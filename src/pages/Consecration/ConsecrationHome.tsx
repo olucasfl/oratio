@@ -83,9 +83,9 @@ export default function ConsecrationHome(){
 
  async function handleReset(){
 
-  const confirmReset = window.confirm(
-   "Deseja cancelar sua consagração?"
-  )
+    const confirmReset = window.confirm(
+        "Deseja cancelar sua consagração? Todo o progresso realizado será apagado."
+    )
 
   if(!confirmReset) return
 
