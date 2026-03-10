@@ -1,12 +1,11 @@
-.dayContainer{
+.container{
 
 max-width:700px;
-
 margin:60px auto;
 
-background:var(--oratio-card-bg);
-
 padding:40px;
+
+background:var(--oratio-card-bg);
 
 border-radius:var(--oratio-radius-lg);
 
@@ -16,26 +15,218 @@ border:1px solid var(--oratio-card-border);
 
 }
 
-.intro{
+/* voltar */
 
-margin-bottom:30px;
+.back{
 
-line-height:1.8;
+margin-bottom:20px;
+
+background:none;
+border:none;
+
+font-size:15px;
+
+color:var(--oratio-primary);
+
+cursor:pointer;
+
+}
+
+/* header */
+
+.header{
+
+text-align:center;
+
+margin-bottom:20px;
+
+}
+
+.header h1{
+
+font-family:var(--oratio-font-title);
+
+font-size:36px;
+
+color:var(--oratio-primary);
+
+margin-bottom:4px;
+
+}
+
+.stage{
+
+font-size:14px;
 
 color:var(--oratio-text-soft);
 
 }
 
+/* título do dia */
+
+.dayTitle{
+
+margin-bottom:30px;
+
+text-align:center;
+
+font-size:22px;
+
+}
+
+/* lista de orações */
+
+.prayers{
+
+display:flex;
+flex-direction:column;
+
+gap:25px;
+
+}
+
+/* oração */
+
 .prayer{
 
 background:var(--oratio-secondary);
 
-padding:20px;
+padding:25px;
 
 border-radius:var(--oratio-radius-md);
 
-margin-bottom:20px;
-
 border-left:4px solid var(--oratio-primary);
+
+}
+
+.prayer h3{
+
+margin-bottom:12px;
+
+font-family:var(--oratio-font-title);
+
+}
+
+/* texto da oração */
+
+.prayerText{
+
+white-space:pre-wrap;
+
+line-height:1.7;
+
+font-size:15px;
+
+font-family:serif;
+
+}
+
+/* botão concluir */
+
+.completeButton{
+
+margin-top:35px;
+
+width:100%;
+
+background:var(--oratio-primary);
+
+color:white;
+
+padding:14px;
+
+border:none;
+
+border-radius:10px;
+
+font-size:16px;
+
+cursor:pointer;
+
+}
+
+.completeButton:hover{
+
+background:var(--oratio-primary-dark);
+
+}
+
+.completeDisabled{
+
+margin-top:35px;
+
+width:100%;
+
+background:#ccc;
+
+color:#777;
+
+padding:14px;
+
+border:none;
+
+border-radius:10px;
+
+cursor:not-allowed;
+
+}
+
+/* loading */
+
+.loading{
+
+display:flex;
+
+align-items:center;
+justify-content:center;
+
+height:100vh;
+
+font-size:18px;
+
+}
+
+.undoButton{
+
+margin-top:25px;
+
+background:#6b7280;
+
+color:white;
+
+padding:14px;
+
+border:none;
+
+border-radius:10px;
+
+cursor:pointer;
+
+width:100%;
+
+}
+
+.undoButton:hover{
+
+background:#4b5563;
+
+}
+
+/* mobile */
+
+@media(max-width:600px){
+
+.container{
+
+margin:20px;
+padding:25px;
+
+}
+
+.header h1{
+
+font-size:28px;
+
+}
 
 }

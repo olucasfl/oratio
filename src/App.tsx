@@ -46,14 +46,14 @@ function App() {
     }
     />
 
-   <Route
-    path="/oratio/consecration/:day"
+    <Route
+    path="/oratio/consecration/day/:day"
     element={
-      <ProtectedRoute>
-        <ConsecrationDay />
-      </ProtectedRoute>
+    <ProtectedRoute>
+    <ConsecrationDay />
+    </ProtectedRoute>
     }
-   />
+    />
 
    <Route path="*" element={<Navigate to="/login" replace />} />
 

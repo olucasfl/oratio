@@ -42,6 +42,14 @@ export async function completeDay(day:number){
 
 }
 
+export async function uncompleteDay(day:number){
+
+ const res = await api.delete(`/oratio/consecration/complete/${day}`)
+
+ return res.data
+
+}
+
 export async function updateStartDate(startDate:string){
 
  const res = await api.put(

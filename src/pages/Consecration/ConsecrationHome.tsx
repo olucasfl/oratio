@@ -15,11 +15,10 @@ export default function ConsecrationHome(){
 
  const [progress,setProgress] = useState<any>(null)
  const [startDate,setStartDate] = useState("")
+ const [loading,setLoading] = useState(false)
 
  useEffect(()=>{
-
   load()
-
  },[])
 
  async function load(){
@@ -28,15 +27,23 @@ export default function ConsecrationHome(){
 
   setProgress(data)
 
+  if(data?.startDate){
+   setStartDate(data.startDate.slice(0,10))
+  }
+
  }
 
  async function handleStart(){
 
   if(!startDate) return
 
+  setLoading(true)
+
   await startConsecration(startDate)
 
-  load()
+  await load()
+
+  setLoading(false)
 
  }
 
@@ -44,9 +51,13 @@ export default function ConsecrationHome(){
 
   if(!startDate) return
 
+  setLoading(true)
+
   await updateStartDate(startDate)
 
-  load()
+  await load()
+
+  setLoading(false)
 
  }
 
@@ -60,7 +71,7 @@ export default function ConsecrationHome(){
 
   await resetConsecration()
 
-  load()
+  await load()
 
  }
 
@@ -68,6 +79,10 @@ export default function ConsecrationHome(){
   progress?.completedDays
   ? (progress.completedDays / 33) * 100
   : 0
+
+ if(!progress){
+  return <div className={styles.loading}>Carregando...</div>
+ }
 
  return(
 
@@ -84,7 +99,7 @@ export default function ConsecrationHome(){
     Consagração
    </h1>
 
-   {!progress?.started && (
+   {!progress.started && (
 
     <div className={styles.startBox}>
 
@@ -99,15 +114,16 @@ export default function ConsecrationHome(){
      <button
       className={styles.primary}
       onClick={handleStart}
+      disabled={loading}
      >
-      Iniciar Consagração
+      {loading ? "Iniciando..." : "Iniciar Consagração"}
      </button>
 
     </div>
 
    )}
 
-   {progress?.started && (
+   {progress.started && (
 
     <div className={styles.controlBox}>
 
@@ -122,8 +138,9 @@ export default function ConsecrationHome(){
      <button
       className={styles.primary}
       onClick={handleUpdate}
+      disabled={loading}
      >
-      Atualizar Data
+      {loading ? "Atualizando..." : "Atualizar Data"}
      </button>
 
      <button
@@ -137,17 +154,15 @@ export default function ConsecrationHome(){
 
    )}
 
-   {progress?.started && (
+   {progress.started && (
 
     <div className={styles.progressBox}>
 
      <div className={styles.progressBar}>
-
       <div
        className={styles.progressFill}
        style={{width:`${progressPercent}%`}}
       />
-
      </div>
 
      <span>
@@ -160,21 +175,57 @@ export default function ConsecrationHome(){
 
    <div className={styles.stages}>
 
-    {progress?.stages?.map((stage:any)=>(
+    {progress?.stages?.map((stage:any, index:number)=>{
 
-     <div
-      key={stage.id}
-      className={styles.stageCard}
-      onClick={()=>navigate(`/oratio/consecration/stage/${stage.id}`)}
-     >
+     // calcula os dias acumulados automaticamente
+     let start = 1
 
-      <h3>{stage.title}</h3>
+     for(let i=0;i<index;i++){
+      start += progress.stages[i].days
+     }
 
-      <p>{stage.days} dias</p>
+     const end = start + stage.days - 1
 
-     </div>
+     const completed =
+      progress.completedDays >= end
 
-    ))}
+     const current =
+      progress.currentDay >= start &&
+      progress.currentDay <= end
+
+     return(
+
+      <div
+       key={stage.id}
+       className={`${styles.stageCard}
+       ${completed ? styles.stageDone : ""}
+       ${current ? styles.stageCurrent : ""}`}
+       onClick={()=>
+        navigate(`/oratio/consecration/stage/${stage.id}`)
+       }
+      >
+
+       <h3>{stage.title}</h3>
+
+       <p>{stage.days} dias</p>
+
+       {completed && (
+        <span className={styles.stageStatus}>
+         ✓ Concluído
+        </span>
+       )}
+
+       {current && !completed && (
+        <span className={styles.stageStatus}>
+         ● Atual
+        </span>
+       )}
+
+      </div>
+
+     )
+
+    })}
 
    </div>
 

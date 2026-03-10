@@ -251,3 +251,120 @@ font-size:14px;
 color:var(--oratio-text-soft);
 
 }
+
+.stageDone{
+ border:2px solid #2f7d32;
+}
+
+.stageCurrent{
+ border:2px solid var(--oratio-primary);
+}
+
+.stageStatus{
+ font-size:12px;
+ margin-top:6px;
+ display:block;
+}
+
+.stageCard{
+position:relative;
+}
+
+.stageStatus{
+margin-top:8px;
+font-size:13px;
+display:flex;
+align-items:center;
+gap:6px;
+color:var(--oratio-text-soft);
+}
+
+.stageCurrent{
+
+border:2px solid var(--oratio-primary);
+
+background:linear-gradient(
+180deg,
+rgba(123,17,19,0.04),
+rgba(123,17,19,0)
+);
+
+}
+
+.stageDone{
+
+border:2px solid #2f7d32;
+
+background:linear-gradient(
+180deg,
+rgba(47,125,50,0.05),
+rgba(47,125,50,0)
+);
+
+}
+
+.stageDone::after{
+
+content:"✓";
+
+position:absolute;
+
+right:14px;
+top:14px;
+
+font-size:18px;
+
+color:#2f7d32;
+
+}
+
+/* ========================= */
+/* PROGRESS BAR MELHORADA */
+/* ========================= */
+
+.progressFill{
+
+height:100%;
+
+background:linear-gradient(
+90deg,
+var(--oratio-primary),
+#9e1c1f
+);
+
+transition:width .6s ease;
+
+}
+
+/* ========================= */
+/* MOBILE */
+/* ========================= */
+
+@media(max-width:600px){
+
+.header{
+font-size:34px;
+text-align:center;
+}
+
+.stages{
+width:100%;
+max-width:420px;
+}
+
+.stageCard{
+padding:18px;
+}
+
+.progressBox{
+width:100%;
+max-width:420px;
+}
+
+.startBox,
+.controlBox{
+width:100%;
+max-width:420px;
+}
+
+}
