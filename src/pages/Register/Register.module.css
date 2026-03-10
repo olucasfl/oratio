@@ -1,56 +1,101 @@
 .wrapper{
+
 height:100vh;
+
 display:flex;
 align-items:center;
 justify-content:center;
-background:var(--oratio-secondary);
-font-family:serif;
+
+background:var(--oratio-background);
+
 }
 
 .card{
-background:white;
-padding:40px;
-border-radius:16px;
-width:360px;
-box-shadow:0 20px 60px rgba(0,0,0,0.2);
+
+background:var(--oratio-card-bg);
+
+padding:42px;
+
+border-radius:var(--oratio-radius-lg);
+
+width:380px;
+
+box-shadow:var(--oratio-shadow-medium);
+
 text-align:center;
+
+border:1px solid var(--oratio-card-border);
+
 }
 
 .logo{
+
 color:var(--oratio-primary);
-font-size:34px;
-margin-bottom:20px;
+
+font-size:36px;
+
+font-family:var(--oratio-font-title);
+
+margin-bottom:22px;
+
+letter-spacing:3px;
+
 }
 
 .form{
+
 display:flex;
 flex-direction:column;
 gap:14px;
+
 }
 
 .input{
+
 padding:12px;
-border-radius:8px;
-border:1px solid #ddd;
+
+border-radius:var(--oratio-radius-sm);
+
+font-size:14px;
+
 }
 
 .button{
+
 background:var(--oratio-primary);
-color:white;
+
+color:var(--oratio-text-light);
+
 padding:12px;
-border:none;
-border-radius:8px;
-cursor:pointer;
+
+border-radius:var(--oratio-radius-sm);
+
+font-weight:600;
+
+}
+
+.button:hover{
+
+background:var(--oratio-primary-dark);
+
 }
 
 .switch{
+
 margin-top:20px;
+
 font-size:14px;
+
 }
 
 .switch span{
+
 color:var(--oratio-primary);
+
 cursor:pointer;
+
 margin-left:6px;
-font-weight:bold;
+
+font-weight:600;
+
 }

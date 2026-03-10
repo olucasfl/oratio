@@ -4,6 +4,9 @@ import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import Home from "./pages/Home/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ConsecrationHome from "./pages/Consecration/ConsecrationHome"
+import ConsecrationDay from "./pages/Consecration/ConsecrationDay"
+import ConsecrationStage from "./pages/Consecration/ConsecrationStage"
 
 function App() {
 
@@ -21,6 +24,33 @@ function App() {
     element={
       <ProtectedRoute>
         <Home />
+      </ProtectedRoute>
+    }
+   />
+
+   <Route
+    path="/oratio/consecration"
+    element={
+      <ProtectedRoute>
+        <ConsecrationHome />
+      </ProtectedRoute>
+    }
+   />
+
+   <Route
+    path="/oratio/consecration/stage/:stageId"
+    element={
+      <ProtectedRoute>
+      <ConsecrationStage/>
+      </ProtectedRoute>
+    }
+    />
+
+   <Route
+    path="/oratio/consecration/:day"
+    element={
+      <ProtectedRoute>
+        <ConsecrationDay />
       </ProtectedRoute>
     }
    />

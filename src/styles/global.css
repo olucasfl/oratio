@@ -1,11 +1,78 @@
-:root{
+@import "./variables.css";
 
- --primary:#7B1113;
- --secondary:#FBF6EE;
+/* =========================
+   RESET
+========================= */
 
- --text-dark:#2A2A2A;
- --text-light:#FFFFFF;
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
 
- --card-bg:#FFFFFF;
+html,body{
+height:100%;
+}
 
+body{
+
+background:var(--oratio-background);
+color:var(--oratio-text-dark);
+
+font-family:var(--oratio-font-text);
+
+-webkit-font-smoothing:antialiased;
+}
+
+
+/* =========================
+   TITULOS
+========================= */
+
+h1,h2,h3,h4{
+
+font-family:var(--oratio-font-title);
+letter-spacing:1px;
+
+}
+
+
+/* =========================
+   BOTÕES PADRÃO
+========================= */
+
+button{
+
+border:none;
+cursor:pointer;
+
+font-family:var(--oratio-font-text);
+
+transition:var(--oratio-transition);
+
+}
+
+
+/* =========================
+   INPUT PADRÃO
+========================= */
+
+input{
+
+font-family:var(--oratio-font-text);
+
+border:1px solid var(--oratio-card-border);
+
+outline:none;
+
+}
+
+
+/* =========================
+   LINKS
+========================= */
+
+a{
+text-decoration:none;
+color:inherit;
 }

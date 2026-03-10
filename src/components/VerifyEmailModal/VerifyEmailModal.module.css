@@ -1,44 +1,53 @@
 .overlay{
+
 position:fixed;
 inset:0;
+
 background:rgba(0,0,0,0.6);
+
 display:flex;
 align-items:center;
 justify-content:center;
-z-index:999;
+
 }
 
 .modal{
-background:white;
+
+background:var(--oratio-card-bg);
+
 padding:40px;
-border-radius:16px;
+
+border-radius:var(--oratio-radius-lg);
+
 text-align:center;
+
 width:420px;
-box-shadow:0 20px 60px rgba(0,0,0,0.4);
+
+box-shadow:var(--oratio-shadow-strong);
+
 }
 
 .spinner{
+
 width:50px;
 height:50px;
+
 border:4px solid rgba(0,0,0,0.1);
-border-top:4px solid #7B1113;
+
+border-top:4px solid var(--oratio-primary);
+
 border-radius:50%;
+
 margin:0 auto 20px auto;
+
 animation:spin 1s linear infinite;
-}
 
-.success{
-font-size:48px;
-color:#22c55e;
-margin-bottom:10px;
-}
-
-.sub{
-margin-top:10px;
-opacity:0.7;
-font-size:14px;
 }
 
 @keyframes spin{
-to{transform:rotate(360deg);}
+
+to{
+transform:rotate(360deg);
+}
+
 }

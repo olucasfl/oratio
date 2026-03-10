@@ -1,63 +1,61 @@
 import { useState } from "react";
-import api from "../../services/api";
 import styles from "./ForgotPasswordModal.module.css";
 
-interface Props {
-  open: boolean;
-  onClose: () => void;
+interface Props{
+ open:boolean
+ onClose:()=>void
+ onSubmit:(email:string)=>void
 }
 
-export default function ForgotPasswordModal({ open, onClose }: Props) {
+export default function ForgotPasswordModal({
+ open,
+ onClose,
+ onSubmit
+}:Props){
 
-  const [email,setEmail] = useState("");
+ const [email,setEmail] = useState("");
 
-  if(!open) return null;
+ if(!open) return null;
 
-  async function sendReset(){
+ function handleSubmit(){
+  if(!email) return;
+  onSubmit(email);
+ }
 
-    try{
+ return(
 
-      await api.post("/auth/forgot-password",{ email });
+  <div className={styles.overlay}>
 
-      alert("Email enviado!");
+   <div className={styles.modal}>
 
-      onClose();
+    <h2>Recuperar senha</h2>
 
-    }catch{
+    <input
+     className={styles.input}
+     type="email"
+     placeholder="Digite seu email"
+     value={email}
+     onChange={(e)=>setEmail(e.target.value)}
+    />
 
-      alert("Erro ao enviar email");
+    <button
+     className={styles.buttonPrimary}
+     onClick={handleSubmit}
+    >
+     Enviar email
+    </button>
 
-    }
+    <button
+     className={styles.buttonSecondary}
+     onClick={onClose}
+    >
+     Cancelar
+    </button>
 
-  }
+   </div>
 
-  return(
+  </div>
 
-    <div className={styles.overlay}>
-
-      <div className={styles.modal}>
-
-        <h2>Recuperar senha</h2>
-
-        <input
-          type="email"
-          placeholder="Digite seu email"
-          value={email}
-          onChange={(e)=>setEmail(e.target.value)}
-        />
-
-        <button onClick={sendReset}>
-          Enviar email
-        </button>
-
-        <button onClick={onClose}>
-          Cancelar
-        </button>
-
-      </div>
-
-    </div>
-
-  );
+ )
 
 }

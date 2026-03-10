@@ -1,7 +1,66 @@
 :root{
 
+/* =========================
+   CORES PRINCIPAIS
+========================= */
+
 --oratio-primary:#7B1113;
---oratio-secondary:#FBF6EE;
---oratio-dark:#2b0b0b;
+--oratio-primary-dark:#5c0c0e;
+--oratio-primary-light:#a01a1d;
+
+--oratio-secondary:#F2E6D8;
+--oratio-secondary-dark:#e2d3c0;
+
+--oratio-background:#f6efe6;
+
+
+/* =========================
+   TEXTO
+========================= */
+
+--oratio-text-dark:#2b2b2b;
+--oratio-text-soft:#555;
+--oratio-text-light:#ffffff;
+
+
+/* =========================
+   CARDS
+========================= */
+
+--oratio-card-bg:#ffffff;
+--oratio-card-border:#e4d6c3;
+
+
+/* =========================
+   SOMBRAS
+========================= */
+
+--oratio-shadow-soft:0 10px 30px rgba(0,0,0,0.08);
+--oratio-shadow-medium:0 20px 60px rgba(0,0,0,0.15);
+--oratio-shadow-strong:0 25px 80px rgba(0,0,0,0.25);
+
+
+/* =========================
+   BORDAS
+========================= */
+
+--oratio-radius-sm:8px;
+--oratio-radius-md:14px;
+--oratio-radius-lg:20px;
+
+
+/* =========================
+   FONTES
+========================= */
+
+--oratio-font-title:'Cinzel',serif;
+--oratio-font-text:'Cormorant Garamond',serif;
+
+
+/* =========================
+   TRANSIÇÕES
+========================= */
+
+--oratio-transition:all 0.2s ease;
 
 }

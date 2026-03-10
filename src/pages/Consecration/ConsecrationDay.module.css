@@ -1,0 +1,41 @@
+.dayContainer{
+
+max-width:700px;
+
+margin:60px auto;
+
+background:var(--oratio-card-bg);
+
+padding:40px;
+
+border-radius:var(--oratio-radius-lg);
+
+box-shadow:var(--oratio-shadow-soft);
+
+border:1px solid var(--oratio-card-border);
+
+}
+
+.intro{
+
+margin-bottom:30px;
+
+line-height:1.8;
+
+color:var(--oratio-text-soft);
+
+}
+
+.prayer{
+
+background:var(--oratio-secondary);
+
+padding:20px;
+
+border-radius:var(--oratio-radius-md);
+
+margin-bottom:20px;
+
+border-left:4px solid var(--oratio-primary);
+
+}
