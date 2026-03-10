@@ -1,6 +1,6 @@
 .container{
 
-min-height:100vh;
+min-height:100dvh;
 
 padding:70px 20px;
 
@@ -283,9 +283,14 @@ top:0;
 left:0;
 
 width:100%;
-height:100%;
 
-background:rgba(0,0,0,0.65);
+/* fallback */
+height:100vh;
+
+/* mobile moderno */
+height:100dvh;
+
+background:rgba(0,0,0,0.6);
 
 display:flex;
 
@@ -296,10 +301,6 @@ z-index:9999;
 
 padding:20px;
 
-backdrop-filter:blur(4px);
-
-animation:fadePage .4s ease;
-
 }
 
 
@@ -307,23 +308,27 @@ animation:fadePage .4s ease;
 
 .modal{
 
-background:var(--oratio-card-bg);
+background:#fdfbf6;
 
-padding:36px 30px;
+padding:40px;
 
-border-radius:var(--oratio-radius-lg);
+border-radius:18px;
 
 max-width:720px;
-
 width:100%;
 
+/* fallback */
 max-height:85vh;
+
+/* mobile moderno */
+max-height:85dvh;
 
 overflow:auto;
 
-box-shadow:var(--oratio-shadow-strong);
+box-shadow:0 15px 40px rgba(0,0,0,0.35);
 
-animation:modalIn .35s ease;
+/* scroll suave no iOS */
+-webkit-overflow-scrolling:touch;
 
 }
 
@@ -566,7 +571,7 @@ grid-template-columns:1fr;
 
 .modal{
 padding:26px 20px;
-max-height:90vh;
+max-height:90dvh;
 }
 
 .modalTitle{
