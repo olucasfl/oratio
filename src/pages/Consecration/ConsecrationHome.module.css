@@ -2,14 +2,33 @@
 
 min-height:100vh;
 
-padding:60px 20px;
+padding:70px 20px;
 
 display:flex;
 flex-direction:column;
-
 align-items:center;
 
-background:var(--oratio-background);
+background:
+radial-gradient(circle at top,#ffffff55,transparent 65%),
+var(--oratio-background);
+
+animation:fadePage .6s ease;
+
+}
+
+/* LOADING */
+
+.loading{
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+height:100vh;
+
+font-size:18px;
+
+color:var(--oratio-text-soft);
 
 }
 
@@ -19,68 +38,48 @@ background:var(--oratio-background);
 
 position:absolute;
 
-left:30px;
-top:30px;
+left:20px;
+top:20px;
 
 background:none;
 
 border:none;
 
-font-size:16px;
+font-size:15px;
 
 color:var(--oratio-primary);
 
 cursor:pointer;
 
+transition:0.2s;
+
 }
+
+.back:hover{
+opacity:.7;
+}
+
 
 /* HEADER */
 
 .header{
 
-font-size:42px;
+font-size:38px;
 
 color:var(--oratio-primary);
 
-margin-bottom:30px;
+margin-bottom:26px;
 
 font-family:var(--oratio-font-title);
 
-}
-
-/* BOX INICIAR */
-
-.startBox{
-
-display:flex;
-flex-direction:column;
-
-gap:14px;
-
-background:var(--oratio-card-bg);
-
-padding:30px;
-
-border-radius:var(--oratio-radius-md);
-
-box-shadow:var(--oratio-shadow-soft);
-
-margin-bottom:30px;
+text-align:center;
 
 }
 
-.startBox input{
 
-padding:10px;
+/* BOXES */
 
-border-radius:var(--oratio-radius-sm);
-
-border:1px solid var(--oratio-card-border);
-
-}
-
-/* BOX CONTROLES */
-
+.startBox,
 .controlBox{
 
 display:flex;
@@ -90,25 +89,61 @@ gap:14px;
 
 background:var(--oratio-card-bg);
 
-padding:30px;
+padding:28px;
 
 border-radius:var(--oratio-radius-md);
 
-box-shadow:var(--oratio-shadow-soft);
+box-shadow:var(--oratio-shadow-medium);
 
-margin-bottom:30px;
+margin-bottom:28px;
+
+width:100%;
+max-width:420px;
+
+animation:fadeUp .6s ease;
 
 }
 
+.startBox h3,
+.controlBox h3{
+
+font-size:18px;
+
+color:var(--oratio-text-dark);
+
+text-align:center;
+
+}
+
+
+/* INPUT */
+
+.startBox input,
 .controlBox input{
 
-padding:10px;
+padding:12px;
 
 border-radius:var(--oratio-radius-sm);
 
 border:1px solid var(--oratio-card-border);
 
+font-size:14px;
+
+transition:0.2s;
+
 }
+
+.startBox input:focus,
+.controlBox input:focus{
+
+outline:none;
+
+border-color:var(--oratio-primary);
+
+box-shadow:0 0 0 3px rgba(123,17,19,0.15);
+
+}
+
 
 /* BOTÕES */
 
@@ -118,13 +153,17 @@ background:var(--oratio-primary);
 
 color:white;
 
-padding:12px 20px;
+padding:12px;
 
 border:none;
 
-border-radius:8px;
+border-radius:var(--oratio-radius-sm);
 
 cursor:pointer;
+
+font-weight:600;
+
+transition:0.2s;
 
 }
 
@@ -132,6 +171,14 @@ cursor:pointer;
 
 background:var(--oratio-primary-dark);
 
+transform:translateY(-2px);
+
+box-shadow:0 6px 16px rgba(0,0,0,0.18);
+
+}
+
+.primary:active{
+transform:scale(.96);
 }
 
 .danger{
@@ -140,13 +187,15 @@ background:#b91c1c;
 
 color:white;
 
-padding:12px 20px;
+padding:12px;
 
 border:none;
 
-border-radius:8px;
+border-radius:var(--oratio-radius-sm);
 
 cursor:pointer;
+
+transition:0.2s;
 
 }
 
@@ -154,19 +203,36 @@ cursor:pointer;
 
 background:#991b1b;
 
+transform:translateY(-2px);
+
 }
+
 
 /* PROGRESSO */
 
 .progressBox{
 
-width:300px;
+width:100%;
+max-width:420px;
 
-margin-bottom:40px;
+margin-bottom:34px;
 
 text-align:center;
 
+animation:fadeUp .7s ease;
+
 }
+
+.progressBox span{
+
+font-size:15px;
+
+color:var(--oratio-text-soft);
+
+}
+
+
+/* BARRA */
 
 .progressBar{
 
@@ -174,13 +240,13 @@ width:100%;
 
 height:12px;
 
-background:#e5e5e5;
+background:#e6e6e6;
 
 border-radius:10px;
 
 overflow:hidden;
 
-margin-bottom:8px;
+margin-bottom:10px;
 
 }
 
@@ -188,11 +254,16 @@ margin-bottom:8px;
 
 height:100%;
 
-background:var(--oratio-primary);
+background:linear-gradient(
+90deg,
+var(--oratio-primary),
+#9e1c1f
+);
 
-transition:0.3s;
+transition:width .7s ease;
 
 }
+
 
 /* STAGES */
 
@@ -202,17 +273,21 @@ display:flex;
 
 flex-direction:column;
 
-gap:16px;
+gap:14px;
 
-width:320px;
+width:100%;
+max-width:420px;
 
 }
+
+
+/* CARD */
 
 .stageCard{
 
 background:var(--oratio-card-bg);
 
-padding:20px;
+padding:18px;
 
 border-radius:var(--oratio-radius-md);
 
@@ -222,7 +297,9 @@ box-shadow:var(--oratio-shadow-soft);
 
 border:1px solid var(--oratio-card-border);
 
-transition:0.2s;
+transition:0.25s;
+
+position:relative;
 
 }
 
@@ -238,7 +315,7 @@ box-shadow:var(--oratio-shadow-medium);
 
 margin-bottom:4px;
 
-font-size:20px;
+font-size:18px;
 
 color:var(--oratio-text-dark);
 
@@ -252,32 +329,27 @@ color:var(--oratio-text-soft);
 
 }
 
-.stageDone{
- border:2px solid #2f7d32;
-}
 
-.stageCurrent{
- border:2px solid var(--oratio-primary);
-}
+/* STATUS */
 
 .stageStatus{
- font-size:12px;
- margin-top:6px;
- display:block;
-}
 
-.stageCard{
-position:relative;
-}
+margin-top:6px;
 
-.stageStatus{
-margin-top:8px;
 font-size:13px;
+
 display:flex;
+
 align-items:center;
+
 gap:6px;
+
 color:var(--oratio-text-soft);
+
 }
+
+
+/* ATUAL */
 
 .stageCurrent{
 
@@ -285,11 +357,14 @@ border:2px solid var(--oratio-primary);
 
 background:linear-gradient(
 180deg,
-rgba(123,17,19,0.04),
+rgba(123,17,19,0.05),
 rgba(123,17,19,0)
 );
 
 }
+
+
+/* COMPLETO */
 
 .stageDone{
 
@@ -297,7 +372,7 @@ border:2px solid #2f7d32;
 
 background:linear-gradient(
 180deg,
-rgba(47,125,50,0.05),
+rgba(47,125,50,0.06),
 rgba(47,125,50,0)
 );
 
@@ -318,53 +393,46 @@ color:#2f7d32;
 
 }
 
-/* ========================= */
-/* PROGRESS BAR MELHORADA */
-/* ========================= */
 
-.progressFill{
+/* ANIMAÇÕES */
 
-height:100%;
+@keyframes fadePage{
 
-background:linear-gradient(
-90deg,
-var(--oratio-primary),
-#9e1c1f
-);
+from{
+opacity:0;
+}
 
-transition:width .6s ease;
+to{
+opacity:1;
+}
 
 }
 
-/* ========================= */
+@keyframes fadeUp{
+
+from{
+opacity:0;
+transform:translateY(15px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+
 /* MOBILE */
-/* ========================= */
 
 @media(max-width:600px){
 
 .header{
-font-size:34px;
-text-align:center;
-}
-
-.stages{
-width:100%;
-max-width:420px;
+font-size:32px;
 }
 
 .stageCard{
-padding:18px;
-}
-
-.progressBox{
-width:100%;
-max-width:420px;
-}
-
-.startBox,
-.controlBox{
-width:100%;
-max-width:420px;
+padding:16px;
 }
 
 }

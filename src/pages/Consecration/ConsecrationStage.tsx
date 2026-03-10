@@ -24,17 +24,31 @@ export default function ConsecrationStage(){
 
   if(!stageId) return
 
-  const [daysData,progressData] = await Promise.all([
-   getStageDays(stageId),
-   getProgress()
-  ])
+  try{
 
-  setDays(daysData)
-  setProgress(progressData)
+   const [daysData,progressData] = await Promise.all([
+    getStageDays(stageId),
+    getProgress()
+   ])
+
+   setDays(daysData)
+   setProgress(progressData)
+
+  }catch{
+
+   console.log("Erro ao carregar estágio")
+
+  }
 
  }
 
- if(!progress) return null
+ if(!progress){
+  return(
+   <div className={styles.loading}>
+    Carregando estágio...
+   </div>
+  )
+ }
 
  const stage = progress.stages?.find(
   (s:any)=>s.id === stageId

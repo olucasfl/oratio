@@ -1,24 +1,35 @@
 .wrapper{
 
-height:100vh;
+min-height:100vh;
 
 display:flex;
 align-items:center;
 justify-content:center;
 
-background:var(--oratio-background);
+padding:20px;
+
+background:
+radial-gradient(circle at top,#ffffff40,transparent 60%),
+var(--oratio-background);
+
+font-family:var(--oratio-font-text);
+
+animation:fadeIn 0.6s ease;
 
 }
+
+/* CARD */
 
 .card{
 
 background:var(--oratio-card-bg);
 
-padding:42px;
+padding:44px 36px;
 
 border-radius:var(--oratio-radius-lg);
 
-width:380px;
+width:100%;
+max-width:380px;
 
 box-shadow:var(--oratio-shadow-medium);
 
@@ -26,19 +37,29 @@ text-align:center;
 
 border:1px solid var(--oratio-card-border);
 
+animation:cardEntrance .6s ease;
+
+backdrop-filter:blur(4px);
+
 }
+
+/* LOGO */
 
 .logo{
 
 color:var(--oratio-primary);
 
-font-size:38px;
+font-size:40px;
 
-letter-spacing:3px;
+font-family:var(--oratio-font-title);
 
-margin-bottom:8px;
+letter-spacing:4px;
+
+margin-bottom:6px;
 
 }
+
+/* SUBTITLE */
 
 .subtitle{
 
@@ -46,27 +67,54 @@ font-size:14px;
 
 color:var(--oratio-text-soft);
 
-margin-bottom:24px;
+margin-bottom:26px;
+
+line-height:1.4;
 
 }
+
+/* FORM */
 
 .form{
 
 display:flex;
 flex-direction:column;
+
 gap:14px;
 
 }
 
+/* INPUT */
+
 .input{
 
-padding:12px;
+padding:13px 14px;
 
 border-radius:var(--oratio-radius-sm);
 
+border:1px solid var(--oratio-card-border);
+
 font-size:14px;
 
+transition:var(--oratio-transition);
+
+background:white;
+
 }
+
+.input:focus{
+
+outline:none;
+
+border-color:var(--oratio-primary);
+
+box-shadow:0 0 0 3px rgba(123,17,19,0.15);
+
+transform:scale(1.01);
+
+}
+
+/* BUTTON */
 
 .button{
 
@@ -74,11 +122,17 @@ background:var(--oratio-primary);
 
 color:var(--oratio-text-light);
 
-padding:12px;
+padding:13px;
 
 border-radius:var(--oratio-radius-sm);
 
 font-weight:600;
+
+cursor:pointer;
+
+border:none;
+
+transition:var(--oratio-transition);
 
 }
 
@@ -86,7 +140,19 @@ font-weight:600;
 
 background:var(--oratio-primary-dark);
 
+transform:translateY(-2px);
+
+box-shadow:0 8px 18px rgba(0,0,0,0.18);
+
 }
+
+.button:active{
+
+transform:scale(.98);
+
+}
+
+/* FORGOT */
 
 .forgot{
 
@@ -98,13 +164,25 @@ cursor:pointer;
 
 color:var(--oratio-primary);
 
+transition:var(--oratio-transition);
+
 }
+
+.forgot:hover{
+
+opacity:.7;
+
+}
+
+/* SWITCH */
 
 .switch{
 
-margin-top:20px;
+margin-top:22px;
 
 font-size:14px;
+
+color:var(--oratio-text-soft);
 
 }
 
@@ -117,5 +195,77 @@ cursor:pointer;
 font-weight:600;
 
 margin-left:6px;
+
+transition:var(--oratio-transition);
+
+}
+
+.switch span:hover{
+
+opacity:.7;
+
+}
+
+/* ===================== */
+/* ANIMAÇÕES */
+/* ===================== */
+
+@keyframes fadeIn{
+
+from{
+opacity:0;
+}
+
+to{
+opacity:1;
+}
+
+}
+
+@keyframes cardEntrance{
+
+from{
+opacity:0;
+transform:translateY(25px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+/* ===================== */
+/* MOBILE */
+/* ===================== */
+
+@media (max-width:768px){
+
+.card{
+
+padding:36px 26px;
+
+}
+
+.logo{
+
+font-size:34px;
+
+}
+
+.subtitle{
+
+font-size:13px;
+
+}
+
+.input{
+
+font-size:14px;
+
+padding:12px;
+
+}
 
 }

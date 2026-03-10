@@ -23,12 +23,20 @@ export default function ConsecrationHome(){
 
  async function load(){
 
-  const data = await getProgress()
+  try{
 
-  setProgress(data)
+   const data = await getProgress()
 
-  if(data?.startDate){
-   setStartDate(data.startDate.slice(0,10))
+   setProgress(data)
+
+   if(data?.startDate){
+    setStartDate(data.startDate.slice(0,10))
+   }
+
+  }catch{
+
+   console.log("Erro ao carregar progresso")
+
   }
 
  }
@@ -39,11 +47,17 @@ export default function ConsecrationHome(){
 
   setLoading(true)
 
-  await startConsecration(startDate)
+  try{
 
-  await load()
+   await startConsecration(startDate)
 
-  setLoading(false)
+   await load()
+
+  }finally{
+
+   setLoading(false)
+
+  }
 
  }
 
@@ -53,11 +67,17 @@ export default function ConsecrationHome(){
 
   setLoading(true)
 
-  await updateStartDate(startDate)
+  try{
 
-  await load()
+   await updateStartDate(startDate)
 
-  setLoading(false)
+   await load()
+
+  }finally{
+
+   setLoading(false)
+
+  }
 
  }
 
@@ -81,7 +101,11 @@ export default function ConsecrationHome(){
   : 0
 
  if(!progress){
-  return <div className={styles.loading}>Carregando...</div>
+  return (
+   <div className={styles.loading}>
+    Carregando consagração...
+   </div>
+  )
  }
 
  return(
@@ -177,7 +201,6 @@ export default function ConsecrationHome(){
 
     {progress?.stages?.map((stage:any, index:number)=>{
 
-     // calcula os dias acumulados automaticamente
      let start = 1
 
      for(let i=0;i<index;i++){

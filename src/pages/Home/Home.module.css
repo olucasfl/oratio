@@ -2,120 +2,589 @@
 
 min-height:100vh;
 
-background:var(--oratio-background);
+padding:70px 20px;
 
 display:flex;
 flex-direction:column;
 align-items:center;
 
-padding:50px 20px;
+gap:42px;
+
+background:
+radial-gradient(circle at top,#ffffff55,transparent 65%),
+linear-gradient(to bottom,#fff8ef,transparent 40%),
+var(--oratio-background);
+
+font-family:var(--oratio-font-text);
+
+animation:fadePage .7s ease;
 
 }
 
-.header{
+
+/* ================================= */
+/* HERO */
+/* ================================= */
+
+.hero{
 
 text-align:center;
 
-margin-bottom:50px;
+animation:fadeUp .8s ease;
 
 }
 
-.header h1{
+
+/* ================================= */
+/* LOGO */
+/* ================================= */
+
+.logoWrapper{
+
+position:relative;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-family:var(--oratio-font-title);
+
+font-size:70px;
 
 color:var(--oratio-primary);
-
-font-size:44px;
 
 letter-spacing:4px;
 
 }
 
-.header p{
 
-color:var(--oratio-text-soft);
+/* PARTES DO TEXTO */
 
-font-size:14px;
+.logoLeft,
+.logoRight{
 
-}
-
-.intro{
-
-max-width:700px;
-
-text-align:center;
-
-margin-bottom:50px;
+z-index:1;
 
 }
 
-.intro h2{
 
-font-size:30px;
+/* ================================= */
+/* CRUZ CENTRAL */
+/* ================================= */
 
-margin-bottom:18px;
+.cross{
 
-}
+position:relative;
 
-.intro p{
-
-line-height:1.8;
-
-color:var(--oratio-text-soft);
-
-margin-bottom:10px;
-
-}
-
-.consagracao{
-
-background:var(--oratio-card-bg);
-
-padding:32px;
-
-border-radius:var(--oratio-radius-lg);
-
-max-width:520px;
-
-text-align:center;
-
-box-shadow:var(--oratio-shadow-soft);
-
-border:1px solid var(--oratio-card-border);
-
-}
-
-.consagracao h3{
-
-font-size:24px;
-
-margin-bottom:10px;
-
-}
-
-.consagracao p{
-
-color:var(--oratio-text-soft);
-
-margin-bottom:20px;
-
-}
-
-.button{
+width:9px;
+height:130px;
 
 background:var(--oratio-primary);
 
-color:var(--oratio-text-light);
+margin:0 8px;
 
-padding:14px 24px;
+z-index:3;
 
-border-radius:var(--oratio-radius-md);
+top:-8px;
+
+box-shadow:0 0 12px rgba(0,0,0,0.25);
+
+}
+
+.cross::after{
+
+content:"";
+
+position:absolute;
+
+width:230px;
+height:9px;
+
+background:var(--oratio-primary);
+
+top:28px;
+
+left:50%;
+
+transform:translateX(-50%);
+
+box-shadow:0 0 12px rgba(0,0,0,0.25);
+
+}
+
+
+/* ================================= */
+/* SUBTITLE */
+/* ================================= */
+
+.subtitle{
+
+margin-top:16px;
+
+font-size:16px;
+
+color:var(--oratio-text-soft);
+
+letter-spacing:.3px;
+
+}
+
+
+/* ================================= */
+/* CARDS */
+/* ================================= */
+
+.liturgyCard,
+.consecration{
+
+background:var(--oratio-card-bg);
+
+padding:32px 28px;
+
+border-radius:var(--oratio-radius-lg);
+
+box-shadow:var(--oratio-shadow-medium);
+
+border:1px solid var(--oratio-card-border);
+
+text-align:center;
+
+width:100%;
+max-width:470px;
+
+transition:var(--oratio-transition);
+
+animation:fadeUp .8s ease;
+
+}
+
+.liturgyCard:hover,
+.consecration:hover{
+
+transform:translateY(-4px);
+
+box-shadow:var(--oratio-shadow-strong);
+
+}
+
+
+/* ================================= */
+/* TITULOS */
+/* ================================= */
+
+.liturgyCard h2,
+.consecration h2{
+
+color:var(--oratio-primary);
+
+margin-bottom:18px;
+
+font-size:26px;
+
+letter-spacing:1px;
+
+}
+
+
+/* ================================= */
+/* GRID DE BOTÕES */
+/* ================================= */
+
+.liturgyButtons{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:12px;
+
+margin-top:14px;
+
+}
+
+
+/* ================================= */
+/* BOTÕES */
+/* ================================= */
+
+.liturgyButtons button,
+.primaryButton{
+
+padding:14px 16px;
+
+border:none;
+
+border-radius:var(--oratio-radius-sm);
+
+background:var(--oratio-primary);
+
+color:white;
+
+font-size:15px;
+
+cursor:pointer;
+
+transition:var(--oratio-transition);
+
+font-weight:500;
+
+}
+
+.liturgyButtons button:hover,
+.primaryButton:hover{
+
+transform:translateY(-2px);
+
+background:var(--oratio-primary-dark);
+
+box-shadow:0 6px 16px rgba(0,0,0,0.18);
+
+}
+
+.liturgyButtons button:active,
+.primaryButton:active{
+
+transform:scale(.97);
+
+}
+
+
+/* ================================= */
+/* TEXTO CONSAGRAÇÃO */
+/* ================================= */
+
+.consecration p{
+
+margin-bottom:26px;
+
+line-height:1.7;
+
+font-size:16px;
+
+max-width:420px;
+
+margin-left:auto;
+margin-right:auto;
+
+color:var(--oratio-text-dark);
+
+}
+
+
+/* ================================= */
+/* MODAL */
+/* ================================= */
+
+.modalOverlay{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:rgba(0,0,0,0.65);
+
+display:flex;
+
+align-items:center;
+justify-content:center;
+
+z-index:9999;
+
+padding:20px;
+
+backdrop-filter:blur(4px);
+
+animation:fadePage .4s ease;
+
+}
+
+
+/* MODAL */
+
+.modal{
+
+background:var(--oratio-card-bg);
+
+padding:36px 30px;
+
+border-radius:var(--oratio-radius-lg);
+
+max-width:720px;
+
+width:100%;
+
+max-height:85vh;
+
+overflow:auto;
+
+box-shadow:var(--oratio-shadow-strong);
+
+animation:modalIn .35s ease;
+
+}
+
+
+/* ================================= */
+/* TITULO */
+/* ================================= */
+
+.modalTitle{
+
+font-size:26px;
+
+color:var(--oratio-primary);
+
+text-align:center;
+
+margin-bottom:10px;
+
+letter-spacing:1px;
+
+}
+
+
+/* ================================= */
+/* REFERENCIA */
+/* ================================= */
+
+.modalReference{
+
+text-align:center;
+
+font-style:italic;
+
+margin-bottom:26px;
+
+font-size:20px;
+
+color:var(--oratio-text-soft);
+
+}
+
+
+/* ================================= */
+/* TEXTO BÍBLICO */
+/* ================================= */
+
+.modalText{
+
+white-space:pre-line;
+
+line-height:2;
+
+font-size:19px;
+
+text-align:justify;
+
+font-family:Georgia,serif;
+
+color:#333;
+
+margin-bottom:28px;
+
+}
+
+
+/* REFRAO */
+
+.modalRefrao{
+
+background:#f4ede2;
+
+padding:14px;
+
+border-radius:10px;
+
+margin-bottom:20px;
+
+font-style:italic;
+
+text-align:center;
 
 font-size:16px;
 
 }
 
-.button:hover{
+
+/* BOTÃO FECHAR */
+
+.closeButton{
+
+background:var(--oratio-primary);
+
+color:white;
+
+border:none;
+
+padding:12px 26px;
+
+border-radius:var(--oratio-radius-sm);
+
+cursor:pointer;
+
+display:block;
+
+margin:auto;
+
+transition:var(--oratio-transition);
+
+}
+
+.closeButton:hover{
+
+transform:scale(1.05);
 
 background:var(--oratio-primary-dark);
+
+}
+
+
+/* ================================= */
+/* FORMATAÇÃO BÍBLICA */
+/* ================================= */
+
+:global(.verse){
+
+font-size:12px;
+
+vertical-align:super;
+
+margin-right:4px;
+
+font-weight:600;
+
+color:#666;
+
+}
+
+:global(.capitular){
+
+float:left;
+
+font-size:68px;
+
+line-height:58px;
+
+padding-right:10px;
+
+font-weight:bold;
+
+color:var(--oratio-primary);
+
+font-family:Georgia,serif;
+
+}
+
+
+/* ================================= */
+/* ANIMAÇÕES */
+/* ================================= */
+
+@keyframes fadePage{
+
+from{
+opacity:0;
+}
+
+to{
+opacity:1;
+}
+
+}
+
+@keyframes fadeUp{
+
+from{
+opacity:0;
+transform:translateY(20px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+@keyframes modalIn{
+
+from{
+opacity:0;
+transform:scale(.95);
+}
+
+to{
+opacity:1;
+transform:scale(1);
+}
+
+}
+
+
+/* ================================= */
+/* MOBILE */
+/* ================================= */
+
+@media (max-width:768px){
+
+.container{
+padding:50px 16px;
+gap:32px;
+}
+
+.logoWrapper{
+font-size:46px;
+}
+
+.cross{
+height:95px;
+}
+
+.cross::after{
+width:160px;
+height:7px;
+top:22px;
+}
+
+.subtitle{
+font-size:14px;
+}
+
+.liturgyCard,
+.consecration{
+padding:26px 20px;
+max-width:100%;
+}
+
+.liturgyButtons{
+grid-template-columns:1fr;
+}
+
+.modal{
+padding:26px 20px;
+max-height:90vh;
+}
+
+.modalTitle{
+font-size:22px;
+}
+
+.modalReference{
+font-size:17px;
+}
+
+.modalText{
+font-size:17px;
+line-height:1.9;
+}
+
+.capitular{
+font-size:52px;
+line-height:46px;
+}
 
 }

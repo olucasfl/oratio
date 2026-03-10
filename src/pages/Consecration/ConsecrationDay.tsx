@@ -37,6 +37,10 @@ export default function ConsecrationDay(){
    setData(dayData)
    setProgress(progressData)
 
+  }catch{
+
+   console.log("Erro ao carregar dia")
+
   }finally{
 
    setLoading(false)

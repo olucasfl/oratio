@@ -16,12 +16,21 @@ height:100%;
 
 body{
 
-background:var(--oratio-background);
+background-color:var(--oratio-background);
+
+/* TEXTURA DE PERGAMINHO */
+
+background-image:url("/parchment.png");
+
+background-size:600px;
+background-repeat:repeat;
+
 color:var(--oratio-text-dark);
 
 font-family:var(--oratio-font-text);
 
 -webkit-font-smoothing:antialiased;
+
 }
 
 

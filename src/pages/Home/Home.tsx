@@ -1,49 +1,168 @@
 import styles from "./Home.module.css"
 import { useNavigate } from "react-router-dom"
+import { useEffect,useState } from "react"
 
 export default function Home(){
 
  const navigate = useNavigate()
 
+ const [liturgy,setLiturgy] = useState<any>(null)
+ const [modal,setModal] = useState<any>(null)
+
+ const today = new Date().toLocaleDateString("pt-BR")
+
+ useEffect(()=>{
+  loadLiturgy()
+ },[])
+
+ async function loadLiturgy(){
+
+  try{
+
+   const res = await fetch("https://finance-api-y0ol.onrender.com/liturgia")
+
+   const data = await res.json()
+
+   setLiturgy(data)
+
+  }catch{
+
+   console.log("Erro ao carregar liturgia")
+
+  }
+
+ }
+
+ function openModal(type:string){
+
+  if(!liturgy) return
+
+  if(type==="primeira"){
+   setModal(liturgy.leituras.primeiraLeitura[0])
+  }
+
+  if(type==="segunda"){
+
+   if(liturgy.leituras.segundaLeitura.length===0){
+
+    setModal({
+     titulo:"Segunda Leitura",
+     referencia:"",
+     texto:"Hoje não possui segunda leitura."
+    })
+
+   }else{
+
+    setModal(liturgy.leituras.segundaLeitura[0])
+
+   }
+
+  }
+
+  if(type==="salmo"){
+   setModal(liturgy.leituras.salmo[0])
+  }
+
+  if(type==="evangelho"){
+   setModal(liturgy.leituras.evangelho[0])
+  }
+
+ }
+
+ function formatVerses(text:string){
+
+  let formatted = text.replace(
+   /(\d+)(?=[A-Za-z“])/g,
+   '<span class="verse">$1</span>'
+  )
+
+  formatted = formatted.replace(
+   /^([A-Za-zÀ-ÿ])/,
+   '<span class="capitular">$1</span>'
+  )
+
+  return formatted
+
+ }
+
  return(
 
   <div className={styles.container}>
 
-   <header className={styles.header}>
-    <h1>ORATIO</h1>
-    <p>Aplicativo de espiritualidade católica</p>
-   </header>
+   <section className={styles.hero}>
 
-   <section className={styles.intro}>
+    <div className={styles.logoWrapper}>
 
-    <h2>Bem-vindo ao Oratio 🙏</h2>
+     <span className={styles.logoLeft}>
+      ORA
+     </span>
 
-    <p>
-     O Oratio foi criado para ajudar na caminhada espiritual diária,
-     oferecendo orações tradicionais da Igreja e guias de devoção.
-    </p>
+     <div className={styles.cross}></div>
 
-    <p>
-     Aqui você poderá realizar a tradicional
-     <strong> Consagração a Nossa Senhora </strong>
-     segundo o método de
-     <strong> São Luís Maria Grignion de Montfort </strong>.
+     <span className={styles.logoRight}>
+      IO
+     </span>
+
+    </div>
+
+    <p className={styles.subtitle}>
+     Aplicativo de espiritualidade católica
     </p>
 
    </section>
 
-   <section className={styles.consagracao}>
 
-    <h3>Consagração a Nossa Senhora</h3>
+   <section className={styles.liturgyCard}>
+
+    <h2>
+     Liturgia {today}
+    </h2>
+
+    {!liturgy && (
+     <p>Carregando liturgia...</p>
+    )}
+
+    {liturgy && (
+
+     <div className={styles.liturgyButtons}>
+
+      <button onClick={()=>openModal("primeira")}>
+       Primeira Leitura
+      </button>
+
+      <button onClick={()=>openModal("salmo")}>
+       Salmo
+      </button>
+
+      <button onClick={()=>openModal("segunda")}>
+       Segunda Leitura
+      </button>
+
+      <button onClick={()=>openModal("evangelho")}>
+       Evangelho
+      </button>
+
+     </div>
+
+    )}
+
+   </section>
+
+
+   <section className={styles.consecration}>
+
+    <h2>
+     Consagração a Nossa Senhora
+    </h2>
 
     <p>
-     Um caminho espiritual de 33 dias de preparação
-     para se entregar totalmente a Jesus Cristo
-     pelas mãos de Maria.
+     Um caminho espiritual de 33 dias segundo
+     o método de São Luís Maria Grignion de
+     Montfort.
     </p>
 
     <button
-     className={styles.button}
+     className={styles.primaryButton}
      onClick={()=>navigate("/oratio/consecration")}
     >
      Iniciar Consagração
@@ -51,8 +170,54 @@ export default function Home(){
 
    </section>
 
+
+   {modal && (
+
+    <div
+     className={styles.modalOverlay}
+     onClick={()=>setModal(null)}
+    >
+
+     <div
+      className={styles.modal}
+      onClick={(e)=>e.stopPropagation()}
+     >
+
+      <h2 className={styles.modalTitle}>
+       {modal.titulo || modal.referencia}
+      </h2>
+
+      <p className={styles.modalReference}>
+       {modal.referencia}
+      </p>
+
+      {modal.refrao && (
+       <p className={styles.modalRefrao}>
+        {modal.refrao}
+       </p>
+      )}
+
+      <div
+       className={styles.modalText}
+       dangerouslySetInnerHTML={{
+        __html: formatVerses(modal.texto)
+       }}
+      />
+
+      <button
+       className={styles.closeButton}
+       onClick={()=>setModal(null)}
+      >
+       Fechar
+      </button>
+
+     </div>
+
+    </div>
+
+   )}
+
   </div>
 
  )
-
 }
