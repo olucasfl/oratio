@@ -35,7 +35,7 @@ export default function Login() {
       navigate("/oratio/home");
     }
 
-  }, []);
+  }, [navigate]);
 
   /*
   ============================
@@ -50,14 +50,7 @@ export default function Login() {
 
     try {
 
-      const data = await login(email, password);
-
-      /*
-      salva tokens
-      */
-
-      localStorage.setItem("access_token", data.access_token);
-      localStorage.setItem("refresh_token", data.refresh_token);
+      await login(email, password);
 
       navigate("/oratio/home");
 

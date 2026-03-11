@@ -1,6 +1,8 @@
 import styles from "./Home.module.css"
 import { useNavigate } from "react-router-dom"
-import { useEffect,useState } from "react"
+import { useEffect, useState } from "react"
+
+import { logout } from "../../services/authService"
 
 export default function Home(){
 
@@ -30,14 +32,6 @@ export default function Home(){
    console.log("Erro ao carregar liturgia")
 
   }
-
- }
-
- function logout(){
-
-  localStorage.removeItem("token")
-
-  navigate("/login")
 
  }
 
