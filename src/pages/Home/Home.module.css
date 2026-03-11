@@ -479,6 +479,44 @@ font-family:Georgia,serif;
 
 }
 
+.topActions{
+
+ display:flex;
+ justify-content:flex-end;
+ width:100%;
+ max-width:900px;
+ margin:0 auto 20px auto;
+ padding:0 20px;
+
+}
+
+.logoutButton{
+
+ background:#8b0000;
+ color:white;
+ border:none;
+ padding:10px 16px;
+ border-radius:8px;
+ font-size:14px;
+ font-weight:600;
+ cursor:pointer;
+ transition:all .2s ease;
+
+}
+
+.logoutButton:hover{
+
+ background:#a00000;
+ transform:translateY(-1px);
+
+}
+
+.logoutButton:active{
+
+ transform:scale(.97);
+
+}
+
 
 /* ================================= */
 /* ANIMAÇÕES */
@@ -531,60 +569,75 @@ transform:scale(1);
 
 @media (max-width:768px){
 
-.container{
-padding:50px 16px;
-gap:32px;
-}
+    .container{
+    padding:50px 16px;
+    gap:32px;
+    }
 
-.logoWrapper{
-font-size:46px;
-}
+    .logoWrapper{
+    font-size:46px;
+    }
 
-.cross{
-height:95px;
-}
+    .cross{
+    height:95px;
+    }
 
-.cross::after{
-width:160px;
-height:7px;
-top:22px;
-}
+    .cross::after{
+    width:160px;
+    height:7px;
+    top:22px;
+    }
 
-.subtitle{
-font-size:14px;
-}
+    .subtitle{
+    font-size:14px;
+    }
 
-.liturgyCard,
-.consecration{
-padding:26px 20px;
-max-width:100%;
-}
+    .liturgyCard,
+    .consecration{
+    padding:26px 20px;
+    max-width:100%;
+    }
 
-.liturgyButtons{
-grid-template-columns:1fr;
-}
+    .liturgyButtons{
+    grid-template-columns:1fr;
+    }
 
-.modal{
-padding:26px 20px;
-max-height:90vh;
-}
+    .modal{
+    padding:26px 20px;
+    max-height:90vh;
+    }
 
-.modalTitle{
-font-size:22px;
-}
+    .modalTitle{
+    font-size:22px;
+    }
 
-.modalReference{
-font-size:17px;
-}
+    .modalReference{
+    font-size:17px;
+    }
 
-.modalText{
-font-size:17px;
-line-height:1.9;
-}
+    .modalText{
+    font-size:17px;
+    line-height:1.9;
+    }
 
-.capitular{
-font-size:52px;
-line-height:46px;
-}
+    .capitular{
+    font-size:52px;
+    line-height:46px;
+    }
 
+    .topActions{
+
+    justify-content:center;
+    margin-bottom:10px;
+
+    }
+
+    .logoutButton{
+
+    width:100%;
+    max-width:200px;
+    padding:12px;
+    font-size:15px;
+
+    }
 }

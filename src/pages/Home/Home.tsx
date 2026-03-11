@@ -33,6 +33,14 @@ export default function Home(){
 
  }
 
+ function logout(){
+
+  localStorage.removeItem("token")
+
+  navigate("/login")
+
+ }
+
  function openModal(type:string){
 
   if(!liturgy) return
@@ -88,6 +96,18 @@ export default function Home(){
  return(
 
   <div className={styles.container}>
+
+   <div className={styles.topActions}>
+
+    <button 
+     className={styles.logoutButton}
+     onClick={logout}
+    >
+     Logout
+    </button>
+
+   </div>
+
 
    <section className={styles.hero}>
 
