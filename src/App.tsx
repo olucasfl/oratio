@@ -15,6 +15,8 @@ import BibliaHome from "./pages/Biblia/BibliaHome"
 import BibliaBook from "./pages/Biblia/BibliaBook"
 import BibliaChapter from "./pages/Biblia/BibliaChapter"
 
+import Vox from "./pages/Vox/Vox"
+
 import Splash from "./components/Splash/Splash"
 
 function App(){
@@ -100,6 +102,8 @@ element={
 <Route path="/oratio/biblia" element={<BibliaHome/>}/>
 <Route path="/oratio/biblia/:book" element={<BibliaBook/>}/>
 <Route path="/oratio/biblia/:book/:chapter" element={<BibliaChapter/>}/>
+
+<Route path="/oratio/vox" element={<Vox/>}/>
 
 <Route path="*" element={<Navigate to="/login" replace />} />
 

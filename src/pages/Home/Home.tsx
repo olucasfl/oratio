@@ -203,10 +203,12 @@ export default function Home(){
    </section>
 
 
+   {/* FEATURES */}
+
+<div className={styles.featuresRow}>
+
    {/* CONSAGRAÇÃO */}
-
    <section className={styles.consecration}>
-
     <h2>
      Consagração à Nossa Senhora
     </h2>
@@ -223,12 +225,10 @@ export default function Home(){
     >
      Iniciar Consagração
     </button>
-
    </section>
 
 
    {/* BÍBLIA */}
-
    <section className={styles.consecration}>
 
     <h2>
@@ -248,6 +248,30 @@ export default function Home(){
     </button>
 
    </section>
+
+
+   {/* VOX AI */}
+   <section className={styles.consecration}>
+
+    <h2>
+    VoxAI - Inteligência Artificial Católica
+    </h2>
+
+    <p>
+    Assistente espiritual católico. Tire dúvidas
+    sobre fé, moral, liturgia e vida cristã.
+    </p>
+
+    <button
+    className={styles.primaryButton}
+    onClick={()=>navigate("/oratio/vox")}
+    >
+    Perguntar ao VoxAI
+    </button>
+
+   </section>
+
+</div>
 
 
    {modal && (

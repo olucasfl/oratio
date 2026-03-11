@@ -562,6 +562,24 @@ transform:scale(1);
 
 }
 
+.featuresRow{
+
+display:flex;
+
+gap:22px;
+
+width:100%;
+
+max-width:1000px;
+
+justify-content:center;
+
+align-items:stretch;
+
+flex-wrap:wrap;
+
+}
+
 
 /* ================================= */
 /* MOBILE */
@@ -638,6 +656,14 @@ transform:scale(1);
     max-width:200px;
     padding:12px;
     font-size:15px;
+
+    }
+
+    .featuresRow{
+
+    flex-direction:column;
+
+    max-width:470px;
 
     }
 }

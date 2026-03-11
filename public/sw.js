@@ -1,16 +1,16 @@
-const CACHE_NAME = "oratio-cache-v5";
+const CACHE_NAME = "oratio-cache-v6"
 
 /* ============================= */
 /* INSTALL */
 /* ============================= */
 
-self.addEventListener("install", (event) => {
+self.addEventListener("install", () => {
 
-  console.log("Service Worker instalado");
+ console.log("Service Worker instalado")
 
-  self.skipWaiting();
+ self.skipWaiting()
 
-});
+})
 
 /* ============================= */
 /* ACTIVATE */
@@ -18,51 +18,51 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
 
-  console.log("Service Worker ativo");
+ console.log("Service Worker ativo")
 
-  event.waitUntil(
+ event.waitUntil(
 
-    caches.keys().then((cacheNames) => {
+  caches.keys().then((cacheNames) => {
 
-      return Promise.all(
+   return Promise.all(
 
-        cacheNames.map((cache) => {
+    cacheNames.map((cache) => {
 
-          if (cache !== CACHE_NAME) {
+     if (cache !== CACHE_NAME) {
 
-            console.log("Removendo cache antigo:", cache);
+      console.log("Removendo cache antigo:", cache)
 
-            return caches.delete(cache);
+      return caches.delete(cache)
 
-          }
-
-        })
-
-      );
+     }
 
     })
 
-  );
+   )
 
-  self.clients.claim();
+  })
 
-});
+ )
+
+ self.clients.claim()
+
+})
 
 /* ============================= */
-/* MENSAGEM PARA ATUALIZAR APP */
+/* ATUALIZAR APP */
 /* ============================= */
 
 self.addEventListener("message", (event) => {
 
-  if (event.data && event.data.type === "SKIP_WAITING") {
+ if (event.data && event.data.type === "SKIP_WAITING") {
 
-    console.log("Atualizando Service Worker");
+  console.log("Atualizando Service Worker")
 
-    self.skipWaiting();
+  self.skipWaiting()
 
-  }
+ }
 
-});
+})
 
 /* ============================= */
 /* FETCH */
@@ -70,103 +70,72 @@ self.addEventListener("message", (event) => {
 
 self.addEventListener("fetch", (event) => {
 
-  const request = event.request;
+ const request = event.request
 
-  if (request.method !== "GET") return;
+ if (request.method !== "GET") return
 
-  const url = new URL(request.url);
+ const url = new URL(request.url)
 
-  /* ============================= */
-  /* IGNORAR EXTENSÕES DO CHROME */
-  /* ============================= */
+ /* ============================= */
+ /* IGNORAR EXTENSÕES DO CHROME */
+ /* ============================= */
 
-  if (url.protocol !== "http:" && url.protocol !== "https:") {
-    return;
-  }
+ if (url.protocol !== "http:" && url.protocol !== "https:") {
+  return
+ }
 
-  /* ============================= */
-  /* NÃO CACHEAR API */
-  /* ============================= */
+ /* ============================= */
+ /* IGNORAR APIs EXTERNAS */
+ /* ============================= */
 
-  if (url.origin.includes("render.com")) {
-    return;
-  }
+ if (url.origin !== location.origin) {
+  return
+ }
 
-  /* ============================= */
-  /* NÃO CACHEAR REQUESTS EXTERNOS */
-  /* ============================= */
+ /* ============================= */
+ /* NÃO INTERCEPTAR ROTAS DO REACT */
+ /* ============================= */
 
-  if (url.origin !== location.origin) {
-    return;
-  }
+ if (
+  url.pathname.startsWith("/oratio") ||
+  url.pathname.startsWith("/login") ||
+  url.pathname.startsWith("/register")
+ ) {
+  return
+ }
 
-  /* ============================= */
-  /* CACHE FIRST PARA ASSETS */
-  /* ============================= */
+ /* ============================= */
+ /* CACHE APENAS ASSETS */
+ /* ============================= */
 
-  const isAsset = request.destination === "style" ||
-                  request.destination === "script" ||
-                  request.destination === "image" ||
-                  request.destination === "font";
+ const isAsset =
+  request.destination === "style" ||
+  request.destination === "script" ||
+  request.destination === "image" ||
+  request.destination === "font"
 
-  if (isAsset) {
+ if (!isAsset) return
 
-    event.respondWith(
+ event.respondWith(
 
-      caches.match(request).then((cachedResponse) => {
+  caches.match(request).then((cached) => {
 
-        if (cachedResponse) {
-          return cachedResponse;
-        }
+   if (cached) return cached
 
-        return fetch(request).then((networkResponse) => {
+   return fetch(request).then((networkResponse) => {
 
-          const responseClone = networkResponse.clone();
+    const clone = networkResponse.clone()
 
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(request, responseClone);
-          });
+    caches.open(CACHE_NAME).then((cache) => {
+     cache.put(request, clone)
+    })
 
-          return networkResponse;
+    return networkResponse
 
-        });
+   })
 
-      })
+  })
 
-    );
+ )
 
-    return;
-
-  }
-
-  /* ============================= */
-  /* NETWORK FIRST PARA PÁGINAS */
-  /* ============================= */
-
-  event.respondWith(
-
-    fetch(request)
-
-      .then((networkResponse) => {
-
-        const responseClone = networkResponse.clone();
-
-        caches.open(CACHE_NAME).then((cache) => {
-
-          cache.put(request, responseClone);
-
-        });
-
-        return networkResponse;
-
-      })
-
-      .catch(() => {
-
-        return caches.match(request);
-
-      })
-
-  );
-
-});
+})
