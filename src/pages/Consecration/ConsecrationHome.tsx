@@ -106,13 +106,22 @@ export default function ConsecrationHome(){
   ? (progress.completedDays / 33) * 100
   : 0
 
- if(!progress){
-  return (
+if(!progress){
+  return(
    <div className={styles.loading}>
-    Carregando consagração...
+
+    <p>Carregando consagração...</p>
+
+    <button
+     className={styles.back}
+     onClick={()=>navigate(-1)}
+    >
+     ← Voltar
+    </button>
+
    </div>
   )
- }
+}
 
  return(
 

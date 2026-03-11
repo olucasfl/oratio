@@ -49,13 +49,22 @@ export default function ConsecrationDay(){
 
  }
 
- if(loading){
-  return(
-   <div className={styles.loading}>
-    Carregando orações...
-   </div>
-  )
- }
+  if(loading){
+    return(
+    <div className={styles.loading}>
+
+      <p>Carregando orações...</p>
+
+      <button
+      className={styles.back}
+      onClick={()=>navigate(-1)}
+      >
+      ← Voltar
+      </button>
+
+    </div>
+    )
+  }
 
  if(!data || !progress) return null
 

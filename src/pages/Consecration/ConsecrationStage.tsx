@@ -42,13 +42,22 @@ export default function ConsecrationStage(){
 
  }
 
- if(!progress){
-  return(
-   <div className={styles.loading}>
-    Carregando estágio...
-   </div>
-  )
- }
+    if(!progress){
+    return(
+    <div className={styles.loading}>
+
+        <p>Carregando estágio...</p>
+
+        <button
+        className={styles.back}
+        onClick={()=>navigate("/oratio/consecration")}
+        >
+        ← Voltar
+        </button>
+
+    </div>
+    )
+    }
 
  const stage = progress.stages?.find(
   (s:any)=>s.id === stageId

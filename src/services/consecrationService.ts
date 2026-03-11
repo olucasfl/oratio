@@ -21,10 +21,36 @@ export async function preloadConsecration(){
 
   const days = res.data
 
+  /* salva todos os dias */
+
   saveLocal(ALL_DAYS_KEY,days)
+
+  /* salva cada dia individual */
 
   days.forEach((day:any)=>{
    saveLocal(`${DAYS_KEY}_${day.dayNumber}`,day)
+  })
+
+  /* agrupar dias por estágio */
+
+  const stages:any = {}
+
+  days.forEach((day:any)=>{
+
+   const stageId = day.stage.id
+
+   if(!stages[stageId]){
+    stages[stageId] = []
+   }
+
+   stages[stageId].push(day)
+
+  })
+
+  /* salvar stages no localStorage */
+
+  Object.keys(stages).forEach(stageId=>{
+   saveLocal(`stage_${stageId}`,stages[stageId])
   })
 
   return days
