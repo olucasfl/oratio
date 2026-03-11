@@ -1,11 +1,11 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { Routes, Route, Navigate } from "react-router-dom"
+import { useState, useEffect } from "react"
 
-import Login from "./pages/Login/Login";
-import Register from "./pages/Register/Register";
-import Home from "./pages/Home/Home";
+import Login from "./pages/Login/Login"
+import Register from "./pages/Register/Register"
+import Home from "./pages/Home/Home"
 
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./components/ProtectedRoute"
 
 import ConsecrationHome from "./pages/Consecration/ConsecrationHome"
 import ConsecrationDay from "./pages/Consecration/ConsecrationDay"
@@ -19,11 +19,27 @@ const [loading,setLoading] = useState(true)
 
 useEffect(()=>{
 
-setTimeout(()=>{
+/* detectar se o app está rodando como PWA */
+
+const isStandalone =
+window.matchMedia("(display-mode: standalone)").matches ||
+(window.navigator as any).standalone === true
+
+/* mostrar splash apenas no app instalado */
+
+if(isStandalone){
+
+const timer = setTimeout(()=>{
+setLoading(false)
+},1200)
+
+return () => clearTimeout(timer)
+
+}else{
 
 setLoading(false)
 
-},1200)
+}
 
 },[])
 
