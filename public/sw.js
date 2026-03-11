@@ -1,4 +1,4 @@
-const CACHE_NAME = "oratio-cache-v4";
+const CACHE_NAME = "oratio-cache-v5";
 
 /* ============================= */
 /* INSTALL */
@@ -29,8 +29,11 @@ self.addEventListener("activate", (event) => {
         cacheNames.map((cache) => {
 
           if (cache !== CACHE_NAME) {
+
             console.log("Removendo cache antigo:", cache);
+
             return caches.delete(cache);
+
           }
 
         })
@@ -98,7 +101,46 @@ self.addEventListener("fetch", (event) => {
   }
 
   /* ============================= */
-  /* NETWORK FIRST STRATEGY */
+  /* CACHE FIRST PARA ASSETS */
+  /* ============================= */
+
+  const isAsset = request.destination === "style" ||
+                  request.destination === "script" ||
+                  request.destination === "image" ||
+                  request.destination === "font";
+
+  if (isAsset) {
+
+    event.respondWith(
+
+      caches.match(request).then((cachedResponse) => {
+
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+
+        return fetch(request).then((networkResponse) => {
+
+          const responseClone = networkResponse.clone();
+
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(request, responseClone);
+          });
+
+          return networkResponse;
+
+        });
+
+      })
+
+    );
+
+    return;
+
+  }
+
+  /* ============================= */
+  /* NETWORK FIRST PARA PÁGINAS */
   /* ============================= */
 
   event.respondWith(

@@ -11,6 +11,10 @@ import ConsecrationHome from "./pages/Consecration/ConsecrationHome"
 import ConsecrationDay from "./pages/Consecration/ConsecrationDay"
 import ConsecrationStage from "./pages/Consecration/ConsecrationStage"
 
+import BibliaHome from "./pages/Biblia/BibliaHome"
+import BibliaBook from "./pages/Biblia/BibliaBook"
+import BibliaChapter from "./pages/Biblia/BibliaChapter"
+
 import Splash from "./components/Splash/Splash"
 
 function App(){
@@ -92,6 +96,10 @@ element={
 </ProtectedRoute>
 }
 />
+
+<Route path="/oratio/biblia" element={<BibliaHome/>}/>
+<Route path="/oratio/biblia/:book" element={<BibliaBook/>}/>
+<Route path="/oratio/biblia/:book/:chapter" element={<BibliaChapter/>}/>
 
 <Route path="*" element={<Navigate to="/login" replace />} />
 

@@ -62,10 +62,6 @@ export default function Home(){
 
    setLiturgy(data)
 
-   /*
-   salva no localStorage
-   */
-
    localStorage.setItem("last_liturgy", JSON.stringify({
     date: today,
     data
@@ -207,10 +203,12 @@ export default function Home(){
    </section>
 
 
+   {/* CONSAGRAÇÃO */}
+
    <section className={styles.consecration}>
 
     <h2>
-     Consagração a Nossa Senhora
+     Consagração à Nossa Senhora
     </h2>
 
     <p>
@@ -224,6 +222,29 @@ export default function Home(){
      onClick={()=>navigate("/oratio/consecration")}
     >
      Iniciar Consagração
+    </button>
+
+   </section>
+
+
+   {/* BÍBLIA */}
+
+   <section className={styles.consecration}>
+
+    <h2>
+     Bíblia Sagrada
+    </h2>
+
+    <p>
+     Leia a Palavra de Deus completa
+     na tradução Ave-Maria.
+    </p>
+
+    <button
+     className={styles.primaryButton}
+     onClick={()=>navigate("/oratio/biblia")}
+    >
+     Abrir Bíblia
     </button>
 
    </section>
@@ -278,4 +299,5 @@ export default function Home(){
   </div>
 
  )
+
 }
