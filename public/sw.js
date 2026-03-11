@@ -1,17 +1,17 @@
-const CACHE_NAME = "oratio-cache-v1"
+const CACHE_NAME = "oratio-v1"
 
 const urlsToCache = [
   "/",
-  "/manifest.json"
+  "/manifest.json",
+  "/icon-192.png",
+  "/icon-512.png"
 ]
 
 self.addEventListener("install", event => {
 
   event.waitUntil(
-
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
-
   )
 
   self.skipWaiting()
@@ -19,9 +19,7 @@ self.addEventListener("install", event => {
 })
 
 self.addEventListener("activate", event => {
-
   event.waitUntil(self.clients.claim())
-
 })
 
 self.addEventListener("fetch", event => {
@@ -31,7 +29,7 @@ self.addEventListener("fetch", event => {
     caches.match(event.request)
       .then(response => {
 
-        if (response) {
+        if(response){
           return response
         }
 

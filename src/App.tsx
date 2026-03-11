@@ -1,66 +1,88 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import Home from "./pages/Home/Home";
+
 import ProtectedRoute from "./components/ProtectedRoute";
+
 import ConsecrationHome from "./pages/Consecration/ConsecrationHome"
 import ConsecrationDay from "./pages/Consecration/ConsecrationDay"
 import ConsecrationStage from "./pages/Consecration/ConsecrationStage"
 
-function App() {
+import Splash from "./components/Splash/Splash"
 
- return(
+function App(){
 
-  <Routes>
+const [loading,setLoading] = useState(true)
 
-   <Route path="/" element={<Navigate to="/login" replace />} />
+useEffect(()=>{
 
-   <Route path="/login" element={<Login />} />
-   <Route path="/register" element={<Register />} />
+setTimeout(()=>{
 
-   <Route
-    path="/oratio/home"
-    element={
-      <ProtectedRoute>
-        <Home />
-      </ProtectedRoute>
-    }
-   />
+setLoading(false)
 
-   <Route
-    path="/oratio/consecration"
-    element={
-      <ProtectedRoute>
-        <ConsecrationHome />
-      </ProtectedRoute>
-    }
-   />
+},1200)
 
-   <Route
-    path="/oratio/consecration/stage/:stageId"
-    element={
-      <ProtectedRoute>
-      <ConsecrationStage/>
-      </ProtectedRoute>
-    }
-    />
+},[])
 
-    <Route
-    path="/oratio/consecration/day/:day"
-    element={
-    <ProtectedRoute>
-    <ConsecrationDay />
-    </ProtectedRoute>
-    }
-    />
+if(loading){
+return <Splash/>
+}
 
-   <Route path="*" element={<Navigate to="/login" replace />} />
+return(
 
-  </Routes>
+<Routes>
 
- )
+<Route path="/" element={<Navigate to="/login" replace />} />
+
+<Route path="/login" element={<Login />} />
+
+<Route path="/register" element={<Register />} />
+
+<Route
+path="/oratio/home"
+element={
+<ProtectedRoute>
+<Home />
+</ProtectedRoute>
+}
+/>
+
+<Route
+path="/oratio/consecration"
+element={
+<ProtectedRoute>
+<ConsecrationHome />
+</ProtectedRoute>
+}
+/>
+
+<Route
+path="/oratio/consecration/stage/:stageId"
+element={
+<ProtectedRoute>
+<ConsecrationStage/>
+</ProtectedRoute>
+}
+/>
+
+<Route
+path="/oratio/consecration/day/:day"
+element={
+<ProtectedRoute>
+<ConsecrationDay />
+</ProtectedRoute>
+}
+/>
+
+<Route path="*" element={<Navigate to="/login" replace />} />
+
+</Routes>
+
+)
 
 }
 
-export default App;
+export default App

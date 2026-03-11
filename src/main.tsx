@@ -21,17 +21,60 @@ createRoot(document.getElementById("root")!).render(
 
 if ("serviceWorker" in navigator) {
 
-  window.addEventListener("load", () => {
+  window.addEventListener("load", async () => {
 
-    navigator.serviceWorker
-      .register("/sw.js", { scope: "/" })
-      .then(() => {
-        console.log("Service Worker registrado")
-      })
-      .catch(err => {
-        console.log("Erro ao registrar Service Worker:", err)
-      })
+    try {
 
-  })
+      const registration = await navigator.serviceWorker.register("/sw.js", {
+        scope: "/"
+      });
+
+      console.log("Service Worker registrado:", registration);
+
+      /* ============================= */
+      /* DETECTAR ATUALIZAÇÃO DO APP */
+      /* ============================= */
+
+      registration.onupdatefound = () => {
+
+        const newWorker = registration.installing;
+
+        if (!newWorker) return;
+
+        newWorker.onstatechange = () => {
+
+          if (newWorker.state === "installed") {
+
+            if (navigator.serviceWorker.controller) {
+
+              console.log("Nova versão do Oratio disponível");
+
+              const update = confirm(
+                "Uma nova versão do Oratio está disponível. Deseja atualizar?"
+              );
+
+              if (update) {
+                window.location.reload();
+              }
+
+            } else {
+
+              console.log("Oratio pronto para uso offline");
+
+            }
+
+          }
+
+        };
+
+      };
+
+    } catch (error) {
+
+      console.error("Erro ao registrar Service Worker:", error);
+
+    }
+
+  });
 
 }

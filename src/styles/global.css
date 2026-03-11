@@ -1,7 +1,7 @@
 @import "./variables.css";
 
 /* =========================
-   RESET
+RESET
 ========================= */
 
 *{
@@ -10,17 +10,17 @@ padding:0;
 box-sizing:border-box;
 }
 
-html,body{
+html{
 height:100%;
+scroll-behavior:smooth;
+-webkit-overflow-scrolling:touch;
 }
 
 body{
 
+height:100%;
+
 background-color:var(--oratio-background);
-
-/* TEXTURA DE PERGAMINHO */
-
-background-image:url("/parchment.png");
 
 background-size:600px;
 background-repeat:repeat;
@@ -31,11 +31,20 @@ font-family:var(--oratio-font-text);
 
 -webkit-font-smoothing:antialiased;
 
+overscroll-behavior-y:contain;
+
+/* SAFE AREAS IPHONE */
+
+padding-top:env(safe-area-inset-top);
+padding-bottom:env(safe-area-inset-bottom);
+padding-left:env(safe-area-inset-left);
+padding-right:env(safe-area-inset-right);
+
 }
 
 
 /* =========================
-   TITULOS
+TITULOS
 ========================= */
 
 h1,h2,h3,h4{
@@ -47,7 +56,7 @@ letter-spacing:1px;
 
 
 /* =========================
-   BOTÕES PADRÃO
+BOTÕES PADRÃO
 ========================= */
 
 button{
@@ -63,7 +72,7 @@ transition:var(--oratio-transition);
 
 
 /* =========================
-   INPUT PADRÃO
+INPUT PADRÃO
 ========================= */
 
 input{
@@ -78,10 +87,59 @@ outline:none;
 
 
 /* =========================
-   LINKS
+LINKS
 ========================= */
 
 a{
 text-decoration:none;
 color:inherit;
+}
+
+
+/* =========================
+SPLASH SCREEN
+========================= */
+
+.splash{
+
+height:100vh;
+width:100vw;
+
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+
+background:#7B1113;
+
+color:white;
+
+animation:splashFade 0.6s ease;
+
+}
+
+.splash img{
+
+width:90px;
+margin-bottom:18px;
+
+}
+
+.splash h1{
+
+font-family:var(--oratio-font-title);
+font-size:34px;
+
+}
+
+@keyframes splashFade{
+
+from{
+opacity:0;
+}
+
+to{
+opacity:1;
+}
+
 }
