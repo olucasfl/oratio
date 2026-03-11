@@ -1,4 +1,4 @@
-const CACHE_NAME = "oratio-cache-v1";
+const CACHE_NAME = "oratio-cache-v3";
 
 /* ============================= */
 /* INSTALL */
@@ -8,14 +8,9 @@ self.addEventListener("install", event => {
 
   console.log("Service Worker instalado");
 
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-  );
-
   self.skipWaiting();
 
 });
-
 
 /* ============================= */
 /* ACTIVATE */
@@ -25,10 +20,45 @@ self.addEventListener("activate", event => {
 
   console.log("Service Worker ativo");
 
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+
+    caches.keys().then(cacheNames => {
+
+      return Promise.all(
+
+        cacheNames.map(cache => {
+
+          if (cache !== CACHE_NAME) {
+            return caches.delete(cache);
+          }
+
+        })
+
+      );
+
+    })
+
+  );
+
+  self.clients.claim();
 
 });
 
+/* ============================= */
+/* MENSAGEM PARA ATUALIZAR APP */
+/* ============================= */
+
+self.addEventListener("message", event => {
+
+  if (event.data && event.data.type === "SKIP_WAITING") {
+
+    console.log("Atualizando service worker...");
+
+    self.skipWaiting();
+
+  }
+
+});
 
 /* ============================= */
 /* FETCH */
@@ -40,33 +70,22 @@ self.addEventListener("fetch", event => {
 
   event.respondWith(
 
-    caches.match(event.request)
-      .then(cachedResponse => {
+    fetch(event.request)
+      .then(networkResponse => {
 
-        if (cachedResponse) {
-          return cachedResponse;
-        }
+        const responseClone = networkResponse.clone();
 
-        return fetch(event.request)
-          .then(networkResponse => {
-
-            const responseClone = networkResponse.clone();
-
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, responseClone);
-              });
-
-            return networkResponse;
-
-          })
-          .catch(() => {
-
-            if (event.request.mode === "navigate") {
-              return caches.match("/");
-            }
-
+        caches.open(CACHE_NAME)
+          .then(cache => {
+            cache.put(event.request, responseClone);
           });
+
+        return networkResponse;
+
+      })
+      .catch(() => {
+
+        return caches.match(event.request);
 
       })
 

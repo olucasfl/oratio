@@ -7,6 +7,10 @@ import "./styles/variables.css";
 
 import App from "./App";
 
+/* ============================= */
+/* RENDER APP */
+/* ============================= */
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
@@ -25,9 +29,7 @@ if ("serviceWorker" in navigator) {
 
     try {
 
-      const registration = await navigator.serviceWorker.register("/sw.js", {
-        scope: "/"
-      });
+      const registration = await navigator.serviceWorker.register("/sw.js");
 
       console.log("Service Worker registrado:", registration);
 
@@ -49,12 +51,14 @@ if ("serviceWorker" in navigator) {
 
               console.log("Nova versão do Oratio disponível");
 
-              const update = confirm(
+              const shouldUpdate = confirm(
                 "Uma nova versão do Oratio está disponível. Deseja atualizar?"
               );
 
-              if (update) {
-                window.location.reload();
+              if (shouldUpdate) {
+
+                newWorker.postMessage({ type: "SKIP_WAITING" });
+
               }
 
             } else {
@@ -68,6 +72,18 @@ if ("serviceWorker" in navigator) {
         };
 
       };
+
+      /* ============================= */
+      /* ATUALIZAR APP AUTOMATICAMENTE */
+      /* ============================= */
+
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+
+        console.log("Atualizando aplicação...");
+
+        window.location.reload();
+
+      });
 
     } catch (error) {
 
