@@ -6,7 +6,8 @@ import {
  getProgress,
  startConsecration,
  updateStartDate,
- resetConsecration
+ resetConsecration,
+ preloadConsecration
 } from "../../services/consecrationService"
 
 export default function ConsecrationHome(){
@@ -18,7 +19,12 @@ export default function ConsecrationHome(){
  const [loading,setLoading] = useState(false)
 
  useEffect(()=>{
+
   load()
+
+  /* baixar consagração completa */
+  preloadConsecration()
+
  },[])
 
  async function load(){
@@ -83,9 +89,9 @@ export default function ConsecrationHome(){
 
  async function handleReset(){
 
-    const confirmReset = window.confirm(
-        "Deseja cancelar sua consagração? Todo o progresso realizado será apagado."
-    )
+  const confirmReset = window.confirm(
+   "Deseja cancelar sua consagração? Todo o progresso realizado será apagado."
+  )
 
   if(!confirmReset) return
 
@@ -199,7 +205,7 @@ export default function ConsecrationHome(){
 
    <div className={styles.stages}>
 
-    {progress?.stages?.map((stage:any, index:number)=>{
+    {progress?.stages?.map((stage:any,index:number)=>{
 
      let start = 1
 
