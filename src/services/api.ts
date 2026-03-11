@@ -1,4 +1,12 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import type { InternalAxiosRequestConfig } from "axios";
+
+/*
+
+================================
+AXIOS INSTANCE
+================================
+*/
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -8,17 +16,17 @@ const api = axios.create({
 });
 
 /*
-==============================
+================================
 REQUEST INTERCEPTOR
-Adiciona o access_token
-==============================
+Adiciona access_token
+================================
 */
 
-api.interceptors.request.use((config) => {
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 
   const token = localStorage.getItem("access_token");
 
-  if (token) {
+  if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
@@ -26,29 +34,29 @@ api.interceptors.request.use((config) => {
 
 });
 
-
 /*
-==============================
+================================
 RESPONSE INTERCEPTOR
-Refresh automático
-==============================
+Refresh automático do token
+================================
 */
 
 api.interceptors.response.use(
 
   (response) => response,
 
-  async (error) => {
+  async (error: AxiosError) => {
 
-    const originalRequest = error.config;
+    const originalRequest: any = error.config;
 
     /*
-    Se for 401 e ainda não tentou refresh
+    Se der 401 e ainda não tentou refresh
     */
+
     if (
       error.response?.status === 401 &&
-      !originalRequest._retry &&
-      !originalRequest.url.includes("/auth/refresh")
+      !originalRequest?._retry &&
+      !originalRequest?.url?.includes("/auth/refresh")
     ) {
 
       originalRequest._retry = true;
@@ -60,12 +68,13 @@ api.interceptors.response.use(
         /*
         Se não existir refresh token → logout
         */
+
         if (!refreshToken) {
 
           localStorage.removeItem("access_token");
           localStorage.removeItem("refresh_token");
 
-          window.location.href = "/";
+          window.location.href = "/login";
 
           return Promise.reject(error);
         }
@@ -74,9 +83,17 @@ api.interceptors.response.use(
         Faz refresh do token
         */
 
-        const response = await api.post("/auth/refresh", {
-          refresh_token: refreshToken,
-        });
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_URL}/auth/refresh`,
+          {
+            refresh_token: refreshToken
+          },
+          {
+            headers: {
+              "x-app": "oratio"
+            }
+          }
+        );
 
         const newAccessToken = response.data.access_token;
         const newRefreshToken = response.data.refresh_token;
@@ -92,8 +109,10 @@ api.interceptors.response.use(
         Atualiza header da requisição original
         */
 
-        originalRequest.headers.Authorization =
-          `Bearer ${newAccessToken}`;
+        originalRequest.headers = {
+          ...originalRequest.headers,
+          Authorization: `Bearer ${newAccessToken}`
+        };
 
         /*
         Refaz requisição original
@@ -104,13 +123,13 @@ api.interceptors.response.use(
       } catch (refreshError) {
 
         /*
-        Refresh token expirou
+        Refresh token expirou → logout
         */
 
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
 
-        window.location.href = "/";
+        window.location.href = "/login";
 
         return Promise.reject(refreshError);
       }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -21,6 +21,28 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [forgotOpen, setForgotOpen] = useState(false);
 
+  /*
+  ============================
+  SE JÁ ESTIVER LOGADO
+  ============================
+  */
+
+  useEffect(() => {
+
+    const token = localStorage.getItem("access_token");
+
+    if (token) {
+      navigate("/oratio/home");
+    }
+
+  }, []);
+
+  /*
+  ============================
+  LOGIN
+  ============================
+  */
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
 
     e.preventDefault();
@@ -28,7 +50,14 @@ export default function Login() {
 
     try {
 
-      await login(email, password);
+      const data = await login(email, password);
+
+      /*
+      salva tokens
+      */
+
+      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("refresh_token", data.refresh_token);
 
       navigate("/oratio/home");
 
@@ -106,7 +135,7 @@ export default function Login() {
         open={forgotOpen}
         onClose={() => setForgotOpen(false)}
         onSubmit={() => {}}
-        />
+      />
 
       {resetToken && (
         <ResetPasswordModal token={resetToken} />

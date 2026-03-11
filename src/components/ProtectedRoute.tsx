@@ -5,11 +5,17 @@ export default function ProtectedRoute({
 }: {
   children: React.ReactNode;
 }) {
+
   const token = localStorage.getItem("access_token");
 
+  /*
+  se não tiver token
+  */
+
   if (!token) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return children;
+
 }

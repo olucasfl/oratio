@@ -1,8 +1,16 @@
 import api from "./api";
 
-export async function login(email: string, password: string) {
+type AuthResponse = {
+  access_token: string;
+  refresh_token: string;
+};
 
-  const response = await api.post("/auth/login", {
+export async function login(
+  email: string,
+  password: string
+): Promise<AuthResponse> {
+
+  const response = await api.post<AuthResponse>("/auth/login", {
     email,
     password
   });
@@ -12,9 +20,15 @@ export async function login(email: string, password: string) {
   localStorage.setItem("access_token", access_token);
   localStorage.setItem("refresh_token", refresh_token);
 
+  return response.data;
 }
 
-export async function register(name: string, email: string, password: string, confirmPassword: string) {
+export async function register(
+  name: string,
+  email: string,
+  password: string,
+  confirmPassword: string
+) {
 
   const response = await api.post("/users", {
     name,
@@ -24,5 +38,4 @@ export async function register(name: string, email: string, password: string, co
   });
 
   return response.data;
-
 }
