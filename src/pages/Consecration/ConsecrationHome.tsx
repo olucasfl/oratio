@@ -16,7 +16,8 @@ export default function ConsecrationHome(){
 
  const [progress,setProgress] = useState<any>(null)
  const [startDate,setStartDate] = useState("")
- const [loading,setLoading] = useState(false)
+ const [loading,setLoading] = useState(true)
+ const [actionLoading,setActionLoading] = useState(false)
 
  useEffect(()=>{
 
@@ -31,6 +32,8 @@ export default function ConsecrationHome(){
 
   try{
 
+   setLoading(true)
+
    const data = await getProgress()
 
    setProgress(data)
@@ -43,6 +46,10 @@ export default function ConsecrationHome(){
 
    console.log("Erro ao carregar progresso")
 
+  }finally{
+
+   setLoading(false)
+
   }
 
  }
@@ -51,7 +58,7 @@ export default function ConsecrationHome(){
 
   if(!startDate) return
 
-  setLoading(true)
+  setActionLoading(true)
 
   try{
 
@@ -61,7 +68,7 @@ export default function ConsecrationHome(){
 
   }finally{
 
-   setLoading(false)
+   setActionLoading(false)
 
   }
 
@@ -71,7 +78,7 @@ export default function ConsecrationHome(){
 
   if(!startDate) return
 
-  setLoading(true)
+  setActionLoading(true)
 
   try{
 
@@ -81,7 +88,7 @@ export default function ConsecrationHome(){
 
   }finally{
 
-   setLoading(false)
+   setActionLoading(false)
 
   }
 
@@ -106,22 +113,29 @@ export default function ConsecrationHome(){
   ? (progress.completedDays / 33) * 100
   : 0
 
-if(!progress){
+
+ /* ============================= */
+ /* LOADING SCREEN */
+ /* ============================= */
+
+ if(loading){
   return(
+
    <div className={styles.loading}>
 
     <p>Carregando consagração...</p>
 
     <button
      className={styles.back}
-     onClick={()=>navigate(-1)}
+     onClick={()=>navigate("/oratio/home")}
     >
      ← Voltar
     </button>
 
    </div>
+
   )
-}
+ }
 
  return(
 
@@ -153,9 +167,9 @@ if(!progress){
      <button
       className={styles.primary}
       onClick={handleStart}
-      disabled={loading}
+      disabled={actionLoading}
      >
-      {loading ? "Iniciando..." : "Iniciar Consagração"}
+      {actionLoading ? "Iniciando..." : "Iniciar Consagração"}
      </button>
 
     </div>
@@ -177,9 +191,9 @@ if(!progress){
      <button
       className={styles.primary}
       onClick={handleUpdate}
-      disabled={loading}
+      disabled={actionLoading}
      >
-      {loading ? "Atualizando..." : "Atualizar Data"}
+      {actionLoading ? "Atualizando..." : "Atualizar Data"}
      </button>
 
      <button

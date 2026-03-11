@@ -25,6 +25,8 @@ export default function ConsecrationDay(){
 
  async function load(){
 
+  if(!day) return
+
   try{
 
    setLoading(true)
@@ -49,24 +51,51 @@ export default function ConsecrationDay(){
 
  }
 
-  if(loading){
-    return(
-    <div className={styles.loading}>
+ /* ============================= */
+ /* LOADING SCREEN */
+ /* ============================= */
 
-      <p>Carregando orações...</p>
+ if(loading){
+  return(
 
-      <button
-      className={styles.back}
-      onClick={()=>navigate(-1)}
-      >
-      ← Voltar
-      </button>
+   <div className={styles.loading}>
 
-    </div>
-    )
-  }
+    <p>Carregando orações...</p>
 
- if(!data || !progress) return null
+    <button
+     className={styles.back}
+     onClick={()=>navigate(-1)}
+    >
+     ← Voltar
+    </button>
+
+   </div>
+
+  )
+ }
+
+ /* ============================= */
+ /* ERRO / DADOS AUSENTES */
+ /* ============================= */
+
+ if(!data || !progress){
+  return(
+
+   <div className={styles.loading}>
+
+    <p>Não foi possível carregar este dia.</p>
+
+    <button
+     className={styles.back}
+     onClick={()=>navigate(-1)}
+    >
+     ← Voltar
+    </button>
+
+   </div>
+
+  )
+ }
 
  const completed =
   progress.completedDays >= data.dayNumber
@@ -111,7 +140,7 @@ export default function ConsecrationDay(){
     </h1>
 
     <span className={styles.stage}>
-     {data.stage.title}
+     {data.stage?.title}
     </span>
 
    </div>
@@ -126,7 +155,7 @@ export default function ConsecrationDay(){
 
    <div className={styles.prayers}>
 
-    {data.prayers.map((p:any)=>(
+    {data.prayers?.map((p:any)=>(
 
       <div
        key={p.id}

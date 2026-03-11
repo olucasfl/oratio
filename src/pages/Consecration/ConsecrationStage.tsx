@@ -15,6 +15,7 @@ export default function ConsecrationStage(){
 
  const [days,setDays] = useState<any[]>([])
  const [progress,setProgress] = useState<any>(null)
+ const [loading,setLoading] = useState(true)
 
  useEffect(()=>{
   load()
@@ -25,6 +26,8 @@ export default function ConsecrationStage(){
   if(!stageId) return
 
   try{
+
+   setLoading(true)
 
    const [daysData,progressData] = await Promise.all([
     getStageDays(stageId),
@@ -38,29 +41,62 @@ export default function ConsecrationStage(){
 
    console.log("Erro ao carregar estágio")
 
+  }finally{
+
+   setLoading(false)
+
   }
 
  }
 
-    if(!progress){
-    return(
-    <div className={styles.loading}>
+ /* ============================= */
+ /* LOADING */
+ /* ============================= */
 
-        <p>Carregando estágio...</p>
+ if(loading){
+  return(
 
-        <button
-        className={styles.back}
-        onClick={()=>navigate("/oratio/consecration")}
-        >
-        ← Voltar
-        </button>
+   <div className={styles.loading}>
 
-    </div>
-    )
-    }
+    <p>Carregando estágio...</p>
+
+    <button
+     className={styles.back}
+     onClick={()=>navigate("/oratio/consecration")}
+    >
+     ← Voltar
+    </button>
+
+   </div>
+
+  )
+ }
+
+ /* ============================= */
+ /* ERRO / SEM DADOS */
+ /* ============================= */
+
+ if(!progress || days.length === 0){
+  return(
+
+   <div className={styles.loading}>
+
+    <p>Não foi possível carregar este estágio.</p>
+
+    <button
+     className={styles.back}
+     onClick={()=>navigate("/oratio/consecration")}
+    >
+     ← Voltar
+    </button>
+
+   </div>
+
+  )
+ }
 
  const stage = progress.stages?.find(
-  (s:any)=>s.id === stageId
+  (s:any)=>String(s.id) === String(stageId)
  )
 
  return(
