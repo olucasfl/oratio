@@ -14,8 +14,43 @@ export default function Home(){
  const today = new Date().toLocaleDateString("pt-BR")
 
  useEffect(()=>{
+
+  loadSavedLiturgy()
   loadLiturgy()
+
  },[])
+
+ /*
+ ============================
+ CARREGAR LITURGIA SALVA
+ ============================
+ */
+
+ function loadSavedLiturgy(){
+
+  const saved = localStorage.getItem("last_liturgy")
+
+  if(!saved) return
+
+  try{
+
+   const parsed = JSON.parse(saved)
+
+   if(parsed.date === today){
+    setLiturgy(parsed.data)
+   }
+
+  }catch{
+   console.log("Erro ao ler liturgia salva")
+  }
+
+ }
+
+ /*
+ ============================
+ BUSCAR LITURGIA NA API
+ ============================
+ */
 
  async function loadLiturgy(){
 
@@ -26,6 +61,15 @@ export default function Home(){
    const data = await res.json()
 
    setLiturgy(data)
+
+   /*
+   salva no localStorage
+   */
+
+   localStorage.setItem("last_liturgy", JSON.stringify({
+    date: today,
+    data
+   }))
 
   }catch{
 
