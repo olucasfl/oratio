@@ -20,81 +20,105 @@ import Vox from "./pages/Vox/Vox"
 import Splash from "./components/Splash/Splash"
 import Profile from "./pages/Profile/Profile"
 
+/* services */
+
+import { preloadConsecration, getProgress } from "./services/consecrationService"
+
 function App(){
 
 const [loading,setLoading] = useState(true)
-const [authReady,setAuthReady] = useState(false)
 
 useEffect(()=>{
-
-/* ============================= */
-/* DETECTAR SE É PWA */
-/* ============================= */
 
 const isStandalone =
 window.matchMedia("(display-mode: standalone)").matches ||
 (window.navigator as any).standalone === true
 
-/* ============================= */
-/* INICIAR APP */
-/* ============================= */
 
-const initApp = async () => {
+/* =================================
+APP BOOT LOADER
+================================= */
 
-  try{
+const bootLoader = async () => {
 
-    const token = localStorage.getItem("access_token")
+ try{
 
-    // se existir token, o app está autenticado
-    if(token){
-      setAuthReady(true)
-    }else{
-      setAuthReady(true)
-    }
+  const token = localStorage.getItem("access_token")
 
-  }catch(e){
+  /* =================================
+  PRELOAD CONSAGRAÇÃO (sempre)
+  ================================= */
 
-    console.log("Erro ao iniciar app")
+  preloadConsecration().catch(()=>{})
 
-    setAuthReady(true)
+  /* =================================
+  SE USUÁRIO LOGADO
+  CARREGA PROGRESSO
+  ================================= */
+
+  if(token){
+
+   getProgress().catch(()=>{})
 
   }
 
+ }catch{
+
+  console.log("Erro ao iniciar aplicativo")
+
+ }
+
 }
 
-/* ============================= */
-/* SPLASH APENAS NO PWA */
-/* ============================= */
+
+/* =================================
+INICIAR APP
+================================= */
+
+const startApp = async () => {
+
+ await bootLoader()
+
+ setLoading(false)
+
+}
+
+
+/* =================================
+SPLASH APENAS NO PWA
+================================= */
 
 if(isStandalone){
 
-const timer = setTimeout(async ()=>{
- await initApp()
- setLoading(false)
-},1200)
+ const timer = setTimeout(()=>{
 
-return () => clearTimeout(timer)
+  startApp()
+
+ },1200)
+
+ return () => clearTimeout(timer)
 
 }else{
 
-initApp()
-setLoading(false)
+ startApp()
 
 }
 
 },[])
 
-/* ============================= */
-/* SPLASH SCREEN */
-/* ============================= */
 
-if(loading || !authReady){
+/* =================================
+SPLASH
+================================= */
+
+if(loading){
  return <Splash/>
 }
 
-/* ============================= */
-/* ROTAS */
-/* ============================= */
+
+/* =================================
+ROTAS
+================================= */
 
 return(
 
