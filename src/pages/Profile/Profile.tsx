@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useNavigate, useLocation } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 import styles from "./Profile.module.css"
 
@@ -12,14 +12,13 @@ import { ArrowLeft } from "lucide-react"
 export default function Profile(){
 
  const navigate = useNavigate()
- const location = useLocation()
 
  const [profile,setProfile] = useState<any>(null)
  const [loading,setLoading] = useState(true)
 
  useEffect(()=>{
   loadProfile()
- },[location])
+ },[])
 
  async function loadProfile(){
 
@@ -45,7 +44,7 @@ export default function Profile(){
    }
 
   }finally{
-    setLoading(false)
+   setLoading(false)
   }
 
  }
@@ -85,7 +84,15 @@ export default function Profile(){
  }
 
  if(!profile){
-  return null
+
+  return(
+
+   <div className={styles.loading}>
+    Não foi possível carregar o perfil
+   </div>
+
+  )
+
  }
 
  const days = profile.spiritualProgress?.daysCompleted || 0
@@ -94,6 +101,15 @@ export default function Profile(){
  const lastPrayer = profile.spiritualProgress?.lastPrayerDate
 
  const progress = Math.min((days / 33) * 100,100)
+
+ /* formatar data + hora */
+
+ const lastPrayerFormatted = lastPrayer
+  ? new Date(lastPrayer).toLocaleString("pt-BR",{
+      dateStyle:"short",
+      timeStyle:"short"
+    })
+  : null
 
  return(
 
@@ -217,7 +233,7 @@ export default function Profile(){
       </div>
 
 
-      {lastPrayer && (
+      {lastPrayerFormatted && (
 
        <div className={styles.stat}>
 
@@ -226,7 +242,7 @@ export default function Profile(){
         </span>
 
         <span className={styles.statValueSmall}>
-         {new Date(lastPrayer).toLocaleDateString("pt-BR")}
+         {lastPrayerFormatted}
         </span>
 
        </div>
