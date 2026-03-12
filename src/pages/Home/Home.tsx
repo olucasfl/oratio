@@ -19,12 +19,6 @@ export default function Home(){
   loadLiturgy()
  },[])
 
- /*
- ============================
- CARREGAR LITURGIA SALVA
- ============================
- */
-
  function loadSavedLiturgy(){
 
   const saved = localStorage.getItem("last_liturgy")
@@ -45,12 +39,6 @@ export default function Home(){
 
  }
 
- /*
- ============================
- LOGOUT
- ============================
- */
-
  function handleLogout(){
 
   localStorage.removeItem("access_token")
@@ -59,12 +47,6 @@ export default function Home(){
   navigate("/login")
 
  }
-
- /*
- ============================
- BUSCAR LITURGIA NA API
- ============================
- */
 
  async function loadLiturgy(){
 
@@ -301,6 +283,9 @@ export default function Home(){
       onClick={(e)=>e.stopPropagation()}
      >
 
+      {/* SPACE TOPO */}
+      <div className={styles.modalTopSpacer}></div>
+
       <h2 className={styles.modalTitle}>
        {modal.titulo || modal.referencia}
       </h2>
@@ -321,6 +306,9 @@ export default function Home(){
         __html: formatVerses(modal.texto)
        }}
       />
+
+      {/* SPACE FINAL */}
+      <div className={styles.modalBottomSpacer}></div>
 
       <button
        className={styles.closeButton}

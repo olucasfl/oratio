@@ -784,3 +784,15 @@ background:var(--oratio-primary-dark);
 box-shadow:0 10px 25px rgba(0,0,0,0.2);
 
 }
+
+/* =========================
+ESPACOS DO MODAL
+========================= */
+
+.modalTopSpacer{
+height:40px;
+}
+
+.modalBottomSpacer{
+height:70px;
+}
