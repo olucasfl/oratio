@@ -23,13 +23,24 @@ export default function Profile(){
 
   try{
 
+   const token = localStorage.getItem("access_token")
+
+   if(!token){
+    navigate("/login")
+    return
+   }
+
    const data = await getProfile()
 
    setProfile(data)
 
-  }catch{
+  }catch(err:any){
 
-   navigate("/login")
+   if(err?.response?.status === 401){
+    navigate("/login")
+   }else{
+    console.log("Erro ao carregar perfil")
+   }
 
   }
 
@@ -38,6 +49,7 @@ export default function Profile(){
  function logout(){
 
   localStorage.removeItem("access_token")
+  localStorage.removeItem("refresh_token")
 
   navigate("/login")
 
@@ -53,7 +65,7 @@ export default function Profile(){
 
  }
 
- const days = profile.spiritualProgress.daysCompleted
+ const days = profile.spiritualProgress?.daysCompleted || 0
  const progress = Math.min((days / 33) * 100,100)
 
  return(
@@ -137,7 +149,7 @@ export default function Profile(){
 
      <p className={styles.consecrationStatus}>
 
-      {profile.spiritualProgress.consecrationStarted
+      {profile.spiritualProgress?.consecrationStarted
        ? "Consagração em andamento"
        : "Consagração ainda não iniciada"}
 
