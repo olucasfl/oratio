@@ -9,7 +9,6 @@ import {
  completeDay,
  uncompleteDay
 } from "../../services/consecrationService"
-import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
 export default function ConsecrationDay(){
 

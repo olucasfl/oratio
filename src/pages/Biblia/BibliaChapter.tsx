@@ -2,7 +2,6 @@ import { useParams, useNavigate } from "react-router-dom"
 import { useState, useRef, useEffect } from "react"
 import { getChapter } from "../../services/bibliaService"
 import styles from "./BibliaChapter.module.css"
-import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
 export default function BibliaChapter(){
 
