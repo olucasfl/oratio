@@ -2,7 +2,7 @@ import styles from "./Home.module.css"
 import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
-import { LogOut } from "lucide-react"
+import { LogOut, User } from "lucide-react"
 import { isPWA } from "../../utils/isPwa"
 
 export default function Home(){
@@ -15,10 +15,8 @@ export default function Home(){
  const today = new Date().toLocaleDateString("pt-BR")
 
  useEffect(()=>{
-
   loadSavedLiturgy()
   loadLiturgy()
-
  },[])
 
  /*
@@ -47,14 +45,20 @@ export default function Home(){
 
  }
 
+ /*
+ ============================
+ LOGOUT
+ ============================
+ */
+
  function handleLogout(){
 
-   localStorage.removeItem("access_token")
-   localStorage.removeItem("refresh_token")
+  localStorage.removeItem("access_token")
+  localStorage.removeItem("refresh_token")
 
-   navigate("/login")
+  navigate("/login")
 
-   }
+ }
 
  /*
  ============================
@@ -143,14 +147,23 @@ export default function Home(){
 
    {!isPWA() && (
 
-   <button
-   className={styles.logoutButton}
-   onClick={handleLogout}
-   >
+    <div className={styles.topButtons}>
 
-   <LogOut size={18}/>
+     <button
+      className={styles.profileButton}
+      onClick={()=>navigate("/oratio/profile")}
+     >
+      <User size={18}/>
+     </button>
 
-   </button>
+     <button
+      className={styles.logoutButton}
+      onClick={handleLogout}
+     >
+      <LogOut size={18}/>
+     </button>
+
+    </div>
 
    )}
 
@@ -214,17 +227,11 @@ export default function Home(){
    </section>
 
 
-   {/* FEATURES */}
-
 <div className={styles.featuresRow}>
 
-
-   {/* BÍBLIA */}
    <section className={styles.consecration}>
 
-    <h2>
-     Bíblia Sagrada
-    </h2>
+    <h2>Bíblia Sagrada</h2>
 
     <p>
      Leia a Palavra de Deus completa
@@ -241,12 +248,9 @@ export default function Home(){
    </section>
 
 
-   {/* VOX AI */}
    <section className={styles.consecration}>
 
-    <h2>
-    VoxAI - Inteligência Artificial Católica
-    </h2>
+    <h2>VoxAI - Inteligência Artificial Católica</h2>
 
     <p>
     Assistente espiritual católico. Tire dúvidas
@@ -262,11 +266,10 @@ export default function Home(){
 
    </section>
 
-   {/* CONSAGRAÇÃO */}
+
    <section className={styles.consecration}>
-    <h2>
-     Consagração à Nossa Senhora
-    </h2>
+
+    <h2>Consagração à Nossa Senhora</h2>
 
     <p>
      Um caminho espiritual de 33 dias segundo
@@ -280,6 +283,7 @@ export default function Home(){
     >
      Iniciar Consagração
     </button>
+
    </section>
 
 </div>
@@ -332,6 +336,7 @@ export default function Home(){
    )}
 
    <div className={styles.pageSpacer}></div>
+
    <BottomNavbar/>
 
   </div>

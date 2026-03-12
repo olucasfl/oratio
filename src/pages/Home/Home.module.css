@@ -674,41 +674,98 @@ flex-wrap:wrap;
  height:120px;
 }
 
+/* =========================
+BOTÕES SUPERIORES
+========================= */
+
+.topButtons{
+
+position:absolute;
+
+top:calc(20px + env(safe-area-inset-top));
+right:20px;
+
+display:flex;
+gap:10px;
+
+z-index:10;
+
+}
+
+
+/* =========================
+BOTÃO PERFIL
+========================= */
+
+.profileButton{
+
+width:42px;
+height:42px;
+
+border-radius:50%;
+
+border:none;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+background:var(--oratio-secondary);
+color:var(--oratio-primary);
+
+cursor:pointer;
+
+box-shadow:0 6px 18px rgba(0,0,0,0.15);
+
+transition:0.25s;
+
+}
+
+.profileButton:hover{
+
+transform:translateY(-2px);
+
+background:#e6d7c6;
+
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+
+}
+
+
+/* =========================
+BOTÃO LOGOUT
+========================= */
+
 .logoutButton{
 
- position:absolute;
+width:42px;
+height:42px;
 
- top:20px;
- right:20px;
+border-radius:50%;
 
- width:42px;
- height:42px;
+border:none;
 
- border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
 
- border:none;
+background:var(--oratio-primary);
+color:white;
 
- display:flex;
- align-items:center;
- justify-content:center;
+cursor:pointer;
 
- background:var(--oratio-primary);
- color:white;
+box-shadow:0 6px 18px rgba(0,0,0,0.15);
 
- cursor:pointer;
-
- box-shadow:0 6px 18px rgba(0,0,0,0.15);
-
- transition:0.25s;
+transition:0.25s;
 
 }
 
 .logoutButton:hover{
 
- transform:translateY(-2px);
+transform:translateY(-2px);
 
- background:var(--oratio-primary-dark);
+background:var(--oratio-primary-dark);
 
- box-shadow:0 10px 25px rgba(0,0,0,0.2);
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
 
 }
