@@ -1,0 +1,260 @@
+.page{
+ min-height:100vh;
+}
+
+.container{
+
+ max-width:720px;
+
+ margin:60px auto;
+
+ padding:40px 32px;
+
+ background:var(--oratio-card-bg);
+
+ border-radius:var(--oratio-radius-lg);
+
+ box-shadow:var(--oratio-shadow-medium);
+
+ border:1px solid var(--oratio-card-border);
+
+}
+
+.back{
+
+ margin-bottom:20px;
+
+ background:none;
+ border:none;
+
+ color:var(--oratio-primary);
+
+ cursor:pointer;
+
+ font-size:16px;
+
+ padding:6px 10px;
+
+ border-radius:8px;
+
+ transition:0.2s;
+
+}
+
+.back:hover{
+ opacity:.7;
+}
+
+h1{
+
+ text-align:center;
+
+ font-family:var(--oratio-font-title);
+
+ font-size:36px;
+
+ color:var(--oratio-primary);
+
+ margin-bottom:30px;
+
+}
+
+.list{
+
+ display:flex;
+
+ flex-direction:column;
+
+ gap:16px;
+
+}
+
+.card{
+
+ background:var(--oratio-secondary);
+
+ padding:20px;
+
+ border-radius:var(--oratio-radius-md);
+
+ cursor:pointer;
+
+ font-family:var(--oratio-font-title);
+
+ font-size:18px;
+
+ border-left:5px solid var(--oratio-primary);
+
+ transition:var(--oratio-transition);
+
+ min-height:56px;
+
+ display:flex;
+ align-items:center;
+
+}
+
+.card:hover{
+
+ transform:translateY(-2px);
+
+ box-shadow:var(--oratio-shadow-soft);
+
+}
+
+.empty{
+
+ text-align:center;
+
+ color:var(--oratio-text-soft);
+
+ font-size:15px;
+
+}
+
+.loading{
+
+ display:flex;
+
+ flex-direction:column;
+
+ align-items:center;
+ justify-content:center;
+
+ height:100vh;
+
+ font-size:18px;
+
+ color:var(--oratio-text-soft);
+
+ gap:20px;
+
+}
+
+
+/* MOBILE */
+
+@media(max-width:720px){
+
+.container{
+
+ margin:20px;
+
+ padding:26px 20px;
+
+}
+
+h1{
+ font-size:28px;
+}
+
+.card{
+
+ font-size:17px;
+
+ padding:18px;
+
+}
+
+}
+
+/* MOBILE PEQUENO */
+
+@media(max-width:420px){
+
+.container{
+
+ margin:12px;
+
+ padding:22px 16px;
+
+}
+
+h1{
+ font-size:24px;
+}
+
+.card{
+
+ font-size:16px;
+
+ padding:16px;
+
+}
+
+}
+
+/* SAFE AREA */
+
+@supports(padding:max(0px)){
+
+.container{
+
+ padding-left:max(20px, env(safe-area-inset-left));
+ padding-right:max(20px, env(safe-area-inset-right));
+
+}
+
+}
+
+.pageSpacer{
+ height:120px;
+}
+
+/* =========================
+BUSCA
+========================= */
+
+.searchBox{
+
+ width:100%;
+ max-width:320px;
+
+ margin:0 auto 24px auto;
+
+ display:flex;
+ justify-content:center;
+
+}
+
+.searchInput{
+
+ width:100%;
+
+ padding:12px 14px;
+
+ border-radius:var(--oratio-radius-md);
+
+ border:1px solid var(--oratio-card-border);
+
+ font-family:var(--oratio-font-text);
+
+ font-size:16px;
+
+ background:white;
+
+ outline:none;
+
+ box-shadow:var(--oratio-shadow-soft);
+
+ transition:var(--oratio-transition);
+
+ text-align:center;
+
+}
+
+.searchInput:focus{
+
+ border-color:var(--oratio-primary);
+
+ box-shadow:0 0 0 2px rgba(123,17,19,0.15);
+
+}
+
+.searchInput::placeholder{
+
+ color:var(--oratio-text-soft);
+
+ font-size:15px;
+
+}

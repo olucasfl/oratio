@@ -312,3 +312,129 @@ font-size:15px;
 background:var(--oratio-primary-dark);
 
 }
+
+/* =========================
+   STATS ESPIRITUAIS
+========================= */
+
+.statsBox{
+
+ margin-top:24px;
+
+ display:flex;
+
+ gap:16px;
+
+ flex-wrap:wrap;
+
+}
+
+.stat{
+
+ background:var(--oratio-secondary);
+
+ padding:14px 18px;
+
+ border-radius:10px;
+
+ display:flex;
+
+ flex-direction:column;
+
+ min-width:120px;
+
+ border-left:4px solid var(--oratio-primary);
+
+}
+
+.statLabel{
+
+ font-size:13px;
+
+ color:var(--oratio-text-soft);
+
+}
+
+.statValue{
+
+ font-size:22px;
+
+ font-weight:600;
+
+ color:var(--oratio-primary);
+
+}
+
+.statValueSmall{
+
+ font-size:14px;
+
+ font-weight:500;
+
+ color:var(--oratio-text-dark);
+
+}
+
+/* ============================= */
+/* STATS ESPIRITUAIS */
+/* ============================= */
+
+.statsBox{
+
+ margin-top:20px;
+
+ display:flex;
+
+ flex-direction:column;
+
+ gap:12px;
+
+}
+
+.stat{
+
+ display:flex;
+
+ justify-content:space-between;
+
+ align-items:center;
+
+ background:var(--oratio-secondary);
+
+ padding:12px 16px;
+
+ border-radius:var(--oratio-radius-sm);
+
+ border-left:4px solid var(--oratio-primary);
+
+}
+
+.statLabel{
+
+ font-family:var(--oratio-font-text);
+
+ font-size:15px;
+
+ color:var(--oratio-text-soft);
+
+}
+
+.statValue{
+
+ font-family:var(--oratio-font-title);
+
+ font-size:20px;
+
+ color:var(--oratio-primary);
+
+}
+
+.statValueSmall{
+
+ font-family:var(--oratio-font-text);
+
+ font-size:14px;
+
+ color:var(--oratio-text-dark);
+
+}

@@ -213,6 +213,43 @@ export default function Home(){
 
    <section className={styles.consecration}>
 
+    <h2>Consagração à Nossa Senhora</h2>
+
+    <p>
+     Um caminho espiritual de 33 dias segundo
+     o método de São Luís Maria Grignion de
+     Montfort.
+    </p>
+
+    <button
+     className={styles.primaryButton}
+     onClick={()=>navigate("/oratio/consecration")}
+    >
+     Iniciar Consagração
+    </button>
+
+   </section>
+
+    <section className={styles.consecration}>
+
+    <h2>Orações</h2>
+
+    <p>
+    Reze as principais orações da tradição
+    católica.
+    </p>
+
+    <button
+    className={styles.primaryButton}
+    onClick={()=>navigate("/oratio/prayers")}
+    >
+    Abrir Orações
+    </button>
+
+    </section>
+
+   <section className={styles.consecration}>
+
     <h2>Bíblia Sagrada</h2>
 
     <p>
@@ -244,26 +281,6 @@ export default function Home(){
     onClick={()=>navigate("/oratio/vox")}
     >
     Perguntar ao VoxAI
-    </button>
-
-   </section>
-
-
-   <section className={styles.consecration}>
-
-    <h2>Consagração à Nossa Senhora</h2>
-
-    <p>
-     Um caminho espiritual de 33 dias segundo
-     o método de São Luís Maria Grignion de
-     Montfort.
-    </p>
-
-    <button
-     className={styles.primaryButton}
-     onClick={()=>navigate("/oratio/consecration")}
-    >
-     Iniciar Consagração
     </button>
 
    </section>

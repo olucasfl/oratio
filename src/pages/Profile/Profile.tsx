@@ -81,6 +81,10 @@ export default function Profile(){
  }
 
  const days = profile.spiritualProgress?.daysCompleted || 0
+ const prayers = profile.spiritualProgress?.prayersPrayed || 0
+ const rosaries = profile.spiritualProgress?.rosariesPrayed || 0
+ const lastPrayer = profile.spiritualProgress?.lastPrayerDate
+
  const progress = Math.min((days / 33) * 100,100)
 
  return(
@@ -108,7 +112,9 @@ export default function Profile(){
    <div className={styles.container}>
 
 
+    {/* ============================= */}
     {/* CARD USUÁRIO */}
+    {/* ============================= */}
 
     <div className={styles.profileCard}>
 
@@ -133,11 +139,16 @@ export default function Profile(){
     </div>
 
 
+    {/* ============================= */}
     {/* VIDA ESPIRITUAL */}
+    {/* ============================= */}
 
     <div className={styles.card}>
 
      <h3>Vida Espiritual</h3>
+
+
+     {/* CONSAGRAÇÃO */}
 
      <div className={styles.progressBox}>
 
@@ -170,10 +181,63 @@ export default function Profile(){
 
      </p>
 
+
+     {/* ============================= */}
+     {/* STATS ESPIRITUAIS */}
+     {/* ============================= */}
+
+     <div className={styles.statsBox}>
+
+      <div className={styles.stat}>
+
+       <span className={styles.statLabel}>
+        Orações rezadas
+       </span>
+
+       <span className={styles.statValue}>
+        {prayers}
+       </span>
+
+      </div>
+
+
+      <div className={styles.stat}>
+
+       <span className={styles.statLabel}>
+        Terços rezados
+       </span>
+
+       <span className={styles.statValue}>
+        {rosaries}
+       </span>
+
+      </div>
+
+
+      {lastPrayer && (
+
+       <div className={styles.stat}>
+
+        <span className={styles.statLabel}>
+         Última oração
+        </span>
+
+        <span className={styles.statValueSmall}>
+         {new Date(lastPrayer).toLocaleDateString("pt-BR")}
+        </span>
+
+       </div>
+
+      )}
+
+     </div>
+
     </div>
 
 
+    {/* ============================= */}
     {/* CONTA */}
+    {/* ============================= */}
 
     <div className={styles.card}>
 
@@ -186,7 +250,9 @@ export default function Profile(){
     </div>
 
 
+    {/* ============================= */}
     {/* LOGOUT */}
+    {/* ============================= */}
 
     <button
      className={styles.logout}
@@ -197,6 +263,7 @@ export default function Profile(){
 
 
    </div>
+
 
    {/* NAVBAR */}
 

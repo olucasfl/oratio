@@ -23,6 +23,11 @@ import Profile from "./pages/Profile/Profile"
 /* services */
 
 import { preloadConsecration, getProgress } from "./services/consecrationService"
+import PrayersCategories from "./pages/Prayers/PrayersCategories"
+import CategoryPrayers from "./pages/Prayers/CategoryPrayers"
+import Prayers from "./pages/Prayers/Prayers"
+import RosaryHome from "./pages/Prayers/RosaryHome"
+import RosaryPage from "./pages/Prayers/RosaryPage"
 
 function App(){
 
@@ -164,6 +169,29 @@ element={
 <ConsecrationDay />
 </ProtectedRoute>
 }
+/>
+
+<Route path="/oratio/prayers" element={<PrayersCategories/>}/>
+
+<Route path="/oratio/prayers/:slug" element={<CategoryPrayers/>}/>
+
+<Route
+ path="/oratio/prayer/:id"
+ element={
+  <ProtectedRoute>
+   <Prayers/>
+  </ProtectedRoute>
+ }
+/>
+
+<Route
+ path="/oratio/rosary"
+ element={<RosaryHome/>}
+/>
+
+<Route
+ path="/oratio/rosary/:type"
+ element={<RosaryPage/>}
 />
 
 <Route path="/oratio/biblia" element={<BibliaHome/>}/>

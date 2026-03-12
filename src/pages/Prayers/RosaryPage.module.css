@@ -1,0 +1,416 @@
+.page{
+
+ padding:40px 24px;
+
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+
+}
+
+.container{
+
+ width:100%;
+ max-width:720px;
+
+ background:var(--oratio-card-bg);
+
+ border-radius:var(--oratio-radius-lg);
+
+ border:1px solid var(--oratio-card-border);
+
+ box-shadow:var(--oratio-shadow-medium);
+
+ padding:36px;
+
+ text-align:center;
+
+ overflow:hidden;
+
+}
+
+/* VOLTAR */
+
+.back{
+
+ border:none;
+ background:none;
+
+ color:var(--oratio-primary);
+
+ font-family:var(--oratio-font-title);
+
+ cursor:pointer;
+
+ margin-bottom:16px;
+
+}
+
+/* ROSARIO */
+
+.rosary{
+
+ display:flex;
+
+ justify-content:center;
+
+ flex-wrap:wrap;
+
+ gap:8px;
+
+ margin-bottom:20px;
+
+}
+
+.bead,
+.beadActive{
+
+ width:26px;
+ height:26px;
+
+ border-radius:50%;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ font-size:12px;
+ font-weight:600;
+
+ transition:all .25s ease;
+
+}
+
+.bead{
+
+ background:#e2e2e2;
+ color:#666;
+
+}
+
+.beadActive{
+
+ background:var(--oratio-primary);
+ color:white;
+
+ transform:scale(1.15);
+
+ box-shadow:0 0 8px rgba(0,0,0,.25);
+
+}
+
+/* ANIMAÇÕES */
+
+.slideNext{
+
+ animation:slideNext .35s ease;
+
+}
+
+.slidePrev{
+
+ animation:slidePrev .35s ease;
+
+}
+
+@keyframes slideNext{
+
+ from{
+  opacity:0;
+  transform:translateX(40px);
+ }
+
+ to{
+  opacity:1;
+  transform:translateX(0);
+ }
+
+}
+
+@keyframes slidePrev{
+
+ from{
+  opacity:0;
+  transform:translateX(-40px);
+ }
+
+ to{
+  opacity:1;
+  transform:translateX(0);
+ }
+
+}
+
+/* ORAÇÃO */
+
+.prayer h2{
+
+ font-family:var(--oratio-font-title);
+
+ font-size:42px;
+
+ color:var(--oratio-primary);
+
+ margin-bottom:18px;
+
+}
+
+.text{
+
+ white-space:pre-wrap;
+
+ font-family:Georgia,serif;
+
+ font-size:18px;
+
+ line-height:1.9;
+
+ color:var(--oratio-text-dark);
+
+}
+
+/* MISTERIO */
+
+.mystery h2{
+
+ font-family:var(--oratio-font-title);
+
+ font-size:36px;
+
+ color:var(--oratio-primary);
+
+ margin-bottom:12px;
+
+}
+
+.mystery p{
+
+ font-size:18px;
+
+ color:var(--oratio-text-soft);
+
+}
+
+/* CONTROLES */
+
+.controls{
+
+ display:flex;
+
+ justify-content:space-between;
+
+ margin-top:32px;
+
+}
+
+.prev,
+.next{
+
+ background:var(--oratio-primary);
+
+ color:white;
+
+ border:none;
+
+ padding:14px 26px;
+
+ border-radius:10px;
+
+ font-family:var(--oratio-font-title);
+
+ cursor:pointer;
+
+ transition:var(--oratio-transition);
+
+}
+
+.prev:hover,
+.next:hover{
+
+ background:var(--oratio-primary-dark);
+
+ transform:translateY(-2px);
+
+}
+
+.finish{
+
+ width:100%;
+
+ background:var(--oratio-primary);
+
+ color:white;
+
+ border:none;
+
+ padding:16px;
+
+ border-radius:12px;
+
+ font-family:var(--oratio-font-title);
+
+ font-size:18px;
+
+ cursor:pointer;
+
+ transition:var(--oratio-transition);
+
+}
+
+.finish:hover{
+
+ background:var(--oratio-primary-dark);
+
+ transform:translateY(-2px);
+
+}
+
+/* LOADING */
+
+.loading{
+
+ display:flex;
+
+ flex-direction:column;
+
+ align-items:center;
+ justify-content:center;
+
+ height:100vh;
+
+ color:var(--oratio-text-soft);
+
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+.container{
+
+ padding:26px 18px;
+
+}
+
+.prayer h2{
+
+ font-size:34px;
+
+}
+
+.text{
+
+ font-size:17px;
+
+}
+
+.controls{
+
+ flex-direction:column;
+
+ gap:12px;
+
+}
+
+.prev,
+.next{
+
+ width:100%;
+
+ padding:16px;
+
+}
+
+.rosary{
+
+ gap:6px;
+
+}
+
+.bead,
+.beadActive{
+
+ width:22px;
+ height:22px;
+
+ font-size:11px;
+
+}
+
+}
+
+.pageSpacer{
+ height:120px;
+}
+
+.finishedOverlay{
+
+ position:fixed;
+
+ top:0;
+ left:0;
+
+ width:100%;
+ height:100%;
+
+ background:rgba(0,0,0,.35);
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ z-index:999;
+
+}
+
+.finishedCard{
+
+ background:white;
+
+ padding:36px 30px;
+
+ border-radius:var(--oratio-radius-lg);
+
+ text-align:center;
+
+ box-shadow:var(--oratio-shadow-strong);
+
+ animation:finishFade .4s ease;
+
+}
+
+.finishedCard h2{
+
+ font-family:var(--oratio-font-title);
+
+ font-size:28px;
+
+ color:var(--oratio-primary);
+
+ margin-bottom:10px;
+
+}
+
+.finishedCard p{
+
+ font-family:var(--oratio-font-text);
+
+ font-size:17px;
+
+ color:var(--oratio-text-soft);
+
+}
+
+@keyframes finishFade{
+
+ from{
+  opacity:0;
+  transform:scale(.9);
+ }
+
+ to{
+  opacity:1;
+  transform:scale(1);
+ }
+
+}
