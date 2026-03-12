@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { login } from "../../services/authService";
+import { login, forgotPassword } from "../../services/authService";
 
 import ForgotPasswordModal from "../../components/ForgotPasswordModal/ForgotPasswordModal";
 import ResetPasswordModal from "../../components/ResetPasswordModal/ResetPasswordModal";
@@ -61,6 +61,30 @@ export default function Login() {
     } finally {
 
       setLoading(false);
+
+    }
+
+  }
+
+  /*
+  ============================
+  FORGOT PASSWORD
+  ============================
+  */
+
+  async function handleForgotPassword(email: string){
+
+    try{
+
+      await forgotPassword(email);
+
+      alert("Se o email existir, enviaremos um link para redefinir sua senha.");
+
+      setForgotOpen(false);
+
+    }catch(err:any){
+
+      alert(err?.response?.data?.message || "Erro ao enviar email");
 
     }
 
@@ -127,7 +151,7 @@ export default function Login() {
       <ForgotPasswordModal
         open={forgotOpen}
         onClose={() => setForgotOpen(false)}
-        onSubmit={() => {}}
+        onSubmit={handleForgotPassword}
       />
 
       {resetToken && (
