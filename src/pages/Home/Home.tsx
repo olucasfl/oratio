@@ -1,8 +1,6 @@
 import styles from "./Home.module.css"
 import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
-
-import { logout } from "../../services/authService"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
 export default function Home(){
