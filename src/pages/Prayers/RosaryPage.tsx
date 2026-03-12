@@ -26,33 +26,39 @@ export default function RosaryPage(){
   load()
  },[type])
 
- async function load(){
+    async function load(){
 
-  if(!type) return
+    if(!type) return
 
-  try{
+    try{
 
-  const session = await getRosarySession()
+    let session = null
 
-  if(!session){
-   await startRosary()
-  }
+    try{
+    session = await getRosarySession()
+    }catch{
+    session = null
+    }
 
-   const data = await getRosary(type)
+    if(!session){
+    await startRosary()
+    }
 
-   setSteps(data)
+    const data = await getRosary(type)
 
-  }catch{
+    setSteps(data)
 
-   console.log("Erro ao carregar terço")
+    }catch(err){
 
-  }finally{
+    console.log("Erro ao carregar terço", err)
 
-   setLoading(false)
+    }finally{
 
-  }
+    setLoading(false)
 
- }
+    }
+
+    }
 
  function next(){
 
