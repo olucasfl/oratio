@@ -94,7 +94,7 @@ if(isStandalone){
 
   startApp()
 
- },1200)
+ },2500)
 
  return () => clearTimeout(timer)
 
