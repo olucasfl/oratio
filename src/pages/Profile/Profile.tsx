@@ -55,12 +55,27 @@ export default function Profile(){
 
  }
 
+ /* ============================= */
+ /* LOADING */
+ /* ============================= */
+
  if(!profile){
 
   return(
+
    <div className={styles.loading}>
-    Carregando perfil...
+
+    <p>Carregando perfil...</p>
+
+    <button
+     className={styles.back}
+     onClick={()=>navigate("/oratio/home")}
+    >
+     ← Voltar
+    </button>
+
    </div>
+
   )
 
  }
