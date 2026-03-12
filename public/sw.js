@@ -1,4 +1,4 @@
-const CACHE_NAME = "oratio-cache-v6"
+const CACHE_NAME = "oratio-cache-v7"
 
 /* ============================= */
 /* INSTALL */
@@ -76,30 +76,21 @@ self.addEventListener("fetch", (event) => {
 
  const url = new URL(request.url)
 
- /* ============================= */
- /* IGNORAR EXTENSÕES DO CHROME */
- /* ============================= */
+ /* ignorar protocolos estranhos */
 
  if (url.protocol !== "http:" && url.protocol !== "https:") {
   return
  }
 
  /* ============================= */
- /* IGNORAR APIs EXTERNAS */
- /* ============================= */
-
- if (url.origin !== location.origin) {
-  return
- }
-
- /* ============================= */
- /* NÃO INTERCEPTAR ROTAS DO REACT */
+ /* NÃO CACHEAR API */
  /* ============================= */
 
  if (
+  url.pathname.startsWith("/auth") ||
   url.pathname.startsWith("/oratio") ||
-  url.pathname.startsWith("/login") ||
-  url.pathname.startsWith("/register")
+  url.origin.includes("render.com") ||
+  url.origin.includes("vercel.app")
  ) {
   return
  }
@@ -116,23 +107,27 @@ self.addEventListener("fetch", (event) => {
 
  if (!isAsset) return
 
+ /* ============================= */
+ /* STALE WHILE REVALIDATE */
+ /* ============================= */
+
  event.respondWith(
 
-  caches.match(request).then((cached) => {
+  caches.open(CACHE_NAME).then(async (cache) => {
 
-   if (cached) return cached
+   const cachedResponse = await cache.match(request)
 
-   return fetch(request).then((networkResponse) => {
+   const networkFetch = fetch(request)
+    .then((networkResponse) => {
 
-    const clone = networkResponse.clone()
+     cache.put(request, networkResponse.clone())
 
-    caches.open(CACHE_NAME).then((cache) => {
-     cache.put(request, clone)
+     return networkResponse
+
     })
+    .catch(() => cachedResponse)
 
-    return networkResponse
-
-   })
+   return cachedResponse || networkFetch
 
   })
 
