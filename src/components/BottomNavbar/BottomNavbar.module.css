@@ -1,0 +1,146 @@
+.navbar{
+
+ position:fixed;
+ bottom:0;
+ left:0;
+ right:0;
+
+ height:78px;
+
+ display:flex;
+ justify-content:space-around;
+ align-items:center;
+
+ padding-bottom:env(safe-area-inset-bottom);
+
+ background:var(--oratio-card-bg);
+
+ border-top:1px solid var(--oratio-card-border);
+
+ backdrop-filter:blur(8px);
+
+ box-shadow:0 -10px 35px rgba(0,0,0,0.08);
+
+ z-index:1000;
+
+}
+
+
+/* BOTÕES PADRÃO */
+
+.item{
+
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+
+ gap:4px;
+
+ border:none;
+ background:none;
+
+ color:var(--oratio-text-soft);
+
+ font-family:var(--oratio-font-text);
+ font-size:12px;
+
+ cursor:pointer;
+
+ transition:all .2s ease;
+
+}
+
+
+.item:hover{
+
+ transform:translateY(-2px);
+
+ color:var(--oratio-primary);
+
+}
+
+
+/* BOTÃO ATIVO */
+
+.active{
+
+ color:var(--oratio-primary);
+
+}
+
+
+/* BOTÃO CENTRAL */
+
+.centerButton{
+
+ width:62px;
+ height:62px;
+
+ border-radius:50%;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ border:none;
+
+ background:linear-gradient(
+ 135deg,
+ var(--oratio-primary),
+ var(--oratio-primary-dark)
+ );
+
+ color:white;
+
+ transform:translateY(-24px);
+
+ box-shadow:0 10px 30px rgba(0,0,0,0.25);
+
+ cursor:pointer;
+
+ transition:all .25s ease;
+
+}
+
+
+.centerButton:hover{
+
+ transform:translateY(-26px) scale(1.05);
+
+}
+
+
+.centerActive{
+
+ box-shadow:
+ 0 10px 30px rgba(0,0,0,0.35),
+ 0 0 0 4px rgba(255,255,255,0.2);
+
+}
+
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+ .navbar{
+
+  height:72px;
+
+ }
+
+ .centerButton{
+
+  width:56px;
+  height:56px;
+
+ }
+
+ .item{
+
+  font-size:11px;
+
+ }
+
+}
