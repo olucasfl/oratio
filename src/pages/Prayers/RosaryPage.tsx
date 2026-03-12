@@ -3,7 +3,7 @@ import { useParams,useNavigate } from "react-router-dom"
 
 import styles from "./RosaryPage.module.css"
 
-import { getRosary, finishRosary, startRosary } from "../../services/rosaryService"
+import { getRosary, finishRosary, startRosary, getRosarySession } from "../../services/rosaryService"
 import { rosaryPrayers } from "../../utils/rosaryPrayers"
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
@@ -32,7 +32,11 @@ export default function RosaryPage(){
 
   try{
 
+  const session = await getRosarySession()
+
+  if(!session){
    await startRosary()
+  }
 
    const data = await getRosary(type)
 
