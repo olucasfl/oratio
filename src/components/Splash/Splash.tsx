@@ -6,7 +6,7 @@ export default function Splash(){
 
   <div className={styles.splash}>
 
-   <div className={styles.logoBox}>
+   <div className={styles.logoWrapper}>
 
     <div className={styles.logoGlow}></div>
 
@@ -18,22 +18,20 @@ export default function Splash(){
 
     <div className={styles.logoShine}></div>
 
-    <h1 className={styles.title}>
-     Oratio
-    </h1>
-
-    <p className={styles.subtitle}>
-     Aplicativo de espiritualidade católica
-    </p>
-
    </div>
 
+   <h1 className={styles.title}>
+    ORATIO
+   </h1>
+
+   <p className={styles.subtitle}>
+    Aplicativo de espiritualidade católica
+   </p>
+
    <div className={styles.loader}>
-
     <span></span>
     <span></span>
     <span></span>
-
    </div>
 
   </div>
