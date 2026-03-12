@@ -17,9 +17,9 @@ export default function BottomNavbar(){
  const navigate = useNavigate()
  const location = useLocation()
 
- if(!isPWA()){
-  return null
- }
+//  if(!isPWA()){
+//   return null
+//  }
 
  function isActive(path:string){
   return location.pathname.startsWith(path)
@@ -30,7 +30,6 @@ export default function BottomNavbar(){
   <nav className={styles.navbar}>
 
    {/* BÍBLIA */}
-
    <button
     className={`${styles.item} ${isActive("/oratio/biblia") ? styles.active : ""}`}
     onClick={()=>navigate("/oratio/biblia")}
@@ -41,7 +40,6 @@ export default function BottomNavbar(){
 
 
    {/* CONSAGRAÇÃO */}
-
    <button
     className={`${styles.item} ${isActive("/oratio/consecration") ? styles.active : ""}`}
     onClick={()=>navigate("/oratio/consecration")}
@@ -51,18 +49,11 @@ export default function BottomNavbar(){
    </button>
 
 
-   {/* BOTÃO CENTRAL HOME */}
-
-   <button
-    className={`${styles.centerButton} ${isActive("/oratio/home") ? styles.centerActive : ""}`}
-    onClick={()=>navigate("/oratio/home")}
-   >
-    <Home size={26}/>
-   </button>
+   {/* ESPAÇO DO BOTÃO CENTRAL */}
+   <div></div>
 
 
    {/* VOX */}
-
    <button
     className={`${styles.item} ${isActive("/oratio/vox") ? styles.active : ""}`}
     onClick={()=>navigate("/oratio/vox")}
@@ -73,13 +64,21 @@ export default function BottomNavbar(){
 
 
    {/* PERFIL */}
-
    <button
     className={`${styles.item} ${isActive("/oratio/profile") ? styles.active : ""}`}
     onClick={()=>navigate("/oratio/profile")}
    >
     <User size={22}/>
     <span>Perfil</span>
+   </button>
+
+
+   {/* BOTÃO CENTRAL HOME */}
+   <button
+    className={`${styles.centerButton} ${isActive("/oratio/home") ? styles.centerActive : ""}`}
+    onClick={()=>navigate("/oratio/home")}
+   >
+    <Home size={26}/>
    </button>
 
   </nav>
