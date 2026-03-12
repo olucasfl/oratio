@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 
 import styles from "./Profile.module.css"
 
@@ -12,12 +12,14 @@ import { ArrowLeft } from "lucide-react"
 export default function Profile(){
 
  const navigate = useNavigate()
+ const location = useLocation()
 
  const [profile,setProfile] = useState<any>(null)
+ const [loading,setLoading] = useState(true)
 
  useEffect(()=>{
   loadProfile()
- },[])
+ },[location])
 
  async function loadProfile(){
 
@@ -42,6 +44,8 @@ export default function Profile(){
     console.log("Erro ao carregar perfil")
    }
 
+  }finally{
+    setLoading(false)
   }
 
  }
@@ -59,7 +63,7 @@ export default function Profile(){
  /* LOADING */
  /* ============================= */
 
- if(!profile){
+ if(loading){
 
   return(
 
@@ -78,6 +82,10 @@ export default function Profile(){
 
   )
 
+ }
+
+ if(!profile){
+  return null
  }
 
  const days = profile.spiritualProgress?.daysCompleted || 0
@@ -112,9 +120,7 @@ export default function Profile(){
    <div className={styles.container}>
 
 
-    {/* ============================= */}
     {/* CARD USUÁRIO */}
-    {/* ============================= */}
 
     <div className={styles.profileCard}>
 
@@ -139,9 +145,7 @@ export default function Profile(){
     </div>
 
 
-    {/* ============================= */}
     {/* VIDA ESPIRITUAL */}
-    {/* ============================= */}
 
     <div className={styles.card}>
 
@@ -182,11 +186,10 @@ export default function Profile(){
      </p>
 
 
-     {/* ============================= */}
-     {/* STATS ESPIRITUAIS */}
-     {/* ============================= */}
+     {/* STATS */}
 
      <div className={styles.statsBox}>
+
 
       <div className={styles.stat}>
 
@@ -235,9 +238,7 @@ export default function Profile(){
     </div>
 
 
-    {/* ============================= */}
     {/* CONTA */}
-    {/* ============================= */}
 
     <div className={styles.card}>
 
@@ -250,9 +251,7 @@ export default function Profile(){
     </div>
 
 
-    {/* ============================= */}
     {/* LOGOUT */}
-    {/* ============================= */}
 
     <button
      className={styles.logout}
@@ -260,7 +259,6 @@ export default function Profile(){
     >
      Sair da conta
     </button>
-
 
    </div>
 
