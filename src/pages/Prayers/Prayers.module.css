@@ -1,28 +1,56 @@
+/* =============================
+PAGE
+============================= */
+
 .page{
+
  min-height:100vh;
+
+ display:flex;
+ flex-direction:column;
+
+ align-items:center;
+
+ padding:20px 16px 0;
+
+ box-sizing:border-box;
+
 }
+
+
+/* =============================
+CONTAINER
+============================= */
 
 .container{
 
- max-width:720px;
+ width:100%;
+ max-width:680px;
 
- margin:60px auto;
+ margin:20px auto;
 
- padding:40px 32px;
+ padding:28px 22px;
 
  background:var(--oratio-card-bg);
 
  border-radius:var(--oratio-radius-lg);
 
+ border:1px solid var(--oratio-card-border);
+
  box-shadow:var(--oratio-shadow-medium);
 
- border:1px solid var(--oratio-card-border);
+ box-sizing:border-box;
 
 }
 
+
+/* =============================
+BACK BUTTON
+============================= */
+
 .back{
 
- margin-bottom:20px;
+ margin-bottom:18px;
 
  background:none;
  border:none;
@@ -31,13 +59,13 @@
 
  cursor:pointer;
 
- font-size:16px;
+ font-size:15px;
 
- padding:6px 10px;
+ padding:6px 8px;
 
  border-radius:8px;
 
- transition:0.2s;
+ transition:.2s;
 
 }
 
@@ -45,41 +73,63 @@
  opacity:.7;
 }
 
+
+/* =============================
+TITLE
+============================= */
+
 h1{
 
  font-family:var(--oratio-font-title);
 
- font-size:36px;
+ font-size:32px;
 
  color:var(--oratio-primary);
 
- margin-bottom:30px;
+ margin-bottom:26px;
 
  text-align:center;
 
+ /* quebra palavras grandes */
+ overflow-wrap:break-word;
+ word-break:break-word;
+
+ /* adiciona hífen automático */
+ hyphens:auto;
+
 }
+
+
+/* =============================
+PRAYER BOX
+============================= */
 
 .prayer{
 
  background:var(--oratio-secondary);
 
- padding:26px;
+ padding:22px;
 
  border-radius:var(--oratio-radius-md);
 
- border-left:5px solid var(--oratio-primary);
+ border-left:4px solid var(--oratio-primary);
 
  box-shadow:var(--oratio-shadow-soft);
 
 }
 
+
+/* =============================
+TEXT
+============================= */
+
 .text{
 
  white-space:pre-wrap;
 
- font-size:17px;
+ font-size:16px;
 
- line-height:1.9;
+ line-height:1.85;
 
  font-family:Georgia,serif;
 
@@ -87,9 +137,14 @@ h1{
 
 }
 
+
+/* =============================
+COMPLETE BUTTON
+============================= */
+
 .complete{
 
- margin-top:30px;
+ margin-top:26px;
 
  width:100%;
 
@@ -97,19 +152,17 @@ h1{
 
  color:white;
 
- padding:16px;
+ padding:15px;
 
  border:none;
 
- border-radius:12px;
+ border-radius:10px;
 
  font-size:16px;
 
  cursor:pointer;
 
- transition:var(--oratio-transition);
-
- min-height:52px;
+ transition:.2s;
 
 }
 
@@ -120,6 +173,11 @@ h1{
  transform:translateY(-2px);
 
 }
+
+
+/* =============================
+LOADING
+============================= */
 
 .loading{
 
@@ -132,7 +190,7 @@ h1{
 
  height:100vh;
 
- font-size:18px;
+ font-size:17px;
 
  color:var(--oratio-text-soft);
 
@@ -140,15 +198,16 @@ h1{
 
 }
 
-/* MOBILE */
 
-@media(max-width:720px){
+/* =============================
+TABLET
+============================= */
+
+@media(max-width:768px){
 
 .container{
 
- margin:20px;
-
- padding:26px 20px;
+ padding:24px 20px;
 
 }
 
@@ -156,25 +215,26 @@ h1{
  font-size:28px;
 }
 
-.prayer{
- padding:22px;
-}
-
 .text{
- font-size:16px;
+ font-size:15.8px;
 }
 
 }
 
-/* MOBILE PEQUENO */
+
+/* =============================
+SMALL MOBILE
+============================= */
 
 @media(max-width:420px){
 
+.page{
+ padding:18px 14px 0;
+}
+
 .container{
 
- margin:12px;
-
- padding:22px 16px;
+ padding:22px 18px;
 
 }
 
@@ -184,23 +244,35 @@ h1{
 
 .text{
  font-size:15px;
+ line-height:1.8;
 }
 
 }
 
-/* SAFE AREA */
+
+/* =============================
+SAFE AREA (iPhone notch)
+============================= */
 
 @supports(padding:max(0px)){
 
-.container{
+.page{
 
- padding-left:max(20px, env(safe-area-inset-left));
- padding-right:max(20px, env(safe-area-inset-right));
+ padding-left:max(16px, env(safe-area-inset-left));
+ padding-right:max(16px, env(safe-area-inset-right));
+
+}
 
 }
 
-}
+
+/* =============================
+SPACE FOR NAVBAR
+============================= */
 
 .pageSpacer{
- height:120px;
+
+ height:110px;
+ flex-shrink:0;
+
 }

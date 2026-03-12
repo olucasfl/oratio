@@ -1,17 +1,26 @@
 .page{
 
- padding:40px 24px;
+ min-height:100dvh;
+
+ padding:36px 16px 0;
 
  display:flex;
  flex-direction:column;
  align-items:center;
 
+ width:100%;
+
 }
+
+
+/* CONTAINER */
 
 .container{
 
  width:100%;
- max-width:720px;
+ max-width:680px;
+
+ margin:0 auto;
 
  background:var(--oratio-card-bg);
 
@@ -21,18 +30,20 @@
 
  box-shadow:var(--oratio-shadow-medium);
 
- padding:34px;
+ padding:30px 24px;
 
  text-align:center;
 
+ box-sizing:border-box;
+
 }
+
 
 /* VOLTAR */
 
 .back{
 
  border:none;
-
  background:none;
 
  color:var(--oratio-primary);
@@ -43,7 +54,12 @@
 
  margin-bottom:16px;
 
+ font-size:15px;
+
+ align-self:flex-start;
+
 }
+
 
 /* TITULO */
 
@@ -51,11 +67,17 @@ h1{
 
  font-family:var(--oratio-font-title);
 
- font-size:42px;
+ font-size:36px;
 
  color:var(--oratio-primary);
 
  margin-bottom:6px;
+
+ line-height:1.2;
+
+ overflow-wrap:break-word;
+ word-break:break-word;
+ hyphens:auto;
 
 }
 
@@ -63,9 +85,12 @@ h1{
 
  color:var(--oratio-text-soft);
 
- margin-bottom:28px;
+ margin-bottom:26px;
+
+ font-size:15px;
 
 }
+
 
 /* LISTA */
 
@@ -76,7 +101,10 @@ h1{
 
  gap:16px;
 
+ width:100%;
+
 }
+
 
 /* CARD */
 
@@ -84,7 +112,7 @@ h1{
 
  background:var(--oratio-secondary);
 
- padding:22px;
+ padding:20px 22px;
 
  border-radius:var(--oratio-radius-md);
 
@@ -92,11 +120,21 @@ h1{
 
  font-family:var(--oratio-font-title);
 
- font-size:20px;
+ font-size:19px;
 
  cursor:pointer;
 
  transition:var(--oratio-transition);
+
+ min-height:56px;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ width:100%;
+
+ box-sizing:border-box;
 
 }
 
@@ -108,32 +146,101 @@ h1{
 
 }
 
+
 /* MOBILE */
 
-@media(max-width:600px){
+@media(max-width:768px){
+
+.page{
+ padding-top:28px;
+}
 
 .container{
 
  padding:26px 20px;
 
+ border-radius:18px;
+
 }
 
 h1{
 
- font-size:34px;
+ font-size:30px;
 
 }
 
 .card{
 
- font-size:18px;
+ font-size:17px;
 
- padding:20px;
+ padding:18px;
+
+}
+
+}
+
+
+/* MOBILE PEQUENO */
+
+@media(max-width:420px){
+
+.page{
+ padding-top:22px;
+}
+
+.container{
+
+ padding:22px 16px;
+
+}
+
+h1{
+
+ font-size:26px;
+
+}
+
+.subtitle{
+
+ font-size:14px;
+
+}
+
+.card{
+
+ font-size:16px;
+
+ padding:16px;
 
 }
 
 }
+
+
+/* SAFE AREA PWA */
+
+@supports(padding:max(0px)){
+
+.page{
+
+ padding-left:max(16px, env(safe-area-inset-left));
+ padding-right:max(16px, env(safe-area-inset-right));
+
+}
+
+.container{
+
+ padding-left:max(20px, env(safe-area-inset-left));
+ padding-right:max(20px, env(safe-area-inset-right));
+
+}
+
+}
+
+
+/* ESPAÇO PARA NAVBAR */
 
 .pageSpacer{
+
  height:300px;
 }
