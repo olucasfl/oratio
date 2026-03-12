@@ -517,3 +517,44 @@
  }
 
 }
+
+.markdownContent{
+ hyphens:auto;
+ overflow-wrap:anywhere;
+ word-break:break-word;
+}
+
+/* hierarquia de títulos */
+
+.markdownContent h1{
+ font-size:30px;
+ margin:14px 0 8px 0;
+ color:var(--oratio-primary);
+ font-weight:700;
+
+}
+
+.markdownContent h2{
+ font-size:19px;
+ margin:12px 0 6px 0;
+ color:var(--oratio-secondary-dark);
+ font-weight:600;
+}
+
+.markdownContent h3{
+ font-size:17px;
+ margin:8px 0 6px 0;
+ color:var(--oratio-primary);
+}
+
+.markdownContent p{
+ margin-bottom:10px;
+}
+
+.markdownContent ul{
+ margin-left:20px;
+}
+
+.markdownContent li{
+ margin-bottom:6px;
+}

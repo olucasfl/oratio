@@ -45,7 +45,6 @@ export default function Vox(){
   */
 
   const limitedHistory = messages.slice(-6)
-
   const updated = [...limitedHistory,userMessage]
 
   /*
@@ -55,7 +54,6 @@ export default function Vox(){
   */
 
   setMessages(prev => [...prev,userMessage])
-
   setInput("")
   setLoading(true)
 
@@ -64,20 +62,11 @@ export default function Vox(){
    const res = await askVox(text,updated)
 
    const aiMessage:Message = {
-
     role:"assistant",
-
     content: res?.success
      ? res.response
      : "O Vox não conseguiu responder agora."
-
    }
-
-   /*
-   ============================
-   ATUALIZA UI
-   ============================
-   */
 
    setMessages(prev => [...prev,aiMessage])
 
@@ -144,9 +133,11 @@ export default function Vox(){
 
        ):(
 
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-         {msg.content}
-        </ReactMarkdown>
+        <div className={styles.markdownContent}>
+         <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {msg.content}
+         </ReactMarkdown>
+        </div>
 
        )}
 
