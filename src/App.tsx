@@ -23,36 +23,73 @@ import Profile from "./pages/Profile/Profile"
 function App(){
 
 const [loading,setLoading] = useState(true)
+const [authReady,setAuthReady] = useState(false)
 
 useEffect(()=>{
 
-/* detectar se o app está rodando como PWA */
+/* ============================= */
+/* DETECTAR SE É PWA */
+/* ============================= */
 
 const isStandalone =
 window.matchMedia("(display-mode: standalone)").matches ||
 (window.navigator as any).standalone === true
 
-/* mostrar splash apenas no app instalado */
+/* ============================= */
+/* SIMULAR BOOT DO APP */
+/* ============================= */
+
+const initApp = async () => {
+
+  try{
+
+    const token = localStorage.getItem("access_token")
+
+    /*
+    aqui poderíamos validar token futuramente
+    */
+
+  }catch(e){
+    console.log("Erro ao iniciar app")
+  }
+
+  setAuthReady(true)
+
+}
+
+/* ============================= */
+/* SPLASH APENAS PARA PWA */
+/* ============================= */
 
 if(isStandalone){
 
-const timer = setTimeout(()=>{
-setLoading(false)
+const timer = setTimeout(async ()=>{
+ await initApp()
+ setLoading(false)
 },1200)
 
 return () => clearTimeout(timer)
 
 }else{
 
+initApp()
 setLoading(false)
 
 }
 
 },[])
 
-if(loading){
+/* ============================= */
+/* SPLASH SCREEN */
+/* ============================= */
+
+if(loading || !authReady){
 return <Splash/>
 }
+
+/* ============================= */
+/* ROTAS */
+/* ============================= */
 
 return(
 
