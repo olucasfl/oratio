@@ -4,7 +4,7 @@ import {
  BookOpen,
  User,
  MessageCircleHeart,
- HeartHandshake,
+ HandHeart,
  Home
 } from "lucide-react"
 
@@ -17,9 +17,9 @@ export default function BottomNavbar(){
  const navigate = useNavigate()
  const location = useLocation()
 
- if(!isPWA()){
-  return null
- }
+if(!isPWA()){
+    return null
+}
 
  function isActive(path:string){
   return location.pathname.startsWith(path)
@@ -39,13 +39,13 @@ export default function BottomNavbar(){
    </button>
 
 
-   {/* CONSAGRAÇÃO */}
+   {/* ORAÇÕES */}
    <button
-    className={`${styles.item} ${isActive("/oratio/consecration") ? styles.active : ""}`}
-    onClick={()=>navigate("/oratio/consecration")}
+    className={`${styles.item} ${isActive("/oratio/prayers") ? styles.active : ""}`}
+    onClick={()=>navigate("/oratio/prayers")}
    >
-    <HeartHandshake size={22}/>
-    <span>Consagração</span>
+    <HandHeart size={22}/>
+    <span>Orações</span>
    </button>
 
 
