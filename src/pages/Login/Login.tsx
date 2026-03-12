@@ -78,7 +78,7 @@ export default function Login() {
 
       await forgotPassword(email);
 
-      alert("Se o email existir, enviaremos um link para redefinir sua senha.");
+      alert("Enviaremos um link para redefinir sua senha.");
 
       setForgotOpen(false);
 

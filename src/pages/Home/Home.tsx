@@ -2,6 +2,8 @@ import styles from "./Home.module.css"
 import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
+import { LogOut } from "lucide-react"
+import { isPWA } from "../../utils/isPwa"
 
 export default function Home(){
 
@@ -44,6 +46,15 @@ export default function Home(){
   }
 
  }
+
+ function handleLogout(){
+
+   localStorage.removeItem("access_token")
+   localStorage.removeItem("refresh_token")
+
+   navigate("/login")
+
+   }
 
  /*
  ============================
@@ -129,6 +140,19 @@ export default function Home(){
  return(
 
   <div className={styles.container}>
+
+   {!isPWA() && (
+
+   <button
+   className={styles.logoutButton}
+   onClick={handleLogout}
+   >
+
+   <LogOut size={18}/>
+
+   </button>
+
+   )}
 
    <section className={styles.hero}>
 

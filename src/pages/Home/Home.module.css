@@ -673,3 +673,42 @@ flex-wrap:wrap;
 .pageSpacer{
  height:120px;
 }
+
+.logoutButton{
+
+ position:absolute;
+
+ top:20px;
+ right:20px;
+
+ width:42px;
+ height:42px;
+
+ border-radius:50%;
+
+ border:none;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ background:var(--oratio-primary);
+ color:white;
+
+ cursor:pointer;
+
+ box-shadow:0 6px 18px rgba(0,0,0,0.15);
+
+ transition:0.25s;
+
+}
+
+.logoutButton:hover{
+
+ transform:translateY(-2px);
+
+ background:var(--oratio-primary-dark);
+
+ box-shadow:0 10px 25px rgba(0,0,0,0.2);
+
+}
