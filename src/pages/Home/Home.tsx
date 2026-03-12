@@ -132,18 +132,6 @@ export default function Home(){
 
   <div className={styles.container}>
 
-   <div className={styles.topActions}>
-
-    <button 
-     className={styles.logoutButton}
-     onClick={logout}
-    >
-     Logout
-    </button>
-
-   </div>
-
-
    <section className={styles.hero}>
 
     <div className={styles.logoWrapper}>
