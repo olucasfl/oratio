@@ -1,5 +1,14 @@
 .page{
+
  min-height:100vh;
+
+ display:flex;
+ flex-direction:column;
+
+ align-items:center;
+
+ padding-top:40px;
+
 }
 
 
@@ -7,9 +16,10 @@
 
 .container{
 
+ width: 100%;
  max-width:720px;
 
- margin:60px auto;
+ margin:0 auto;
 
  padding:40px 32px;
 
@@ -196,7 +206,8 @@ h1{
 /* ESPAÇO PARA NAVBAR */
 
 .pageSpacer{
- height:120px;
+ height:110px;
+ flex-shrink:0;
 }
 
 .back{

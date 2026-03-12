@@ -1,14 +1,14 @@
 .navbar{
 
  position:fixed;
+
  bottom:0;
  left:0;
  right:0;
 
- height:90px; /* aumentamos a altura */
+ height:80px;
 
- padding-top:12px; /* empurra conteúdo para cima */
- padding-bottom:env(safe-area-inset-bottom);
+ padding-bottom:calc(env(safe-area-inset-bottom) + 6px);
 
  display:flex;
  justify-content:space-around;
@@ -78,7 +78,7 @@
  position:absolute;
 
  left:50%;
- transform:translate(-50%,-28px);
+ transform:translate(-50%,-22px);
 
  width:64px;
  height:64px;
