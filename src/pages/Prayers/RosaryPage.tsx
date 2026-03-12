@@ -6,8 +6,6 @@ import styles from "./RosaryPage.module.css"
 import { getRosary, finishRosary, startRosary, getRosarySession } from "../../services/rosaryService"
 import { rosaryPrayers } from "../../utils/rosaryPrayers"
 
-import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
-
 export default function RosaryPage(){
 
  const { type } = useParams()
@@ -416,10 +414,6 @@ if(isInitialAveMaria){
     </div>
 
    </div>
-
-   <div className={styles.pageSpacer}></div>
-
-   <BottomNavbar/>
 
   </div>
 
