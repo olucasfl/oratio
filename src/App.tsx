@@ -36,7 +36,7 @@ window.matchMedia("(display-mode: standalone)").matches ||
 (window.navigator as any).standalone === true
 
 /* ============================= */
-/* SIMULAR BOOT DO APP */
+/* INICIAR APP */
 /* ============================= */
 
 const initApp = async () => {
@@ -45,20 +45,25 @@ const initApp = async () => {
 
     const token = localStorage.getItem("access_token")
 
-    /*
-    aqui poderíamos validar token futuramente
-    */
+    // se existir token, o app está autenticado
+    if(token){
+      setAuthReady(true)
+    }else{
+      setAuthReady(true)
+    }
 
   }catch(e){
-    console.log("Erro ao iniciar app")
-  }
 
-  setAuthReady(true)
+    console.log("Erro ao iniciar app")
+
+    setAuthReady(true)
+
+  }
 
 }
 
 /* ============================= */
-/* SPLASH APENAS PARA PWA */
+/* SPLASH APENAS NO PWA */
 /* ============================= */
 
 if(isStandalone){
@@ -84,7 +89,7 @@ setLoading(false)
 /* ============================= */
 
 if(loading || !authReady){
-return <Splash/>
+ return <Splash/>
 }
 
 /* ============================= */
