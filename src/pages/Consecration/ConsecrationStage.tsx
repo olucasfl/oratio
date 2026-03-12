@@ -7,6 +7,7 @@ import {
  getStageDays,
  getProgress
 } from "../../services/consecrationService"
+import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
 export default function ConsecrationStage(){
 
@@ -167,7 +168,10 @@ export default function ConsecrationStage(){
     })}
 
    </div>
-
+   
+   <div className={styles.pageSpacer}></div>
+   <BottomNavbar/>
+    
   </div>
 
  )

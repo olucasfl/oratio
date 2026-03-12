@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 
 import { getOldTestament,getNewTestament } from "../../services/bibliaService"
+import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
 export default function BibliaHome(){
 
@@ -134,6 +135,9 @@ export default function BibliaHome(){
 
    )}
 
+   <div className={styles.pageSpacer}></div>
+   <BottomNavbar/> 
+   
   </div>
 
  )

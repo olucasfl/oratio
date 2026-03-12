@@ -9,6 +9,7 @@ import {
  resetConsecration,
  preloadConsecration
 } from "../../services/consecrationService"
+import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
 export default function ConsecrationHome(){
 
@@ -280,7 +281,10 @@ export default function ConsecrationHome(){
     })}
 
    </div>
-
+   
+   <div className={styles.pageSpacer}></div>
+   <BottomNavbar/> 
+   
   </div>
 
  )

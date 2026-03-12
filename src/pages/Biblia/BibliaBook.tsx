@@ -3,6 +3,7 @@ import { useParams,useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 
 import { getBook } from "../../services/bibliaService"
+import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
 export default function BibliaBook(){
 
@@ -87,6 +88,9 @@ export default function BibliaBook(){
 
    </div>
 
+   <div className={styles.pageSpacer}></div>
+   <BottomNavbar/>
+   
   </div>
 
  )

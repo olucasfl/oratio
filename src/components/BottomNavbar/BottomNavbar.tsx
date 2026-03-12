@@ -17,9 +17,9 @@ export default function BottomNavbar(){
  const navigate = useNavigate()
  const location = useLocation()
 
- if(!isPWA()){
-  return null
- }
+//  if(!isPWA()){
+//   return null
+//  }
 
  function isActive(path:string){
   return location.pathname.startsWith(path)
