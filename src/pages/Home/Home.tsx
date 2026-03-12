@@ -307,7 +307,9 @@ export default function Home(){
 
    )}
 
+   <div className={styles.pageSpacer}></div>
    <BottomNavbar/>
+
   </div>
 
  )
