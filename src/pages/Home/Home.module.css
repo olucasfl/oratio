@@ -286,17 +286,18 @@ left:0;
 right:0;
 bottom:0;
 
+height:100dvh;
+
 background:rgba(0,0,0,0.55);
 
 display:flex;
 align-items:center;
 justify-content:center;
 
-padding:
-calc(20px + env(safe-area-inset-top))
-20px
-calc(20px + env(safe-area-inset-bottom))
-20px;
+padding-top:calc(20px + env(safe-area-inset-top));
+padding-bottom:calc(20px + env(safe-area-inset-bottom));
+padding-left:20px;
+padding-right:20px;
 
 z-index:2000;
 
@@ -314,7 +315,7 @@ background:white;
 width:100%;
 max-width:620px;
 
-max-height:85vh;
+max-height:85dvh;
 
 overflow-y:auto;
 
@@ -323,8 +324,6 @@ padding:32px 26px;
 border-radius:var(--oratio-radius-lg);
 
 box-shadow:var(--oratio-shadow-strong);
-
-animation:fadeModal .25s ease;
 
 }
 
