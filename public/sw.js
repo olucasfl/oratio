@@ -1,4 +1,4 @@
-const CACHE_NAME = "oratio-cache-v9"
+const CACHE_NAME = "oratio-cache-v10"
 
 /* ============================= */
 /* APP SHELL */
@@ -120,13 +120,27 @@ self.addEventListener("fetch",(event)=>{
 
   event.respondWith(
 
-   fetch(request).catch(async ()=>{
+   (async () => {
 
-    const cache = await caches.open(CACHE_NAME)
+    try{
 
-    return await cache.match("/index.html")
+     const response = await fetch(request)
 
-   })
+     return response
+
+    }catch{
+
+     const cache = await caches.open(CACHE_NAME)
+
+     const cached = await cache.match("/index.html")
+
+     if(cached) return cached
+
+     return Response.error()
+
+    }
+
+   })()
 
   )
 
@@ -136,7 +150,7 @@ self.addEventListener("fetch",(event)=>{
 
  /* ============================= */
  /* CACHE ASSETS */
- /* ============================= */
+/* ============================= */
 
  const isAsset =
   request.destination === "style" ||
@@ -152,7 +166,9 @@ self.addEventListener("fetch",(event)=>{
 
    const cached = await cache.match(request)
 
-   if(cached) return cached
+   if(cached){
+    return cached
+   }
 
    try{
 
