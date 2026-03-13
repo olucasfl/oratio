@@ -1,4 +1,4 @@
-const CACHE_NAME = "oratio-cache-v8"
+const CACHE_NAME = "oratio-cache-v9"
 
 /* ============================= */
 /* APP SHELL */
@@ -48,11 +48,7 @@ self.addEventListener("activate",(event)=>{
     cacheNames.map((cache)=>{
 
      if(cache !== CACHE_NAME){
-
-      console.log("Removendo cache antigo:",cache)
-
-      return caches.delete(cache)
-
+       return caches.delete(cache)
      }
 
     })
@@ -114,16 +110,21 @@ self.addEventListener("fetch",(event)=>{
  }
 
  /* ============================= */
- /* NAVEGAÇÃO (ROTAS REACT) */
+ /* NAVEGAÇÃO (React Router) */
  /* ============================= */
 
- if(request.mode === "navigate"){
+ if(
+  request.mode === "navigate" ||
+  request.destination === "document"
+ ){
 
   event.respondWith(
 
-   fetch(request).catch(()=>{
+   fetch(request).catch(async ()=>{
 
-    return caches.match("/index.html")
+    const cache = await caches.open(CACHE_NAME)
+
+    return await cache.match("/index.html")
 
    })
 
@@ -145,27 +146,27 @@ self.addEventListener("fetch",(event)=>{
 
  if(!isAsset) return
 
- /* ============================= */
- /* STALE WHILE REVALIDATE */
- /* ============================= */
-
  event.respondWith(
 
   caches.open(CACHE_NAME).then(async(cache)=>{
 
    const cached = await cache.match(request)
 
-   const network = fetch(request)
-    .then((response)=>{
+   if(cached) return cached
 
-     cache.put(request,response.clone())
+   try{
 
-     return response
+    const response = await fetch(request)
 
-    })
-    .catch(()=>cached)
+    cache.put(request,response.clone())
 
-   return cached || network
+    return response
+
+   }catch{
+
+    return cached
+
+   }
 
   })
 
