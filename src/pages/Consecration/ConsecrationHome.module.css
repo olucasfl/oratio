@@ -1,30 +1,39 @@
+/* ========================= */
+/* CONTAINER */
+/* ========================= */
+
 .container{
 
 min-height:100vh;
-
-padding:70px 20px;
 
 display:flex;
 flex-direction:column;
 align-items:center;
 
+padding:70px 20px;
+
 background:
 radial-gradient(circle at top,#ffffff55,transparent 65%),
 var(--oratio-background);
 
-animation:fadePage .6s ease;
+position:relative;
+
+animation:fadePage .5s ease;
 
 }
 
+
+/* ========================= */
 /* LOADING */
+/* ========================= */
 
 .loading{
 
-display:flex;
-justify-content:center;
-align-items:center;
-
 height:100vh;
+
+display:flex;
+align-items:center;
+justify-content:center;
 
 font-size:18px;
 
@@ -32,18 +41,20 @@ color:var(--oratio-text-soft);
 
 }
 
-/* VOLTAR */
+
+/* ========================= */
+/* BOTÃO VOLTAR */
+/* ========================= */
 
 .back{
 
 position:absolute;
 
-top:calc(20px + env(safe-area-inset-top));
-
+top:20px;
 left:20px;
 
-background:none;
 border:none;
+background:none;
 
 color:var(--oratio-primary);
 
@@ -51,196 +62,299 @@ font-size:16px;
 
 cursor:pointer;
 
+transition:opacity .2s;
+
 }
 
 .back:hover{
-opacity:.7;
+opacity:.6;
 }
 
 
+/* ========================= */
 /* HEADER */
+/* ========================= */
 
 .header{
 
-font-size:38px;
+font-family:var(--oratio-font-title);
+
+font-size:40px;
 
 color:var(--oratio-primary);
 
-margin-bottom:26px;
+margin-bottom:30px;
 
-font-family:var(--oratio-font-title);
-
-text-align:center;
+animation:fadeUp .5s ease;
 
 }
 
 
-/* BOXES */
+/* ========================= */
+/* OFFLINE WARNING */
+/* ========================= */
 
-.startBox,
-.controlBox{
+.offlineWarning{
 
-display:flex;
-flex-direction:column;
+background:#fff3cd;
 
-gap:14px;
+padding:10px 14px;
 
-background:var(--oratio-card-bg);
+border-radius:8px;
 
-padding:28px;
+margin-bottom:20px;
 
-border-radius:var(--oratio-radius-md);
+font-size:14px;
 
-box-shadow:var(--oratio-shadow-medium);
+color:#856404;
 
-margin-bottom:28px;
+}
+
+
+/* ========================= */
+/* CARD */
+/* ========================= */
+
+.card{
+
+background:white;
+
+padding:26px;
+
+border-radius:16px;
+
+box-shadow:var(--oratio-shadow-soft);
 
 width:100%;
 max-width:420px;
+
+text-align:center;
+
+margin-bottom:30px;
 
 animation:fadeUp .6s ease;
 
 }
 
-.startBox h3,
-.controlBox h3{
+.card h3{
 
-font-size:18px;
+font-family:var(--oratio-font-title);
 
-color:var(--oratio-text-dark);
-
-text-align:center;
+margin-bottom:10px;
 
 }
 
 
 /* INPUT */
 
-.startBox input,
-.controlBox input{
+.card input{
+
+margin-top:12px;
 
 padding:12px;
 
-border-radius:var(--oratio-radius-sm);
+width:100%;
 
-border:1px solid var(--oratio-card-border);
+border-radius:10px;
+
+border:1px solid #ddd;
+
+font-size:16px;
+
+}
+
+
+/* ========================= */
+/* ERROR */
+/* ========================= */
+
+.error{
+
+color:#c62828;
 
 font-size:14px;
 
-transition:0.2s;
+margin-top:10px;
 
-}
-
-.startBox input:focus,
-.controlBox input:focus{
-
-outline:none;
-
-border-color:var(--oratio-primary);
-
-box-shadow:0 0 0 3px rgba(123,17,19,0.15);
+text-align:center;
 
 }
 
 
-/* BOTÕES */
+/* ========================= */
+/* START INFO */
+/* ========================= */
+
+.startInfo{
+
+margin-top:15px;
+
+font-size:14px;
+
+color:#666;
+
+line-height:1.6;
+
+}
+
+.startDate{
+
+font-size:18px;
+
+font-weight:bold;
+
+color:var(--oratio-primary);
+
+display:block;
+
+margin:6px 0;
+
+}
+
+
+/* ========================= */
+/* BUTTONS */
+/* ========================= */
 
 .primary{
+
+margin-top:18px;
+
+width:100%;
+
+padding:14px;
+
+border:none;
+
+border-radius:10px;
 
 background:var(--oratio-primary);
 
 color:white;
 
-padding:12px;
+font-weight:bold;
 
-border:none;
-
-border-radius:var(--oratio-radius-sm);
+font-size:16px;
 
 cursor:pointer;
 
-font-weight:600;
-
-transition:0.2s;
+transition:all .2s;
 
 }
 
 .primary:hover{
 
-background:var(--oratio-primary-dark);
-
 transform:translateY(-2px);
 
-box-shadow:0 6px 16px rgba(0,0,0,0.18);
+box-shadow:var(--oratio-shadow-medium);
 
 }
 
-.primary:active{
-transform:scale(.96);
+
+/* ACTIONS */
+
+.actions{
+
+display:flex;
+
+flex-direction:column;
+
+gap:10px;
+
+margin-top:15px;
+
 }
 
-.danger{
 
-background:#b91c1c;
+/* SECONDARY BUTTON */
 
-color:white;
+.secondary{
+
+width:100%;
 
 padding:12px;
 
-border:none;
+border-radius:10px;
 
-border-radius:var(--oratio-radius-sm);
+border:1px solid var(--oratio-primary);
+
+background:white;
+
+color:var(--oratio-primary);
+
+font-weight:bold;
 
 cursor:pointer;
 
-transition:0.2s;
+transition:all .2s;
+
+}
+
+.secondary:hover{
+
+background:var(--oratio-primary);
+
+color:white;
+
+}
+
+
+/* DANGER BUTTON */
+
+.danger{
+
+width:100%;
+
+padding:12px;
+
+border-radius:10px;
+
+border:none;
+
+background:#c62828;
+
+color:white;
+
+font-weight:bold;
+
+cursor:pointer;
+
+transition:all .2s;
 
 }
 
 .danger:hover{
 
-background:#991b1b;
-
-transform:translateY(-2px);
+background:#b71c1c;
 
 }
 
 
-/* PROGRESSO */
+/* ========================= */
+/* PROGRESS */
+/* ========================= */
 
 .progressBox{
 
 width:100%;
 max-width:420px;
 
-margin-bottom:34px;
+margin-bottom:30px;
 
 text-align:center;
 
-animation:fadeUp .7s ease;
+animation:fadeUp .6s ease;
 
 }
-
-.progressBox span{
-
-font-size:15px;
-
-color:var(--oratio-text-soft);
-
-}
-
-
-/* BARRA */
 
 .progressBar{
 
 width:100%;
+height:10px;
 
-height:12px;
+background:#eee;
 
-background:#e6e6e6;
-
-border-radius:10px;
+border-radius:20px;
 
 overflow:hidden;
 
@@ -252,52 +366,60 @@ margin-bottom:10px;
 
 height:100%;
 
-background:linear-gradient(
-90deg,
-var(--oratio-primary),
-#9e1c1f
-);
+background:var(--oratio-primary);
 
-transition:width .7s ease;
+transition:width .4s ease;
+
+}
+
+.progressBox span{
+
+font-size:14px;
+
+color:#555;
 
 }
 
 
+/* ========================= */
 /* STAGES */
+/* ========================= */
 
 .stages{
 
 display:flex;
-
 flex-direction:column;
 
-gap:14px;
+gap:16px;
 
 width:100%;
 max-width:420px;
 
+animation:fadeUp .7s ease;
+
 }
 
 
-/* CARD */
+/* STAGE CARD */
 
 .stageCard{
 
-background:var(--oratio-card-bg);
+background:white;
 
-padding:18px;
+border-radius:14px;
 
-border-radius:var(--oratio-radius-md);
-
-cursor:pointer;
+padding:20px;
 
 box-shadow:var(--oratio-shadow-soft);
 
-border:1px solid var(--oratio-card-border);
+cursor:pointer;
 
-transition:0.25s;
+transition:all .25s ease;
 
-position:relative;
+border:2px solid transparent;
+
+display:flex;
+flex-direction:column;
 
 }
 
@@ -309,21 +431,36 @@ box-shadow:var(--oratio-shadow-medium);
 
 }
 
-.stageCard h3{
 
-margin-bottom:4px;
+/* STAGE ATUAL */
 
-font-size:18px;
+.stageCurrent{
 
-color:var(--oratio-text-dark);
+border:2px solid var(--oratio-primary);
+
+background:#fff5f5;
 
 }
 
-.stageCard p{
 
-font-size:14px;
+/* STAGE CONCLUÍDO */
 
-color:var(--oratio-text-soft);
+.stageDone{
+
+background:#e8f5e9;
+
+border:2px solid #2e7d32;
+
+}
+
+
+/* STAGE ATRASADO */
+
+.stageLate{
+
+background:#fff8e1;
+
+border:2px solid #f57c00;
 
 }
 
@@ -332,67 +469,43 @@ color:var(--oratio-text-soft);
 
 .stageStatus{
 
+display:block;
+
 margin-top:6px;
 
 font-size:13px;
 
-display:flex;
+color:#555;
 
-align-items:center;
+}
 
-gap:6px;
+.stageLateStatus{
 
-color:var(--oratio-text-soft);
+display:block;
+
+margin-top:6px;
+
+font-size:13px;
+
+color:#e65100;
+
+font-weight:bold;
 
 }
 
 
-/* ATUAL */
+/* ========================= */
+/* SPACER */
+/* ========================= */
 
-.stageCurrent{
-
-border:2px solid var(--oratio-primary);
-
-background:linear-gradient(
-180deg,
-rgba(123,17,19,0.05),
-rgba(123,17,19,0)
-);
-
+.pageSpacer{
+height:120px;
 }
 
 
-/* COMPLETO */
-
-.stageDone{
-
-border:2px solid #2f7d32;
-
-background:linear-gradient(
-180deg,
-rgba(47,125,50,0.06),
-rgba(47,125,50,0)
-);
-
-}
-
-.stageDone::after{
-
-content:"✓";
-
-position:absolute;
-
-right:14px;
-top:14px;
-
-font-size:18px;
-
-color:#2f7d32;
-
-}
-
-
+/* ========================= */
 /* ANIMAÇÕES */
+/* ========================= */
 
 @keyframes fadePage{
 
@@ -410,7 +523,7 @@ opacity:1;
 
 from{
 opacity:0;
-transform:translateY(15px);
+transform:translateY(12px);
 }
 
 to{
@@ -421,7 +534,9 @@ transform:translateY(0);
 }
 
 
+/* ========================= */
 /* MOBILE */
+/* ========================= */
 
 @media(max-width:600px){
 
@@ -429,12 +544,12 @@ transform:translateY(0);
 font-size:32px;
 }
 
+.card{
+padding:22px;
+}
+
 .stageCard{
-padding:16px;
+padding:18px;
 }
 
-}
-
-.pageSpacer{
- height:120px;
 }

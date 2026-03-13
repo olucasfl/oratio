@@ -6,8 +6,8 @@ import {
  getProgress,
  startConsecration,
  updateStartDate,
- resetConsecration,
- preloadConsecration
+ preloadConsecration,
+ resetConsecration
 } from "../../services/consecrationService"
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
@@ -17,9 +17,12 @@ export default function ConsecrationHome(){
  const navigate = useNavigate()
 
  const [progress,setProgress] = useState<any>(null)
- const [startDate,setStartDate] = useState("")
+ const [consecrationDate,setConsecrationDate] = useState("")
+
  const [loading,setLoading] = useState(true)
  const [actionLoading,setActionLoading] = useState(false)
+
+ const [error,setError] = useState<string | null>(null)
 
  const [isOffline,setIsOffline] = useState(!navigator.onLine)
 
@@ -38,15 +41,11 @@ export default function ConsecrationHome(){
   window.addEventListener("offline",handleOffline)
 
   load()
-
-  /* baixar consagração completa */
   preloadConsecration()
 
   return ()=>{
-
    window.removeEventListener("online",handleOnline)
    window.removeEventListener("offline",handleOffline)
-
   }
 
  },[])
@@ -56,10 +55,6 @@ export default function ConsecrationHome(){
   try{
 
    setLoading(true)
-
-   /* ============================= */
-   /* CACHE LOCAL */
-   /* ============================= */
 
    const cached =
     localStorage.getItem("oratio-consecration-progress")
@@ -71,14 +66,12 @@ export default function ConsecrationHome(){
     setProgress(parsed)
 
     if(parsed?.startDate){
-     setStartDate(parsed.startDate.slice(0,10))
+     setConsecrationDate(
+      calculateConsecrationDate(parsed.startDate)
+     )
     }
 
    }
-
-   /* ============================= */
-   /* API SE ONLINE */
-   /* ============================= */
 
    if(!navigator.onLine){
     return
@@ -88,49 +81,150 @@ export default function ConsecrationHome(){
 
    setProgress(data)
 
+   if(data?.startDate){
+    setConsecrationDate(
+     calculateConsecrationDate(data.startDate)
+    )
+   }
+
    localStorage.setItem(
     "oratio-consecration-progress",
     JSON.stringify(data)
    )
 
-   if(data?.startDate){
-    setStartDate(data.startDate.slice(0,10))
-   }
-
   }catch{
-
    console.log("Erro ao carregar progresso")
-
   }finally{
-
    setLoading(false)
-
   }
 
  }
 
- function offlineWarning(){
+ /* ========================= */
+ /* CONVERSÃO SEGURA DE DATA */
+ /* ========================= */
 
-  alert(
-   "Você está offline. Para alterar a consagração é necessário conexão com a internet."
-  )
+ function parseDate(date:string){
+
+  const [y,m,d] = date.split("-").map(Number)
+
+  return new Date(y,m-1,d)
 
  }
+
+ /* ========================= */
+
+ function calculateStartDate(date:string){
+
+  if(!date) return null
+
+  const d = parseDate(date)
+
+  d.setDate(d.getDate()-33)
+
+  return d
+
+ }
+
+ /* ========================= */
+
+ function calculateConsecrationDate(startDate:string){
+
+  const d = new Date(startDate)
+
+  d.setDate(d.getDate()+33)
+
+  const year = d.getFullYear()
+  const month = String(d.getMonth()+1).padStart(2,"0")
+  const day = String(d.getDate()).padStart(2,"0")
+
+  return `${year}-${month}-${day}`
+
+ }
+
+ /* ========================= */
+
+ function formatDateBR(date:Date){
+
+  const day = String(date.getDate()).padStart(2,"0")
+  const month = String(date.getMonth()+1).padStart(2,"0")
+  const year = date.getFullYear()
+
+  return `${day}/${month}/${year}`
+
+ }
+
+ /* ========================= */
+
+ function daysUntilStart(startDate:Date){
+
+  const today = new Date()
+
+  today.setHours(0,0,0,0)
+
+  const diff =
+   Math.ceil(
+    (startDate.getTime()-today.getTime()) /
+    (1000*60*60*24)
+   )
+
+  return diff
+
+ }
+
+ /* ========================= */
+
+ function validateDate(date:string){
+
+  const today = new Date()
+
+  today.setHours(0,0,0,0)
+
+  const selected = parseDate(date)
+
+  if(selected <= today){
+
+   setError("Escolha uma data futura para a consagração.")
+
+   return false
+  }
+
+  setError(null)
+
+  return true
+
+ }
+
+ /* ========================= */
+
+ function handleDateChange(value:string){
+
+  setConsecrationDate(value)
+
+  if(error){
+   setError(null)
+  }
+
+ }
+
+ /* ========================= */
 
  async function handleStart(){
 
   if(isOffline){
-   offlineWarning()
+   alert("Você está offline.")
    return
   }
 
-  if(!startDate) return
+  if(!consecrationDate) return
+
+  if(!validateDate(consecrationDate)) return
 
   setActionLoading(true)
 
   try{
 
-   await startConsecration(startDate)
+   await startConsecration(consecrationDate)
 
    await load()
 
@@ -141,21 +235,25 @@ export default function ConsecrationHome(){
   }
 
  }
+
+ /* ========================= */
 
  async function handleUpdate(){
 
   if(isOffline){
-   offlineWarning()
+   alert("Você está offline.")
    return
   }
 
-  if(!startDate) return
+  if(!consecrationDate) return
+
+  if(!validateDate(consecrationDate)) return
 
   setActionLoading(true)
 
   try{
 
-   await updateStartDate(startDate)
+   await updateStartDate(consecrationDate)
 
    await load()
 
@@ -167,16 +265,17 @@ export default function ConsecrationHome(){
 
  }
 
+ /* ========================= */
+
  async function handleReset(){
 
   if(isOffline){
-   offlineWarning()
+   alert("Você está offline.")
    return
   }
 
-  const confirmReset = window.confirm(
-   "Deseja cancelar sua consagração? Todo o progresso realizado será apagado."
-  )
+  const confirmReset =
+   window.confirm("Deseja cancelar sua consagração?")
 
   if(!confirmReset) return
 
@@ -186,35 +285,46 @@ export default function ConsecrationHome(){
 
  }
 
+ /* ========================= */
+
+ const startDateObj =
+  calculateStartDate(consecrationDate)
+
+ const startDateFormatted =
+  startDateObj
+  ? formatDateBR(startDateObj)
+  : null
+
+ const consecrationDateFormatted =
+  consecrationDate
+  ? formatDateBR(parseDate(consecrationDate))
+  : null
+
+ const daysRemaining =
+  startDateObj
+  ? daysUntilStart(startDateObj)
+  : null
+
  const progressPercent =
   progress?.completedDays
-  ? (progress.completedDays / 33) * 100
+  ? (progress.completedDays/33)*100
   : 0
 
- /* ============================= */
- /* LOADING SCREEN */
- /* ============================= */
+ /* ========================= */
 
  if(loading){
 
   return(
 
    <div className={styles.loading}>
-
     <p>Carregando consagração...</p>
-
-    <button
-     className={styles.back}
-     onClick={()=>navigate("/oratio/home")}
-    >
-     ← Voltar
-    </button>
-
    </div>
 
   )
 
  }
+
+ /* ========================= */
 
  return(
 
@@ -232,74 +342,94 @@ export default function ConsecrationHome(){
    </h1>
 
    {isOffline && (
-
-    <div style={{
-     background:"#fff3cd",
-     padding:"10px",
-     borderRadius:"8px",
-     marginBottom:"16px",
-     fontSize:"14px"
-    }}>
-     Você está offline. Algumas ações estão desativadas.
+    <div className={styles.offlineWarning}>
+     Você está offline
     </div>
-
    )}
 
-   {!progress?.started && (
+   <div className={styles.card}>
 
-    <div className={styles.startBox}>
+    <h3>Dia da consagração</h3>
 
-     <h3>Escolha a data para iniciar</h3>
+    <input
+     type="date"
+     value={consecrationDate}
+     onChange={(e)=>handleDateChange(e.target.value)}
+    />
 
-     <input
-      type="date"
-      value={startDate}
-      onChange={(e)=>setStartDate(e.target.value)}
-     />
+    {error && (
+     <p className={styles.error}>{error}</p>
+    )}
+
+    {consecrationDate && (
+
+     <div className={styles.startInfo}>
+
+      <p>Sua consagração será em</p>
+
+      <span className={styles.startDate}>
+       {consecrationDateFormatted}
+      </span>
+
+      {daysRemaining! > 0 && (
+
+       <>
+        <p>A preparação começa em</p>
+
+        <span className={styles.startDate}>
+         {startDateFormatted}
+        </span>
+
+        <p>Faltam {daysRemaining} dias</p>
+       </>
+
+      )}
+
+      {daysRemaining === 0 && (
+       <p>Hoje começa sua preparação</p>
+      )}
+
+     </div>
+
+    )}
+
+    {!progress?.started && (
 
      <button
       className={styles.primary}
       onClick={handleStart}
-      disabled={actionLoading || isOffline}
+      disabled={actionLoading}
      >
-      {actionLoading ? "Iniciando..." : "Iniciar Consagração"}
+      {actionLoading
+       ? "Iniciando..."
+       : "Iniciar Consagração"}
      </button>
 
-    </div>
+    )}
 
-   )}
+    {progress?.started && (
 
-   {progress?.started && (
+     <div className={styles.actions}>
 
-    <div className={styles.controlBox}>
+      <button
+       className={styles.secondary}
+       onClick={handleUpdate}
+      >
+       Atualizar Data
+      </button>
 
-     <h3>Alterar data de início</h3>
+      <button
+       className={styles.danger}
+       onClick={handleReset}
+      >
+       Cancelar Consagração
+      </button>
 
-     <input
-      type="date"
-      value={startDate}
-      onChange={(e)=>setStartDate(e.target.value)}
-     />
+     </div>
 
-     <button
-      className={styles.primary}
-      onClick={handleUpdate}
-      disabled={actionLoading || isOffline}
-     >
-      {actionLoading ? "Atualizando..." : "Atualizar Data"}
-     </button>
+    )}
 
-     <button
-      className={styles.danger}
-      onClick={handleReset}
-      disabled={isOffline}
-     >
-      Cancelar Consagração
-     </button>
-
-    </div>
-
-   )}
+   </div>
 
    {progress?.started && (
 
@@ -320,61 +450,6 @@ export default function ConsecrationHome(){
 
    )}
 
-   <div className={styles.stages}>
-
-    {progress?.stages?.map((stage:any,index:number)=>{
-
-     let start = 1
-
-     for(let i=0;i<index;i++){
-      start += progress.stages[i].days
-     }
-
-     const end = start + stage.days - 1
-
-     const completed =
-      progress.completedDays >= end
-
-     const current =
-      progress.currentDay >= start &&
-      progress.currentDay <= end
-
-     return(
-
-      <div
-       key={stage.id}
-       className={`${styles.stageCard}
-       ${completed ? styles.stageDone : ""}
-       ${current ? styles.stageCurrent : ""}`}
-       onClick={()=>
-        navigate(`/oratio/consecration/stage/${stage.id}`)
-       }
-      >
-
-       <h3>{stage.title}</h3>
-
-       <p>{stage.days} dias</p>
-
-       {completed && (
-        <span className={styles.stageStatus}>
-         ✓ Concluído
-        </span>
-       )}
-
-       {current && !completed && (
-        <span className={styles.stageStatus}>
-         ● Atual
-        </span>
-       )}
-
-      </div>
-
-     )
-
-    })}
-
-   </div>
-
    <div className={styles.pageSpacer}></div>
 
    <BottomNavbar/>
@@ -382,4 +457,5 @@ export default function ConsecrationHome(){
   </div>
 
  )
+
 }

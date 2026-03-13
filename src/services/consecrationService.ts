@@ -7,6 +7,22 @@ const ALL_DAYS_KEY = "oratio_consecration_all_days"
 const PRELOADED_KEY = "oratio_consecration_preloaded"
 
 /* ============================= */
+/* UTIL */
+/* ============================= */
+
+function calculateStartDate(consecrationDate:string){
+
+ const [year,month,day] = consecrationDate.split("-").map(Number)
+
+ const d = new Date(year, month - 1, day)
+
+ d.setDate(d.getDate() - 33)
+
+ return d.toISOString().slice(0,10)
+
+}
+
+/* ============================= */
 /* PRELOAD ALL DAYS */
 /* ============================= */
 
@@ -22,17 +38,11 @@ export async function preloadConsecration(){
 
   const days = res.data
 
-  /* salva todos os dias */
-
   saveLocal(ALL_DAYS_KEY,days)
-
-  /* salvar dias individuais */
 
   days.forEach((day:any)=>{
    saveLocal(`${DAYS_KEY}_${day.dayNumber}`,day)
   })
-
-  /* agrupar dias por estágio */
 
   const stages:any = {}
 
@@ -48,19 +58,15 @@ export async function preloadConsecration(){
 
   })
 
-  /* salvar stages */
-
   Object.keys(stages).forEach(stageId=>{
    saveLocal(`stage_${stageId}`,stages[stageId])
   })
-
-  /* marcar preload */
 
   saveLocal(PRELOADED_KEY,true)
 
   console.log("Consagração pré-carregada")
 
- }catch(err){
+ }catch{
 
   console.log("Erro no preload da consagração")
 
@@ -98,24 +104,19 @@ export async function getProgress(){
 /* START */
 /* ============================= */
 
-export async function startConsecration(startDate:string){
-
- const progress = {
-  started:true,
-  startDate,
-  completedDays:0,
-  currentDay:1
- }
-
- saveLocal(PROGRESS_KEY,progress)
+export async function startConsecration(consecrationDate:string){
 
  try{
 
-  await api.post("/oratio/consecration/start",{startDate})
+  await api.post("/oratio/consecration/start",{
+   consecrationDate
+  })
 
- }catch{}
+ }catch(err){
 
- return progress
+  console.log("Erro ao iniciar consagração",err)
+
+ }
 
 }
 
@@ -205,7 +206,7 @@ export async function completeDay(day:number){
 }
 
 /* ============================= */
-/* UNCOMPLETE */
+/* UNCOMPLETE DAY */
 /* ============================= */
 
 export async function uncompleteDay(day:number){
@@ -233,7 +234,9 @@ export async function uncompleteDay(day:number){
 /* UPDATE START DATE */
 /* ============================= */
 
-export async function updateStartDate(startDate:string){
+export async function updateStartDate(consecrationDate:string){
+
+ const startDate = calculateStartDate(consecrationDate)
 
  const progress = getLocal(PROGRESS_KEY)
 
@@ -247,7 +250,7 @@ export async function updateStartDate(startDate:string){
 
  try{
 
-  await api.put("/oratio/consecration/start-date",{startDate})
+  await api.put("/oratio/consecration/start-date",{ startDate })
 
  }catch{}
 
