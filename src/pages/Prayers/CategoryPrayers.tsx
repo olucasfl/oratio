@@ -7,6 +7,20 @@ import { getPrayersByCategory } from "../../services/prayersService"
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
+/* =========================
+NORMALIZAR TEXTO
+remove acentos e lowercase
+========================= */
+
+function normalizeText(text:string){
+
+ return text
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g,"")
+  .toLowerCase()
+
+}
+
 export default function CategoryPrayers(){
 
  const { slug } = useParams()
@@ -30,7 +44,7 @@ export default function CategoryPrayers(){
 
    const data = await getPrayersByCategory(slug)
 
-   setPrayers(data)
+   setPrayers(data || [])
 
   }catch{
 
@@ -45,33 +59,20 @@ export default function CategoryPrayers(){
  }
 
  /* =========================
- NORMALIZAR TEXTO
- remove acentos e lowercase
- ========================= */
-
- function normalizeText(text:string){
-
-  return text
-   .normalize("NFD")
-   .replace(/[\u0300-\u036f]/g,"")
-   .toLowerCase()
-
- }
-
- /* =========================
  FILTRO DE BUSCA
  ========================= */
 
- const filteredPrayers = prayers.filter((p:any)=>{
+ const searchText = normalizeText(search.trim())
 
-  if(!search) return true
+ const filteredPrayers = !searchText
+  ? prayers
+  : prayers.filter((p:any)=>{
 
-  const prayerTitle = normalizeText(p.title)
-  const searchText = normalizeText(search)
+     const prayerTitle = normalizeText(p?.title || "")
 
-  return prayerTitle.includes(searchText)
+     return prayerTitle.includes(searchText)
 
- })
+    })
 
  if(loading){
 
@@ -109,7 +110,6 @@ export default function CategoryPrayers(){
 
     <h1>Orações</h1>
 
-
     {/* =========================
     BUSCA
     ========================= */}
@@ -125,7 +125,6 @@ export default function CategoryPrayers(){
      />
 
     </div>
-
 
     {/* =========================
     LISTA

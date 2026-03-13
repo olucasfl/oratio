@@ -12,7 +12,7 @@ import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
 export default function Prayers(){
 
- const { id } = useParams()
+ const { id } = useParams<{ id:string }>()
 
  const navigate = useNavigate()
 
@@ -20,16 +20,18 @@ export default function Prayers(){
  const [loading,setLoading] = useState(true)
 
  useEffect(()=>{
-  load()
- },[id])
-
- async function load(){
 
   if(!id) return
 
+  loadPrayer(id)
+
+ },[id])
+
+ async function loadPrayer(prayerId:string){
+
   try{
 
-   const data = await getPrayer(id)
+   const data = await getPrayer(prayerId)
 
    setPrayer(data)
 
@@ -114,7 +116,7 @@ export default function Prayers(){
     <div className={styles.prayer}>
 
      <pre className={styles.text}>
-      {prayer.content}
+      {prayer.content || ""}
      </pre>
 
     </div>
@@ -137,5 +139,4 @@ export default function Prayers(){
   </div>
 
  )
-
 }

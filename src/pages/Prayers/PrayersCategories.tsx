@@ -1,34 +1,39 @@
-import { useEffect,useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useEffect,useState,useMemo } from "react"
+import { useParams,useNavigate } from "react-router-dom"
 
-import styles from "./PrayersCategories.module.css"
+import styles from "./CategoryPrayers.module.css"
 
-import { getPrayerCategories } from "../../services/prayersService"
+import { getPrayersByCategory } from "../../services/prayersService"
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
-export default function PrayersCategories(){
+export default function CategoryPrayers(){
 
+ const { slug } = useParams()
  const navigate = useNavigate()
 
- const [categories,setCategories] = useState<any[]>([])
+ const [prayers,setPrayers] = useState<any[]>([])
  const [loading,setLoading] = useState(true)
+
+ const [search,setSearch] = useState("")
 
  useEffect(()=>{
   load()
- },[])
+ },[slug])
 
  async function load(){
 
+  if(!slug) return
+
   try{
 
-   const data = await getPrayerCategories()
+   const data = await getPrayersByCategory(slug)
 
-   setCategories(data)
+   setPrayers(data)
 
   }catch{
 
-   console.log("Erro ao carregar categorias")
+   console.log("Erro ao carregar orações")
 
   }finally{
 
@@ -38,13 +43,46 @@ export default function PrayersCategories(){
 
  }
 
+ /* =========================
+ NORMALIZAR TEXTO
+ ========================= */
+
+ function normalizeText(text:string){
+
+  return text
+   .normalize("NFD")
+   .replace(/[\u0300-\u036f]/g,"")
+   .toLowerCase()
+
+ }
+
+ /* =========================
+ FILTRO DE BUSCA OTIMIZADO
+ ========================= */
+
+ const filteredPrayers = useMemo(()=>{
+
+  const searchText = normalizeText(search.trim())
+
+  if(!searchText) return prayers
+
+  return prayers.filter((p:any)=>{
+
+   const prayerTitle = normalizeText(p.title)
+
+   return prayerTitle.includes(searchText)
+
+  })
+
+ },[search,prayers])
+
  if(loading){
 
   return(
 
    <div className={styles.loading}>
 
-    <p>Carregando categorias...</p>
+    <p>Carregando orações...</p>
 
     <button
      className={styles.back}
@@ -72,43 +110,51 @@ export default function PrayersCategories(){
      ← Voltar
     </button>
 
-    <h1>Categorias</h1>
+    <h1>Orações</h1>
 
-    <div className={styles.categories}>
+    {/* BUSCA */}
 
-     {categories.length === 0 && (
+    <div className={styles.searchBox}>
+
+     <input
+      type="text"
+      placeholder="Pesquisar oração..."
+      value={search}
+      onChange={(e)=>setSearch(e.target.value)}
+      className={styles.searchInput}
+     />
+
+    </div>
+
+    {/* LISTA */}
+
+    <div className={styles.list}>
+
+     {filteredPrayers.length === 0 && (
 
       <p className={styles.empty}>
-       Nenhuma categoria disponível.
+
+       {search
+        ? "Nenhuma oração encontrada para essa busca."
+        : "Esta categoria ainda não possui orações."}
+
       </p>
 
      )}
 
-     {categories.map(cat=>(
+     {filteredPrayers.map(p=>(
 
-        <div
-        key={cat.id}
-        className={styles.card}
-        onClick={()=>{
+      <div
+       key={p.id}
+       className={styles.card}
+       onClick={()=>navigate(`/oratio/prayer/${p.id}`)}
+      >
 
-        if(cat.slug === "tercos"){
+       {p.title}
 
-            navigate("/oratio/rosary")
+      </div>
 
-        }else{
-
-            navigate(`/oratio/prayers/${cat.slug}`)
-
-        }
-
-        }}
-        >
-
-        {cat.name}
-
-        </div>
-
-        ))}
+     ))}
 
     </div>
 
@@ -121,5 +167,4 @@ export default function PrayersCategories(){
   </div>
 
  )
-
 }

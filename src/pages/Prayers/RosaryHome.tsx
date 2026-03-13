@@ -1,20 +1,38 @@
 import styles from "./RosaryHome.module.css"
 import { useNavigate } from "react-router-dom"
-
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
+
+/* =========================
+TIPAGEM
+========================= */
+
+type Rosary = {
+ name: string
+ slug: string
+}
+
+/* =========================
+DADOS
+========================= */
+
+const ROSARIES: Rosary[] = [
+
+ { name:"Mistérios Gozosos", slug:"gozosos" },
+ { name:"Mistérios Dolorosos", slug:"dolorosos" },
+ { name:"Mistérios Gloriosos", slug:"gloriosos" },
+ { name:"Mistérios Luminosos", slug:"luminosos" }
+
+]
 
 export default function RosaryHome(){
 
  const navigate = useNavigate()
 
- const rosaries = [
+ function goToRosary(slug:string){
 
-  { name:"Mistérios Gozosos", slug:"gozosos" },
-  { name:"Mistérios Dolorosos", slug:"dolorosos" },
-  { name:"Mistérios Gloriosos", slug:"gloriosos" },
-  { name:"Mistérios Luminosos", slug:"luminosos" }
+  navigate(`/oratio/rosary/${slug}`)
 
- ]
+ }
 
  return(
 
@@ -37,11 +55,11 @@ export default function RosaryHome(){
 
     <div className={styles.list}>
 
-     {rosaries.map(r=>(
+     {ROSARIES.map((r)=>(
       <div
        key={r.slug}
        className={styles.card}
-       onClick={()=>navigate(`/oratio/rosary/${r.slug}`)}
+       onClick={()=>goToRosary(r.slug)}
       >
        {r.name}
       </div>
@@ -58,5 +76,4 @@ export default function RosaryHome(){
   </div>
 
  )
-
 }

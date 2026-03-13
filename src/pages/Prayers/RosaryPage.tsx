@@ -3,12 +3,18 @@ import { useParams,useNavigate } from "react-router-dom"
 
 import styles from "./RosaryPage.module.css"
 
-import { getRosary, finishRosary, startRosary, getRosarySession } from "../../services/rosaryService"
+import {
+ getRosary,
+ finishRosary,
+ startRosary,
+ getRosarySession
+} from "../../services/rosaryService"
+
 import { rosaryPrayers } from "../../utils/rosaryPrayers"
 
 export default function RosaryPage(){
 
- const { type } = useParams()
+ const { type } = useParams<{type:string}>()
  const navigate = useNavigate()
 
  const [steps,setSteps] = useState<any[]>([])
@@ -21,64 +27,70 @@ export default function RosaryPage(){
  const touchStart = useRef<number | null>(null)
 
  useEffect(()=>{
-  load()
+
+  if(!type) return
+
+  loadRosary(type)
+
  },[type])
 
-    async function load(){
+ async function loadRosary(rosaryType:string){
 
-    if(!type) return
+  try{
 
-    try{
+   let session = null
 
-    let session = null
-
-    try{
+   try{
     session = await getRosarySession()
-    }catch{
+   }catch{
     session = null
-    }
+   }
 
-    if(!session){
+   if(!session){
     await startRosary()
-    }
+   }
 
-    const data = await getRosary(type)
+   const data = await getRosary(rosaryType)
 
-    setSteps(data)
+   setSteps(data)
 
-    }catch(err){
+  }catch(err){
 
-    console.log("Erro ao carregar terço", err)
+   console.log("Erro ao carregar terço",err)
 
-    }finally{
+  }finally{
 
-    setLoading(false)
-
-    }
-
-    }
-
- function next(){
-
-  if(current < steps.length-1){
-
-   setDirection("next")
-
-   setCurrent(current+1)
+   setLoading(false)
 
   }
 
  }
 
+ function next(){
+
+  setCurrent((prev)=>{
+
+   if(prev >= steps.length-1) return prev
+
+   setDirection("next")
+
+   return prev + 1
+
+  })
+
+ }
+
  function prev(){
 
-  if(current > 0){
+  setCurrent((prev)=>{
+
+   if(prev <= 0) return prev
 
    setDirection("prev")
 
-   setCurrent(current-1)
+   return prev - 1
 
-  }
+  })
 
  }
 
@@ -98,19 +110,9 @@ export default function RosaryPage(){
 
   const diff = e.changedTouches[0].clientX - touchStart.current
 
-  if(diff < -60){
+  if(diff < -60) next()
 
-   setDirection("next")
-   next()
-
-  }
-
-  if(diff > 60){
-
-   setDirection("prev")
-   prev()
-
-  }
+  if(diff > 60) prev()
 
   touchStart.current = null
 
@@ -137,6 +139,18 @@ export default function RosaryPage(){
 
  }
 
+ if(!steps.length){
+
+  return(
+
+   <div className={styles.loading}>
+    Não foi possível carregar o terço.
+   </div>
+
+  )
+
+ }
+
  const step = steps[current]
 
  const isAveMaria = step.title?.includes("Ave Maria")
@@ -145,37 +159,34 @@ export default function RosaryPage(){
 
 
  /* =====================
-3 AVE MARIAS INICIAIS
-===================== */
+ 3 AVE MARIAS INICIAIS
+ ===================== */
 
-// encontrar o primeiro mistério
-const firstMysteryIndex = steps.findIndex(
- (s:any)=>s.type === "mystery"
-)
-
-const initialAveMariaIndexes = steps
- .map((s:any,i:number)=>({
-  step:s,
-  index:i
- }))
- .filter(item =>
-  item.step.title?.includes("Ave Maria") &&
-  item.index < firstMysteryIndex
+ const firstMysteryIndex = steps.findIndex(
+  (s:any)=>s.type === "mystery"
  )
- .slice(0,3)
 
-const initialPositions = initialAveMariaIndexes.map(i=>i.index)
+ const initialAveMariaIndexes = steps
+  .map((s:any,i:number)=>({step:s,index:i}))
+  .filter(item =>
+   item.step.title?.includes("Ave Maria") &&
+   item.index < firstMysteryIndex
+  )
+  .slice(0,3)
 
-const isInitialAveMaria = initialPositions.includes(current)
+ const initialPositions = initialAveMariaIndexes.map(i=>i.index)
 
-let initialIndex = 0
+ const isInitialAveMaria = initialPositions.includes(current)
 
-if(isInitialAveMaria){
+ let initialIndex = 0
 
- initialIndex =
-  initialPositions.indexOf(current) + 1
+ if(isInitialAveMaria){
 
-}
+  initialIndex =
+   initialPositions.indexOf(current) + 1
+
+ }
+
 
  /* =====================
  DETECTAR DEZENA
@@ -214,6 +225,7 @@ if(isInitialAveMaria){
 
  }
 
+
  async function handleFinish(){
 
   try{
@@ -244,8 +256,6 @@ if(isInitialAveMaria){
    onTouchEnd={handleTouchEnd}
   >
 
-   {/* AVISO TERÇO CONCLUÍDO */}
-
    {finished && (
 
     <div className={styles.finishedOverlay}>
@@ -271,10 +281,6 @@ if(isInitialAveMaria){
      ← Sair do Terço
     </button>
 
-
-    {/* =====================
-    3 AVE MARIAS INICIAIS
-    ===================== */}
 
     {isInitialAveMaria && (
 
@@ -302,10 +308,6 @@ if(isInitialAveMaria){
     )}
 
 
-    {/* =====================
-    BOLINHAS DA DEZENA
-    ===================== */}
-
     {isInsideDecade && (
 
      <div className={styles.rosary}>
@@ -331,8 +333,6 @@ if(isInitialAveMaria){
 
     )}
 
-
-    {/* CONTEÚDO */}
 
     <div
      key={current}
@@ -364,7 +364,9 @@ if(isInitialAveMaria){
        </h2>
 
        <pre className={styles.text}>
-        {rosaryPrayers[step.title.replace(/\s\d+\/10/,"")]}
+        {rosaryPrayers[
+         step.title.replace(/\s\d+\/10/,"")
+        ]}
        </pre>
 
       </div>
@@ -373,8 +375,6 @@ if(isInitialAveMaria){
 
     </div>
 
-
-    {/* CONTROLES */}
 
     <div className={styles.controls}>
 
@@ -418,5 +418,4 @@ if(isInitialAveMaria){
   </div>
 
  )
-
 }
