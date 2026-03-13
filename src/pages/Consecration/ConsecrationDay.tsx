@@ -19,8 +19,31 @@ export default function ConsecrationDay(){
  const [progress,setProgress] = useState<any>(null)
  const [loading,setLoading] = useState(true)
 
+ const [isOffline,setIsOffline] = useState(!navigator.onLine)
+
  useEffect(()=>{
+
+  function handleOnline(){
+   setIsOffline(false)
+   load()
+  }
+
+  function handleOffline(){
+   setIsOffline(true)
+  }
+
+  window.addEventListener("online",handleOnline)
+  window.addEventListener("offline",handleOffline)
+
   load()
+
+  return ()=>{
+
+   window.removeEventListener("online",handleOnline)
+   window.removeEventListener("offline",handleOffline)
+
+  }
+
  },[day])
 
  async function load(){
@@ -31,13 +54,51 @@ export default function ConsecrationDay(){
 
    setLoading(true)
 
+   /* ============================= */
+   /* CACHE LOCAL */
+   /* ============================= */
+
+   const cachedDay =
+    localStorage.getItem(`oratio-day-${day}`)
+
+   const cachedProgress =
+    localStorage.getItem("oratio-consecration-progress")
+
+   if(cachedDay){
+    setData(JSON.parse(cachedDay))
+   }
+
+   if(cachedProgress){
+    setProgress(JSON.parse(cachedProgress))
+   }
+
+   /* ============================= */
+   /* API SE ONLINE */
+   /* ============================= */
+
+   if(!navigator.onLine){
+    return
+   }
+
    const [dayData,progressData] = await Promise.all([
+
     getDay(Number(day)),
     getProgress()
+
    ])
 
    setData(dayData)
    setProgress(progressData)
+
+   localStorage.setItem(
+    `oratio-day-${day}`,
+    JSON.stringify(dayData)
+   )
+
+   localStorage.setItem(
+    "oratio-consecration-progress",
+    JSON.stringify(progressData)
+   )
 
   }catch{
 
@@ -48,6 +109,14 @@ export default function ConsecrationDay(){
    setLoading(false)
 
   }
+
+ }
+
+ function offlineWarning(){
+
+  alert(
+   "Você está offline. Para registrar a conclusão do dia é necessário conexão com a internet."
+  )
 
  }
 
@@ -83,7 +152,11 @@ export default function ConsecrationDay(){
 
    <div className={styles.loading}>
 
-    <p>Não foi possível carregar este dia.</p>
+    <p>
+     {isOffline
+      ? "Você está offline e este dia ainda não foi carregado."
+      : "Não foi possível carregar este dia."}
+    </p>
 
     <button
      className={styles.back}
@@ -108,6 +181,11 @@ export default function ConsecrationDay(){
 
  async function handleComplete(){
 
+  if(isOffline){
+   offlineWarning()
+   return
+  }
+
   await completeDay(data.dayNumber)
 
   load()
@@ -115,6 +193,11 @@ export default function ConsecrationDay(){
  }
 
  async function handleUndo(){
+
+  if(isOffline){
+   offlineWarning()
+   return
+  }
 
   await uncompleteDay(data.dayNumber)
 
@@ -132,6 +215,20 @@ export default function ConsecrationDay(){
    >
     ← Voltar
    </button>
+
+   {isOffline && (
+
+    <div style={{
+     background:"#fff3cd",
+     padding:"10px",
+     borderRadius:"8px",
+     marginBottom:"16px",
+     fontSize:"14px"
+    }}>
+     Você está offline. As orações estão disponíveis, mas registrar progresso requer conexão.
+    </div>
+
+   )}
 
    <div className={styles.header}>
 
@@ -179,9 +276,9 @@ export default function ConsecrationDay(){
    {!completed && (
 
     <button
-     disabled={!canComplete}
+     disabled={!canComplete || isOffline}
      className={
-      canComplete
+      canComplete && !isOffline
       ? styles.completeButton
       : styles.completeDisabled
      }
@@ -198,6 +295,7 @@ export default function ConsecrationDay(){
 
     <button
      className={styles.undoButton}
+     disabled={isOffline}
      onClick={handleUndo}
     >
 

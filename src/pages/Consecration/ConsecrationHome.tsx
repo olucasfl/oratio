@@ -9,6 +9,7 @@ import {
  resetConsecration,
  preloadConsecration
 } from "../../services/consecrationService"
+
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
 export default function ConsecrationHome(){
@@ -20,12 +21,33 @@ export default function ConsecrationHome(){
  const [loading,setLoading] = useState(true)
  const [actionLoading,setActionLoading] = useState(false)
 
+ const [isOffline,setIsOffline] = useState(!navigator.onLine)
+
  useEffect(()=>{
+
+  function handleOnline(){
+   setIsOffline(false)
+   load()
+  }
+
+  function handleOffline(){
+   setIsOffline(true)
+  }
+
+  window.addEventListener("online",handleOnline)
+  window.addEventListener("offline",handleOffline)
 
   load()
 
   /* baixar consagração completa */
   preloadConsecration()
+
+  return ()=>{
+
+   window.removeEventListener("online",handleOnline)
+   window.removeEventListener("offline",handleOffline)
+
+  }
 
  },[])
 
@@ -35,9 +57,41 @@ export default function ConsecrationHome(){
 
    setLoading(true)
 
+   /* ============================= */
+   /* CACHE LOCAL */
+   /* ============================= */
+
+   const cached =
+    localStorage.getItem("oratio-consecration-progress")
+
+   if(cached){
+
+    const parsed = JSON.parse(cached)
+
+    setProgress(parsed)
+
+    if(parsed?.startDate){
+     setStartDate(parsed.startDate.slice(0,10))
+    }
+
+   }
+
+   /* ============================= */
+   /* API SE ONLINE */
+   /* ============================= */
+
+   if(!navigator.onLine){
+    return
+   }
+
    const data = await getProgress()
 
    setProgress(data)
+
+   localStorage.setItem(
+    "oratio-consecration-progress",
+    JSON.stringify(data)
+   )
 
    if(data?.startDate){
     setStartDate(data.startDate.slice(0,10))
@@ -55,7 +109,20 @@ export default function ConsecrationHome(){
 
  }
 
+ function offlineWarning(){
+
+  alert(
+   "Você está offline. Para alterar a consagração é necessário conexão com a internet."
+  )
+
+ }
+
  async function handleStart(){
+
+  if(isOffline){
+   offlineWarning()
+   return
+  }
 
   if(!startDate) return
 
@@ -77,6 +144,11 @@ export default function ConsecrationHome(){
 
  async function handleUpdate(){
 
+  if(isOffline){
+   offlineWarning()
+   return
+  }
+
   if(!startDate) return
 
   setActionLoading(true)
@@ -97,6 +169,11 @@ export default function ConsecrationHome(){
 
  async function handleReset(){
 
+  if(isOffline){
+   offlineWarning()
+   return
+  }
+
   const confirmReset = window.confirm(
    "Deseja cancelar sua consagração? Todo o progresso realizado será apagado."
   )
@@ -114,12 +191,12 @@ export default function ConsecrationHome(){
   ? (progress.completedDays / 33) * 100
   : 0
 
-
  /* ============================= */
  /* LOADING SCREEN */
  /* ============================= */
 
  if(loading){
+
   return(
 
    <div className={styles.loading}>
@@ -136,6 +213,7 @@ export default function ConsecrationHome(){
    </div>
 
   )
+
  }
 
  return(
@@ -153,7 +231,21 @@ export default function ConsecrationHome(){
     Consagração
    </h1>
 
-   {!progress.started && (
+   {isOffline && (
+
+    <div style={{
+     background:"#fff3cd",
+     padding:"10px",
+     borderRadius:"8px",
+     marginBottom:"16px",
+     fontSize:"14px"
+    }}>
+     Você está offline. Algumas ações estão desativadas.
+    </div>
+
+   )}
+
+   {!progress?.started && (
 
     <div className={styles.startBox}>
 
@@ -168,7 +260,7 @@ export default function ConsecrationHome(){
      <button
       className={styles.primary}
       onClick={handleStart}
-      disabled={actionLoading}
+      disabled={actionLoading || isOffline}
      >
       {actionLoading ? "Iniciando..." : "Iniciar Consagração"}
      </button>
@@ -177,7 +269,7 @@ export default function ConsecrationHome(){
 
    )}
 
-   {progress.started && (
+   {progress?.started && (
 
     <div className={styles.controlBox}>
 
@@ -192,7 +284,7 @@ export default function ConsecrationHome(){
      <button
       className={styles.primary}
       onClick={handleUpdate}
-      disabled={actionLoading}
+      disabled={actionLoading || isOffline}
      >
       {actionLoading ? "Atualizando..." : "Atualizar Data"}
      </button>
@@ -200,6 +292,7 @@ export default function ConsecrationHome(){
      <button
       className={styles.danger}
       onClick={handleReset}
+      disabled={isOffline}
      >
       Cancelar Consagração
      </button>
@@ -208,7 +301,7 @@ export default function ConsecrationHome(){
 
    )}
 
-   {progress.started && (
+   {progress?.started && (
 
     <div className={styles.progressBox}>
 
@@ -281,12 +374,12 @@ export default function ConsecrationHome(){
     })}
 
    </div>
-   
+
    <div className={styles.pageSpacer}></div>
-   <BottomNavbar/> 
-   
+
+   <BottomNavbar/>
+
   </div>
 
  )
-
 }

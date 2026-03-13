@@ -1,12 +1,31 @@
-const CACHE_NAME = "oratio-cache-v7"
+const CACHE_NAME = "oratio-cache-v8"
+
+/* ============================= */
+/* APP SHELL */
+/* ============================= */
+
+const APP_SHELL = [
+ "/",
+ "/index.html"
+]
 
 /* ============================= */
 /* INSTALL */
 /* ============================= */
 
-self.addEventListener("install", () => {
+self.addEventListener("install",(event)=>{
 
  console.log("Service Worker instalado")
+
+ event.waitUntil(
+
+  caches.open(CACHE_NAME).then((cache)=>{
+
+   return cache.addAll(APP_SHELL)
+
+  })
+
+ )
 
  self.skipWaiting()
 
@@ -16,21 +35,21 @@ self.addEventListener("install", () => {
 /* ACTIVATE */
 /* ============================= */
 
-self.addEventListener("activate", (event) => {
+self.addEventListener("activate",(event)=>{
 
  console.log("Service Worker ativo")
 
  event.waitUntil(
 
-  caches.keys().then((cacheNames) => {
+  caches.keys().then((cacheNames)=>{
 
    return Promise.all(
 
-    cacheNames.map((cache) => {
+    cacheNames.map((cache)=>{
 
-     if (cache !== CACHE_NAME) {
+     if(cache !== CACHE_NAME){
 
-      console.log("Removendo cache antigo:", cache)
+      console.log("Removendo cache antigo:",cache)
 
       return caches.delete(cache)
 
@@ -49,12 +68,12 @@ self.addEventListener("activate", (event) => {
 })
 
 /* ============================= */
-/* ATUALIZAR APP */
+/* UPDATE */
 /* ============================= */
 
-self.addEventListener("message", (event) => {
+self.addEventListener("message",(event)=>{
 
- if (event.data && event.data.type === "SKIP_WAITING") {
+ if(event.data && event.data.type === "SKIP_WAITING"){
 
   console.log("Atualizando Service Worker")
 
@@ -68,17 +87,17 @@ self.addEventListener("message", (event) => {
 /* FETCH */
 /* ============================= */
 
-self.addEventListener("fetch", (event) => {
+self.addEventListener("fetch",(event)=>{
 
  const request = event.request
 
- if (request.method !== "GET") return
+ if(request.method !== "GET") return
 
  const url = new URL(request.url)
 
  /* ignorar protocolos estranhos */
 
- if (url.protocol !== "http:" && url.protocol !== "https:") {
+ if(url.protocol !== "http:" && url.protocol !== "https:"){
   return
  }
 
@@ -86,17 +105,36 @@ self.addEventListener("fetch", (event) => {
  /* NÃO CACHEAR API */
  /* ============================= */
 
- if (
+ if(
   url.pathname.startsWith("/auth") ||
-  url.pathname.startsWith("/oratio") ||
   url.origin.includes("render.com") ||
   url.origin.includes("vercel.app")
- ) {
+ ){
   return
  }
 
  /* ============================= */
- /* CACHE APENAS ASSETS */
+ /* NAVEGAÇÃO (ROTAS REACT) */
+ /* ============================= */
+
+ if(request.mode === "navigate"){
+
+  event.respondWith(
+
+   fetch(request).catch(()=>{
+
+    return caches.match("/index.html")
+
+   })
+
+  )
+
+  return
+
+ }
+
+ /* ============================= */
+ /* CACHE ASSETS */
  /* ============================= */
 
  const isAsset =
@@ -105,7 +143,7 @@ self.addEventListener("fetch", (event) => {
   request.destination === "image" ||
   request.destination === "font"
 
- if (!isAsset) return
+ if(!isAsset) return
 
  /* ============================= */
  /* STALE WHILE REVALIDATE */
@@ -113,21 +151,21 @@ self.addEventListener("fetch", (event) => {
 
  event.respondWith(
 
-  caches.open(CACHE_NAME).then(async (cache) => {
+  caches.open(CACHE_NAME).then(async(cache)=>{
 
-   const cachedResponse = await cache.match(request)
+   const cached = await cache.match(request)
 
-   const networkFetch = fetch(request)
-    .then((networkResponse) => {
+   const network = fetch(request)
+    .then((response)=>{
 
-     cache.put(request, networkResponse.clone())
+     cache.put(request,response.clone())
 
-     return networkResponse
+     return response
 
     })
-    .catch(() => cachedResponse)
+    .catch(()=>cached)
 
-   return cachedResponse || networkFetch
+   return cached || network
 
   })
 

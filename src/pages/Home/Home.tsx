@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 import { LogOut, User } from "lucide-react"
 import { isPWA } from "../../utils/isPwa"
+import { preload } from "react-dom"
+import { preloadConsecration } from "../../services/consecrationService"
 
 export default function Home(){
 
@@ -17,6 +19,7 @@ export default function Home(){
  useEffect(()=>{
   loadSavedLiturgy()
   loadLiturgy()
+  preloadConsecration()
  },[])
 
  function loadSavedLiturgy(){

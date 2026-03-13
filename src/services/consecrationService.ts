@@ -4,6 +4,7 @@ import { saveLocal, getLocal } from "../utils/localCache"
 const PROGRESS_KEY = "oratio_consecration_progress"
 const DAYS_KEY = "oratio_consecration_days"
 const ALL_DAYS_KEY = "oratio_consecration_all_days"
+const PRELOADED_KEY = "oratio_consecration_preloaded"
 
 /* ============================= */
 /* PRELOAD ALL DAYS */
@@ -11,9 +12,9 @@ const ALL_DAYS_KEY = "oratio_consecration_all_days"
 
 export async function preloadConsecration(){
 
- const cached = getLocal(ALL_DAYS_KEY)
+ const alreadyPreloaded = getLocal(PRELOADED_KEY)
 
- if(cached) return cached
+ if(alreadyPreloaded) return
 
  try{
 
@@ -25,7 +26,7 @@ export async function preloadConsecration(){
 
   saveLocal(ALL_DAYS_KEY,days)
 
-  /* salva cada dia individual */
+  /* salvar dias individuais */
 
   days.forEach((day:any)=>{
    saveLocal(`${DAYS_KEY}_${day.dayNumber}`,day)
@@ -47,21 +48,21 @@ export async function preloadConsecration(){
 
   })
 
-  /* salvar stages no localStorage */
+  /* salvar stages */
 
   Object.keys(stages).forEach(stageId=>{
    saveLocal(`stage_${stageId}`,stages[stageId])
   })
 
-  return days
+  /* marcar preload */
 
- }catch{
+  saveLocal(PRELOADED_KEY,true)
 
-  const cached = getLocal(ALL_DAYS_KEY)
+  console.log("Consagração pré-carregada")
 
-  if(cached) return cached
+ }catch(err){
 
-  throw new Error("Sem conexão")
+  console.log("Erro no preload da consagração")
 
  }
 
@@ -153,6 +154,10 @@ export async function getDay(day:number){
 /* ============================= */
 
 export async function getStageDays(stageId:string){
+
+ const cached = getLocal(`stage_${stageId}`)
+
+ if(cached) return cached
 
  try{
 

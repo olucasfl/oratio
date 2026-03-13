@@ -16,8 +16,31 @@ export default function Profile(){
  const [profile,setProfile] = useState<any>(null)
  const [loading,setLoading] = useState(true)
 
+ const [isOffline,setIsOffline] = useState(!navigator.onLine)
+
  useEffect(()=>{
+
+  function handleOnline(){
+   setIsOffline(false)
+   loadProfile()
+  }
+
+  function handleOffline(){
+   setIsOffline(true)
+  }
+
+  window.addEventListener("online",handleOnline)
+  window.addEventListener("offline",handleOffline)
+
   loadProfile()
+
+  return ()=>{
+
+   window.removeEventListener("online",handleOnline)
+   window.removeEventListener("offline",handleOffline)
+
+  }
+
  },[])
 
  async function loadProfile(){
@@ -31,9 +54,32 @@ export default function Profile(){
     return
    }
 
+   /* ============================= */
+   /* CACHE LOCAL */
+   /* ============================= */
+
+   const cached = localStorage.getItem("oratio-profile")
+
+   if(cached){
+    setProfile(JSON.parse(cached))
+   }
+
+   /* ============================= */
+   /* API SE ONLINE */
+   /* ============================= */
+
+   if(!navigator.onLine){
+    return
+   }
+
    const data = await getProfile()
 
    setProfile(data)
+
+   localStorage.setItem(
+    "oratio-profile",
+    JSON.stringify(data)
+   )
 
   }catch(err:any){
 
@@ -53,6 +99,7 @@ export default function Profile(){
 
   localStorage.removeItem("access_token")
   localStorage.removeItem("refresh_token")
+  localStorage.removeItem("oratio-profile")
 
   navigate("/login")
 
@@ -102,8 +149,6 @@ export default function Profile(){
 
  const progress = Math.min((days / 33) * 100,100)
 
- /* formatar data + hora */
-
  const lastPrayerFormatted = lastPrayer
   ? new Date(lastPrayer).toLocaleString("pt-BR",{
       dateStyle:"short",
@@ -130,11 +175,21 @@ export default function Profile(){
 
    </header>
 
-
-   {/* CONTEÚDO */}
-
    <div className={styles.container}>
 
+    {isOffline && (
+
+     <div style={{
+      background:"#fff3cd",
+      padding:"10px",
+      borderRadius:"8px",
+      marginBottom:"16px",
+      fontSize:"14px"
+     }}>
+      Você está offline. Os dados exibidos podem estar desatualizados.
+     </div>
+
+    )}
 
     {/* CARD USUÁRIO */}
 
@@ -160,15 +215,11 @@ export default function Profile(){
 
     </div>
 
-
     {/* VIDA ESPIRITUAL */}
 
     <div className={styles.card}>
 
      <h3>Vida Espiritual</h3>
-
-
-     {/* CONSAGRAÇÃO */}
 
      <div className={styles.progressBox}>
 
@@ -201,11 +252,9 @@ export default function Profile(){
 
      </p>
 
-
      {/* STATS */}
 
      <div className={styles.statsBox}>
-
 
       <div className={styles.stat}>
 
@@ -219,7 +268,6 @@ export default function Profile(){
 
       </div>
 
-
       <div className={styles.stat}>
 
        <span className={styles.statLabel}>
@@ -231,7 +279,6 @@ export default function Profile(){
        </span>
 
       </div>
-
 
       {lastPrayerFormatted && (
 
@@ -253,7 +300,6 @@ export default function Profile(){
 
     </div>
 
-
     {/* CONTA */}
 
     <div className={styles.card}>
@@ -266,7 +312,6 @@ export default function Profile(){
 
     </div>
 
-
     {/* LOGOUT */}
 
     <button
@@ -278,13 +323,9 @@ export default function Profile(){
 
    </div>
 
-
-   {/* NAVBAR */}
-
    <BottomNavbar/>
 
   </div>
 
  )
-
 }
