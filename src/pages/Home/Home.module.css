@@ -320,7 +320,7 @@ max-height:85dvh;
 overflow-y:auto;
 
 padding-top:60px;
-padding-bottom:80px;
+padding-bottom:40px;
 padding-left:26px;
 padding-right:26px;
 
@@ -387,7 +387,7 @@ font-family:Georgia,serif;
 
 color:#333;
 
-margin-bottom:40px;
+margin-bottom:5px;
 
 }
 
@@ -790,9 +790,9 @@ ESPACOS DO MODAL
 ========================= */
 
 .modalTopSpacer{
-height:40px;
+height:10px;
 }
 
 .modalBottomSpacer{
-height:70px;
+height:20px;
 }
