@@ -6,8 +6,7 @@
  display:flex;
  flex-direction:column;
 
- height:100dvh; /* melhor para mobile */
-
+ height:100dvh;
  width:100%;
 
  background:var(--oratio-background);
@@ -32,7 +31,6 @@
  position:relative;
 
  padding:18px 20px;
-
  padding-top:calc(18px + env(safe-area-inset-top));
 
  background:linear-gradient(
@@ -116,6 +114,8 @@
  width:100%;
 
  margin:0 auto;
+
+ min-width:0; /* evita overflow em flex */
 }
 
 
@@ -146,6 +146,9 @@
  box-shadow:var(--oratio-shadow-soft);
 
  animation:userMessageIn .35s ease;
+
+ overflow-wrap:anywhere;
+ word-break:break-word;
 
 }
 
@@ -178,11 +181,31 @@
 
  animation:aiMessageIn .35s ease;
 
+ overflow-wrap:anywhere;
+ word-break:break-word;
+
+ min-width:0;
 }
 
 
 /* =========================
    MARKDOWN
+========================= */
+
+.markdownContent{
+
+ hyphens:auto;
+
+ overflow-wrap:anywhere;
+ word-break:break-word;
+
+ width:100%;
+ max-width:100%;
+}
+
+
+/* =========================
+   TEXTO
 ========================= */
 
 .aiMessage p{
@@ -193,12 +216,30 @@
  color:var(--oratio-primary);
 }
 
-.aiMessage ul{
- margin-left:18px;
+
+/* =========================
+   LISTAS (corrige bug mobile)
+========================= */
+
+.markdownContent ul,
+.markdownContent ol{
+
+ padding-left:20px;
+ margin-left:0;
+
+ list-style-position:inside;
+
+ max-width:100%;
+
+ overflow-wrap:anywhere;
 }
 
-.aiMessage li{
+.markdownContent li{
+
  margin-bottom:6px;
+
+ overflow-wrap:anywhere;
+ word-break:break-word;
 }
 
 
@@ -229,7 +270,6 @@
  );
 
  backdrop-filter:blur(10px);
-
 }
 
 
@@ -243,7 +283,7 @@
  max-width:850px;
 
  display:flex;
- align-items:center;
+ align-items:flex-end;
 
  background:white;
 
@@ -290,6 +330,8 @@
  color:var(--oratio-text-dark);
 
  background:transparent;
+
+ overflow-y:auto;
 }
 
 .inputBox textarea::placeholder{
@@ -328,6 +370,8 @@
  justify-content:center;
 
  transition:var(--oratio-transition);
+
+ flex-shrink:0;
 }
 
 .inputBox button:hover{
@@ -518,24 +562,20 @@
 
 }
 
-.markdownContent{
- hyphens:auto;
- overflow-wrap:anywhere;
- word-break:break-word;
-}
 
-/* hierarquia de títulos */
+/* =========================
+   TITULOS MARKDOWN
+========================= */
 
 .markdownContent h1{
- font-size:30px;
+ font-size:26px;
  margin:14px 0 8px 0;
  color:var(--oratio-primary);
  font-weight:700;
-
 }
 
 .markdownContent h2{
- font-size:19px;
+ font-size:20px;
  margin:12px 0 6px 0;
  color:var(--oratio-secondary-dark);
  font-weight:600;
@@ -545,16 +585,4 @@
  font-size:17px;
  margin:8px 0 6px 0;
  color:var(--oratio-primary);
-}
-
-.markdownContent p{
- margin-bottom:10px;
-}
-
-.markdownContent ul{
- margin-left:20px;
-}
-
-.markdownContent li{
- margin-bottom:6px;
 }

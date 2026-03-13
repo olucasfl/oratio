@@ -9,9 +9,12 @@ import styles from "./Vox.module.css"
 import { askVox } from "../../services/voxService"
 
 interface Message{
+ id:string
  role:"user" | "assistant"
  content:string
 }
+
+const MAX_HISTORY = 6
 
 export default function Vox(){
 
@@ -22,10 +25,21 @@ export default function Vox(){
  const [loading,setLoading] = useState(false)
 
  const bottomRef = useRef<HTMLDivElement | null>(null)
+ const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+
+ /* =========================
+ SCROLL AUTOMÁTICO
+ ========================= */
 
  useEffect(()=>{
-  bottomRef.current?.scrollIntoView({behavior:"smooth"})
+  if(messages.length){
+   bottomRef.current?.scrollIntoView({behavior:"smooth"})
+  }
  },[messages,loading])
+
+ /* =========================
+ ENVIAR PERGUNTA
+ ========================= */
 
  async function sendMessage(){
 
@@ -33,39 +47,49 @@ export default function Vox(){
 
   if(!text || loading) return
 
+  if(text.length > 500){
+   alert("Pergunta muito longa.")
+   return
+  }
+
   const userMessage:Message={
+   id:crypto.randomUUID(),
    role:"user",
    content:text
   }
 
-  /*
-  ============================
-  LIMITAR HISTÓRICO (3 INTERAÇÕES)
-  ============================
-  */
+  /* limitar histórico */
 
-  const limitedHistory = messages.slice(-6)
+  const limitedHistory = messages.slice(-MAX_HISTORY)
+
   const updated = [...limitedHistory,userMessage]
 
-  /*
-  ============================
-  ATUALIZA UI
-  ============================
-  */
+  /* atualizar UI */
 
   setMessages(prev => [...prev,userMessage])
+
   setInput("")
+
+  if(textareaRef.current){
+   textareaRef.current.style.height = "auto"
+  }
+
   setLoading(true)
 
   try{
 
    const res = await askVox(text,updated)
 
-   const aiMessage:Message = {
+   const aiMessage:Message={
+
+    id:crypto.randomUUID(),
+
     role:"assistant",
+
     content: res?.success
      ? res.response
      : "O Vox não conseguiu responder agora."
+
    }
 
    setMessages(prev => [...prev,aiMessage])
@@ -75,6 +99,7 @@ export default function Vox(){
    setMessages(prev => [
     ...prev,
     {
+     id:crypto.randomUUID(),
      role:"assistant",
      content:"O Vox está temporariamente indisponível."
     }
@@ -86,12 +111,37 @@ export default function Vox(){
 
  }
 
+ /* =========================
+ ENTER PARA ENVIAR
+ ========================= */
+
  function handleKey(e:React.KeyboardEvent<HTMLTextAreaElement>){
 
   if(e.key==="Enter" && !e.shiftKey){
+
    e.preventDefault()
+
    sendMessage()
+
   }
+
+ }
+
+ /* =========================
+ AUTO RESIZE
+ ========================= */
+
+ function handleChange(e:React.ChangeEvent<HTMLTextAreaElement>){
+
+  setInput(e.target.value)
+
+  const el = textareaRef.current
+
+  if(!el) return
+
+  el.style.height="auto"
+
+  el.style.height = el.scrollHeight+"px"
 
  }
 
@@ -116,14 +166,14 @@ export default function Vox(){
 
    <main className={styles.chatArea}>
 
-    {messages.map((msg,index)=>{
+    {messages.map((msg)=>{
 
      const isUser = msg.role==="user"
 
      return(
 
       <div
-       key={index}
+       key={msg.id}
        className={`${styles.message} ${isUser ? styles.userMessage : styles.aiMessage}`}
       >
 
@@ -134,9 +184,13 @@ export default function Vox(){
        ):(
 
         <div className={styles.markdownContent}>
+
          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+
           {msg.content}
+
          </ReactMarkdown>
+
         </div>
 
        )}
@@ -150,11 +204,13 @@ export default function Vox(){
     {loading && (
 
      <div className={`${styles.message} ${styles.aiMessage}`}>
+
       <div className={styles.typing}>
        <span></span>
        <span></span>
        <span></span>
       </div>
+
      </div>
 
     )}
@@ -168,8 +224,9 @@ export default function Vox(){
     <div className={styles.inputBox}>
 
      <textarea
+      ref={textareaRef}
       value={input}
-      onChange={(e)=>setInput(e.target.value)}
+      onChange={handleChange}
       onKeyDown={handleKey}
       placeholder="Pergunte algo ao Vox..."
       rows={1}
