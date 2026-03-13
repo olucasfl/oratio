@@ -32,9 +32,7 @@ export default function Vox(){
  ========================= */
 
  useEffect(()=>{
-  if(messages.length){
-   bottomRef.current?.scrollIntoView({behavior:"smooth"})
-  }
+  bottomRef.current?.scrollIntoView({behavior:"smooth"})
  },[messages,loading])
 
  /* =========================
@@ -58,11 +56,14 @@ export default function Vox(){
    content:text
   }
 
-  /* limitar histórico */
+  /* limitar histórico e formatar */
 
-  const limitedHistory = messages.slice(-MAX_HISTORY)
-
-  const updated = [...limitedHistory,userMessage]
+  const limitedHistory = messages
+   .slice(-MAX_HISTORY)
+   .map(m => ({
+    role:m.role,
+    content:m.content
+   }))
 
   /* atualizar UI */
 
@@ -78,18 +79,14 @@ export default function Vox(){
 
   try{
 
-   const res = await askVox(text,updated)
+   const res = await askVox(text,limitedHistory)
 
    const aiMessage:Message={
-
     id:crypto.randomUUID(),
-
     role:"assistant",
-
     content: res?.success
      ? res.response
      : "O Vox não conseguiu responder agora."
-
    }
 
    setMessages(prev => [...prev,aiMessage])
@@ -118,11 +115,8 @@ export default function Vox(){
  function handleKey(e:React.KeyboardEvent<HTMLTextAreaElement>){
 
   if(e.key==="Enter" && !e.shiftKey){
-
    e.preventDefault()
-
    sendMessage()
-
   }
 
  }
@@ -139,8 +133,7 @@ export default function Vox(){
 
   if(!el) return
 
-  el.style.height="auto"
-
+  el.style.height = "auto"
   el.style.height = el.scrollHeight+"px"
 
  }
@@ -186,9 +179,7 @@ export default function Vox(){
         <div className={styles.markdownContent}>
 
          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-
           {msg.content}
-
          </ReactMarkdown>
 
         </div>
