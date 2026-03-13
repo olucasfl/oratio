@@ -6,17 +6,13 @@ export default function Splash(){
 
   <div className={styles.splash}>
 
-   <div className={styles.logoWrapper}>
-
-    <div className={styles.logoGlow}></div>
+   <div className={styles.logoContainer}>
 
     <img
      src="/icon-noBack-512.png"
      alt="Oratio Logo"
      className={styles.logo}
     />
-
-    <div className={styles.logoShine}></div>
 
    </div>
 
@@ -29,9 +25,11 @@ export default function Splash(){
    </p>
 
    <div className={styles.loader}>
-    <span></span>
-    <span></span>
-    <span></span>
+
+    <div></div>
+    <div></div>
+    <div></div>
+
    </div>
 
   </div>

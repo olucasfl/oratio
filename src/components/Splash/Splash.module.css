@@ -1,6 +1,10 @@
+/* =========================
+CONTAINER
+========================= */
+
 .splash{
 
-height:100dvh;
+height:100vh;
 width:100%;
 
 display:flex;
@@ -8,9 +12,7 @@ flex-direction:column;
 align-items:center;
 justify-content:center;
 
-background:
-radial-gradient(circle at center, #7b111340 0%, transparent 60%),
-linear-gradient(
+background:linear-gradient(
 180deg,
 var(--oratio-primary),
 var(--oratio-primary-dark)
@@ -19,151 +21,104 @@ var(--oratio-primary-dark)
 color:white;
 text-align:center;
 
-padding-top:env(safe-area-inset-top);
-padding-bottom:env(safe-area-inset-bottom);
+padding:20px;
 
-animation:fadeIn .9s ease;
+animation:fadeIn .6s ease;
 
 }
 
 
-/* ========================
-LOGO WRAPPER
-======================== */
+/* =========================
+LOGO CONTAINER
+========================= */
 
-.logoWrapper{
+.logoContainer{
 
-position:relative;
+width:130px;
+height:130px;
 
 display:flex;
 align-items:center;
 justify-content:center;
 
-margin-bottom:24px;
+margin-bottom:28px;
 
-animation:logoRise 1.2s ease;
+border-radius:50%;
+
+background:rgba(255,255,255,0.06);
+
+box-shadow:
+0 10px 35px rgba(0,0,0,.35),
+inset 0 0 25px rgba(255,255,255,.06);
+
+animation:logoAppear .8s ease;
 
 }
 
 
-/* ========================
+/* =========================
 LOGO
-======================== */
+========================= */
 
 .logo{
 
-width:130px;
+width:90px;
 height:auto;
 
 object-fit:contain;
 
-filter:drop-shadow(0 10px 30px rgba(0,0,0,.45));
+filter:drop-shadow(0 6px 18px rgba(0,0,0,.4));
 
-animation:logoFloat 4s ease-in-out infinite;
-
-z-index:2;
+animation:logoFloat 3.2s ease-in-out infinite;
 
 }
 
 
-/* ========================
-GLOW ATRÁS DA LOGO
-======================== */
-
-.logoGlow{
-
-position:absolute;
-
-width:200px;
-height:200px;
-
-border-radius:50%;
-
-background:radial-gradient(
-circle,
-rgba(255,220,140,.35),
-transparent 70%
-);
-
-filter:blur(30px);
-
-animation:glowPulse 4s infinite ease-in-out;
-
-z-index:0;
-
-}
-
-
-/* ========================
-BRILHO PASSANDO
-======================== */
-
-.logoShine{
-
-position:absolute;
-
-width:220px;
-height:220px;
-
-background:linear-gradient(
-120deg,
-transparent 35%,
-rgba(255,255,255,.35) 50%,
-transparent 65%
-);
-
-transform:rotate(25deg);
-
-animation:shineMove 4s infinite;
-
-pointer-events:none;
-
-}
-
-
-/* ========================
+/* =========================
 TITLE
-======================== */
+========================= */
 
 .title{
 
 font-family:var(--oratio-font-title);
 
-font-size:40px;
+font-size:38px;
 
 letter-spacing:3px;
 
 margin-bottom:8px;
 
-text-shadow:0 10px 30px rgba(0,0,0,.5);
+text-shadow:0 6px 20px rgba(0,0,0,.4);
+
+animation:titleFade .9s ease;
+
+}
+
+
+/* =========================
+SUBTITLE
+========================= */
+
+.subtitle{
+
+font-size:15px;
+
+opacity:.85;
+
+margin-bottom:36px;
+
+max-width:280px;
+
+line-height:1.5;
 
 animation:titleFade 1.1s ease;
 
 }
 
 
-/* ========================
-SUBTITLE
-======================== */
-
-.subtitle{
-
-font-size:16px;
-
-opacity:.9;
-
-letter-spacing:.4px;
-
-margin-bottom:32px;
-
-animation:titleFade 1.3s ease;
-
-}
-
-
-/* ========================
-LOADING DOTS
-======================== */
+/* =========================
+LOADER
+========================= */
 
 .loader{
 
@@ -172,52 +127,57 @@ gap:8px;
 
 }
 
-.loader span{
+.loader div{
 
 width:8px;
 height:8px;
 
-background:white;
-
 border-radius:50%;
 
-opacity:.7;
+background:white;
 
-animation:dotBounce 1.6s infinite ease-in-out;
+opacity:.6;
+
+animation:dotPulse 1.4s infinite ease-in-out;
 
 }
 
-.loader span:nth-child(2){
-animation-delay:.25s;
+.loader div:nth-child(2){
+animation-delay:.2s;
 }
 
-.loader span:nth-child(3){
-animation-delay:.5s;
+.loader div:nth-child(3){
+animation-delay:.4s;
 }
 
 
-/* ========================
+/* =========================
 ANIMAÇÕES
-======================== */
+========================= */
 
 @keyframes fadeIn{
 
-from{opacity:0}
-to{opacity:1}
-
-}
-
-
-@keyframes logoRise{
-
 from{
 opacity:0;
-transform:translateY(30px);
 }
 
 to{
 opacity:1;
-transform:translateY(0);
+}
+
+}
+
+
+@keyframes logoAppear{
+
+from{
+opacity:0;
+transform:scale(.85);
+}
+
+to{
+opacity:1;
+transform:scale(1);
 }
 
 }
@@ -227,7 +187,7 @@ transform:translateY(0);
 
 from{
 opacity:0;
-transform:translateY(15px);
+transform:translateY(10px);
 }
 
 to{
@@ -240,66 +200,65 @@ transform:translateY(0);
 
 @keyframes logoFloat{
 
-0%{transform:translateY(0)}
-50%{transform:translateY(-7px)}
-100%{transform:translateY(0)}
-
-}
-
-
-@keyframes glowPulse{
-
 0%{
-opacity:.6;
-transform:scale(1);
+transform:translateY(0);
 }
 
 50%{
-opacity:1;
-transform:scale(1.15);
+transform:translateY(-6px);
 }
 
 100%{
-opacity:.6;
-transform:scale(1);
+transform:translateY(0);
 }
 
 }
 
 
-@keyframes shineMove{
-
-0%{
-transform:translateX(-250px) rotate(25deg);
-opacity:0;
-}
-
-30%{
-opacity:.8;
-}
-
-60%{
-opacity:.8;
-}
-
-100%{
-transform:translateX(250px) rotate(25deg);
-opacity:0;
-}
-
-}
-
-
-@keyframes dotBounce{
+@keyframes dotPulse{
 
 0%,80%,100%{
-transform:scale(0);
+transform:scale(.6);
 opacity:.4;
 }
 
 40%{
 transform:scale(1);
 opacity:1;
+}
+
+}
+
+
+/* =========================
+RESPONSIVO
+========================= */
+
+@media (max-width:480px){
+
+.logoContainer{
+
+width:110px;
+height:110px;
+
+}
+
+.logo{
+
+width:80px;
+
+}
+
+.title{
+
+font-size:32px;
+
+}
+
+.subtitle{
+
+font-size:14px;
+
 }
 
 }
