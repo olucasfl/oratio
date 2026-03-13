@@ -1,4 +1,4 @@
-const CACHE_NAME = "oratio-cache-v10"
+const CACHE_NAME = "oratio-cache-v11"
 
 /* ============================= */
 /* APP SHELL */
@@ -13,18 +13,14 @@ const APP_SHELL = [
 /* INSTALL */
 /* ============================= */
 
-self.addEventListener("install",(event)=>{
+self.addEventListener("install", (event) => {
 
  console.log("Service Worker instalado")
 
  event.waitUntil(
-
-  caches.open(CACHE_NAME).then((cache)=>{
-
+  caches.open(CACHE_NAME).then((cache) => {
    return cache.addAll(APP_SHELL)
-
   })
-
  )
 
  self.skipWaiting()
@@ -35,28 +31,24 @@ self.addEventListener("install",(event)=>{
 /* ACTIVATE */
 /* ============================= */
 
-self.addEventListener("activate",(event)=>{
+self.addEventListener("activate", (event) => {
 
  console.log("Service Worker ativo")
 
  event.waitUntil(
-
-  caches.keys().then((cacheNames)=>{
+  caches.keys().then((cacheNames) => {
 
    return Promise.all(
+    cacheNames.map((cache) => {
 
-    cacheNames.map((cache)=>{
-
-     if(cache !== CACHE_NAME){
-       return caches.delete(cache)
+     if (cache !== CACHE_NAME) {
+      return caches.delete(cache)
      }
 
     })
-
    )
 
   })
-
  )
 
  self.clients.claim()
@@ -67,9 +59,9 @@ self.addEventListener("activate",(event)=>{
 /* UPDATE */
 /* ============================= */
 
-self.addEventListener("message",(event)=>{
+self.addEventListener("message", (event) => {
 
- if(event.data && event.data.type === "SKIP_WAITING"){
+ if (event.data && event.data.type === "SKIP_WAITING") {
 
   console.log("Atualizando Service Worker")
 
@@ -83,17 +75,17 @@ self.addEventListener("message",(event)=>{
 /* FETCH */
 /* ============================= */
 
-self.addEventListener("fetch",(event)=>{
+self.addEventListener("fetch", (event) => {
 
  const request = event.request
 
- if(request.method !== "GET") return
+ if (request.method !== "GET") return
 
  const url = new URL(request.url)
 
  /* ignorar protocolos estranhos */
 
- if(url.protocol !== "http:" && url.protocol !== "https:"){
+ if (url.protocol !== "http:" && url.protocol !== "https:") {
   return
  }
 
@@ -101,11 +93,11 @@ self.addEventListener("fetch",(event)=>{
  /* NÃO CACHEAR API */
  /* ============================= */
 
- if(
+ if (
   url.pathname.startsWith("/auth") ||
   url.origin.includes("render.com") ||
   url.origin.includes("vercel.app")
- ){
+ ) {
   return
  }
 
@@ -113,28 +105,32 @@ self.addEventListener("fetch",(event)=>{
  /* NAVEGAÇÃO (React Router) */
  /* ============================= */
 
- if(
+ if (
   request.mode === "navigate" ||
   request.destination === "document"
- ){
+ ) {
 
   event.respondWith(
 
    (async () => {
 
-    try{
+    const cache = await caches.open(CACHE_NAME)
 
+    try {
+
+     /* tenta rede primeiro */
      const response = await fetch(request)
 
      return response
 
-    }catch{
+    } catch {
 
-     const cache = await caches.open(CACHE_NAME)
+     /* fallback offline */
+     const cachedIndex =
+      await cache.match("/") ||
+      await cache.match("/index.html")
 
-     const cached = await cache.match("/index.html")
-
-     if(cached) return cached
+     if (cachedIndex) return cachedIndex
 
      return Response.error()
 
@@ -158,27 +154,25 @@ self.addEventListener("fetch",(event)=>{
   request.destination === "image" ||
   request.destination === "font"
 
- if(!isAsset) return
+ if (!isAsset) return
 
  event.respondWith(
 
-  caches.open(CACHE_NAME).then(async(cache)=>{
+  caches.open(CACHE_NAME).then(async (cache) => {
 
    const cached = await cache.match(request)
 
-   if(cached){
-    return cached
-   }
+   if (cached) return cached
 
-   try{
+   try {
 
     const response = await fetch(request)
 
-    cache.put(request,response.clone())
+    cache.put(request, response.clone())
 
     return response
 
-   }catch{
+   } catch {
 
     return cached
 
