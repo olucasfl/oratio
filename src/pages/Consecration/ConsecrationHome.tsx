@@ -413,10 +413,6 @@ export default function ConsecrationHome(){
 
     <h3>Coloque o Dia da consagração</h3>
 
-    <label className={styles.dateLabel}>
-        Escolha a data
-    </label>
-
         {!consecrationDate && (
         <div className={styles.dateHint}>
         Toque para escolher uma data
