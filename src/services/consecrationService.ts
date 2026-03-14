@@ -7,22 +7,6 @@ const ALL_DAYS_KEY = "oratio_consecration_all_days"
 const PRELOADED_KEY = "oratio_consecration_preloaded"
 
 /* ============================= */
-/* UTIL */
-/* ============================= */
-
-function calculateStartDate(consecrationDate:string){
-
- const [year,month,day] = consecrationDate.split("-").map(Number)
-
- const d = new Date(year, month - 1, day)
-
- d.setDate(d.getDate() - 33)
-
- return d.toISOString().slice(0,10)
-
-}
-
-/* ============================= */
 /* PRELOAD ALL DAYS */
 /* ============================= */
 
@@ -231,18 +215,16 @@ export async function uncompleteDay(day:number){
 }
 
 /* ============================= */
-/* UPDATE START DATE */
+/* UPDATE CONSECRATION DATE */
 /* ============================= */
 
 export async function updateStartDate(consecrationDate:string){
-
- const startDate = calculateStartDate(consecrationDate)
 
  const progress = getLocal(PROGRESS_KEY)
 
  if(progress){
 
-  progress.startDate = startDate
+  progress.startDate = consecrationDate
 
   saveLocal(PROGRESS_KEY,progress)
 
@@ -250,7 +232,9 @@ export async function updateStartDate(consecrationDate:string){
 
  try{
 
-  await api.put("/oratio/consecration/start-date",{ startDate })
+  await api.put("/oratio/consecration/consecration-date",{
+   consecrationDate
+  })
 
  }catch{}
 

@@ -54,10 +54,6 @@ export default function ConsecrationStage(){
 
    setLoading(true)
 
-   /* ============================= */
-   /* CACHE LOCAL */
-   /* ============================= */
-
    const cachedDays =
     localStorage.getItem(`oratio-stage-days-${stageId}`)
 
@@ -71,10 +67,6 @@ export default function ConsecrationStage(){
    if(cachedProgress){
     setProgress(JSON.parse(cachedProgress))
    }
-
-   /* ============================= */
-   /* API SE ONLINE */
-   /* ============================= */
 
    if(!navigator.onLine){
     return
@@ -110,10 +102,6 @@ export default function ConsecrationStage(){
 
  }
 
- /* ============================= */
- /* LOADING */
- /* ============================= */
-
  if(loading){
 
   return(
@@ -134,10 +122,6 @@ export default function ConsecrationStage(){
   )
 
  }
-
- /* ============================= */
- /* ERRO */
- /* ============================= */
 
  if(!progress || days.length === 0){
 
@@ -223,8 +207,11 @@ export default function ConsecrationStage(){
      const current =
       progress.currentDay === day.dayNumber
 
-     const unlocked =
-      progress.currentDay >= day.dayNumber
+     const late =
+      day.dayNumber < progress.currentDay && !completed
+
+     const future =
+      day.dayNumber > progress.currentDay
 
      return(
 
@@ -234,7 +221,8 @@ export default function ConsecrationStage(){
         ${styles.day}
         ${completed ? styles.dayDone : ""}
         ${current ? styles.dayCurrent : ""}
-        ${!unlocked ? styles.dayLocked : ""}
+        ${late ? styles.dayLate : ""}
+        ${future ? styles.dayFuture : ""}
        `}
        onClick={()=>
         navigate(`/oratio/consecration/day/${day.dayNumber}`)
