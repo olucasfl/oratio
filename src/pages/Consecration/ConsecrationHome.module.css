@@ -179,6 +179,8 @@ animation:fadeUp .6s ease;
 display:flex;
 flex-direction:column;
 
+touch-action:manipulation;
+
 }
 
 .card h3{
@@ -198,32 +200,52 @@ color:var(--oratio-text);
 
 .dateInput{
 
-margin-top:12px;
-
-padding:12px;
-
 width:100%;
 
-border-radius:10px;
+height:52px;
+
+padding:0 14px;
+
+border-radius:12px;
 
 border:1px solid #ddd;
 
 font-size:16px;
 
-transition:border .2s, box-shadow .2s;
-
 background:white;
+
+color:#333;
+
+font-family:inherit;
+
+appearance:none;
+-webkit-appearance:none;
+
+cursor:pointer;
 
 }
 
+/* evita zoom no iOS */
+
 .dateInput:focus{
-
-border:1px solid var(--oratio-primary);
-
 outline:none;
+border:1px solid var(--oratio-primary);
+box-shadow:0 0 0 2px rgba(0,0,0,0.05);
+}
 
-box-shadow:0 0 0 2px rgba(200,0,0,0.08);
+/* corrige WebKit */
 
+.dateInput::-webkit-calendar-picker-indicator{
+
+opacity:0.8;
+cursor:pointer;
+
+}
+
+/* placeholder fallback */
+
+.dateInput:invalid{
+color:#999;
 }
 
 
@@ -663,4 +685,48 @@ padding:18px;
 font-size:16px;
 }
 
+}
+
+.dateLabel{
+
+display:block;
+
+font-size:14px;
+
+color:#777;
+
+margin-bottom:6px;
+
+text-align:left;
+
+}
+
+.dateHint{
+
+font-size:13px;
+
+color:#999;
+
+margin-bottom:8px;
+
+}
+
+@media(max-width:600px){
+
+.dateInput{
+
+height:50px;
+
+font-size:16px;
+
+}
+
+}
+
+.dateInput:hover{
+border-color:#bbb;
+}
+
+.dateInput:active{
+transform:scale(.99);
 }

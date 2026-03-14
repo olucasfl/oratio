@@ -411,15 +411,26 @@ export default function ConsecrationHome(){
 
    <div className={styles.card}>
 
-    <h3>Dia da consagração</h3>
+    <h3>Coloque o Dia da consagração</h3>
 
-    <input
-     className={styles.dateInput}
-     type="date"
-     min={getTodayInputDate()}
-     value={consecrationDate}
-     onChange={(e)=>handleDateChange(e.target.value)}
-    />
+    <label className={styles.dateLabel}>
+        Escolha a data
+    </label>
+
+        {!consecrationDate && (
+        <div className={styles.dateHint}>
+        Toque para escolher uma data
+        </div>
+        )}
+
+        <input
+        className={styles.dateInput}
+        type="date"
+        min={getTodayInputDate()}
+        value={consecrationDate}
+        onChange={(e)=>handleDateChange(e.target.value)}
+        placeholder="Selecione a data"
+        />
 
     {error && (
      <p className={styles.error}>{error}</p>
@@ -437,7 +448,7 @@ export default function ConsecrationHome(){
        </span>
       )}
 
-      {daysRemaining! > 0 && (
+        {daysRemaining !== null && daysRemaining > 0 && (
 
        <>
         <p>A preparação começa em</p>
