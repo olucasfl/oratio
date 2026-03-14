@@ -43,8 +43,12 @@ export default function ConsecrationHome(){
   window.addEventListener("online",handleOnline)
   window.addEventListener("offline",handleOffline)
 
-  preloadConsecration()
-  load()
+    async function init(){
+    preloadConsecration()
+    await load()
+    }
+
+    init()
 
   return ()=>{
    window.removeEventListener("online",handleOnline)
@@ -55,56 +59,59 @@ export default function ConsecrationHome(){
 
  async function load(){
 
-  try{
+    let cached = localStorage.getItem(PROGRESS_KEY)
 
-   setLoading(true)
+    try{
 
-   const cached = localStorage.getItem(PROGRESS_KEY)
+    if(!cached){
+    setLoading(true)
+    }
 
-   if(cached){
+    if(cached){
 
     const parsed = JSON.parse(cached)
 
     setProgress(parsed)
 
     if(parsed?.startDate){
-     setConsecrationDate(
-      calculateConsecrationDate(parsed.startDate)
-     )
+        setConsecrationDate(
+        calculateConsecrationDate(parsed.startDate)
+        )
     }
 
-   }
+    }
 
-   if(!navigator.onLine){
+    if(!navigator.onLine){
     return
-   }
+    }
 
-   const data = await getProgress()
+    const data = await getProgress()
 
-   setProgress(data)
+    setProgress(data)
 
-   if(data?.startDate){
+    if(data?.startDate){
     setConsecrationDate(
-     calculateConsecrationDate(data.startDate)
+        calculateConsecrationDate(data.startDate)
     )
-   }
+    }
 
-   localStorage.setItem(
-    PROGRESS_KEY,
-    JSON.stringify(data)
-   )
+    localStorage.setItem(PROGRESS_KEY,JSON.stringify(data))
 
-  }catch(err){
+    }catch(err){
 
-   console.error("Erro ao carregar progresso",err)
+    console.error("Erro ao carregar progresso",err)
 
-   setInfo("Não foi possível atualizar os dados.")
+    if(!cached){
+    setInfo("Não foi possível carregar os dados.")
+    }
 
-  }finally{
-   setLoading(false)
-  }
+    }finally{
 
- }
+    setLoading(false)
+
+    }
+
+    }
 
  function parseDate(date:string){
   const [y,m,d] = date.split("-").map(Number)

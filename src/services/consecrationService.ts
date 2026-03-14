@@ -12,9 +12,9 @@ const PRELOADED_KEY = "oratio_consecration_preloaded"
 
 export async function preloadConsecration(){
 
- const alreadyPreloaded = getLocal(PRELOADED_KEY)
+ const cachedDays = getLocal(ALL_DAYS_KEY)
 
- if(alreadyPreloaded) return
+ if(cachedDays) return
 
  try{
 
@@ -45,8 +45,6 @@ export async function preloadConsecration(){
   Object.keys(stages).forEach(stageId=>{
    saveLocal(`stage_${stageId}`,stages[stageId])
   })
-
-  saveLocal(PRELOADED_KEY,true)
 
   console.log("Consagração pré-carregada")
 
