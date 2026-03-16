@@ -4,7 +4,6 @@ import { saveLocal, getLocal } from "../utils/localCache"
 const PROGRESS_KEY = "oratio_consecration_progress"
 const DAYS_KEY = "oratio_consecration_days"
 const ALL_DAYS_KEY = "oratio_consecration_all_days"
-const PRELOADED_KEY = "oratio_consecration_preloaded"
 
 /* ============================= */
 /* PRELOAD ALL DAYS */
