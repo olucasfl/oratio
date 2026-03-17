@@ -268,6 +268,23 @@ export default function Home(){
 
    </section>
 
+   <section className={styles.consecration}>
+
+   <h2>Catecismo da Igreja</h2>
+
+   <p>
+      Leia o Catecismo oficial com navegação rápida
+      por artigo e acesso direto ao documento.
+   </p>
+
+   <button
+      className={styles.primaryButton}
+      onClick={()=>navigate("/oratio/catecismo")}
+   >
+      Abrir Catecismo
+   </button>
+
+   </section>
 
    <section className={styles.consecration}>
 

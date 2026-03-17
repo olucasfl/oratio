@@ -1,0 +1,224 @@
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+
+import styles from "./Catecismo.module.css"
+import { Document, Page, pdfjs } from "react-pdf"
+
+import "react-pdf/dist/Page/TextLayer.css"
+import "react-pdf/dist/Page/AnnotationLayer.css"
+
+import worker from "pdfjs-dist/build/pdf.worker.min.mjs?url"
+pdfjs.GlobalWorkerOptions.workerSrc = worker
+
+export default function Catecismo(){
+
+  const navigate = useNavigate()
+
+  const [page, setPage] = useState(1)
+  const [numPages, setNumPages] = useState<number>(0)
+
+  const [inputPagina, setInputPagina] = useState("")
+  const [inputArtigo, setInputArtigo] = useState("")
+
+  const [scale, setScale] = useState(1.2)
+
+  const [pdf, setPdf] = useState<any>(null)
+  const [loadingSearch, setLoadingSearch] = useState(false)
+
+  const [resultados, setResultados] = useState<any[]>([])
+  const [mostrarResultados, setMostrarResultados] = useState(false)
+
+  function onLoadSuccess(pdf:any){
+    setNumPages(pdf.numPages)
+    setPdf(pdf)
+  }
+
+  function irParaPagina(){
+    const pagina = Number(inputPagina)
+    if(pagina >= 1 && pagina <= numPages){
+      setPage(pagina)
+    }
+  }
+
+  // 🔥 BUSCA CORRIGIDA
+  async function irParaArtigo(){
+
+    if(!pdf) return
+
+    const artigo = inputArtigo.trim()
+    if(!artigo) return
+
+    setLoadingSearch(true)
+    setResultados([])
+
+    try{
+
+      const encontrados:any[] = []
+
+      const regex = new RegExp(`${artigo}\\s*\\.`)
+
+      for(let i = 1; i <= numPages; i++){
+
+        const p = await pdf.getPage(i)
+        const text = await p.getTextContent()
+
+        const pageText = text.items
+          .map((item:any)=>item.str)
+          .join("")
+          .replace(/\s+/g," ")
+
+        if(regex.test(pageText)){
+
+          const index = pageText.indexOf(artigo)
+          const preview = pageText.substring(index, index + 120)
+
+          encontrados.push({
+            pagina: i,
+            preview
+          })
+        }
+      }
+
+      setResultados(encontrados)
+      setMostrarResultados(true)
+
+      if(encontrados.length === 1){
+        setPage(encontrados[0].pagina)
+        setMostrarResultados(false)
+      }
+
+    }catch(err){
+      console.error(err)
+    }
+
+    setLoadingSearch(false)
+  }
+
+  function handleKey(e:React.KeyboardEvent<HTMLInputElement>, tipo:"artigo"|"pagina"){
+
+    if(e.key === "Enter"){
+      if(tipo === "artigo") irParaArtigo()
+      if(tipo === "pagina") irParaPagina()
+    }
+
+  }
+
+  return(
+
+    <div className={styles.container}>
+
+      {/* HEADER */}
+      <div className={styles.header}>
+
+        <div className={styles.headerTop}>
+
+          <button
+            className={styles.backButton}
+            onClick={()=>navigate("/oratio/home")}
+          >
+            ←
+          </button>
+
+          <div className={styles.title}>
+            Catecismo
+          </div>
+
+        </div>
+
+        <div className={styles.searchBar}>
+
+          <div className={styles.searchGroup}>
+            <input
+              placeholder="Artigo (ex: 1210)"
+              value={inputArtigo}
+              onChange={(e)=>setInputArtigo(e.target.value)}
+              onKeyDown={(e)=>handleKey(e,"artigo")}
+            />
+            <button onClick={irParaArtigo}>
+              Buscar
+            </button>
+          </div>
+
+          <div className={styles.searchGroup}>
+            <input
+              placeholder="Página"
+              value={inputPagina}
+              onChange={(e)=>setInputPagina(e.target.value)}
+              onKeyDown={(e)=>handleKey(e,"pagina")}
+            />
+            <button onClick={irParaPagina}>
+              Ir
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* LOADING */}
+      {loadingSearch && (
+        <div className={styles.loadingOverlay}>
+          <div className={styles.loader}></div>
+          <p>Buscando artigo...</p>
+        </div>
+      )}
+
+      {/* RESULTADOS */}
+      {mostrarResultados && (
+        <div className={styles.results}>
+          <div className={styles.resultsHeader}>
+            <h3>Resultados ({resultados.length})</h3>
+            <button onClick={()=>setMostrarResultados(false)}>✕</button>
+          </div>
+
+          {resultados.length === 0 && (
+            <p className={styles.noResults}>
+              Nenhum artigo encontrado.
+            </p>
+          )}
+
+          {resultados.map((r, i)=>(
+            <div
+              key={i}
+              className={styles.resultItem}
+              onClick={()=>{
+                setPage(r.pagina)
+                setMostrarResultados(false)
+              }}
+            >
+              <strong>Página {r.pagina}</strong>
+              <p>{r.preview}...</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* PDF */}
+      <div className={styles.viewer}>
+        <Document file="/catecismo.pdf" onLoadSuccess={onLoadSuccess}>
+          <Page pageNumber={page} scale={scale}/>
+        </Document>
+      </div>
+
+      {/* FOOTER */}
+      <div className={styles.footer}>
+
+        <button onClick={()=>setPage(p => Math.max(p - 1, 1))}>←</button>
+
+        <span className={styles.pageInfo}>
+          {page}/{numPages}
+        </span>
+
+        <button onClick={()=>setPage(p => Math.min(p + 1, numPages))}>→</button>
+
+        <div className={styles.zoom}>
+          <button onClick={()=>setScale(s => Math.max(0.8, s - 0.2))}>−</button>
+          <span>{Math.round(scale * 100)}%</span>
+          <button onClick={()=>setScale(s => s + 0.2)}>+</button>
+        </div>
+
+      </div>
+
+    </div>
+  )
+}
