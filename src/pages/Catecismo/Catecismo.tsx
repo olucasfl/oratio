@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
 import styles from "./Catecismo.module.css"
@@ -28,9 +28,49 @@ export default function Catecismo(){
   const [resultados, setResultados] = useState<any[]>([])
   const [mostrarResultados, setMostrarResultados] = useState(false)
 
+  /* =========================
+     RESTORE (DEPOIS DO PDF)
+  ========================= */
+
+  function restoreState(pdf:any){
+
+    const savedPage = localStorage.getItem("catecismo_page")
+    const savedScale = localStorage.getItem("catecismo_scale")
+
+    if(savedPage){
+      const p = Number(savedPage)
+      if(p >= 1 && p <= pdf.numPages){
+        setPage(p)
+      }
+    }
+
+    if(savedScale){
+      setScale(Number(savedScale))
+    }
+  }
+
+  /* =========================
+     SAVE STATE
+  ========================= */
+
+  useEffect(()=>{
+    localStorage.setItem("catecismo_page", String(page))
+  },[page])
+
+  useEffect(()=>{
+    localStorage.setItem("catecismo_scale", String(scale))
+  },[scale])
+
+  /* =========================
+     PDF LOAD
+  ========================= */
+
   function onLoadSuccess(pdf:any){
     setNumPages(pdf.numPages)
     setPdf(pdf)
+
+    // 🔥 só aqui que restaura (evita bug)
+    restoreState(pdf)
   }
 
   function irParaPagina(){
@@ -40,7 +80,7 @@ export default function Catecismo(){
     }
   }
 
-  // 🔥 BUSCA CORRIGIDA
+  // 🔥 BUSCA ORIGINAL (INTOCADA)
   async function irParaArtigo(){
 
     if(!pdf) return
