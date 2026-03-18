@@ -80,14 +80,21 @@ export default function Catecismo(){
     }
   }
 
-  /* ========================= PINCH ZOOM (REAL) ========================= */
+  /* ========================= PINCH ZOOM (VERSÃO FINAL ESTÁVEL) ========================= */
+
+  const scaleRef = useRef(scale)
+
+  useEffect(()=>{
+    scaleRef.current = scale
+  },[scale])
 
   useEffect(()=>{
     const el = containerRef.current
     if(!el) return
 
     let initialDistance = 0
-    let initialScale = scale
+    let initialScale = 1
+    let rafId: number | null = null
 
     function getDistance(touches:any){
       const dx = touches[0].clientX - touches[1].clientX
@@ -99,7 +106,9 @@ export default function Catecismo(){
       if(e.touches.length === 2){
         setIsZooming(true)
         initialDistance = getDistance(e.touches)
-        initialScale = scale
+
+        // 🔥 pega o scale REAL atual (sem bug de closure)
+        initialScale = scaleRef.current
       }
     }
 
@@ -114,27 +123,34 @@ export default function Catecismo(){
         let newScale = initialScale * ratio
         newScale = Math.max(1, Math.min(newScale, 4))
 
-        setScale(newScale) // 🔥 agora o zoom é real (não visual)
+        // 🔥 evita travar / lag
+        if(rafId) cancelAnimationFrame(rafId)
+
+        rafId = requestAnimationFrame(()=>{
+          setScale(newScale)
+        })
       }
     }
 
-    const onTouchEnd = (e: TouchEvent)=>{
-      if(e.touches.length < 2){
-        setIsZooming(false)
-      }
+    const onTouchEnd = ()=>{
+      setIsZooming(false)
     }
 
     el.addEventListener("touchstart", onTouchStart, { passive:false })
     el.addEventListener("touchmove", onTouchMove, { passive:false })
     el.addEventListener("touchend", onTouchEnd)
+    el.addEventListener("touchcancel", onTouchEnd)
 
     return ()=>{
       el.removeEventListener("touchstart", onTouchStart)
       el.removeEventListener("touchmove", onTouchMove)
       el.removeEventListener("touchend", onTouchEnd)
+      el.removeEventListener("touchcancel", onTouchEnd)
+
+      if(rafId) cancelAnimationFrame(rafId)
     }
 
-  },[scale])
+  },[])
 
   /* ========================= SWIPE ========================= */
 
@@ -320,15 +336,17 @@ export default function Catecismo(){
 
       {/* PDF */}
       <div ref={containerRef} className={styles.viewer}>
-        <Document file="/catecismo.pdf" onLoadSuccess={onLoadSuccess}>
-          <Page
-            key={`${page}-${scale}`}
-            pageNumber={page}
-            scale={scale * dpr}
-            renderTextLayer={false}
-            renderAnnotationLayer={false}
-          />
-        </Document>
+        <div>
+          <Document file="/catecismo.pdf" onLoadSuccess={onLoadSuccess}>
+            <Page
+              key={`${page}-${scale}`}
+              pageNumber={page}
+              scale={scale * dpr}
+              renderTextLayer={false}
+              renderAnnotationLayer={false}
+            />
+          </Document>
+        </div>
       </div>
 
       {/* FOOTER */}
