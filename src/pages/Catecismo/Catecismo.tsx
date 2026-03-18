@@ -30,9 +30,6 @@ export default function Catecismo(){
   const [mostrarResultados, setMostrarResultados] = useState(false)
 
   const [loaded, setLoaded] = useState(false)
-  const [isZooming, setIsZooming] = useState(false)
-
-  const dpr = Math.min(window.devicePixelRatio || 1, 2)
 
   /* ========================= RESTORE ========================= */
 
@@ -80,78 +77,6 @@ export default function Catecismo(){
     }
   }
 
-  /* ========================= PINCH ZOOM (VERSÃO FINAL ESTÁVEL) ========================= */
-
-  const scaleRef = useRef(scale)
-
-  useEffect(()=>{
-    scaleRef.current = scale
-  },[scale])
-
-  useEffect(()=>{
-    const el = containerRef.current
-    if(!el) return
-
-    let initialDistance = 0
-    let initialScale = 1
-    let rafId: number | null = null
-
-    function getDistance(touches:any){
-      const dx = touches[0].clientX - touches[1].clientX
-      const dy = touches[0].clientY - touches[1].clientY
-      return Math.sqrt(dx*dx + dy*dy)
-    }
-
-    const onTouchStart = (e:any)=>{
-      if(e.touches.length === 2){
-        setIsZooming(true)
-        initialDistance = getDistance(e.touches)
-
-        // 🔥 pega o scale REAL atual (sem bug de closure)
-        initialScale = scaleRef.current
-      }
-    }
-
-    const onTouchMove = (e:any)=>{
-      if(e.touches.length === 2){
-
-        e.preventDefault()
-
-        const newDistance = getDistance(e.touches)
-        const ratio = newDistance / initialDistance
-
-        let newScale = initialScale * ratio
-        newScale = Math.max(1, Math.min(newScale, 4))
-
-        // 🔥 evita travar / lag
-        if(rafId) cancelAnimationFrame(rafId)
-
-        rafId = requestAnimationFrame(()=>{
-          setScale(newScale)
-        })
-      }
-    }
-
-    const onTouchEnd = ()=>{
-      setIsZooming(false)
-    }
-
-    el.addEventListener("touchstart", onTouchStart, { passive:false })
-    el.addEventListener("touchmove", onTouchMove, { passive:false })
-    el.addEventListener("touchend", onTouchEnd)
-    el.addEventListener("touchcancel", onTouchEnd)
-
-    return ()=>{
-      el.removeEventListener("touchstart", onTouchStart)
-      el.removeEventListener("touchmove", onTouchMove)
-      el.removeEventListener("touchend", onTouchEnd)
-      el.removeEventListener("touchcancel", onTouchEnd)
-
-      if(rafId) cancelAnimationFrame(rafId)
-    }
-
-  },[])
-
   /* ========================= SWIPE ========================= */
 
   useEffect(()=>{
@@ -167,8 +92,6 @@ export default function Catecismo(){
     }
 
     const onTouchEnd = (e:any)=>{
-
-      if(isZooming) return
 
       const endX = e.changedTouches[0].clientX
       const diff = startX - endX
@@ -190,7 +113,7 @@ export default function Catecismo(){
       el.removeEventListener("touchend", onTouchEnd)
     }
 
-  },[numPages, isZooming])
+  },[numPages])
 
   /* ========================= BUSCA ========================= */
 
@@ -341,7 +264,7 @@ export default function Catecismo(){
             <Page
               key={`${page}-${scale}`}
               pageNumber={page}
-              scale={scale * dpr}
+              scale={scale}
               renderTextLayer={false}
               renderAnnotationLayer={false}
             />

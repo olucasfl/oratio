@@ -155,19 +155,20 @@
 
   -webkit-overflow-scrolling:touch;
 
-  touch-action: pan-y;
+  touch-action: pan-x pan-y;
 }
 
 .viewer > div{
-  min-width: 100%;
   display:flex;
   justify-content:center;
-  will-change: transform;
+  align-items:flex-start;
+
+  width:fit-content;
+  min-width:100%;
 }
 
 .viewer canvas{
   display:block;
-  max-width:100%;
   height:auto !important;
 
   border-radius:var(--oratio-radius-md);
@@ -367,11 +368,6 @@
 
   .viewer{
     padding:6px;
-  }
-
-  .viewer canvas{
-    width:100% !important;
-    height:auto !important;
   }
 
 }
