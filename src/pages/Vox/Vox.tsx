@@ -116,7 +116,6 @@ async function handleNewConversation(existingConversations?: Conversation[]){
 
  try{
 
-  setLoading(true)
   setError(null)
 
   const convList = existingConversations || conversations
@@ -126,8 +125,7 @@ async function handleNewConversation(existingConversations?: Conversation[]){
     const msgs = await getMessages(conv.id)
 
     if(!msgs || msgs.length === 0){
-      await openConversation(conv.id)
-      return
+      return openConversation(conv.id)
     }
   }
 
@@ -147,8 +145,6 @@ async function handleNewConversation(existingConversations?: Conversation[]){
 
  }catch{
   setError("Erro ao criar nova conversa.")
- }finally{
-  setLoading(false)
  }
 }
 
@@ -271,9 +267,16 @@ async function handleNewConversation(existingConversations?: Conversation[]){
       <button
         className={styles.newChatButton}
         onClick={() => handleNewConversation()}
+        disabled={loading}
       >
-        <Plus size={18} />
-        Nova conversa
+        {loading ? (
+          <div className={styles.spinner}></div>
+        ) : (
+          <>
+            <Plus size={18} />
+            Nova conversa
+          </>
+        )}
       </button>
 
     </div>
