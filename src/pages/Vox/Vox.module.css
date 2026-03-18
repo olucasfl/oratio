@@ -197,7 +197,7 @@
 .menuButton{
  position:absolute;
 
- top:calc(50% + 16px);
+ top:calc(50% + 20px);
  transform:translateY(-50%);
 
  display:flex;

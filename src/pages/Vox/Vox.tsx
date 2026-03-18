@@ -343,7 +343,7 @@ export default function Vox(){
      className={styles.menuButton}
      onClick={()=>setMenuOpen(prev => !prev)}
     >
-     <Menu size={26} strokeWidth={2.5} />
+     <Menu size={32} strokeWidth={3} />
     </button>
 
     <button
