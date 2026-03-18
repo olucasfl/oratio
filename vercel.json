@@ -1,12 +1,12 @@
 {
-  "rewrites": [
+  "routes": [
     {
-      "source": "/(.*\\.(pdf|png|jpg|jpeg|svg|ico|js|css))",
-      "destination": "/$1"
+      "src": "/(.*\\.pdf)",
+      "dest": "/$1"
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
