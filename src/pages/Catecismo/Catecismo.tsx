@@ -13,7 +13,6 @@ pdfjs.GlobalWorkerOptions.workerSrc = worker
 export default function Catecismo(){
 
   const navigate = useNavigate()
-
   const containerRef = useRef<HTMLDivElement>(null)
 
   const [page, setPage] = useState(1)
@@ -30,24 +29,14 @@ export default function Catecismo(){
   const [resultados, setResultados] = useState<any[]>([])
   const [mostrarResultados, setMostrarResultados] = useState(false)
 
-  // 🔥 CONTROLE PRA NÃO SOBRESCREVER
   const [loaded, setLoaded] = useState(false)
-
-  // 🔥 RESPONSIVO
-  const [width, setWidth] = useState(window.innerWidth)
-
-  useEffect(() => {
-    const handleResize = () => setWidth(window.innerWidth)
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
+  const [isZooming, setIsZooming] = useState(false)
 
   /* =========================
      RESTORE
   ========================= */
 
   function restoreState(pdf:any){
-
     const savedPage = localStorage.getItem("catecismo_page")
     const savedScale = localStorage.getItem("catecismo_scale")
 
@@ -64,7 +53,7 @@ export default function Catecismo(){
   }
 
   /* =========================
-     SAVE STATE (CORRIGIDO)
+     SAVE STATE
   ========================= */
 
   useEffect(()=>{
@@ -84,9 +73,7 @@ export default function Catecismo(){
   function onLoadSuccess(pdf:any){
     setNumPages(pdf.numPages)
     setPdf(pdf)
-
     restoreState(pdf)
-
     setLoaded(true)
   }
 
@@ -98,7 +85,7 @@ export default function Catecismo(){
   }
 
   /* =========================
-     PINCH ZOOM (SEM QUEBRAR)
+     PINCH ZOOM
   ========================= */
 
   useEffect(()=>{
@@ -116,6 +103,7 @@ export default function Catecismo(){
 
     const onTouchStart = (e:any)=>{
       if(e.touches.length === 2){
+        setIsZooming(true)
         initialDistance = getDistance(e.touches)
         initialScale = scale
       }
@@ -135,15 +123,21 @@ export default function Catecismo(){
       }
     }
 
+    const onTouchEnd = ()=>{
+      setIsZooming(false)
+    }
+
     el.addEventListener("touchstart", onTouchStart, { passive:false })
     el.addEventListener("touchmove", onTouchMove, { passive:false })
+    el.addEventListener("touchend", onTouchEnd)
 
     return ()=>{
       el.removeEventListener("touchstart", onTouchStart)
       el.removeEventListener("touchmove", onTouchMove)
+      el.removeEventListener("touchend", onTouchEnd)
     }
 
-  },[scale])
+  },[]) // 🔥 importante
 
   /* =========================
      SWIPE
@@ -162,6 +156,9 @@ export default function Catecismo(){
     }
 
     const onTouchEnd = (e:any)=>{
+
+      if(isZooming) return // 🔥 evita conflito
+
       const endX = e.changedTouches[0].clientX
       const diff = startX - endX
 
@@ -182,10 +179,10 @@ export default function Catecismo(){
       el.removeEventListener("touchend", onTouchEnd)
     }
 
-  },[numPages])
+  },[numPages, isZooming])
 
   /* =========================
-     BUSCA ORIGINAL (INTOCADA)
+     BUSCA (INTOCADA)
   ========================= */
 
   async function irParaArtigo(){
@@ -242,12 +239,10 @@ export default function Catecismo(){
   }
 
   function handleKey(e:React.KeyboardEvent<HTMLInputElement>, tipo:"artigo"|"pagina"){
-
     if(e.key === "Enter"){
       if(tipo === "artigo") irParaArtigo()
       if(tipo === "pagina") irParaPagina()
     }
-
   }
 
   return(
@@ -292,7 +287,7 @@ export default function Catecismo(){
         </div>
       </div>
 
-      {/* 🔥 LOADING */}
+      {/* LOADING */}
       {loadingSearch && (
         <div className={styles.loadingOverlay}>
           <div className={styles.loader}></div>
@@ -300,7 +295,7 @@ export default function Catecismo(){
         </div>
       )}
 
-      {/* 🔥 RESULTADOS */}
+      {/* RESULTADOS */}
       {mostrarResultados && (
         <div className={styles.results}>
           <div className={styles.resultsHeader}>
@@ -321,8 +316,6 @@ export default function Catecismo(){
               onClick={()=>{
                 setPage(r.pagina)
                 setMostrarResultados(false)
-
-                // 🔥 UX melhor
                 window.scrollTo({ top: 0, behavior: "smooth" })
               }}
             >
@@ -337,9 +330,8 @@ export default function Catecismo(){
       <div ref={containerRef} className={styles.viewer}>
         <Document file="/catecismo.pdf" onLoadSuccess={onLoadSuccess}>
           <Page
-            key={`${page}-${scale}-${width}`}
+            key={`${page}-${scale}`}
             pageNumber={page}
-            width={Math.min(width * 0.95, 700)}
             scale={scale}
           />
         </Document>

@@ -146,19 +146,22 @@
 .viewer{
   flex:1;
   overflow:auto;
-  padding-bottom:20px;
 
   display:flex;
   justify-content:center;
   align-items:flex-start;
-  padding:12px 8px;
+
+  padding:20px 12px;
 
   -webkit-overflow-scrolling:touch;
+
+  touch-action: pan-y pinch-zoom;
 }
 
 .viewer canvas{
-  border-radius:var(--oratio-radius-md);
-  box-shadow:var(--oratio-shadow-medium);
+  display:block;
+  max-width:100%;
+  height:auto !important;
 
   border-radius:var(--oratio-radius-md);
   box-shadow:var(--oratio-shadow-medium);
