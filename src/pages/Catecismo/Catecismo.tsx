@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 
 import styles from "./Catecismo.module.css"
@@ -14,6 +14,8 @@ export default function Catecismo(){
 
   const navigate = useNavigate()
 
+  const containerRef = useRef<HTMLDivElement>(null)
+
   const [page, setPage] = useState(1)
   const [numPages, setNumPages] = useState<number>(0)
 
@@ -28,8 +30,20 @@ export default function Catecismo(){
   const [resultados, setResultados] = useState<any[]>([])
   const [mostrarResultados, setMostrarResultados] = useState(false)
 
+  // 🔥 CONTROLE PRA NÃO SOBRESCREVER
+  const [loaded, setLoaded] = useState(false)
+
+  // 🔥 RESPONSIVO
+  const [width, setWidth] = useState(window.innerWidth)
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth)
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
   /* =========================
-     RESTORE (DEPOIS DO PDF)
+     RESTORE
   ========================= */
 
   function restoreState(pdf:any){
@@ -50,16 +64,18 @@ export default function Catecismo(){
   }
 
   /* =========================
-     SAVE STATE
+     SAVE STATE (CORRIGIDO)
   ========================= */
 
   useEffect(()=>{
+    if(!loaded) return
     localStorage.setItem("catecismo_page", String(page))
-  },[page])
+  },[page, loaded])
 
   useEffect(()=>{
+    if(!loaded) return
     localStorage.setItem("catecismo_scale", String(scale))
-  },[scale])
+  },[scale, loaded])
 
   /* =========================
      PDF LOAD
@@ -69,8 +85,9 @@ export default function Catecismo(){
     setNumPages(pdf.numPages)
     setPdf(pdf)
 
-    // 🔥 só aqui que restaura (evita bug)
     restoreState(pdf)
+
+    setLoaded(true)
   }
 
   function irParaPagina(){
@@ -80,7 +97,97 @@ export default function Catecismo(){
     }
   }
 
-  // 🔥 BUSCA ORIGINAL (INTOCADA)
+  /* =========================
+     PINCH ZOOM (SEM QUEBRAR)
+  ========================= */
+
+  useEffect(()=>{
+    const el = containerRef.current
+    if(!el) return
+
+    let initialDistance = 0
+    let initialScale = scale
+
+    function getDistance(touches:any){
+      const dx = touches[0].clientX - touches[1].clientX
+      const dy = touches[0].clientY - touches[1].clientY
+      return Math.sqrt(dx*dx + dy*dy)
+    }
+
+    const onTouchStart = (e:any)=>{
+      if(e.touches.length === 2){
+        initialDistance = getDistance(e.touches)
+        initialScale = scale
+      }
+    }
+
+    const onTouchMove = (e:any)=>{
+      if(e.touches.length === 2){
+        e.preventDefault()
+
+        const newDistance = getDistance(e.touches)
+        const ratio = newDistance / initialDistance
+
+        let newScale = initialScale * ratio
+        newScale = Math.max(0.5, Math.min(newScale, 3))
+
+        setScale(newScale)
+      }
+    }
+
+    el.addEventListener("touchstart", onTouchStart, { passive:false })
+    el.addEventListener("touchmove", onTouchMove, { passive:false })
+
+    return ()=>{
+      el.removeEventListener("touchstart", onTouchStart)
+      el.removeEventListener("touchmove", onTouchMove)
+    }
+
+  },[scale])
+
+  /* =========================
+     SWIPE
+  ========================= */
+
+  useEffect(()=>{
+    const el = containerRef.current
+    if(!el) return
+
+    let startX = 0
+
+    const onTouchStart = (e:any)=>{
+      if(e.touches.length === 1){
+        startX = e.touches[0].clientX
+      }
+    }
+
+    const onTouchEnd = (e:any)=>{
+      const endX = e.changedTouches[0].clientX
+      const diff = startX - endX
+
+      if(Math.abs(diff) > 80){
+        if(diff > 0){
+          setPage(p => Math.min(p + 1, numPages))
+        }else{
+          setPage(p => Math.max(p - 1, 1))
+        }
+      }
+    }
+
+    el.addEventListener("touchstart", onTouchStart)
+    el.addEventListener("touchend", onTouchEnd)
+
+    return ()=>{
+      el.removeEventListener("touchstart", onTouchStart)
+      el.removeEventListener("touchend", onTouchEnd)
+    }
+
+  },[numPages])
+
+  /* =========================
+     BUSCA ORIGINAL (INTOCADA)
+  ========================= */
+
   async function irParaArtigo(){
 
     if(!pdf) return
@@ -149,9 +256,7 @@ export default function Catecismo(){
 
       {/* HEADER */}
       <div className={styles.header}>
-
         <div className={styles.headerTop}>
-
           <button
             className={styles.backButton}
             onClick={()=>navigate("/oratio/home")}
@@ -162,11 +267,9 @@ export default function Catecismo(){
           <div className={styles.title}>
             Catecismo
           </div>
-
         </div>
 
         <div className={styles.searchBar}>
-
           <div className={styles.searchGroup}>
             <input
               placeholder="Artigo (ex: 1210)"
@@ -174,9 +277,7 @@ export default function Catecismo(){
               onChange={(e)=>setInputArtigo(e.target.value)}
               onKeyDown={(e)=>handleKey(e,"artigo")}
             />
-            <button onClick={irParaArtigo}>
-              Buscar
-            </button>
+            <button onClick={irParaArtigo}>Buscar</button>
           </div>
 
           <div className={styles.searchGroup}>
@@ -186,16 +287,12 @@ export default function Catecismo(){
               onChange={(e)=>setInputPagina(e.target.value)}
               onKeyDown={(e)=>handleKey(e,"pagina")}
             />
-            <button onClick={irParaPagina}>
-              Ir
-            </button>
+            <button onClick={irParaPagina}>Ir</button>
           </div>
-
         </div>
-
       </div>
 
-      {/* LOADING */}
+      {/* 🔥 LOADING */}
       {loadingSearch && (
         <div className={styles.loadingOverlay}>
           <div className={styles.loader}></div>
@@ -203,7 +300,7 @@ export default function Catecismo(){
         </div>
       )}
 
-      {/* RESULTADOS */}
+      {/* 🔥 RESULTADOS */}
       {mostrarResultados && (
         <div className={styles.results}>
           <div className={styles.resultsHeader}>
@@ -224,6 +321,9 @@ export default function Catecismo(){
               onClick={()=>{
                 setPage(r.pagina)
                 setMostrarResultados(false)
+
+                // 🔥 UX melhor
+                window.scrollTo({ top: 0, behavior: "smooth" })
               }}
             >
               <strong>Página {r.pagina}</strong>
@@ -234,9 +334,14 @@ export default function Catecismo(){
       )}
 
       {/* PDF */}
-      <div className={styles.viewer}>
+      <div ref={containerRef} className={styles.viewer}>
         <Document file="/catecismo.pdf" onLoadSuccess={onLoadSuccess}>
-          <Page pageNumber={page} scale={scale}/>
+          <Page
+            key={`${page}-${scale}-${width}`}
+            pageNumber={page}
+            width={Math.min(width * 0.95, 700)}
+            scale={scale}
+          />
         </Document>
       </div>
 
@@ -252,9 +357,9 @@ export default function Catecismo(){
         <button onClick={()=>setPage(p => Math.min(p + 1, numPages))}>→</button>
 
         <div className={styles.zoom}>
-          <button onClick={()=>setScale(s => Math.max(0.8, s - 0.2))}>−</button>
+          <button onClick={()=>setScale(s => Math.max(0.5, s - 0.2))}>−</button>
           <span>{Math.round(scale * 100)}%</span>
-          <button onClick={()=>setScale(s => s + 0.2)}>+</button>
+          <button onClick={()=>setScale(s => Math.min(3, s + 0.2))}>+</button>
         </div>
 
       </div>
