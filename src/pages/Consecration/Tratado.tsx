@@ -25,9 +25,6 @@ export default function Tratado(){
   const [inputPagina, setInputPagina] = useState("")
   const [loaded, setLoaded] = useState(false)
 
-  // 🔥 URL FIXA PRA EVITAR RELOAD INFINITO
-  const [pdfUrl] = useState(`/tratado.pdf?v=${Date.now()}`)
-
   /* ================= RESTORE ================= */
 
   function restoreState(pdf:any){
@@ -161,7 +158,7 @@ export default function Tratado(){
       >
         <div>
           <Document
-            file={pdfUrl}
+            file="/tratado.pdf"
             onLoadSuccess={onLoadSuccess}
             loading="Carregando PDF..."
             error="Erro ao carregar PDF"
