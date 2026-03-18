@@ -75,7 +75,7 @@
  position:absolute;
 
  left:50%;
- transform:translate(-50%,-28px);
+ transform:translate(-50%,-32px);
 
  width:64px;
  height:64px;
@@ -152,4 +152,6 @@
   align-items:center;
 
   flex:1;
+
+  padding:0 28px;
 }
