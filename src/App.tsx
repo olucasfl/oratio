@@ -29,6 +29,7 @@ import Prayers from "./pages/Prayers/Prayers"
 import RosaryHome from "./pages/Prayers/RosaryHome"
 import RosaryPage from "./pages/Prayers/RosaryPage"
 import Catecismo from "./pages/Catecismo/Catecismo"
+import Tratado from "./pages/Consecration/Tratado"
 
 function App(){
 
@@ -200,6 +201,8 @@ element={
 <Route path="/oratio/biblia/:book/:chapter" element={<BibliaChapter/>}/>
 
 <Route path="/oratio/catecismo" element={<Catecismo />} />
+
+<Route path="/oratio/tratado" element={<Tratado />} />
 
 <Route path="/oratio/vox" element={<Vox/>}/>
 

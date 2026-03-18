@@ -730,3 +730,68 @@ border-color:#bbb;
 .dateInput:active{
 transform:scale(.99);
 }
+
+.tratadoCard{
+
+  background:linear-gradient(135deg,#fdf6ec,#f4e9d8);
+
+  border-radius:16px;
+  padding:22px;
+
+  width:100%;
+
+  box-shadow:0 8px 25px rgba(0,0,0,0.08);
+
+  cursor:pointer;
+
+  transition:all .25s ease;
+
+  border:1px solid rgba(139,0,0,0.15);
+
+  position:relative;
+
+  overflow:hidden;
+}
+
+/* detalhe decorativo tipo livro */
+.tratadoCard::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:6px;
+
+  background:linear-gradient(
+    180deg,
+    #8b0000,
+    #b22222
+  );
+}
+
+/* título */
+.tratadoCard h3{
+  font-family:var(--oratio-font-title);
+
+  color:#5a3e2b;
+
+  font-size:18px;
+
+  margin-bottom:6px;
+}
+
+/* subtítulo */
+.tratadoCard span{
+  font-size:13px;
+  color:#7a6a58;
+}
+
+/* hover */
+.tratadoCard:hover{
+  transform:translateY(-3px) scale(1.01);
+  box-shadow:0 12px 30px rgba(0,0,0,0.12);
+}
+
+.tratadoCard h3::before{
+  content:"📖 ";
+}

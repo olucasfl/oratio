@@ -534,6 +534,16 @@ export default function ConsecrationHome(){
 
     <div className={styles.stages}>
 
+      <div
+        className={styles.tratadoCard}
+        onClick={()=>navigate("/oratio/tratado")}
+      >
+        <h3>Leitura do Tratado</h3>
+        <span className={styles.stageStatus}>
+          Etapa inicial
+        </span>
+      </div>
+
      {progress.stages.map((stage:any)=>{
 
       const stageClass = getStageStatus(stage)
