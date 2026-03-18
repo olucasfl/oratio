@@ -32,16 +32,7 @@ export default function Catecismo(){
   const [loaded, setLoaded] = useState(false)
   const [isZooming, setIsZooming] = useState(false)
 
-  const [visualScale, setVisualScale] = useState(1)
-  const visualScaleRef = useRef(1)
-
-  const [origin, setOrigin] = useState("center center")
-
   const dpr = Math.min(window.devicePixelRatio || 1, 2)
-
-  useEffect(()=>{
-    visualScaleRef.current = visualScale
-  },[visualScale])
 
   /* ========================= RESTORE ========================= */
 
@@ -89,14 +80,14 @@ export default function Catecismo(){
     }
   }
 
-  /* ========================= PINCH ZOOM (CORRIGIDO) ========================= */
+  /* ========================= PINCH ZOOM (REAL) ========================= */
 
   useEffect(()=>{
     const el = containerRef.current
     if(!el) return
 
     let initialDistance = 0
-    let initialScale = 1
+    let initialScale = scale
 
     function getDistance(touches:any){
       const dx = touches[0].clientX - touches[1].clientX
@@ -108,22 +99,12 @@ export default function Catecismo(){
       if(e.touches.length === 2){
         setIsZooming(true)
         initialDistance = getDistance(e.touches)
-        initialScale = scale // 🔥 BASE CORRETA
+        initialScale = scale
       }
     }
 
     const onTouchMove = (e:any)=>{
       if(e.touches.length === 2){
-
-        const rect = el.getBoundingClientRect()
-
-        const x = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left
-        const y = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top
-
-        const originX = (x / rect.width) * 100
-        const originY = (y / rect.height) * 100
-
-        setOrigin(`${originX}% ${originY}%`)
 
         e.preventDefault()
 
@@ -133,21 +114,13 @@ export default function Catecismo(){
         let newScale = initialScale * ratio
         newScale = Math.max(1, Math.min(newScale, 4))
 
-        // 🔥 só visual (não mexe no scale ainda)
-        setVisualScale(newScale / initialScale)
+        setScale(newScale) // 🔥 agora o zoom é real (não visual)
       }
     }
 
     const onTouchEnd = (e: TouchEvent)=>{
       if(e.touches.length < 2){
         setIsZooming(false)
-
-        const finalScale = initialScale * visualScaleRef.current
-
-        setScale(Math.max(1, Math.min(finalScale, 4)))
-
-        setVisualScale(1)
-        setOrigin("center center")
       }
     }
 
@@ -347,23 +320,15 @@ export default function Catecismo(){
 
       {/* PDF */}
       <div ref={containerRef} className={styles.viewer}>
-        <div
-          style={{
-            transform: isZooming ? `scale(${visualScale})` : "scale(1)",
-            transformOrigin: origin,
-            transition: isZooming ? "none" : "transform 0.2s ease"
-          }}
-        >
-          <Document file="/catecismo.pdf" onLoadSuccess={onLoadSuccess}>
-            <Page
-              key={`${page}-${scale}`}
-              pageNumber={page}
-              scale={scale * dpr}
-              renderTextLayer={false}
-              renderAnnotationLayer={false}
-            />
-          </Document>
-        </div>
+        <Document file="/catecismo.pdf" onLoadSuccess={onLoadSuccess}>
+          <Page
+            key={`${page}-${scale}`}
+            pageNumber={page}
+            scale={scale * dpr}
+            renderTextLayer={false}
+            renderAnnotationLayer={false}
+          />
+        </Document>
       </div>
 
       {/* FOOTER */}
