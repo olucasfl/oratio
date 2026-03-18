@@ -1,29 +1,27 @@
 .navbar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
 
- position:fixed;
- bottom:0;
- left:0;
- right:0;
+  height:90px;
 
- height:90px;
+  padding-top:12px;
+  padding-bottom:env(safe-area-inset-bottom);
+  padding-left:12px;
+  padding-right:12px;
 
- padding-top:12px;
- padding-bottom:env(safe-area-inset-bottom);
+  display:flex;
+  justify-content:space-between; /* 👈 IMPORTANTE */
+  align-items:center;
 
- display:flex;
- justify-content:space-around;
- align-items:center;
+  background:var(--oratio-card-bg);
+  border-top:1px solid var(--oratio-card-border);
 
- background:var(--oratio-card-bg);
+  backdrop-filter:blur(8px);
+  box-shadow:0 -10px 35px rgba(0,0,0,0.08);
 
- border-top:1px solid var(--oratio-card-border);
-
- backdrop-filter:blur(8px);
-
- box-shadow:0 -10px 35px rgba(0,0,0,0.08);
-
- z-index:1000;
-
+  z-index:1000;
 }
 
 
@@ -49,8 +47,6 @@
  cursor:pointer;
 
  transition:all .2s ease;
-
- flex:1; /* 🔥 garante espaçamento igual */
 }
 
 
@@ -148,4 +144,12 @@
 
  }
 
+}
+
+.side{
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+
+  flex:1;
 }

@@ -29,59 +29,53 @@ export default function BottomNavbar(){
 
   <nav className={styles.navbar}>
 
-   {/* BÍBLIA */}
-   <button
-    className={`${styles.item} ${isActive("/oratio/biblia") ? styles.active : ""}`}
-    onClick={()=>navigate("/oratio/biblia")}
-   >
-    <BookOpen size={22}/>
-    <span>Bíblia</span>
-   </button>
+    {/* LADO ESQUERDO */}
+    <div className={styles.side}>
+        <button
+        className={`${styles.item} ${isActive("/oratio/biblia") ? styles.active : ""}`}
+        onClick={()=>navigate("/oratio/biblia")}
+        >
+        <BookOpen size={22}/>
+        <span>Bíblia</span>
+        </button>
 
+        <button
+        className={`${styles.item} ${isActive("/oratio/catecismo") ? styles.active : ""}`}
+        onClick={()=>navigate("/oratio/catecismo")}
+        >
+        <Book size={22}/>
+        <span>Catecismo</span>
+        </button>
+    </div>
 
-   {/* CATECISMO */}
-   <button
-    className={`${styles.item} ${isActive("/oratio/catecismo") ? styles.active : ""}`}
-    onClick={()=>navigate("/oratio/catecismo")}
-   >
-    <Book size={22}/>
-    <span>Catecismo</span>
-   </button>
+    {/* LADO DIREITO */}
+    <div className={styles.side}>
+        <button
+        className={`${styles.item} ${isActive("/oratio/vox") ? styles.active : ""}`}
+        onClick={()=>navigate("/oratio/vox")}
+        >
+        <MessageCircleHeart size={22}/>
+        <span>VoxAI</span>
+        </button>
 
+        <button
+        className={`${styles.item} ${isActive("/oratio/profile") ? styles.active : ""}`}
+        onClick={()=>navigate("/oratio/profile")}
+        >
+        <User size={22}/>
+        <span>Perfil</span>
+        </button>
+    </div>
 
-   {/* ESPAÇO DO BOTÃO CENTRAL */}
-   <div></div>
+    {/* BOTÃO CENTRAL */}
+    <button
+        className={`${styles.centerButton} ${isActive("/oratio/home") ? styles.centerActive : ""}`}
+        onClick={()=>navigate("/oratio/home")}
+    >
+        <Home size={26}/>
+    </button>
 
-
-   {/* VOX */}
-   <button
-    className={`${styles.item} ${isActive("/oratio/vox") ? styles.active : ""}`}
-    onClick={()=>navigate("/oratio/vox")}
-   >
-    <MessageCircleHeart size={22}/>
-    <span>VoxAI</span>
-   </button>
-
-
-   {/* PERFIL */}
-   <button
-    className={`${styles.item} ${isActive("/oratio/profile") ? styles.active : ""}`}
-    onClick={()=>navigate("/oratio/profile")}
-   >
-    <User size={22}/>
-    <span>Perfil</span>
-   </button>
-
-
-   {/* BOTÃO CENTRAL HOME */}
-   <button
-    className={`${styles.centerButton} ${isActive("/oratio/home") ? styles.centerActive : ""}`}
-    onClick={()=>navigate("/oratio/home")}
-   >
-    <Home size={26}/>
-   </button>
-
-  </nav>
+   </nav>
 
  )
 }
