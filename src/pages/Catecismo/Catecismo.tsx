@@ -96,7 +96,7 @@ export default function Catecismo(){
       const endX = e.changedTouches[0].clientX
       const diff = startX - endX
 
-      if(Math.abs(diff) > 80){
+      if(scale <= 1.05 && Math.abs(diff) > 80){
         if(diff > 0){
           setPage(p => Math.min(p + 1, numPages))
         }else{

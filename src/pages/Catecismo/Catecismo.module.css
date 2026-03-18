@@ -147,9 +147,7 @@
   flex:1;
   overflow:auto;
 
-  display:flex;
-  justify-content:center;
-  align-items:flex-start;
+  display:block;
 
   padding:20px 12px;
 
@@ -159,10 +157,6 @@
 }
 
 .viewer > div{
-  display:flex;
-  justify-content:center;
-  align-items:flex-start;
-
   width:fit-content;
   min-width:100%;
 }
