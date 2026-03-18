@@ -70,45 +70,21 @@ export default function Vox(){
 
   },[])
 
- async function init(){
+  async function init(){
   try{
 
-   setError(null)
+    setError(null)
 
-   const list = await getConversations()
-   setConversations(list || [])
+    const list = await getConversations()
+    setConversations(list || [])
 
-   const savedConversation = localStorage.getItem(STORAGE_KEY)
-
-    if(savedConversation){
-
-    try{
-
-      const msgs = await getMessages(savedConversation)
-
-      if(!msgs?.length){
-      setConversationId(savedConversation)
-      setMessages([])
-      return
-      }
-
-      await openConversation(savedConversation)
-      return
-
-    }catch{
-      // conversa inválida → limpa storage
-      localStorage.removeItem(STORAGE_KEY)
-    }
-
-    }
-
-    // se não tiver conversa válida → cria nova
+    // 👇 SEMPRE abre conversa vazia (ou cria uma)
     await handleNewConversation(list)
 
   }catch{
-   setError("Não foi possível carregar suas conversas.")
+    setError("Não foi possível carregar suas conversas.")
   }
- }
+  }
 
  /* =========================
     ABRIR CONVERSA
