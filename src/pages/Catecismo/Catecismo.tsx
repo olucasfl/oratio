@@ -32,9 +32,8 @@ export default function Catecismo(){
   const [loaded, setLoaded] = useState(false)
   const [isZooming, setIsZooming] = useState(false)
 
-  const [visualScale, setVisualScale] = useState(1.2)
-
-  const visualScaleRef = useRef(visualScale)
+  const [visualScale, setVisualScale] = useState(1)
+  const visualScaleRef = useRef(1)
 
   const [origin, setOrigin] = useState("center center")
 
@@ -44,9 +43,7 @@ export default function Catecismo(){
     visualScaleRef.current = visualScale
   },[visualScale])
 
-  /* =========================
-     RESTORE
-  ========================= */
+  /* ========================= RESTORE ========================= */
 
   function restoreState(pdf:any){
     const savedPage = localStorage.getItem("catecismo_page")
@@ -64,9 +61,7 @@ export default function Catecismo(){
     }
   }
 
-  /* =========================
-     SAVE STATE
-  ========================= */
+  /* ========================= SAVE ========================= */
 
   useEffect(()=>{
     if(!loaded) return
@@ -78,13 +73,7 @@ export default function Catecismo(){
     localStorage.setItem("catecismo_scale", String(scale))
   },[scale, loaded])
 
-  useEffect(()=>{
-  setVisualScale(scale)
-}, [scale])
-
-  /* =========================
-     PDF LOAD
-  ========================= */
+  /* ========================= PDF LOAD ========================= */
 
   function onLoadSuccess(pdf:any){
     setNumPages(pdf.numPages)
@@ -100,16 +89,14 @@ export default function Catecismo(){
     }
   }
 
-  /* =========================
-     PINCH ZOOM
-  ========================= */
+  /* ========================= PINCH ZOOM (CORRIGIDO) ========================= */
 
   useEffect(()=>{
     const el = containerRef.current
     if(!el) return
 
     let initialDistance = 0
-    let initialScale = visualScaleRef.current
+    let initialScale = 1
 
     function getDistance(touches:any){
       const dx = touches[0].clientX - touches[1].clientX
@@ -121,12 +108,11 @@ export default function Catecismo(){
       if(e.touches.length === 2){
         setIsZooming(true)
         initialDistance = getDistance(e.touches)
-        initialScale = visualScaleRef.current
+        initialScale = scale // 🔥 BASE CORRETA
       }
     }
 
     const onTouchMove = (e:any)=>{
-
       if(e.touches.length === 2){
 
         const rect = el.getBoundingClientRect()
@@ -147,14 +133,19 @@ export default function Catecismo(){
         let newScale = initialScale * ratio
         newScale = Math.max(1, Math.min(newScale, 4))
 
-        setVisualScale(newScale / scale)
+        // 🔥 só visual (não mexe no scale ainda)
+        setVisualScale(newScale / initialScale)
       }
     }
 
     const onTouchEnd = (e: TouchEvent)=>{
       if(e.touches.length < 2){
         setIsZooming(false)
-        setScale(prev => Math.max(1, Math.min(prev * visualScaleRef.current, 4)))
+
+        const finalScale = initialScale * visualScaleRef.current
+
+        setScale(Math.max(1, Math.min(finalScale, 4)))
+
         setVisualScale(1)
         setOrigin("center center")
       }
@@ -170,11 +161,9 @@ export default function Catecismo(){
       el.removeEventListener("touchend", onTouchEnd)
     }
 
-  },[])
+  },[scale])
 
-  /* =========================
-     SWIPE
-  ========================= */
+  /* ========================= SWIPE ========================= */
 
   useEffect(()=>{
     const el = containerRef.current
@@ -190,7 +179,7 @@ export default function Catecismo(){
 
     const onTouchEnd = (e:any)=>{
 
-      if(isZooming) return // 🔥 evita conflito
+      if(isZooming) return
 
       const endX = e.changedTouches[0].clientX
       const diff = startX - endX
@@ -214,9 +203,7 @@ export default function Catecismo(){
 
   },[numPages, isZooming])
 
-  /* =========================
-     BUSCA (INTOCADA)
-  ========================= */
+  /* ========================= BUSCA ========================= */
 
   async function irParaArtigo(){
 
@@ -231,7 +218,6 @@ export default function Catecismo(){
     try{
 
       const encontrados:any[] = []
-
       const regex = new RegExp(`${artigo}\\s*\\.`)
 
       for(let i = 1; i <= numPages; i++){
