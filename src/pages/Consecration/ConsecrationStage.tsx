@@ -135,12 +135,14 @@ export default function ConsecrationStage(){
       : "Não foi possível carregar este estágio."}
     </p>
 
-    <button
-     className={styles.back}
-     onClick={()=>navigate("/oratio/consecration")}
-    >
-     ← Voltar
-    </button>
+    <div className={styles.headerTop}>
+      <button
+        className={styles.back}
+        onClick={()=>navigate("/oratio/consecration")}
+      >
+        ← Voltar
+      </button>
+    </div>
 
    </div>
 

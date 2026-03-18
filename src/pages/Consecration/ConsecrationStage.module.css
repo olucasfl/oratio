@@ -38,22 +38,13 @@ color:var(--oratio-text-soft);
 /* BOTÃO VOLTAR */
 
 .back{
+  background:none;
+  border:none;
 
-position:absolute;
+  color:var(--oratio-primary);
 
-top:calc(20px + env(safe-area-inset-top));
-
-left:20px;
-
-background:none;
-border:none;
-
-color:var(--oratio-primary);
-
-font-size:16px;
-
-cursor:pointer;
-
+  font-size:16px;
+  cursor:pointer;
 }
 
 .back:hover{
@@ -326,4 +317,14 @@ font-size:14px;
 
 .pageSpacer{
 height:120px;
+}
+
+.headerTop{
+  width:100%;
+  max-width:640px;
+
+  display:flex;
+  align-items:center;
+
+  margin-bottom:10px;
 }
