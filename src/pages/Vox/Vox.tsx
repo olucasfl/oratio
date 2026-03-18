@@ -96,7 +96,6 @@ export default function Vox(){
 
    setError(null)
    setConversationId(id)
-   localStorage.setItem(STORAGE_KEY, id)
    setMenuOpen(false)
    setLoading(true)
 
@@ -141,7 +140,6 @@ async function handleNewConversation(existingConversations?: Conversation[]){
   }
 
   setConversationId(conv.id)
-  localStorage.setItem(STORAGE_KEY, conv.id)
   setMessages([])
 
   const list = await getConversations()
@@ -204,7 +202,6 @@ async function handleNewConversation(existingConversations?: Conversation[]){
 
    setMessages(prev => [...prev,aiMessage])
 
-   localStorage.removeItem(STORAGE_KEY)
 
    const list = await getConversations()
    setConversations(list || [])
