@@ -32,6 +32,14 @@ export default function Catecismo(){
   const [loaded, setLoaded] = useState(false)
   const [isZooming, setIsZooming] = useState(false)
 
+  const [visualScale, setVisualScale] = useState(1.2)
+
+  const visualScaleRef = useRef(visualScale)
+
+  useEffect(()=>{
+    visualScaleRef.current = visualScale
+  },[visualScale])
+
   /* =========================
      RESTORE
   ========================= */
@@ -66,6 +74,10 @@ export default function Catecismo(){
     localStorage.setItem("catecismo_scale", String(scale))
   },[scale, loaded])
 
+  useEffect(()=>{
+  setVisualScale(scale)
+}, [scale])
+
   /* =========================
      PDF LOAD
   ========================= */
@@ -93,7 +105,7 @@ export default function Catecismo(){
     if(!el) return
 
     let initialDistance = 0
-    let initialScale = scale
+    let initialScale = visualScaleRef.current
 
     function getDistance(touches:any){
       const dx = touches[0].clientX - touches[1].clientX
@@ -105,7 +117,7 @@ export default function Catecismo(){
       if(e.touches.length === 2){
         setIsZooming(true)
         initialDistance = getDistance(e.touches)
-        initialScale = scale
+        initialScale = visualScaleRef.current
       }
     }
 
@@ -119,12 +131,14 @@ export default function Catecismo(){
         let newScale = initialScale * ratio
         newScale = Math.max(0.5, Math.min(newScale, 3))
 
-        setScale(newScale)
+        setVisualScale(newScale)
       }
     }
 
     const onTouchEnd = ()=>{
       setIsZooming(false)
+
+      setScale(visualScaleRef.current)
     }
 
     el.addEventListener("touchstart", onTouchStart, { passive:false })
@@ -137,7 +151,7 @@ export default function Catecismo(){
       el.removeEventListener("touchend", onTouchEnd)
     }
 
-  },[]) // 🔥 importante
+  },[])
 
   /* =========================
      SWIPE
@@ -328,13 +342,21 @@ export default function Catecismo(){
 
       {/* PDF */}
       <div ref={containerRef} className={styles.viewer}>
-        <Document file="/catecismo.pdf" onLoadSuccess={onLoadSuccess}>
-          <Page
-            key={`${page}-${scale}`}
-            pageNumber={page}
-            scale={scale}
-          />
-        </Document>
+        <div
+          style={{
+            transform: `scale(${visualScale})`,
+            transformOrigin: "center center",
+            transition: isZooming ? "none" : "transform 0.2s ease"
+          }}
+        >
+          <Document file="/catecismo.pdf" onLoadSuccess={onLoadSuccess}>
+            <Page
+              key={`${page}-${scale}`}
+              pageNumber={page}
+              scale={scale}
+            />
+          </Document>
+        </div>
       </div>
 
       {/* FOOTER */}
