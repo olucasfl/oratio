@@ -36,6 +36,8 @@ export default function Catecismo(){
 
   const visualScaleRef = useRef(visualScale)
 
+  const [origin, setOrigin] = useState("center center")
+
   useEffect(()=>{
     visualScaleRef.current = visualScale
   },[visualScale])
@@ -122,23 +124,37 @@ export default function Catecismo(){
     }
 
     const onTouchMove = (e:any)=>{
+
       if(e.touches.length === 2){
+
+        const rect = el.getBoundingClientRect()
+
+        const x = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left
+        const y = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top
+
+        const originX = (x / rect.width) * 100
+        const originY = (y / rect.height) * 100
+
+        setOrigin(`${originX}% ${originY}%`)
+
         e.preventDefault()
 
         const newDistance = getDistance(e.touches)
         const ratio = newDistance / initialDistance
 
         let newScale = initialScale * ratio
-        newScale = Math.max(0.5, Math.min(newScale, 3))
+        newScale = Math.max(1, Math.min(newScale, 4))
 
         setVisualScale(newScale)
       }
     }
 
-    const onTouchEnd = ()=>{
-      setIsZooming(false)
-
-      setScale(visualScaleRef.current)
+    const onTouchEnd = (e: TouchEvent)=>{
+      if(e.touches.length < 2){
+        setIsZooming(false)
+        setScale(visualScaleRef.current)
+        setOrigin("center center")
+      }
     }
 
     el.addEventListener("touchstart", onTouchStart, { passive:false })
@@ -344,8 +360,7 @@ export default function Catecismo(){
       <div ref={containerRef} className={styles.viewer}>
         <div
           style={{
-            transform: `scale(${visualScale})`,
-            transformOrigin: "center center",
+            transformOrigin: origin,
             transition: isZooming ? "none" : "transform 0.2s ease"
           }}
         >
@@ -353,7 +368,9 @@ export default function Catecismo(){
             <Page
               key={`${page}-${scale}`}
               pageNumber={page}
-              scale={scale}
+              scale={visualScale * window.devicePixelRatio}
+              renderTextLayer={false}
+              renderAnnotationLayer={false}
             />
           </Document>
         </div>
@@ -371,9 +388,9 @@ export default function Catecismo(){
         <button onClick={()=>setPage(p => Math.min(p + 1, numPages))}>→</button>
 
         <div className={styles.zoom}>
-          <button onClick={()=>setScale(s => Math.max(0.5, s - 0.2))}>−</button>
+          <button onClick={()=>setScale(s => Math.max(1, s - 0.2))}>−</button>
           <span>{Math.round(scale * 100)}%</span>
-          <button onClick={()=>setScale(s => Math.min(3, s + 0.2))}>+</button>
+          <button onClick={()=>setScale(s => Math.min(4, s + 0.2))}>+</button>
         </div>
 
       </div>
