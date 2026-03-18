@@ -38,6 +38,8 @@ export default function Catecismo(){
 
   const [origin, setOrigin] = useState("center center")
 
+  const dpr = Math.min(window.devicePixelRatio || 1, 2)
+
   useEffect(()=>{
     visualScaleRef.current = visualScale
   },[visualScale])
@@ -145,14 +147,15 @@ export default function Catecismo(){
         let newScale = initialScale * ratio
         newScale = Math.max(1, Math.min(newScale, 4))
 
-        setVisualScale(newScale)
+        setVisualScale(newScale / scale)
       }
     }
 
     const onTouchEnd = (e: TouchEvent)=>{
       if(e.touches.length < 2){
         setIsZooming(false)
-        setScale(visualScaleRef.current)
+        setScale(prev => Math.max(1, Math.min(prev * visualScaleRef.current, 4)))
+        setVisualScale(1)
         setOrigin("center center")
       }
     }
@@ -360,6 +363,7 @@ export default function Catecismo(){
       <div ref={containerRef} className={styles.viewer}>
         <div
           style={{
+            transform: isZooming ? `scale(${visualScale})` : "scale(1)",
             transformOrigin: origin,
             transition: isZooming ? "none" : "transform 0.2s ease"
           }}
@@ -368,7 +372,7 @@ export default function Catecismo(){
             <Page
               key={`${page}-${scale}`}
               pageNumber={page}
-              scale={visualScale * window.devicePixelRatio}
+              scale={scale * dpr}
               renderTextLayer={false}
               renderAnnotationLayer={false}
             />
