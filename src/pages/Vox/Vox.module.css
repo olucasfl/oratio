@@ -169,12 +169,8 @@
    BOTÕES HEADER
 ========================= */
 
-.backButton,
-.menuButton{
- position:absolute;
-
- top:50%; /* 👈 VOLTA PRO NORMAL */
- transform:translateY(-50%);
+.backButton{
+ left:16px;
 
  width:42px;
  height:42px;
@@ -183,19 +179,34 @@
  border-radius:50%;
 
  background:rgba(255,255,255,0.2);
- color:white;
 
- cursor:pointer;
+ backdrop-filter:blur(6px);
+}
+
+.menuButton{
+ left:64px;
+
+ width:auto;
+ height:auto;
+
+ background:transparent;
+ border:none;
+}
+
+.backButton,
+.menuButton{
+ position:absolute;
+
+ top:calc(50% + 6px);
+ transform:translateY(-50%);
 
  display:flex;
  align-items:center;
  justify-content:center;
 
- backdrop-filter:blur(6px);
+ color:white;
+ cursor:pointer;
 }
-
-.backButton{ left:16px; }
-.menuButton{ left:64px; }
 
 /* =========================
    CHAT AREA

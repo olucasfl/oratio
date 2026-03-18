@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm"
 import styles from "./Vox.module.css"
 
 import { Plus } from "lucide-react"
+import { Menu } from "lucide-react"
 
 import {
  askVox,
@@ -342,7 +343,7 @@ export default function Vox(){
      className={styles.menuButton}
      onClick={()=>setMenuOpen(prev => !prev)}
     >
-     ☰
+     <Menu size={26} strokeWidth={2.5} />
     </button>
 
     <button
