@@ -184,7 +184,7 @@
 }
 
 .menuButton{
- left:64px;
+ left:70px;
 
  width:auto;
  height:auto;
@@ -197,7 +197,7 @@
 .menuButton{
  position:absolute;
 
- top:calc(50% + 6px);
+ top:calc(50% + 16px);
  transform:translateY(-50%);
 
  display:flex;
