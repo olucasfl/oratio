@@ -103,7 +103,7 @@ export default function Vox(){
     }
 
     // se não tiver conversa válida → cria nova
-    await handleNewConversation()
+    await handleNewConversation(list)
 
   }catch{
    setError("Não foi possível carregar suas conversas.")
@@ -139,48 +139,46 @@ export default function Vox(){
     NOVA CONVERSA
  ========================= */
 
- async function handleNewConversation(){
+async function handleNewConversation(existingConversations?: Conversation[]){
 
-  try{
+ try{
 
-    setLoading(true)
-    setError(null)
+  setLoading(true)
+  setError(null)
 
-    // 👇 verifica conversas existentes
-    for(const conv of conversations){
+  const convList = existingConversations || conversations
 
-      const msgs = await getMessages(conv.id)
+  for(const conv of convList){
 
-      if(!msgs || msgs.length === 0){
-        // 👇 reutiliza conversa vazia
-        await openConversation(conv.id)
-        return
-      }
+    const msgs = await getMessages(conv.id)
+
+    if(!msgs || msgs.length === 0){
+      await openConversation(conv.id)
+      return
     }
-
-    // 👇 se não encontrou nenhuma vazia → cria nova
-    const conv = await createConversation()
-
-    if(!conv?.id){
-      throw new Error()
-    }
-
-    setConversationId(conv.id)
-    localStorage.setItem(STORAGE_KEY, conv.id)
-    setMessages([])
-
-    const list = await getConversations()
-    setConversations(list || [])
-
-    setMenuOpen(false)
-
-  }catch{
-    setError("Erro ao criar nova conversa.")
-  }finally{
-    setLoading(false)
   }
 
+  const conv = await createConversation()
+
+  if(!conv?.id){
+    throw new Error()
   }
+
+  setConversationId(conv.id)
+  localStorage.setItem(STORAGE_KEY, conv.id)
+  setMessages([])
+
+  const list = await getConversations()
+  setConversations(list || [])
+
+  setMenuOpen(false)
+
+ }catch{
+  setError("Erro ao criar nova conversa.")
+ }finally{
+  setLoading(false)
+ }
+}
 
  /* =========================
     ENVIAR
@@ -301,7 +299,7 @@ export default function Vox(){
 
       <button
         className={styles.newChatButton}
-        onClick={handleNewConversation}
+        onClick={() => handleNewConversation()}
       >
         <Plus size={18} />
         Nova conversa
