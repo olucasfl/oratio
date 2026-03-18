@@ -147,18 +147,20 @@
   flex:1;
   overflow:auto;
 
-  display:block;
+  display:flex;
+  justify-content:center;   /* 👈 CENTRALIZA */
+  align-items:flex-start;
 
   padding:20px 12px;
 
   -webkit-overflow-scrolling:touch;
-
   touch-action: pan-x pan-y;
 }
 
 .viewer > div{
-  width:fit-content;
-  min-width:100%;
+  display:flex;
+  justify-content:center;   /* 👈 GARANTE */
+  width:100%;
 }
 
 .viewer canvas{
