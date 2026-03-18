@@ -25,6 +25,9 @@ export default function Tratado(){
   const [inputPagina, setInputPagina] = useState("")
   const [loaded, setLoaded] = useState(false)
 
+  // 🔥 URL FIXA PRA EVITAR RELOAD INFINITO
+  const [pdfUrl] = useState(`/tratado.pdf?v=${Date.now()}`)
+
   /* ================= RESTORE ================= */
 
   function restoreState(pdf:any){
@@ -107,6 +110,15 @@ export default function Tratado(){
 
   },[numPages, scale])
 
+  /* ================= SCROLL TO TOP ================= */
+
+  useEffect(()=>{
+    containerRef.current?.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    })
+  },[page])
+
   return(
 
     <div className={styles.container}>
@@ -126,7 +138,7 @@ export default function Tratado(){
           </div>
         </div>
 
-        {/* 🔥 BUSCA DE PÁGINA */}
+        {/* BUSCA DE PÁGINA */}
         <div className={styles.searchBar}>
           <div className={styles.searchGroup}>
             <input
@@ -148,7 +160,12 @@ export default function Tratado(){
         className={`${styles.viewer} ${scale <= 1 ? styles.centered : ""}`}
       >
         <div>
-          <Document file="/tratado.pdf" onLoadSuccess={onLoadSuccess}>
+          <Document
+            file={pdfUrl}
+            onLoadSuccess={onLoadSuccess}
+            loading="Carregando PDF..."
+            error="Erro ao carregar PDF"
+          >
             <Page
               key={`${page}-${scale}`}
               pageNumber={page}
