@@ -4,8 +4,8 @@ import {
  BookOpen,
  User,
  MessageCircleHeart,
- HandHeart,
- Home
+ Home,
+ Book
 } from "lucide-react"
 
 import styles from "./BottomNavbar.module.css"
@@ -17,9 +17,9 @@ export default function BottomNavbar(){
  const navigate = useNavigate()
  const location = useLocation()
 
-if(!isPWA()){
-    return null
-}
+ if(!isPWA()){
+  return null
+ }
 
  function isActive(path:string){
   return location.pathname.startsWith(path)
@@ -39,13 +39,13 @@ if(!isPWA()){
    </button>
 
 
-   {/* ORAÇÕES */}
+   {/* CATECISMO */}
    <button
-    className={`${styles.item} ${isActive("/oratio/prayers") ? styles.active : ""}`}
-    onClick={()=>navigate("/oratio/prayers")}
+    className={`${styles.item} ${isActive("/oratio/catecismo") ? styles.active : ""}`}
+    onClick={()=>navigate("/oratio/catecismo")}
    >
-    <HandHeart size={22}/>
-    <span>Orações</span>
+    <Book size={22}/>
+    <span>Catecismo</span>
    </button>
 
 

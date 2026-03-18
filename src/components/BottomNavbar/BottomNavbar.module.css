@@ -5,9 +5,9 @@
  left:0;
  right:0;
 
- height:90px; /* aumentamos a altura */
+ height:90px;
 
- padding-top:12px; /* empurra conteúdo para cima */
+ padding-top:12px;
  padding-bottom:env(safe-area-inset-bottom);
 
  display:flex;
@@ -50,6 +50,7 @@
 
  transition:all .2s ease;
 
+ flex:1; /* 🔥 garante espaçamento igual */
 }
 
 
