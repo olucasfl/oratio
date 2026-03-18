@@ -16,8 +16,6 @@ import {
  getMessages
 } from "../../services/voxService"
 
-const STORAGE_KEY = "vox_current_conversation"
-
 interface Message{
  id:string
  role:"user" | "assistant"
