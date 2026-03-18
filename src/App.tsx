@@ -204,7 +204,14 @@ element={
 
 <Route path="/oratio/tratado" element={<Tratado />} />
 
-<Route path="/oratio/vox" element={<Vox/>}/>
+<Route
+ path="/oratio/vox"
+ element={
+  <ProtectedRoute>
+   <Vox/>
+  </ProtectedRoute>
+ }
+/>
 
 <Route
  path="/oratio/profile"
