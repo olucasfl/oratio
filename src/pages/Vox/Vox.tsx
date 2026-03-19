@@ -33,7 +33,8 @@ export default function Vox(){
 
  const [messages,setMessages] = useState<Message[]>([])
  const [input,setInput] = useState("")
- const [loading,setLoading] = useState(false)
+  const [loading,setLoading] = useState(false)
+  const [loadingConversation,setLoadingConversation] = useState(false)
 
  const [conversationId,setConversationId] = useState<string | null>(null)
  const [conversations,setConversations] = useState<Conversation[]>([])
@@ -50,9 +51,11 @@ export default function Vox(){
     SCROLL
  ========================= */
 
- useEffect(()=>{
-  bottomRef.current?.scrollIntoView({behavior:"smooth"})
- },[messages,loading])
+  useEffect(()=>{
+  setTimeout(()=>{
+    bottomRef.current?.scrollIntoView({behavior:"smooth"})
+  },50)
+  },[messages])
 
  /* =========================
     INIT
@@ -66,6 +69,10 @@ export default function Vox(){
 
   init()
 
+  },[])
+
+  useEffect(()=>{
+  textareaRef.current?.focus()
   },[])
 
   async function init(){
@@ -92,21 +99,23 @@ export default function Vox(){
 
   try{
 
-   setError(null)
-   setConversationId(id)
-   setMenuOpen(false)
-   setLoading(true)
+    setError(null)
+    setConversationId(id)
+    setMenuOpen(false)
+    setLoadingConversation(true)
 
-   const msgs = await getMessages(id)
+    setMessages([])
 
-   setMessages(msgs || [])
+    const msgs = await getMessages(id)
+
+    setMessages(msgs || [])
 
   }catch{
-   setError("Erro ao abrir conversa.")
+    setError("Erro ao abrir conversa.")
   }finally{
-  setLoading(false)
+    setLoadingConversation(false)
   }
- }
+  }
 
  /* =========================
     NOVA CONVERSA
@@ -116,6 +125,7 @@ async function handleNewConversation(existingConversations?: Conversation[]){
 
  try{
 
+  setLoadingConversation(true)
   setError(null)
 
   const convList = existingConversations || conversations
@@ -125,7 +135,8 @@ async function handleNewConversation(existingConversations?: Conversation[]){
     const msgs = await getMessages(conv.id)
 
     if(!msgs || msgs.length === 0){
-      return openConversation(conv.id)
+      await openConversation(conv.id)
+      return
     }
   }
 
@@ -145,85 +156,97 @@ async function handleNewConversation(existingConversations?: Conversation[]){
 
  }catch{
   setError("Erro ao criar nova conversa.")
- }
+ } finally {
+    setLoadingConversation(false)
+   }
 }
 
  /* =========================
     ENVIAR
  ========================= */
 
- async function sendMessage(){
+async function sendMessage(){
 
   const text = input.trim()
 
-  if(!text || loading || !conversationId) return
+  if(!text || loading || loadingConversation || !conversationId) return
 
   if(text.length > 500){
-   alert("Pergunta muito longa.")
-   return
+    alert("Pergunta muito longa.")
+    return
   }
 
   const userMessage:Message={
-   id:crypto.randomUUID(),
-   role:"user",
-   content:text
+    id:crypto.randomUUID(),
+    role:"user",
+    content:text
   }
 
   setMessages(prev => [...prev,userMessage])
   setInput("")
 
   if(textareaRef.current){
-   textareaRef.current.style.height = "auto"
+    textareaRef.current.style.height = "auto"
   }
 
   setLoading(true)
+  setError(null)
 
   try{
+    let res
 
-   setError(null)
+    for(let i = 0; i < 2; i++){
+    res = await askVox(text, conversationId)
+    if(res?.success) break
+    }
 
-   const res = await askVox(text, conversationId)
+    if(!res?.success){
 
-   if(!res?.success){
-    throw new Error()
-   }
+    if(res?.error === "UNAUTHORIZED"){
+      setError("Sua sessão expirou. Faça login novamente.")
+    }else if(res?.error === "RATE_LIMIT"){
+      setError("Você está enviando mensagens muito rápido.")
+    }else if(res?.error === "TIMEOUT"){
+      setError("O Vox demorou para responder. Tente novamente.")
+    }else if(res?.error === "LIMIT_EXCEEDED"){
+      setError("Limite diário atingido.")
+    }else{
+      setError(res?.message || "Erro inesperado.")
+    }
 
-   const aiMessage:Message={
+    return
+    }
+
+    const aiMessage:Message={
     id:crypto.randomUUID(),
     role:"assistant",
     content: res.response
-   }
-
-   setMessages(prev => [...prev,aiMessage])
-
-
-   const list = await getConversations()
-   setConversations(list || [])
-
-  }catch{
-
-   setError("O Vox não conseguiu responder. Tente novamente.")
-
-   setMessages(prev => [
-    ...prev,
-    {
-     id:crypto.randomUUID(),
-     role:"assistant",
-     content:"O Vox está temporariamente indisponível."
     }
-   ])
+
+    setMessages(prev => [...prev,aiMessage])
+
+    const list = await getConversations()
+    setConversations(list || [])
+
+  }catch(error:any){
+
+    if(error?.response?.status === 401){
+    setError("Sua sessão expirou. Faça login novamente.")
+    }else{
+    setError("Erro de conexão. Verifique sua internet.")
+    }
 
   }finally{
     setLoading(false)
   }
- }
+  }
 
  /* =========================
     ENTER
  ========================= */
 
  function handleKey(e:React.KeyboardEvent<HTMLTextAreaElement>){
-  if(e.key==="Enter" && !e.shiftKey){
+  if(e.key==="Enter" && !e.shiftKey && !loading){
    e.preventDefault()
    sendMessage()
   }
@@ -267,9 +290,9 @@ async function handleNewConversation(existingConversations?: Conversation[]){
       <button
         className={styles.newChatButton}
         onClick={() => handleNewConversation()}
-        disabled={loading}
+        disabled={loadingConversation}
       >
-        {loading ? (
+        {loadingConversation ? (
           <div className={styles.spinner}></div>
         ) : (
           <>
@@ -338,7 +361,40 @@ async function handleNewConversation(existingConversations?: Conversation[]){
 
    {/* CHAT */}
 
-   <main className={styles.chatArea}>
+    <main className={styles.chatArea}>
+
+      {loadingConversation && (
+        <div style={{
+          textAlign:"center",
+          marginTop:"60px",
+          opacity:0.6,
+          fontSize:"14px"
+        }}>
+          ⏳ Carregando conversa...
+        </div>
+      )}
+
+      {messages.length === 0 && !loading && !loadingConversation && (
+        <div style={{
+          textAlign:"center",
+          opacity:0.7,
+          marginTop:"40px",
+          fontSize: "18px",
+          fontWeight: 800,
+          lineHeight:"1.6"
+        }}>
+          Pergunte algo ao Vox ✨<br/><br/>
+          
+          <span style={{fontSize:"14px", opacity:0.85}}>
+            Você pode pedir explicações, tirar dúvidas ou conversar sobre:<br/><br/>
+
+            📖 Doutrina Católica<br/>
+            🙏 Espiritualidade e vida de oração<br/>
+            ❤️ Sentimentos, dúvidas e desafios pessoais<br/>
+            ❓ Qualquer tema espiritual ou questão da vida
+          </span>
+        </div>
+      )}
 
     {messages.map(msg => {
 
@@ -369,14 +425,15 @@ async function handleNewConversation(existingConversations?: Conversation[]){
 
     })}
 
-    {loading && (
+    {loading && !loadingConversation && messages.length > 0 && (
 
      <div className={`${styles.message} ${styles.aiMessage}`}>
       <div className={styles.typing}>
-       <span></span>
-       <span></span>
-       <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
+      <small style={{opacity:0.6}}>Vox está escrevendo...</small>
      </div>
 
     )}
@@ -401,10 +458,10 @@ async function handleNewConversation(existingConversations?: Conversation[]){
      />
 
      <button
-      onClick={sendMessage}
-      disabled={loading}
-     >
-      ↑
+        onClick={sendMessage}
+        disabled={loading || loadingConversation || !input.trim()}
+      >
+      {loading ? "..." : "↑"}
      </button>
 
     </div>

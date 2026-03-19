@@ -241,6 +241,12 @@
  font-size:18px;
  line-height:1.75;
  animation:fadeIn .3s ease;
+
+ transition:.2s;
+}
+
+.message:hover{
+ transform:translateY(-2px);
 }
 
 /* USER */
@@ -294,6 +300,9 @@
  font-size:14px;
 
  animation:fadeIn .3s ease;
+
+ max-width:90%;
+ text-align:center;
 }
 
 /* =========================
@@ -450,6 +459,9 @@
  font-size:17px;
  font-family:var(--oratio-font-text);
  background:transparent;
+
+ max-height:140px;
+ overflow-y:auto;
 }
 
 .inputBox button{
@@ -464,6 +476,18 @@
  );
  color:white;
  cursor:pointer;
+
+ transition:.2s;
+}
+
+.inputBox button:hover{
+ transform:scale(1.08);
+}
+
+.inputBox button:disabled{
+ opacity:.6;
+ cursor:not-allowed;
+ transform:none;
 }
 
 /* =========================
@@ -518,8 +542,42 @@
  border-top:2px solid transparent;
  border-radius:50%;
  animation:spin .7s linear infinite;
+
+ margin:auto;
 }
 
 @keyframes spin{
  to{ transform:rotate(360deg); }
 }
+
+/* =========================
+   TYPING (AI)
+========================= */
+
+.typing{
+ display:flex;
+ gap:6px;
+ padding:6px 4px;
+}
+
+.typing span{
+ width:8px;
+ height:8px;
+ border-radius:50%;
+ background:var(--oratio-primary);
+ animation:typing 1.2s infinite ease-in-out;
+}
+
+.typing span:nth-child(2){
+ animation-delay:.2s;
+}
+
+.typing span:nth-child(3){
+ animation-delay:.4s;
+}
+
+@keyframes typing{
+ 0%,80%,100%{ transform:scale(0.6); opacity:.4; }
+ 40%{ transform:scale(1); opacity:1; }
+}
+
