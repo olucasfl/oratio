@@ -587,16 +587,29 @@
 
 .conversationContent{
  display:flex;
- align-items:center;
+ align-items:flex-start;
+ gap: 8px;
  justify-content:space-between;
  width:100%;
 }
 
 .conversationTitle{
- overflow:hidden;
- text-overflow:ellipsis;
- white-space:nowrap;
  flex:1;
+ min-width:0;
+
+ white-space:normal;
+ overflow:hidden;
+
+ display:-webkit-box;
+ -webkit-line-clamp:2;
+ -webkit-box-orient:vertical;
+
+ word-break:normal;
+ overflow-wrap:break-word;
+
+ hyphens:auto;
+
+ line-height:1.3;
 }
 
 .conversationActions{

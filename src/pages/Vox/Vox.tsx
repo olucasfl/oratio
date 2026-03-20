@@ -280,9 +280,16 @@ export default function Vox(){
 
   async function handleRename(){
 
-    if(!selectedConv || !renameValue.trim()) return
+    const trimmed = renameValue.trim()
 
-    await renameConversation(selectedConv, renameValue)
+    if(!selectedConv || !trimmed) return
+
+    if(trimmed.length > 50){
+      alert("O nome da conversa deve ter no máximo 50 caracteres.")
+      return
+    }
+
+    await renameConversation(selectedConv, trimmed)
 
     const list = await getConversations()
     setConversations(list || [])
