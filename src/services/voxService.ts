@@ -1,5 +1,4 @@
-const BASE_URL = "http://localhost:3000/oratio/voxai"
-//https://finance-api-y0ol.onrender.com/oratio/voxai
+const BASE_URL = "https://finance-api-y0ol.onrender.com/oratio/voxai"
 
 /* =========================
    HELPER TOKEN
