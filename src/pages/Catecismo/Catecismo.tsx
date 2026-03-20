@@ -77,44 +77,6 @@ export default function Catecismo(){
     }
   }
 
-  /* ========================= SWIPE ========================= */
-
-  useEffect(()=>{
-    const el = containerRef.current
-    if(!el) return
-
-    let startX = 0
-
-    const onTouchStart = (e:any)=>{
-      if(e.touches.length === 1){
-        startX = e.touches[0].clientX
-      }
-    }
-
-    const onTouchEnd = (e:any)=>{
-
-      const endX = e.changedTouches[0].clientX
-      const diff = startX - endX
-
-      if(scale <= 1.05 && Math.abs(diff) > 80){
-        if(diff > 0){
-          setPage(p => Math.min(p + 1, numPages))
-        }else{
-          setPage(p => Math.max(p - 1, 1))
-        }
-      }
-    }
-
-    el.addEventListener("touchstart", onTouchStart)
-    el.addEventListener("touchend", onTouchEnd)
-
-    return ()=>{
-      el.removeEventListener("touchstart", onTouchStart)
-      el.removeEventListener("touchend", onTouchEnd)
-    }
-
-  },[numPages])
-
   /* ========================= BUSCA ========================= */
 
   async function irParaArtigo(){
