@@ -1,798 +1,389 @@
 .container{
+ --home-content-max:1100px;
+ --home-card-max:520px;
+ --home-card-radius:20px;
+ --home-section-gap:30px;
+ --home-top-offset:calc(16px + env(safe-area-inset-top));
 
-min-height:100vh;
-
-padding:70px 20px;
-
-display:flex;
-flex-direction:column;
-align-items:center;
-
- padding-bottom:calc(110px + env(safe-area-inset-bottom));
-
-gap:42px;
-
-background:
-radial-gradient(circle at top,#ffffff55,transparent 65%),
-linear-gradient(to bottom,#fff8ef,transparent 40%),
-var(--oratio-background);
-
-font-family:var(--oratio-font-text);
-
-animation:fadePage .7s ease;
-
+ min-height:100dvh;
+ padding:72px 20px calc(124px + env(safe-area-inset-bottom));
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ gap:var(--home-section-gap);
+ background:
+  radial-gradient(circle at top,#ffffff55,transparent 65%),
+  linear-gradient(to bottom,#fff8ef,transparent 40%),
+  var(--oratio-background);
+ font-family:var(--oratio-font-text);
+ animation:fadePage .6s ease;
 }
 
+.topButtons{
+ position:fixed;
+ top:var(--home-top-offset);
+ right:18px;
+ display:flex;
+ gap:10px;
+ z-index:100;
+}
 
-/* ================================= */
-/* HERO */
-/* ================================= */
+.profileButton,
+.logoutButton{
+ width:42px;
+ height:42px;
+ border:none;
+ border-radius:50%;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ cursor:pointer;
+ box-shadow:0 6px 18px rgba(0,0,0,.15);
+ transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+
+.profileButton{
+ background:var(--oratio-secondary);
+ color:var(--oratio-primary);
+}
+
+.logoutButton{
+ background:var(--oratio-primary);
+ color:#fff;
+}
+
+.profileButton:hover,
+.logoutButton:hover{
+ transform:translateY(-1px);
+ box-shadow:0 10px 24px rgba(0,0,0,.2);
+}
+
+.profileButton:hover{
+ filter:brightness(.98);
+}
+
+.logoutButton:hover{
+ background:var(--oratio-primary-dark);
+}
 
 .hero{
-
-text-align:center;
-
-animation:fadeUp .8s ease;
-
+ width:100%;
+ max-width:var(--home-content-max);
+ text-align:center;
+ animation:fadeUp .7s ease;
 }
-
-
-/* ================================= */
-/* LOGO */
-/* ================================= */
 
 .logoWrapper{
-
-position:relative;
-
-display:flex;
-align-items:center;
-justify-content:center;
-
-font-family:var(--oratio-font-title);
-
-font-size:70px;
-
-color:var(--oratio-primary);
-
-letter-spacing:4px;
-
+ position:relative;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ font-family:var(--oratio-font-title);
+ font-size:clamp(48px, 8vw, 88px);
+ letter-spacing:clamp(2px, .8vw, 4px);
+ color:var(--oratio-primary);
+ line-height:1;
 }
-
-
-/* PARTES DO TEXTO */
 
 .logoLeft,
 .logoRight{
-
-z-index:1;
-
+ z-index:1;
 }
 
-
-/* ================================= */
-/* CRUZ CENTRAL */
-/* ================================= */
-
 .cross{
-
-position:relative;
-
-width:9px;
-height:130px;
-
-background:var(--oratio-primary);
-
-margin:0 8px;
-
-z-index:3;
-
-top:-8px;
-
-box-shadow:0 0 12px rgba(0,0,0,0.25);
-
+ position:relative;
+ width:9px;
+ height:clamp(94px, 13vw, 142px);
+ margin:0 clamp(5px, .7vw, 10px);
+ top:clamp(-8px, -.6vw, -5px);
+ background:var(--oratio-primary);
+ box-shadow:0 0 12px rgba(0,0,0,.22);
+ z-index:2;
 }
 
 .cross::after{
-
-content:"";
-
-position:absolute;
-
-width:230px;
-height:9px;
-
-background:var(--oratio-primary);
-
-top:28px;
-
-left:50%;
-
-transform:translateX(-50%);
-
-box-shadow:0 0 12px rgba(0,0,0,0.25);
-
+ content:"";
+ position:absolute;
+ left:50%;
+ top:clamp(22px, 2.2vw, 31px);
+ width:clamp(170px, 24vw, 292px);
+ height:9px;
+ transform:translateX(-50%);
+ background:var(--oratio-primary);
+ box-shadow:0 0 12px rgba(0,0,0,.22);
 }
-
-
-/* ================================= */
-/* SUBTITLE */
-/* ================================= */
 
 .subtitle{
-
-margin-top:16px;
-
-font-size:16px;
-
-color:var(--oratio-text-soft);
-
-letter-spacing:.3px;
-
+ margin-top:18px;
+ color:var(--oratio-text-soft);
+ font-size:clamp(14px, 1.9vw, 18px);
+ letter-spacing:.25px;
 }
 
-
-/* ================================= */
-/* CARDS */
-/* ================================= */
-
-.liturgyCard,
-.consecration{
-
-background:var(--oratio-card-bg);
-
-padding:32px 28px;
-
-border-radius:var(--oratio-radius-lg);
-
-box-shadow:var(--oratio-shadow-medium);
-
-border:1px solid var(--oratio-card-border);
-
-text-align:center;
-
-width:100%;
-max-width:470px;
-
-transition:var(--oratio-transition);
-
-animation:fadeUp .8s ease;
-
+.liturgyCard{
+ width:100%;
+ max-width:var(--home-content-max);
+ background:var(--oratio-card-bg);
+ border:1px solid var(--oratio-card-border);
+ border-radius:var(--home-card-radius);
+ box-shadow:var(--oratio-shadow-medium);
+ padding:30px 28px;
+ text-align:center;
+ animation:fadeUp .75s ease;
 }
 
-.liturgyCard:hover,
-.consecration:hover{
-
-transform:translateY(-4px);
-
-box-shadow:var(--oratio-shadow-strong);
-
+.liturgyCard h2{
+ margin:0 0 14px;
+ color:var(--oratio-primary);
+ font-size:clamp(22px, 3vw, 30px);
 }
 
-
-/* ================================= */
-/* TITULOS */
-/* ================================= */
-
-.liturgyCard h2,
-.consecration h2{
-
-color:var(--oratio-primary);
-
-margin-bottom:18px;
-
-font-size:26px;
-
-letter-spacing:1px;
-
+.infoText{
+ color:var(--oratio-text-soft);
 }
 
-
-/* ================================= */
-/* GRID DE BOTÕES */
-/* ================================= */
+.errorText{
+ color:#a01f22;
+}
 
 .liturgyButtons{
-
-display:grid;
-
-grid-template-columns:repeat(2,1fr);
-
-gap:12px;
-
-margin-top:14px;
-
+ display:grid;
+ grid-template-columns:repeat(4, minmax(0, 1fr));
+ gap:12px;
 }
-
-
-/* ================================= */
-/* BOTÕES */
-/* ================================= */
 
 .liturgyButtons button,
 .primaryButton{
-
-padding:14px 16px;
-
-border:none;
-
-border-radius:var(--oratio-radius-sm);
-
-background:var(--oratio-primary);
-
-color:white;
-
-font-size:15px;
-
-cursor:pointer;
-
-transition:var(--oratio-transition);
-
-font-weight:500;
-
+ border:none;
+ border-radius:var(--oratio-radius-sm);
+ background:var(--oratio-primary);
+ color:#fff;
+ font-size:15px;
+ font-weight:600;
+ padding:13px 14px;
+ cursor:pointer;
+ transition:transform .2s ease, box-shadow .2s ease, background .2s ease;
 }
 
 .liturgyButtons button:hover,
 .primaryButton:hover{
-
-transform:translateY(-2px);
-
-background:var(--oratio-primary-dark);
-
-box-shadow:0 6px 16px rgba(0,0,0,0.18);
-
+ transform:translateY(-2px);
+ background:var(--oratio-primary-dark);
+ box-shadow:0 8px 18px rgba(0,0,0,.18);
 }
 
-.liturgyButtons button:active,
-.primaryButton:active{
-
-transform:scale(.97);
-
+.featuresGrid{
+ width:100%;
+ max-width:var(--home-content-max);
+ display:grid;
+ grid-template-columns:repeat(2, minmax(0, 1fr));
+ gap:20px;
 }
 
-
-/* ================================= */
-/* TEXTO CONSAGRAÇÃO */
-/* ================================= */
-
-.consecration p{
-
-margin-bottom:26px;
-
-line-height:1.7;
-
-font-size:16px;
-
-max-width:420px;
-
-margin-left:auto;
-margin-right:auto;
-
-color:var(--oratio-text-dark);
-
+.featureCard{
+ background:var(--oratio-card-bg);
+ border:1px solid var(--oratio-card-border);
+ border-radius:var(--home-card-radius);
+ box-shadow:var(--oratio-shadow-medium);
+ text-align:center;
+ padding:28px 24px;
+ display:flex;
+ flex-direction:column;
+ justify-content:space-between;
+ min-height:240px;
+ animation:fadeUp .8s ease;
 }
 
+.featureCard h2{
+ margin:0 0 14px;
+ color:var(--oratio-primary);
+ font-size:clamp(22px, 2.1vw, 28px);
+ letter-spacing:.3px;
+}
 
-/* ================================= */
-/* MODAL */
-/* ================================= */
+.featureCard p{
+ margin:0 0 22px;
+ font-size:16px;
+ line-height:1.65;
+ color:var(--oratio-text-dark);
+}
 
 .modalOverlay{
-
-position:fixed;
-
-top:0;
-left:0;
-right:0;
-bottom:0;
-
-height:100dvh;
-
-background:rgba(0,0,0,0.55);
-
-display:flex;
-align-items:center;
-justify-content:center;
-
-padding-top:calc(20px + env(safe-area-inset-top));
-padding-bottom:calc(20px + env(safe-area-inset-bottom));
-padding-left:20px;
-padding-right:20px;
-
-z-index:2000;
-
-overflow:auto;
-
+ position:fixed;
+ inset:0;
+ z-index:2000;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:
+  calc(18px + env(safe-area-inset-top))
+  18px
+  calc(18px + env(safe-area-inset-bottom));
+ background:rgba(0,0,0,.56);
+ overflow:auto;
 }
-
-
-/* MODAL */
 
 .modal{
-
-background:white;
-
-width:100%;
-max-width:620px;
-
-max-height:85dvh;
-
-overflow-y:auto;
-
-padding-top:60px;
-padding-bottom:40px;
-padding-left:26px;
-padding-right:26px;
-
-border-radius:var(--oratio-radius-lg);
-
-box-shadow:var(--oratio-shadow-strong);
-
+ width:100%;
+ max-width:670px;
+ max-height:86dvh;
+ overflow:auto;
+ border-radius:var(--home-card-radius);
+ border:1px solid var(--oratio-card-border);
+ background:#fff;
+ box-shadow:var(--oratio-shadow-strong);
+ padding:28px 24px 24px;
+ animation:fadeUp .24s ease;
 }
-
-
-/* ================================= */
-/* TITULO */
-/* ================================= */
 
 .modalTitle{
-
-font-size:26px;
-
-color:var(--oratio-primary);
-
-text-align:center;
-
-margin-bottom:10px;
-
-letter-spacing:1px;
-
+ margin:0 0 8px;
+ text-align:center;
+ color:var(--oratio-primary);
+ font-size:clamp(22px, 3vw, 30px);
 }
-
-
-/* ================================= */
-/* REFERENCIA */
-/* ================================= */
 
 .modalReference{
-
-text-align:center;
-
-font-style:italic;
-
-margin-bottom:26px;
-
-font-size:20px;
-
-color:var(--oratio-text-soft);
-
+ margin:0 0 20px;
+ text-align:center;
+ font-size:clamp(16px, 2vw, 20px);
+ color:var(--oratio-text-soft);
+ font-style:italic;
 }
-
-
-/* ================================= */
-/* TEXTO BÍBLICO */
-/* ================================= */
-
-.modalText{
-
-white-space:pre-line;
-
-line-height:2;
-
-font-size:19px;
-
-text-align:justify;
-
-font-family:Georgia,serif;
-
-color:#333;
-
-margin-bottom:5px;
-
-}
-
-
-/* REFRAO */
 
 .modalRefrao{
-
-background:#f4ede2;
-
-padding:14px;
-
-border-radius:10px;
-
-margin-bottom:20px;
-
-font-style:italic;
-
-text-align:center;
-
-font-size:16px;
-
+ margin:0 0 16px;
+ padding:12px;
+ border-radius:10px;
+ background:#f4ede2;
+ text-align:center;
+ font-style:italic;
+ font-size:16px;
 }
 
-
-/* BOTÃO FECHAR */
+.modalText{
+ white-space:pre-line;
+ margin-bottom:8px;
+ text-align:justify;
+ line-height:1.95;
+ font-size:clamp(17px, 2.1vw, 20px);
+ font-family:Georgia, serif;
+ color:#333;
+}
 
 .closeButton{
-
-margin-top:28px;
-
-width:100%;
-
-padding:14px;
-
-border:none;
-
-border-radius:var(--oratio-radius-sm);
-
-background:var(--oratio-primary);
-
-color:white;
-
-font-size:15px;
-
-cursor:pointer;
-
-transition:var(--oratio-transition);
-
+ width:100%;
+ margin-top:20px;
+ padding:13px;
+ border:none;
+ border-radius:var(--oratio-radius-sm);
+ background:var(--oratio-primary);
+ color:#fff;
+ font-size:15px;
+ font-weight:600;
+ cursor:pointer;
+ transition:background .2s ease;
 }
 
 .closeButton:hover{
-
-background:var(--oratio-primary-dark);
-
+ background:var(--oratio-primary-dark);
 }
 
-
-/* ================================= */
-/* FORMATAÇÃO BÍBLICA */
-/* ================================= */
-
-:global(.verse){
-
-font-size:12px;
-
-vertical-align:super;
-
-margin-right:4px;
-
-font-weight:600;
-
-color:#666;
-
+::global(.verse){
+ font-size:12px;
+ vertical-align:super;
+ margin-right:4px;
+ font-weight:700;
+ color:#666;
 }
 
-:global(.capitular){
-
-float:left;
-
-font-size:68px;
-
-line-height:58px;
-
-padding-right:10px;
-
-font-weight:bold;
-
-color:var(--oratio-primary);
-
-font-family:Georgia,serif;
-
-}
-
-.topActions{
-
- display:flex;
- justify-content:flex-end;
- width:100%;
- max-width:900px;
- margin:0 auto 20px auto;
- padding:0 20px;
-
-}
-
-.logoutButton{
-
- background:#8b0000;
- color:white;
- border:none;
- padding:10px 16px;
- border-radius:8px;
- font-size:14px;
- font-weight:600;
- cursor:pointer;
- transition:all .2s ease;
-
-}
-
-.logoutButton:hover{
-
- background:#a00000;
- transform:translateY(-1px);
-
-}
-
-.logoutButton:active{
-
- transform:scale(.97);
-
-}
-
-
-/* ================================= */
-/* ANIMAÇÕES */
-/* ================================= */
-
-@keyframes fadePage{
-
-from{
-opacity:0;
-}
-
-to{
-opacity:1;
-}
-
-}
-
-@keyframes fadeUp{
-
-from{
-opacity:0;
-transform:translateY(20px);
-}
-
-to{
-opacity:1;
-transform:translateY(0);
-}
-
-}
-
-@keyframes modalIn{
-
-from{
-opacity:0;
-transform:scale(.95);
-}
-
-to{
-opacity:1;
-transform:scale(1);
-}
-
-}
-
-@keyframes fadeModal{
-
-from{
-opacity:0;
-transform:scale(.95);
-}
-
-to{
-opacity:1;
-transform:scale(1);
-}
-
-}
-
-.featuresRow{
-
-display:flex;
-
-gap:22px;
-
-width:100%;
-
-max-width:1000px;
-
-justify-content:center;
-
-align-items:stretch;
-
-flex-wrap:wrap;
-
-}
-
-
-/* ================================= */
-/* MOBILE */
-/* ================================= */
-
-@media (max-width:768px){
-
-    .container{
-    padding:50px 16px;
-    gap:32px;
-    }
-
-    .logoWrapper{
-    font-size:46px;
-    }
-
-    .cross{
-    height:95px;
-    }
-
-    .cross::after{
-    width:160px;
-    height:7px;
-    top:22px;
-    }
-
-    .subtitle{
-    font-size:14px;
-    }
-
-    .liturgyCard,
-    .consecration{
-    padding:26px 20px;
-    max-width:100%;
-    }
-
-    .liturgyButtons{
-    grid-template-columns:1fr;
-    }
-
-    .modal{
-    padding:26px 20px;
-    max-height:90vh;
-    }
-
-    .modalTitle{
-    font-size:22px;
-    }
-
-    .modalReference{
-    font-size:17px;
-    }
-
-    .modalText{
-    font-size:17px;
-    line-height:1.9;
-    }
-
-    .capitular{
-    font-size:52px;
-    line-height:46px;
-    }
-
-    .topActions{
-
-    justify-content:center;
-    margin-bottom:10px;
-
-    }
-
-    .logoutButton{
-
-    width:100%;
-    max-width:200px;
-    padding:12px;
-    font-size:15px;
-
-    }
-
-    .featuresRow{
-
-    flex-direction:column;
-
-    max-width:470px;
-
-    }
+::global(.capitular){
+ float:left;
+ font-size:66px;
+ line-height:56px;
+ padding-right:10px;
+ font-weight:700;
+ color:var(--oratio-primary);
+ font-family:Georgia, serif;
 }
 
 .pageSpacer{
- height:120px;
+ height:96px;
 }
 
-/* =========================
-BOTÕES SUPERIORES
-========================= */
-
-.topButtons{
-
-position:absolute;
-
-top:calc(20px + env(safe-area-inset-top));
-right:20px;
-
-display:flex;
-gap:10px;
-
-z-index:10;
-
+@media (max-width:1024px){
+ .liturgyButtons{
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+ }
 }
 
+@media (max-width:768px){
+ .container{
+  --home-section-gap:24px;
+  padding:52px 14px calc(124px + env(safe-area-inset-bottom));
+ }
 
-/* =========================
-BOTÃO PERFIL
-========================= */
+ .topButtons{
+  position:absolute;
+  top:calc(14px + env(safe-area-inset-top));
+  right:14px;
+ }
 
-.profileButton{
+ .liturgyCard,
+ .featureCard{
+  border-radius:16px;
+ }
 
-width:42px;
-height:42px;
+ .liturgyCard{
+  padding:24px 18px;
+ }
 
-border-radius:50%;
+ .liturgyButtons{
+  grid-template-columns:1fr;
+ }
 
-border:none;
+ .featuresGrid{
+  grid-template-columns:1fr;
+  max-width:var(--home-card-max);
+  gap:16px;
+ }
 
-display:flex;
-align-items:center;
-justify-content:center;
+ .featureCard{
+  min-height:unset;
+  padding:24px 18px;
+ }
 
-background:var(--oratio-secondary);
-color:var(--oratio-primary);
+ .modal{
+  max-height:90dvh;
+  padding:24px 18px;
+ }
 
-cursor:pointer;
+ .modalText{
+  line-height:1.8;
+ }
 
-box-shadow:0 6px 18px rgba(0,0,0,0.15);
-
-transition:0.25s;
-
+ ::global(.capitular){
+  font-size:52px;
+  line-height:46px;
+ }
 }
 
-.profileButton:hover{
-
-transform:translateY(-2px);
-
-background:#e6d7c6;
-
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-
+@keyframes fadePage{
+ from{
+  opacity:0;
+ }
+ to{
+  opacity:1;
+ }
 }
 
-
-/* =========================
-BOTÃO LOGOUT
-========================= */
-
-.logoutButton{
-
-width:42px;
-height:42px;
-
-border-radius:50%;
-
-border:none;
-
-display:flex;
-align-items:center;
-justify-content:center;
-
-background:var(--oratio-primary);
-color:white;
-
-cursor:pointer;
-
-box-shadow:0 6px 18px rgba(0,0,0,0.15);
-
-transition:0.25s;
-
-}
-
-.logoutButton:hover{
-
-transform:translateY(-2px);
-
-background:var(--oratio-primary-dark);
-
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-
-}
-
-/* =========================
-ESPACOS DO MODAL
-========================= */
-
-.modalTopSpacer{
-height:10px;
-}
-
-.modalBottomSpacer{
-height:20px;
+@keyframes fadeUp{
+ from{
+  opacity:0;
+  transform:translateY(14px);
+ }
+ to{
+  opacity:1;
+  transform:translateY(0);
+ }
 }

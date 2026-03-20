@@ -1,112 +1,178 @@
 import styles from "./Home.module.css"
 import { useNavigate } from "react-router-dom"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 import { LogOut, User } from "lucide-react"
 import { isPWA } from "../../utils/isPwa"
 import { preloadConsecration } from "../../services/consecrationService"
 
+type LiturgyReading = {
+ titulo?: string
+ referencia?: string
+ texto?: string
+ refrao?: string
+}
+
+type LiturgyData = {
+ leituras?: {
+  primeiraLeitura?: LiturgyReading[]
+  segundaLeitura?: LiturgyReading[]
+  salmo?: LiturgyReading[]
+  evangelho?: LiturgyReading[]
+ }
+}
+
+type FeatureItem = {
+ title: string
+ description: string
+ actionLabel: string
+ path: string
+}
+
+const LITURGY_URL = "https://finance-api-y0ol.onrender.com/liturgia"
+const LITURGY_CACHE_KEY = "last_liturgy"
+
 export default function Home(){
-
  const navigate = useNavigate()
+ const pwa = isPWA()
+ const today = useMemo(() => new Date().toLocaleDateString("pt-BR"), [])
 
- const [liturgy,setLiturgy] = useState<any>(null)
- const [modal,setModal] = useState<any>(null)
+ const [liturgy,setLiturgy] = useState<LiturgyData | null>(null)
+ const [modal,setModal] = useState<LiturgyReading | null>(null)
+ const [loadingLiturgy,setLoadingLiturgy] = useState(true)
+ const [liturgyError,setLiturgyError] = useState<string | null>(null)
 
- const today = new Date().toLocaleDateString("pt-BR")
+ const features:FeatureItem[] = [
+  {
+   title: "Consagração à Nossa Senhora",
+   description:
+    "Um caminho espiritual de 33 dias segundo o método de São Luís Maria Grignion de Montfort.",
+   actionLabel: "Iniciar Consagração",
+   path: "/oratio/consecration"
+  },
+  {
+   title: "Orações",
+   description: "Reze as principais orações da tradição católica.",
+   actionLabel: "Abrir Orações",
+   path: "/oratio/prayers"
+  },
+  {
+   title: "Bíblia Sagrada",
+   description: "Leia a Palavra de Deus completa na tradução Ave-Maria.",
+   actionLabel: "Abrir Bíblia",
+   path: "/oratio/biblia"
+  },
+  {
+   title: "Catecismo da Igreja",
+   description:
+    "Leia o Catecismo oficial com navegação rápida por artigo e acesso direto ao documento.",
+   actionLabel: "Abrir Catecismo",
+   path: "/oratio/catecismo"
+  },
+  {
+   title: "VoxAI - Inteligência Artificial Católica",
+   description:
+    "Assistente espiritual católico. Tire dúvidas sobre fé, moral, liturgia e vida cristã.",
+   actionLabel: "Perguntar ao VoxAI",
+   path: "/oratio/vox"
+  }
+ ]
 
  useEffect(()=>{
-  loadSavedLiturgy()
-  loadLiturgy()
+  loadLiturgyFromCache()
+  void loadLiturgy()
   preloadConsecration()
  },[])
 
- function loadSavedLiturgy(){
+ useEffect(()=>{
+  if(!modal) return
 
-  const saved = localStorage.getItem("last_liturgy")
+  function onEsc(e:KeyboardEvent){
+   if(e.key === "Escape"){
+    setModal(null)
+   }
+  }
 
+  window.addEventListener("keydown", onEsc)
+  return () => window.removeEventListener("keydown", onEsc)
+ },[modal])
+
+ function handleLogout(){
+  localStorage.removeItem("access_token")
+  localStorage.removeItem("refresh_token")
+  navigate("/login")
+ }
+
+ function loadLiturgyFromCache(){
+  const saved = localStorage.getItem(LITURGY_CACHE_KEY)
   if(!saved) return
 
   try{
-
    const parsed = JSON.parse(saved)
-
-   if(parsed.date === today){
-    setLiturgy(parsed.data)
+   if(parsed?.date === today){
+    setLiturgy(parsed.data as LiturgyData)
    }
-
   }catch{
-   console.log("Erro ao ler liturgia salva")
+   localStorage.removeItem(LITURGY_CACHE_KEY)
   }
-
- }
-
- function handleLogout(){
-
-  localStorage.removeItem("access_token")
-  localStorage.removeItem("refresh_token")
-
-  navigate("/login")
-
  }
 
  async function loadLiturgy(){
+  setLoadingLiturgy(true)
+  setLiturgyError(null)
 
   try{
-
-   const res = await fetch("https://finance-api-y0ol.onrender.com/liturgia")
+   const res = await fetch(LITURGY_URL)
+   if(!res.ok){
+    throw new Error("LITURGY_FETCH_FAILED")
+   }
 
    const data = await res.json()
-
    setLiturgy(data)
 
-   localStorage.setItem("last_liturgy", JSON.stringify({
+   localStorage.setItem(LITURGY_CACHE_KEY, JSON.stringify({
     date: today,
     data
    }))
-
   }catch{
-
-   console.log("Erro ao carregar liturgia")
-
+   if(!liturgy){
+    setLiturgyError("Não foi possível carregar a liturgia agora.")
+   }
+  }finally{
+   setLoadingLiturgy(false)
   }
-
  }
 
- function openModal(type:string){
+ function getReadingByType(type:"primeira" | "segunda" | "salmo" | "evangelho"){
+  if(!liturgy?.leituras) return null
 
-  if(!liturgy) return
-
-  if(type==="primeira"){
-   setModal(liturgy.leituras.primeiraLeitura[0])
-  }
-
-  if(type==="segunda"){
-
-   if(liturgy.leituras.segundaLeitura.length===0){
-
-    setModal({
+  if(type === "segunda"){
+   const second = liturgy.leituras.segundaLeitura ?? []
+   if(second.length === 0){
+    return {
      titulo:"Segunda Leitura",
      referencia:"",
      texto:"Hoje não possui segunda leitura."
-    })
-
-   }else{
-
-    setModal(liturgy.leituras.segundaLeitura[0])
-
+    } as LiturgyReading
    }
-
+   return second[0] ?? null
   }
 
-  if(type==="salmo"){
-   setModal(liturgy.leituras.salmo[0])
+  if(type === "primeira"){
+   return liturgy.leituras.primeiraLeitura?.[0] ?? null
   }
 
-  if(type==="evangelho"){
-   setModal(liturgy.leituras.evangelho[0])
+  if(type === "salmo"){
+   return liturgy.leituras.salmo?.[0] ?? null
   }
 
+  return liturgy.leituras.evangelho?.[0] ?? null
+ }
+
+ function openModal(type:"primeira" | "segunda" | "salmo" | "evangelho"){
+  const reading = getReadingByType(type)
+  if(!reading) return
+  setModal(reading)
  }
 
  function formatVerses(text:string){
@@ -126,16 +192,13 @@ export default function Home(){
  }
 
  return(
-
   <div className={styles.container}>
-
-   {!isPWA() && (
-
+   {!pwa && (
     <div className={styles.topButtons}>
-
      <button
       className={styles.profileButton}
       onClick={()=>navigate("/oratio/profile")}
+      aria-label="Abrir perfil"
      >
       <User size={18}/>
      </button>
@@ -143,12 +206,11 @@ export default function Home(){
      <button
       className={styles.logoutButton}
       onClick={handleLogout}
+      aria-label="Sair da conta"
      >
       <LogOut size={18}/>
      </button>
-
     </div>
-
    )}
 
    <section className={styles.hero}>
@@ -170,24 +232,15 @@ export default function Home(){
     <p className={styles.subtitle}>
      Aplicativo de espiritualidade católica
     </p>
-
    </section>
 
-
    <section className={styles.liturgyCard}>
-
-    <h2>
-     Liturgia {today}
-    </h2>
-
-    {!liturgy && (
-     <p>Carregando liturgia...</p>
-    )}
+    <h2>Liturgia {today}</h2>
+    {loadingLiturgy && !liturgy && <p className={styles.infoText}>Carregando liturgia...</p>}
+    {liturgyError && !liturgy && <p className={styles.errorText}>{liturgyError}</p>}
 
     {liturgy && (
-
      <div className={styles.liturgyButtons}>
-
       <button onClick={()=>openModal("primeira")}>
        Primeira Leitura
       </button>
@@ -203,112 +256,26 @@ export default function Home(){
       <button onClick={()=>openModal("evangelho")}>
        Evangelho
       </button>
-
      </div>
-
     )}
-
    </section>
 
-
-<div className={styles.featuresRow}>
-
-   <section className={styles.consecration}>
-
-    <h2>Consagração à Nossa Senhora</h2>
-
-    <p>
-     Um caminho espiritual de 33 dias segundo
-     o método de São Luís Maria Grignion de
-     Montfort.
-    </p>
-
-    <button
-     className={styles.primaryButton}
-     onClick={()=>navigate("/oratio/consecration")}
-    >
-     Iniciar Consagração
-    </button>
-
-   </section>
-
-    <section className={styles.consecration}>
-
-    <h2>Orações</h2>
-
-    <p>
-    Reze as principais orações da tradição
-    católica.
-    </p>
-
-    <button
-    className={styles.primaryButton}
-    onClick={()=>navigate("/oratio/prayers")}
-    >
-    Abrir Orações
-    </button>
-
-    </section>
-
-   <section className={styles.consecration}>
-
-    <h2>Bíblia Sagrada</h2>
-
-    <p>
-     Leia a Palavra de Deus completa
-     na tradução Ave-Maria.
-    </p>
-
-    <button
-     className={styles.primaryButton}
-     onClick={()=>navigate("/oratio/biblia")}
-    >
-     Abrir Bíblia
-    </button>
-
-   </section>
-
-   <section className={styles.consecration}>
-
-   <h2>Catecismo da Igreja</h2>
-
-   <p>
-      Leia o Catecismo oficial com navegação rápida
-      por artigo e acesso direto ao documento.
-   </p>
-
-   <button
-      className={styles.primaryButton}
-      onClick={()=>navigate("/oratio/catecismo")}
-   >
-      Abrir Catecismo
-   </button>
-
-   </section>
-
-   <section className={styles.consecration}>
-
-    <h2>VoxAI - Inteligência Artificial Católica</h2>
-
-    <p>
-    Assistente espiritual católico. Tire dúvidas
-    sobre fé, moral, liturgia e vida cristã.
-    </p>
-
-    <button
-    className={styles.primaryButton}
-    onClick={()=>navigate("/oratio/vox")}
-    >
-    Perguntar ao VoxAI
-    </button>
-
-   </section>
-
-</div>
-
+   <div className={styles.featuresGrid}>
+    {features.map(item => (
+     <section className={styles.featureCard} key={item.path}>
+      <h2>{item.title}</h2>
+      <p>{item.description}</p>
+      <button
+       className={styles.primaryButton}
+       onClick={()=>navigate(item.path)}
+      >
+       {item.actionLabel}
+      </button>
+     </section>
+    ))}
+   </div>
 
    {modal && (
-
     <div
      className={styles.modalOverlay}
      onClick={()=>setModal(null)}
@@ -318,10 +285,6 @@ export default function Home(){
       className={styles.modal}
       onClick={(e)=>e.stopPropagation()}
      >
-
-      {/* SPACE TOPO */}
-      <div className={styles.modalTopSpacer}></div>
-
       <h2 className={styles.modalTitle}>
        {modal.titulo || modal.referencia}
       </h2>
@@ -339,12 +302,9 @@ export default function Home(){
       <div
        className={styles.modalText}
        dangerouslySetInnerHTML={{
-        __html: formatVerses(modal.texto)
+        __html: formatVerses(modal.texto || "")
        }}
       />
-
-      {/* SPACE FINAL */}
-      <div className={styles.modalBottomSpacer}></div>
 
       <button
        className={styles.closeButton}
@@ -352,19 +312,12 @@ export default function Home(){
       >
        Fechar
       </button>
-
      </div>
-
     </div>
-
    )}
 
    <div className={styles.pageSpacer}></div>
-
    <BottomNavbar/>
-
   </div>
-
  )
-
 }

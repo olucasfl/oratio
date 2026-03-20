@@ -31,6 +31,13 @@ interface Conversation{
  hasMessages?: boolean
 }
 
+interface VoxAskResponse{
+ success:boolean
+ response?:string
+ error?:string
+ message?:string
+}
+
 export default function Vox(){
 
  const navigate = useNavigate()
@@ -47,6 +54,8 @@ export default function Vox(){
  const [renameOpen,setRenameOpen] = useState(false)
  const [renameValue,setRenameValue] = useState("")
  const [selectedConv,setSelectedConv] = useState<string | null>(null)
+ const [renaming,setRenaming] = useState(false)
+ const [deletingConversationId,setDeletingConversationId] = useState<string | null>(null)
 
  const [error,setError] = useState<string | null>(null)
 
@@ -54,6 +63,7 @@ export default function Vox(){
  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
  const initialized = useRef(false)
+ const openConversationRequest = useRef(0)
 
  /* =========================
     SCROLL
@@ -110,6 +120,7 @@ export default function Vox(){
  ========================= */
 
  async function openConversation(id:string){
+  const requestId = ++openConversationRequest.current
 
   try{
 
@@ -121,13 +132,19 @@ export default function Vox(){
     setMessages([])
 
     const msgs = await getMessages(id)
+    if(!Array.isArray(msgs)){
+      throw new Error("INVALID_MESSAGES_PAYLOAD")
+    }
+    if(requestId !== openConversationRequest.current) return
 
-    setMessages(msgs || [])
+    setMessages(msgs)
 
   }catch{
     setError("Erro ao abrir conversa.")
   }finally{
-    setLoadingConversation(false)
+    if(requestId === openConversationRequest.current){
+      setLoadingConversation(false)
+    }
   }
  }
 
@@ -146,11 +163,7 @@ export default function Vox(){
 
     if(!conv?.id) throw new Error()
 
-    setConversationId(conv.id)
-    setMessages([])
-
-    const list = await getConversations()
-    setConversations(list || [])
+    await openConversation(conv.id)
 
     setMenuOpen(false)
 
@@ -171,8 +184,8 @@ export default function Vox(){
 
   if(!text || loading || loadingConversation || !conversationId) return
 
-  if(text.length > 500){
-    alert("Pergunta muito longa.")
+  if(text.length > 1000){
+    setError("A mensagem deve ter no máximo 1000 caracteres.")
     return
   }
 
@@ -193,27 +206,31 @@ export default function Vox(){
   setError(null)
 
   try{
-    let res
+    const res = await askVox(text, conversationId) as VoxAskResponse
 
-    for(let i = 0; i < 2; i++){
-      res = await askVox(text, conversationId)
-      if(res?.success) break
-    }
-
-    if(!res?.success){
+    if(!res?.success || !res?.response){
 
       if(res?.error === "UNAUTHORIZED"){
         setError("Sua sessão expirou. Faça login novamente.")
       }else if(res?.error === "RATE_LIMIT"){
         setError("Você está enviando mensagens muito rápido.")
+      }else if(res?.error === "MESSAGE_TOO_LONG"){
+        setError("A mensagem deve ter no máximo 1000 caracteres.")
+      }else if(res?.error === "INVALID_CONVERSATION"){
+        setError("Conversa inválida. Recarregue a página.")
+      }else if(res?.error === "EMPTY_MESSAGE"){
+        setError("Digite uma mensagem antes de enviar.")
       }else if(res?.error === "TIMEOUT"){
         setError("O Vox demorou para responder. Tente novamente.")
       }else if(res?.error === "LIMIT_EXCEEDED"){
         setError("Limite diário atingido.")
+      }else if(res?.error === "AI_PROVIDER_ERROR"){
+        setError("Erro na comunicação com a IA.")
       }else{
-        setError(res?.message || "Erro inesperado.")
+        setError(res?.message || "Erro inesperado no envio da mensagem.")
       }
 
+      setMessages(prev => prev.filter(msg => msg.id !== userMessage.id))
       return
     }
 
@@ -235,6 +252,7 @@ export default function Vox(){
     }else{
       setError("Erro de conexão. Verifique sua internet.")
     }
+    setMessages(prev => prev.filter(msg => msg.id !== userMessage.id))
 
   }finally{
     setLoading(false)
@@ -259,14 +277,22 @@ export default function Vox(){
   const confirmDelete = confirm("Tem certeza que deseja apagar essa conversa?")
   if(!confirmDelete) return
 
-  const newConv = await deleteConversation(id)
+  try{
+    setDeletingConversationId(id)
+    setError(null)
 
-  if(newConv?.id){
-    setConversationId(newConv.id)
-    setMessages([])
+    const newConv = await deleteConversation(id)
+    if(!newConv?.id){
+      throw new Error("DELETE_FAILED")
+    }
 
     const list = await getConversations()
     setConversations(list || [])
+    await openConversation(newConv.id)
+  }catch{
+    setError("Não foi possível apagar a conversa.")
+  }finally{
+    setDeletingConversationId(null)
   }
   }
 
@@ -285,18 +311,30 @@ export default function Vox(){
     if(!selectedConv || !trimmed) return
 
     if(trimmed.length > 50){
-      alert("O nome da conversa deve ter no máximo 50 caracteres.")
+      setError("O nome da conversa deve ter no máximo 50 caracteres.")
       return
     }
 
-    await renameConversation(selectedConv, trimmed)
+    try{
+      setRenaming(true)
+      setError(null)
 
-    const list = await getConversations()
-    setConversations(list || [])
+      const updated = await renameConversation(selectedConv, trimmed)
+      if(!updated){
+        throw new Error("RENAME_FAILED")
+      }
 
-    setRenameOpen(false)
-    setRenameValue("")
-    setSelectedConv(null)
+      const list = await getConversations()
+      setConversations(list || [])
+
+      setRenameOpen(false)
+      setRenameValue("")
+      setSelectedConv(null)
+    }catch{
+      setError("Não foi possível renomear a conversa.")
+    }finally{
+      setRenaming(false)
+    }
   }
 
  /* =========================
@@ -373,6 +411,9 @@ export default function Vox(){
           <div className={styles.conversationActions}>
 
             <button
+              className={styles.iconActionButton}
+              disabled={renaming || deletingConversationId === conv.id}
+              aria-label={`Renomear conversa ${conv.title || "Nova conversa"}`}
               onClick={(e)=>{
                 e.stopPropagation()
                 openRename(conv.id, conv.title || "")
@@ -382,6 +423,9 @@ export default function Vox(){
             </button>
 
             <button
+              className={styles.iconActionButton}
+              disabled={renaming || deletingConversationId === conv.id}
+              aria-label={`Apagar conversa ${conv.title || "Nova conversa"}`}
               onClick={(e)=>{
                 e.stopPropagation()
                 handleDeleteConversation(conv.id)
@@ -406,6 +450,7 @@ export default function Vox(){
     <button
      className={styles.menuButton}
      onClick={()=>setMenuOpen(prev => !prev)}
+     aria-label="Abrir menu de conversas"
     >
      <Menu size={32} strokeWidth={3} />
     </button>
@@ -413,6 +458,7 @@ export default function Vox(){
     <button
      className={styles.backButton}
      onClick={()=>navigate("/oratio/home")}
+     aria-label="Voltar para início"
     >
      ←
     </button>
@@ -422,7 +468,7 @@ export default function Vox(){
    </header>
 
    {error && (
-    <div className={styles.errorBox}>
+    <div className={styles.errorBox} role="status" aria-live="polite">
      {error}
     </div>
    )}
@@ -430,28 +476,16 @@ export default function Vox(){
    <main className={styles.chatArea}>
 
       {loadingConversation && (
-        <div style={{
-          textAlign:"center",
-          marginTop:"60px",
-          opacity:0.6,
-          fontSize:"14px"
-        }}>
+        <div className={styles.statusInfo}>
           ⏳ Carregando conversa...
         </div>
       )}
 
       {messages.length === 0 && !loading && !loadingConversation && (
-        <div style={{
-          textAlign:"center",
-          opacity:0.7,
-          marginTop:"40px",
-          fontSize: "18px",
-          fontWeight: 800,
-          lineHeight:"1.6"
-        }}>
+        <div className={styles.emptyState}>
           Pergunte algo ao Vox ✨<br/><br/>
           
-          <span style={{fontSize:"14px", opacity:0.85}}>
+          <span className={styles.emptyStateHint}>
             Você pode pedir explicações, tirar dúvidas ou conversar sobre:<br/><br/>
 
             📖 Doutrina Católica<br/>
@@ -499,7 +533,7 @@ export default function Vox(){
         <span></span>
         <span></span>
       </div>
-      <small style={{opacity:0.6}}>Vox está escrevendo...</small>
+      <small className={styles.typingLabel}>Vox está escrevendo...</small>
      </div>
 
     )}
@@ -518,12 +552,15 @@ export default function Vox(){
       onChange={handleChange}
       onKeyDown={handleKey}
       placeholder="Pergunte algo ao Vox..."
+      maxLength={1000}
+      aria-label="Digite sua pergunta para o Vox"
       rows={1}
      />
 
      <button
         onClick={sendMessage}
         disabled={loading || loadingConversation || !input.trim()}
+        aria-label="Enviar mensagem"
       >
       {loading ? "..." : "↑"}
      </button>
@@ -543,15 +580,17 @@ export default function Vox(){
             value={renameValue}
             onChange={(e)=>setRenameValue(e.target.value)}
             placeholder="Novo nome..."
+            maxLength={50}
+            aria-label="Novo nome da conversa"
           />
 
           <div className={styles.modalActions}>
-            <button onClick={()=>setRenameOpen(false)}>
+            <button onClick={()=>setRenameOpen(false)} disabled={renaming}>
               Cancelar
             </button>
 
-            <button onClick={handleRename}>
-              Salvar
+            <button onClick={handleRename} disabled={renaming}>
+              {renaming ? "Salvando..." : "Salvar"}
             </button>
           </div>
 
