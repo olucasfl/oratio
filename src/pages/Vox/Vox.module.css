@@ -581,3 +581,111 @@
  40%{ transform:scale(1); opacity:1; }
 }
 
+/* =========================
+   ACTIONS NA CONVERSA
+========================= */
+
+.conversationContent{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ width:100%;
+}
+
+.conversationTitle{
+ overflow:hidden;
+ text-overflow:ellipsis;
+ white-space:nowrap;
+ flex:1;
+}
+
+.conversationActions{
+ display:flex;
+ gap:6px;
+ align-items:center;
+
+ opacity:1;
+ transform:translateX(0);
+
+ transition: all .25s ease;
+}
+
+
+.conversationActions button{
+ background:transparent;
+ border:none;
+ color:white;
+ cursor:pointer;
+ padding:4px;
+ border-radius:6px;
+ transition:.2s;
+}
+
+.conversationActions button:hover{
+ background:rgba(255,255,255,0.15);
+ transform:scale(1.1);
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modalOverlay{
+ position:fixed;
+ inset:0;
+ background:rgba(0,0,0,0.5);
+ backdrop-filter:blur(4px);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ z-index:999;
+}
+
+.modal{
+ background:white;
+ padding:20px;
+ border-radius:16px;
+ width:90%;
+ max-width:320px;
+ box-shadow:var(--oratio-shadow-medium);
+ display:flex;
+ flex-direction:column;
+ gap:12px;
+}
+
+.modal h3{
+ text-align:center;
+ color:var(--oratio-primary);
+}
+
+.modal input{
+ padding:10px;
+ border-radius:10px;
+ border:1px solid var(--oratio-card-border);
+ outline:none;
+ font-size:14px;
+}
+
+.modalActions{
+ display:flex;
+ justify-content:space-between;
+ gap:10px;
+}
+
+.modalActions button{
+ flex:1;
+ padding:10px;
+ border:none;
+ border-radius:10px;
+ cursor:pointer;
+ font-weight:600;
+}
+
+.modalActions button:first-child{
+ background:#eee;
+}
+
+.modalActions button:last-child{
+ background:var(--oratio-primary);
+ color:white;
+}

@@ -8,6 +8,8 @@ import styles from "./Vox.module.css"
 
 import { Plus } from "lucide-react"
 import { Menu } from "lucide-react"
+import { Trash2, Pencil } from "lucide-react"
+import { deleteConversation, renameConversation } from "../../services/voxService"
 
 import {
  askVox,
@@ -26,6 +28,7 @@ interface Message{
 interface Conversation{
  id:string
  title:string
+ hasMessages?: boolean
 }
 
 export default function Vox(){
@@ -40,6 +43,10 @@ export default function Vox(){
  const [conversationId,setConversationId] = useState<string | null>(null)
  const [conversations,setConversations] = useState<Conversation[]>([])
  const [menuOpen,setMenuOpen] = useState(false)
+
+ const [renameOpen,setRenameOpen] = useState(false)
+ const [renameValue,setRenameValue] = useState("")
+ const [selectedConv,setSelectedConv] = useState<string | null>(null)
 
  const [error,setError] = useState<string | null>(null)
 
@@ -245,6 +252,46 @@ export default function Vox(){
   }
  }
 
+ // DELETAR CONVERSATION
+
+ async function handleDeleteConversation(id:string){
+
+  const confirmDelete = confirm("Tem certeza que deseja apagar essa conversa?")
+  if(!confirmDelete) return
+
+  const newConv = await deleteConversation(id)
+
+  if(newConv?.id){
+    setConversationId(newConv.id)
+    setMessages([])
+
+    const list = await getConversations()
+    setConversations(list || [])
+  }
+  }
+
+  //RENAME CONVERSATION
+
+  function openRename(id:string, title:string){
+    setSelectedConv(id)
+    setRenameValue(title)
+    setRenameOpen(true)
+  }
+
+  async function handleRename(){
+
+    if(!selectedConv || !renameValue.trim()) return
+
+    await renameConversation(selectedConv, renameValue)
+
+    const list = await getConversations()
+    setConversations(list || [])
+
+    setRenameOpen(false)
+    setRenameValue("")
+    setSelectedConv(null)
+  }
+
  /* =========================
     AUTO RESIZE
  ========================= */
@@ -309,7 +356,36 @@ export default function Vox(){
        }`}
        onClick={()=>openConversation(conv.id)}
       >
-       {conv.title || "Nova conversa"}
+       <div className={styles.conversationContent}>
+
+          <span className={styles.conversationTitle}>
+            {conv.title || "Nova conversa"}
+          </span>
+
+        {conv.hasMessages && (
+          <div className={styles.conversationActions}>
+
+            <button
+              onClick={(e)=>{
+                e.stopPropagation()
+                openRename(conv.id, conv.title || "")
+              }}
+            >
+              <Pencil size={16}/>
+            </button>
+
+            <button
+              onClick={(e)=>{
+                e.stopPropagation()
+                handleDeleteConversation(conv.id)
+              }}
+            >
+              <Trash2 size={16}/>
+            </button>
+
+          </div>
+        )}
+        </div>
       </div>
 
      ))}
@@ -449,6 +525,33 @@ export default function Vox(){
 
    </div>
 
+        {renameOpen && (
+      <div className={styles.modalOverlay}>
+
+        <div className={styles.modal}>
+
+          <h3>Renomear conversa</h3>
+
+          <input
+            value={renameValue}
+            onChange={(e)=>setRenameValue(e.target.value)}
+            placeholder="Novo nome..."
+          />
+
+          <div className={styles.modalActions}>
+            <button onClick={()=>setRenameOpen(false)}>
+              Cancelar
+            </button>
+
+            <button onClick={handleRename}>
+              Salvar
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    )}
   </div>
 
  )

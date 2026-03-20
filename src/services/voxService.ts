@@ -139,3 +139,51 @@ export async function getMessages(conversationId:string){
  }
 
 }
+
+export async function deleteConversation(conversationId:string){
+
+ try{
+
+  const res = await fetch(
+   `${BASE_URL}/conversation/${conversationId}`,
+   {
+    method:"DELETE",
+    headers:getAuthHeaders()
+   }
+  )
+
+  if(!res.ok) throw new Error()
+
+  return await res.json()
+
+ }catch{
+  return null
+ }
+
+}
+
+export async function renameConversation(
+ conversationId:string,
+ title:string
+){
+
+ try{
+
+  const res = await fetch(
+   `${BASE_URL}/conversation/${conversationId}`,
+   {
+    method:"PATCH",
+    headers:getAuthHeaders(),
+    body:JSON.stringify({ title })
+   }
+  )
+
+  if(!res.ok) throw new Error()
+
+  return await res.json()
+
+ }catch{
+  return null
+ }
+
+}
