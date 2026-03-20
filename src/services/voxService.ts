@@ -14,7 +14,29 @@ function getAuthHeaders(){
 }
 
 /* =========================
-   CRIAR CONVERSA
+   PEGAR CONVERSA ATIVA (🔥 NOVO)
+========================= */
+
+export async function getActiveConversation(){
+
+ try{
+
+  const res = await fetch(`${BASE_URL}/conversation/active`,{
+   headers:getAuthHeaders()
+  })
+
+  if(!res.ok) throw new Error()
+
+  return await res.json()
+
+ }catch{
+  return null
+ }
+
+}
+
+/* =========================
+   CRIAR CONVERSA (INTELIGENTE)
 ========================= */
 
 export async function createConversation(){

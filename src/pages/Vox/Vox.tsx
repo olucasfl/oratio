@@ -13,7 +13,8 @@ import {
  askVox,
  createConversation,
  getConversations,
- getMessages
+ getMessages,
+ getActiveConversation
 } from "../../services/voxService"
 
 interface Message{
@@ -33,8 +34,8 @@ export default function Vox(){
 
  const [messages,setMessages] = useState<Message[]>([])
  const [input,setInput] = useState("")
-  const [loading,setLoading] = useState(false)
-  const [loadingConversation,setLoadingConversation] = useState(false)
+ const [loading,setLoading] = useState(false)
+ const [loadingConversation,setLoadingConversation] = useState(false)
 
  const [conversationId,setConversationId] = useState<string | null>(null)
  const [conversations,setConversations] = useState<Conversation[]>([])
@@ -51,45 +52,51 @@ export default function Vox(){
     SCROLL
  ========================= */
 
-  useEffect(()=>{
+ useEffect(()=>{
   setTimeout(()=>{
     bottomRef.current?.scrollIntoView({behavior:"smooth"})
   },50)
-  },[messages])
+ },[messages])
 
  /* =========================
-    INIT
+    INIT (🔥 NOVO)
  ========================= */
 
-  useEffect(()=>{
+ useEffect(()=>{
 
-  if(initialized.current) return // 👈 evita rodar duas vezes
-
+  if(initialized.current) return
   initialized.current = true
 
   init()
 
-  },[])
+ },[])
 
-  useEffect(()=>{
+ useEffect(()=>{
   textareaRef.current?.focus()
-  },[])
+ },[])
 
-  async function init(){
+ async function init(){
   try{
 
     setError(null)
+    setLoadingConversation(true)
 
     const list = await getConversations()
     setConversations(list || [])
 
-    // 👇 SEMPRE abre conversa vazia (ou cria uma)
-    await handleNewConversation(list)
+    // 🔥 pega conversa ativa do backend
+    const active = await getActiveConversation()
+
+    if(!active?.id) throw new Error()
+
+    await openConversation(active.id)
 
   }catch{
     setError("Não foi possível carregar suas conversas.")
+  }finally{
+    setLoadingConversation(false)
   }
-  }
+ }
 
  /* =========================
     ABRIR CONVERSA
@@ -115,57 +122,43 @@ export default function Vox(){
   }finally{
     setLoadingConversation(false)
   }
-  }
+ }
 
  /* =========================
-    NOVA CONVERSA
+    NOVA CONVERSA (🔥 LIMPO)
  ========================= */
 
-async function handleNewConversation(existingConversations?: Conversation[]){
+ async function handleNewConversation(){
 
- try{
+  try{
 
-  setLoadingConversation(true)
-  setError(null)
+    setLoadingConversation(true)
+    setError(null)
 
-  const convList = existingConversations || conversations
+    const conv = await createConversation()
 
-  for(const conv of convList){
+    if(!conv?.id) throw new Error()
 
-    const msgs = await getMessages(conv.id)
+    setConversationId(conv.id)
+    setMessages([])
 
-    if(!msgs || msgs.length === 0){
-      await openConversation(conv.id)
-      return
-    }
-  }
+    const list = await getConversations()
+    setConversations(list || [])
 
-  const conv = await createConversation()
+    setMenuOpen(false)
 
-  if(!conv?.id){
-    throw new Error()
-  }
-
-  setConversationId(conv.id)
-  setMessages([])
-
-  const list = await getConversations()
-  setConversations(list || [])
-
-  setMenuOpen(false)
-
- }catch{
-  setError("Erro ao criar nova conversa.")
- } finally {
+  }catch{
+    setError("Erro ao criar nova conversa.")
+  } finally {
     setLoadingConversation(false)
-   }
-}
+  }
+ }
 
  /* =========================
     ENVIAR
  ========================= */
 
-async function sendMessage(){
+ async function sendMessage(){
 
   const text = input.trim()
 
@@ -196,31 +189,31 @@ async function sendMessage(){
     let res
 
     for(let i = 0; i < 2; i++){
-    res = await askVox(text, conversationId)
-    if(res?.success) break
+      res = await askVox(text, conversationId)
+      if(res?.success) break
     }
 
     if(!res?.success){
 
-    if(res?.error === "UNAUTHORIZED"){
-      setError("Sua sessão expirou. Faça login novamente.")
-    }else if(res?.error === "RATE_LIMIT"){
-      setError("Você está enviando mensagens muito rápido.")
-    }else if(res?.error === "TIMEOUT"){
-      setError("O Vox demorou para responder. Tente novamente.")
-    }else if(res?.error === "LIMIT_EXCEEDED"){
-      setError("Limite diário atingido.")
-    }else{
-      setError(res?.message || "Erro inesperado.")
-    }
+      if(res?.error === "UNAUTHORIZED"){
+        setError("Sua sessão expirou. Faça login novamente.")
+      }else if(res?.error === "RATE_LIMIT"){
+        setError("Você está enviando mensagens muito rápido.")
+      }else if(res?.error === "TIMEOUT"){
+        setError("O Vox demorou para responder. Tente novamente.")
+      }else if(res?.error === "LIMIT_EXCEEDED"){
+        setError("Limite diário atingido.")
+      }else{
+        setError(res?.message || "Erro inesperado.")
+      }
 
-    return
+      return
     }
 
     const aiMessage:Message={
-    id:crypto.randomUUID(),
-    role:"assistant",
-    content: res.response
+      id:crypto.randomUUID(),
+      role:"assistant",
+      content: res.response
     }
 
     setMessages(prev => [...prev,aiMessage])
@@ -231,15 +224,15 @@ async function sendMessage(){
   }catch(error:any){
 
     if(error?.response?.status === 401){
-    setError("Sua sessão expirou. Faça login novamente.")
+      setError("Sua sessão expirou. Faça login novamente.")
     }else{
-    setError("Erro de conexão. Verifique sua internet.")
+      setError("Erro de conexão. Verifique sua internet.")
     }
 
   }finally{
     setLoading(false)
   }
-  }
+ }
 
  /* =========================
     ENTER
@@ -259,7 +252,6 @@ async function sendMessage(){
  function handleChange(e:React.ChangeEvent<HTMLTextAreaElement>){
 
   setError(null)
-
   setInput(e.target.value)
 
   const el = textareaRef.current
@@ -273,7 +265,6 @@ async function sendMessage(){
 
   <div className={styles.container}>
 
-   {/* OVERLAY MOBILE */}
    {menuOpen && (
     <div
      className={styles.overlay}
@@ -281,15 +272,13 @@ async function sendMessage(){
     />
    )}
 
-   {/* SIDEBAR */}
-
    <aside className={`${styles.sidebar} ${menuOpen ? styles.open : ""}`}>
 
     <div className={styles.sidebarHeader}>
 
       <button
         className={styles.newChatButton}
-        onClick={() => handleNewConversation()}
+        onClick={handleNewConversation}
         disabled={loadingConversation}
       >
         {loadingConversation ? (
@@ -304,7 +293,6 @@ async function sendMessage(){
 
     </div>
 
-    {/* TEXTO UX */}
     <p className={styles.sidebarTitle}>Suas conversas</p>
     <p className={styles.sidebarSubtitle}>
      Retome suas perguntas com o Vox
@@ -330,8 +318,6 @@ async function sendMessage(){
 
    </aside>
 
-   {/* HEADER */}
-
    <header className={styles.header}>
 
     <button
@@ -352,16 +338,13 @@ async function sendMessage(){
 
    </header>
 
-   {/* ERRO GLOBAL */}
    {error && (
     <div className={styles.errorBox}>
      {error}
     </div>
    )}
 
-   {/* CHAT */}
-
-    <main className={styles.chatArea}>
+   <main className={styles.chatArea}>
 
       {loadingConversation && (
         <div style={{
@@ -441,8 +424,6 @@ async function sendMessage(){
     <div ref={bottomRef}></div>
 
    </main>
-
-   {/* INPUT */}
 
    <div className={styles.inputWrapper}>
 
