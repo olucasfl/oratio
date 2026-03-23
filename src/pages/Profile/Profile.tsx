@@ -215,90 +215,104 @@ export default function Profile(){
 
     </div>
 
+    {profile.isAdmin && (
+      <div className={styles.adminCard}>
+        <h3>painel administrador</h3>
+        <p>Você é administrador. Acesse o painel para gerenciar usuários e estatísticas.</p>
+        <button
+          className={styles.adminButton}
+          onClick={()=>navigate("/oratio/admin")}
+        >
+          Ir para painel admin
+        </button>
+      </div>
+    )}
+
     {/* VIDA ESPIRITUAL */}
 
     <div className={styles.card}>
 
-     <h3>Vida Espiritual</h3>
+      <h3>Vida Espiritual</h3>
 
-     <div className={styles.progressBox}>
+      <div className={styles.progressBox}>
 
-      <div className={styles.progressInfo}>
+        <div className={styles.progressInfo}>
 
-       <span>Consagração</span>
+          <span>Consagração</span>
 
-       <span>
-        {days} / 33 dias
-       </span>
+          <span>
+            {days} / 33 dias
+          </span>
 
-      </div>
+        </div>
 
-      <div className={styles.progressBar}>
+        <div className={styles.progressBar}>
 
-       <div
-        className={styles.progressFill}
-        style={{width:`${progress}%`}}
-       />
+          <div
+            className={styles.progressFill}
+            style={{width:`${progress}%`}}
+          />
 
-      </div>
-
-     </div>
-
-     <p className={styles.consecrationStatus}>
-
-      {profile.spiritualProgress?.consecrationStarted
-       ? "Consagração em andamento"
-       : "Consagração ainda não iniciada"}
-
-     </p>
-
-     {/* STATS */}
-
-     <div className={styles.statsBox}>
-
-      <div className={styles.stat}>
-
-       <span className={styles.statLabel}>
-        Orações rezadas
-       </span>
-
-       <span className={styles.statValue}>
-        {prayers}
-       </span>
+        </div>
 
       </div>
 
-      <div className={styles.stat}>
+      <p className={styles.consecrationStatus}>
 
-       <span className={styles.statLabel}>
-        Terços rezados
-       </span>
+        {profile.spiritualProgress?.consecrationStarted
+         ? "Consagração em andamento"
+         : "Consagração ainda não iniciada"}
 
-       <span className={styles.statValue}>
-        {rosaries}
-       </span>
+      </p>
+
+      {/* STATS */}
+
+      <div className={styles.statsBox}>
+
+        <div className={styles.stat}>
+
+          <span className={styles.statLabel}>
+            Orações rezadas
+          </span>
+
+          <span className={styles.statValue}>
+            {prayers}
+          </span>
+
+        </div>
+
+        <div className={styles.stat}>
+
+          <span className={styles.statLabel}>
+            Terços rezados
+          </span>
+
+          <span className={styles.statValue}>
+            {rosaries}
+          </span>
+
+        </div>
+
+        {lastPrayerFormatted && (
+
+        <div className={styles.stat}>
+
+          <span className={styles.statLabel}>
+            Última oração
+          </span>
+
+          <span className={styles.statValueSmall}>
+            {lastPrayerFormatted}
+          </span>
+
+        </div>
+
+        )}
 
       </div>
-
-      {lastPrayerFormatted && (
-
-       <div className={styles.stat}>
-
-        <span className={styles.statLabel}>
-         Última oração
-        </span>
-
-        <span className={styles.statValueSmall}>
-         {lastPrayerFormatted}
-        </span>
-
-       </div>
-
-      )}
-
-     </div>
 
     </div>
+
 
     {/* CONTA */}
 

@@ -19,6 +19,7 @@ import Vox from "./pages/Vox/Vox"
 
 import Splash from "./components/Splash/Splash"
 import Profile from "./pages/Profile/Profile"
+import AdminPanel from "./pages/Profile/AdminPanel"
 
 /* services */
 
@@ -218,6 +219,15 @@ element={
  element={
   <ProtectedRoute>
    <Profile/>
+  </ProtectedRoute>
+ }
+/>
+
+<Route
+ path="/oratio/admin"
+ element={
+  <ProtectedRoute>
+   <AdminPanel/>
   </ProtectedRoute>
  }
 />

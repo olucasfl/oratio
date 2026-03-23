@@ -236,6 +236,45 @@ font-size:18px;
 
 }
 
+.adminCard {
+  background: var(--oratio-card-bg);
+  border: 1px solid var(--oratio-card-border);
+  border-radius: var(--oratio-radius-md);
+  padding: 16px;
+  box-shadow: var(--oratio-shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.adminCard h3 {
+  margin: 0;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.adminCard p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--oratio-text-soft);
+}
+
+.adminButton {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--oratio-radius-sm);
+  border: none;
+  background: #1f4d6a;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.adminButton:hover {
+  background: #16415a;
+}
+
 /* PÁGINA */
 
 .page{
