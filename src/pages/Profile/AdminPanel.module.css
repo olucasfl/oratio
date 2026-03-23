@@ -52,6 +52,7 @@
   border-radius: var(--oratio-radius-md);
   padding: 16px;
   box-shadow: var(--oratio-shadow-soft);
+  overflow: hidden;
 }
 
 .statsCard h2,
@@ -102,18 +103,92 @@
   color: white;
   border-radius: var(--oratio-radius-sm);
   cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
 }
 
+/* SEARCH */
+
+.searchBar {
+  margin-bottom: 12px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--oratio-card-border);
+  border-radius: var(--oratio-radius-sm);
+  font-size: 14px;
+  font-family: var(--oratio-font-text);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--oratio-primary);
+  box-shadow: 0 0 0 3px rgba(176, 24, 26, 0.1);
+}
+
+@media (max-width: 480px) {
+  .searchInput {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+}
+
+/* FILTERS */
+
+.filterBar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  padding: 8px 14px;
+  border: 1px solid var(--oratio-card-border);
+  border-radius: var(--oratio-radius-sm);
+  background: #f9fafb;
+  color: #333;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.filterBtn:hover {
+  border-color: var(--oratio-primary);
+  background: rgba(176, 24, 26, 0.05);
+}
+
+.filterBtn.filterActive {
+  background: var(--oratio-primary);
+  color: white;
+  border-color: var(--oratio-primary);
+}
+
+@media (max-width: 480px) {
+  .filterBtn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
+/* TABLE */
+
 .usersTable {
-  max-height: 380px;
+  max-height: 500px;
   overflow: auto;
   border-top: 1px solid var(--oratio-card-border);
+  margin: 0 -16px;
+  padding: 0 16px;
 }
 
 .rowHeader,
 .row {
   display: grid;
-  grid-template-columns: 1fr 1.4fr 1fr 1fr 1fr;
+  grid-template-columns: 1.2fr 1.4fr 60px 90px 1fr;
   gap: 10px;
   align-items: center;
   padding: 10px 0;
@@ -123,6 +198,39 @@
 .rowHeader {
   font-weight: 700;
   border-bottom: 1px solid var(--oratio-card-border);
+  position: sticky;
+  top: 0;
+  background: var(--oratio-card-bg);
+}
+
+/* MOBILE RESPONSIVENESS */
+@media (max-width: 768px) {
+  .usersTable {
+    overflow-x: auto;
+    margin: 0 -16px;
+    padding: 0 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .rowHeader,
+  .row {
+    grid-template-columns: 1.1fr 1.2fr 50px 80px 0.9fr;
+    gap: 8px;
+    padding: 8px 0;
+    font-size: 12px;
+    min-width: 520px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rowHeader,
+  .row {
+    grid-template-columns: 1fr 1.1fr 45px 70px 0.8fr;
+    gap: 6px;
+    padding: 6px 0;
+    font-size: 11px;
+    min-width: 420px;
+  }
 }
 
 .row {
@@ -132,6 +240,26 @@
 .row:last-child {
   border-bottom: none;
 }
+
+.nameCell,
+.emailCell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty {
+  padding: 20px;
+  text-align: center;
+  color: var(--oratio-text-soft);
+  font-size: 14px;
+}
+
+.actionsCell {
+  display: flex;
+  gap: 8px;
+}
+
 
 .adminToggle,
 .adminActive {
@@ -152,6 +280,44 @@
   color: #065f46;
   border-color: #10b981;
 }
+
+/* ACTION BUTTONS */
+
+.btnIcon,
+.btnIconDelete {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.btnIcon {
+  color: #0369a1;
+}
+
+.btnIcon:hover:not(:disabled) {
+  background: rgba(3, 105, 161, 0.1);
+}
+
+.btnIconDelete {
+  color: #991b1b;
+}
+
+.btnIconDelete:hover {
+  background: rgba(153, 27, 27, 0.1);
+}
+
+.btnIcon:disabled,
+.btnIconDelete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 
 .note {
   font-size: 13px;
@@ -238,6 +404,157 @@
 .confirmBtn:hover {
   background: #7a1414;
 }
+
+/* DETAIL MODAL */
+
+.modalLarge {
+  background: var(--oratio-card-bg);
+  border-radius: var(--oratio-radius-md);
+  padding: 24px;
+  max-width: 500px;
+  width: 95%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--oratio-shadow-strong);
+  animation: slideUp 0.3s ease;
+  position: relative;
+}
+
+.modalClose {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #f3f4f6;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.modalClose:hover {
+  background: #e5e7eb;
+}
+
+.modalLarge h2 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  font-family: var(--oratio-font-title);
+  padding-right: 40px;
+}
+
+.detailSections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.detailSection {
+  border-bottom: 1px solid var(--oratio-card-border);
+  padding-bottom: 16px;
+}
+
+.detailSection:last-child {
+  border-bottom: none;
+}
+
+.detailSection h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--oratio-text-dark);
+  font-family: var(--oratio-font-title);
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 13px;
+}
+
+.detailRow strong {
+  color: var(--oratio-text-dark);
+  margin-right: 12px;
+}
+
+.modalButtonsLarge {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.closeModalBtn {
+  padding: 10px 16px;
+  border-radius: var(--oratio-radius-sm);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  background: var(--oratio-primary);
+  color: white;
+}
+
+.closeModalBtn:hover {
+  background: var(--oratio-primary-dark);
+}
+
+/* ACTIVITY TIMELINE */
+
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.activityItem {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background: var(--oratio-secondary, #f9fafb);
+  border-radius: 8px;
+  font-size: 13px;
+  align-items: center;
+}
+
+.activityType {
+  font-weight: 700;
+  color: var(--oratio-primary);
+  min-width: 60px;
+}
+
+.activityAction {
+  flex: 1;
+  color: var(--oratio-text-dark);
+}
+
+.activityTime {
+  color: var(--oratio-text-soft);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.activityLoading {
+  padding: 12px;
+  text-align: center;
+  color: var(--oratio-text-soft);
+  font-size: 13px;
+}
+
+.activityEmpty {
+  padding: 12px;
+  text-align: center;
+  color: var(--oratio-text-soft);
+  font-size: 13px;
+}
+
+/* ANIMAÇÕES */
 
 @keyframes fadeIn {
   from {
