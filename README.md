@@ -1,73 +1,118 @@
-# React + TypeScript + Vite
+# ✝️ ORATIO
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Aplicativo de espiritualidade católica moderno, focado em oração, liturgia diária e crescimento espiritual.
 
-Currently, two official plugins are available:
+🌐 **Acesse o projeto:**  
+https://oratio-phi.vercel.app/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 📌 Sobre o Projeto
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+O **Oratio** é uma aplicação web desenvolvida para auxiliar católicos em sua vida espiritual diária.
 
-## Expanding the ESLint configuration
+Ele reúne, em um só lugar, os principais elementos da fé cristã, oferecendo uma experiência simples, bonita e acessível para o dia a dia.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## ✨ Funcionalidades
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 🕊️ Liturgia Diária
+- Leituras atualizadas automaticamente
+- Primeira leitura, salmo, segunda leitura e evangelho
+- Interface simples e rápida
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 🙏 Orações
+- Principais orações da tradição católica
+- Acesso rápido para uso diário
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 📿 Consagração à Nossa Senhora
+- Método de 33 dias (São Luís Maria Grignion de Montfort)
+- Acompanhamento de progresso espiritual
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 👤 Perfil do Usuário
+- Registro de progresso espiritual
+- Contagem de orações e terços
+- Informações organizadas de forma clara
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 🤖 VoxAI — Inteligência Artificial Católica
+- Assistente espiritual inteligente
+- Responde dúvidas sobre:
+  - Fé
+  - Moral
+  - Liturgia
+  - Vida cristã
+
+### 📚 Conteúdo
+- Bíblia Sagrada (tradução Ave-Maria)
+- Catecismo da Igreja Católica
+
+---
+
+## 🖼️ Interface
+
+O Oratio foi projetado com foco em:
+
+- Design minimalista
+- Experiência fluida
+- Facilidade de uso
+- Leitura confortável
+- Identidade visual inspirada na tradição católica
+
+---
+
+## 🧠 Tecnologias Utilizadas
+
+### Frontend
+- React (Vite)
+- JavaScript / TypeScript
+- CSS Modules
+
+### Backend
+- Node.js
+- NestJS
+- Prisma ORM
+
+### Banco de Dados
+- PostgreSQL / MongoDB Atlas
+
+### Infraestrutura
+- Vercel (Frontend)
+- Render / Cloud (API)
+- Autenticação com JWT
+
+---
+
+## 🚀 Diferenciais
+
+- Foco total na espiritualidade católica
+- Inteligência artificial integrada (VoxAI)
+- Sistema de progresso espiritual
+- Interface simples e direta
+- Pode ser usado como aplicativo (PWA)
+
+---
+
+## 🙌 Propósito
+
+O Oratio foi criado com o objetivo de ajudar na constância da oração e no crescimento espiritual através da tecnologia.
+
+---
+
+## 👨‍💻 Autor
+
+Desenvolvido por **Lucas Farias Leandro**
+
+GitHub: https://github.com/lucasfl22
+
+---
+
+## ✝️ Inspiração
+
+> “Orai sem cessar.” — 1Ts 5,17
+
+---
+
+## ⭐ Acesse o Projeto
+
+https://oratio-phi.vercel.app/
