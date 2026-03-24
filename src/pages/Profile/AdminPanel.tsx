@@ -249,53 +249,55 @@ export default function AdminPanel(){
           </div>
 
           <div className={styles.usersTable}>
-            <div className={styles.rowHeader}>
-              <span>Nome</span>
-              <span>Email</span>
-              <span>Ver.</span>
-              <span>Admin</span>
-              <span>Ações</span>
-            </div>
-            {users.length === 0 ? (
-              <div className={styles.empty}>Nenhum usuário encontrado</div>
-            ) : (
-              users.map((user)=> (
-                <div key={user.id} className={styles.row}>
-                  <span className={styles.nameCell}>{user.name}</span>
-                  <span className={styles.emailCell}>{user.email}</span>
-                  <span>{user.emailVerified ? "✓" : "-"}</span>
-                  <span>
-                    <button
-                      className={user.isAdmin ? styles.adminActive : styles.adminToggle}
-                      disabled={updateId === user.id}
-                      onClick={()=>toggleAdmin(user.id, user.isAdmin)}
-                      aria-label={`Tornar ${user.isAdmin ? "não " : ""}administrador`}
-                    >
-                      {updateId === user.id ? "..." : user.isAdmin ? "Admin" : "Normal"}
-                    </button>
-                  </span>
-                  <span className={styles.actionsCell}>
-                    <button
-                      className={styles.btnIcon}
-                      onClick={() => openDetailModal(user)}
-                      title="Ver detalhes"
-                      disabled={detailLoading}
-                    >
-                      <Eye size={16}/>
-                    </button>
-                    {user.id !== currentUserId && (
+            <div className={styles.tableInner}>
+              <div className={styles.rowHeader}>
+                <span>Nome</span>
+                <span>Email</span>
+                <span>Ver.</span>
+                <span>Admin</span>
+                <span>Ações</span>
+              </div>
+              {users.length === 0 ? (
+                <div className={styles.empty}>Nenhum usuário encontrado</div>
+              ) : (
+                users.map((user)=> (
+                  <div key={user.id} className={styles.row}>
+                    <span className={styles.nameCell}>{user.name}</span>
+                    <span className={styles.emailCell}>{user.email}</span>
+                    <span>{user.emailVerified ? "✓" : "-"}</span>
+                    <span>
                       <button
-                        className={styles.btnIconDelete}
-                        onClick={() => setDeleteModal({ show:true, userId:user.id })}
-                        title="Deletar usuário"
+                        className={user.isAdmin ? styles.adminActive : styles.adminToggle}
+                        disabled={updateId === user.id}
+                        onClick={()=>toggleAdmin(user.id, user.isAdmin)}
+                        aria-label={`Tornar ${user.isAdmin ? "não " : ""}administrador`}
                       >
-                        <Trash2 size={16}/>
+                        {updateId === user.id ? "..." : user.isAdmin ? "Admin" : "Normal"}
                       </button>
-                    )}
-                  </span>
-                </div>
-              ))
-            )}
+                    </span>
+                    <span className={styles.actionsCell}>
+                      <button
+                        className={styles.btnIcon}
+                        onClick={() => openDetailModal(user)}
+                        title="Ver detalhes"
+                        disabled={detailLoading}
+                      >
+                        <Eye size={16}/>
+                      </button>
+                      {user.id !== currentUserId && (
+                        <button
+                          className={styles.btnIconDelete}
+                          onClick={() => setDeleteModal({ show:true, userId:user.id })}
+                          title="Deletar usuário"
+                        >
+                          <Trash2 size={16}/>
+                        </button>
+                      )}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </section>
 
