@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="./public/icon-noBack-512.png" width="180" alt="Oratio Logo" />
+  <img src="./public/banner-oratio.png" alt="Oratio Banner" />
 </p>
-
-<h1 align="center">✝️ ORATIO</h1>
 
 <p align="center">
   Aplicativo de espiritualidade católica focado em oração, liturgia diária e crescimento espiritual.
