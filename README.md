@@ -1,9 +1,19 @@
-# ✝️ ORATIO
+<p align="center">
+  <img src="./public/icon-noBack-512.png" width="180" alt="Oratio Logo" />
+</p>
 
-> Aplicativo de espiritualidade católica moderno, focado em oração, liturgia diária e crescimento espiritual.
+<h1 align="center">✝️ ORATIO</h1>
 
-🌐 **Acesse o projeto:**  
-https://oratio-phi.vercel.app/
+<p align="center">
+  Aplicativo de espiritualidade católica focado em oração, liturgia diária e crescimento espiritual.
+</p>
+
+<p align="center">
+  <a href="https://oratio-phi.vercel.app/">
+    <strong>🌐 Acessar Aplicação</strong>
+  </a>
+</p>
+
 
 ---
 
