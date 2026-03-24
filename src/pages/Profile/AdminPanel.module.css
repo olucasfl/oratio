@@ -184,9 +184,10 @@
   overflow-x: auto;
 
   -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
   overscroll-behavior: contain;
   scroll-behavior: smooth;
-  touch-action: pan-y;
+  touch-action: auto;
 
   border-top: 1px solid var(--oratio-card-border);
   margin: 0 -16px;
