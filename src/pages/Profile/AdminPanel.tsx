@@ -35,6 +35,9 @@ export default function AdminPanel(){
   const [deleteModal,setDeleteModal] = useState<{ show:boolean; userId:string | null }>({ show:false, userId:null })
   const [deleteLoading,setDeleteLoading] = useState(false)
 
+  const [activityPage, setActivityPage] = useState(1)
+  const ITEMS_PER_PAGE = 20
+
   useEffect(()=>{
     loadData()
     getCurrentUser()
@@ -126,6 +129,7 @@ export default function AdminPanel(){
     try{
       setDetailLoading(true)
       setActivityLoading(true)
+      setActivityPage(1)
       const [detail, activity] = await Promise.all([
         getUserDetail(user.id),
         getUserActivity(user.id)
@@ -450,22 +454,58 @@ export default function AdminPanel(){
                       </div>
                     ) : activityData?.activities && activityData.activities.length > 0 ? (
                       <div className={styles.activityList}>
-                        {activityData.activities.map((activity: any, index: number) => (
-                          <div key={index} className={styles.activityItem}>
-                            <span>{getActivityIcon(activity.type)}</span>
+                        {(() => {
+                          const sortedActivities = [...(activityData.activities || [])]
+                            .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
 
-                            <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-                              <span className={styles.activityAction}>{activity.action}</span>
-                              <span style={{ fontSize: "11px", color: "#888" }}>
-                                {activity.type}
-                              </span>
-                            </div>
+                          const start = (activityPage - 1) * ITEMS_PER_PAGE
+                          const paginatedActivities = sortedActivities.slice(start, start + ITEMS_PER_PAGE)
 
-                            <span className={styles.activityTime}>
-                              {formatActivityTime(activity.timestamp)}
-                            </span>
-                          </div>
-                        ))}
+                          return (
+                            <>
+                              {paginatedActivities.map((activity: any, index: number) => (
+                                <div key={index} className={styles.activityItem}>
+                                  <span>{getActivityIcon(activity.type)}</span>
+
+                                  <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                                    <span className={styles.activityAction}>{activity.action}</span>
+                                    <span style={{ fontSize: "11px", color: "#888" }}>
+                                      {activity.type}
+                                    </span>
+                                  </div>
+
+                                  <span className={styles.activityTime}>
+                                    {formatActivityTime(activity.timestamp)}
+                                  </span>
+                                </div>
+                              ))}
+                            </>
+                          )
+                        })()}
+
+                        <div className={styles.pagination}>
+                          <button
+                            onClick={() => setActivityPage((p) => Math.max(p - 1, 1))}
+                            disabled={activityPage === 1}
+                          >
+                            ←
+                          </button>
+
+                          <span>Página {activityPage}</span>
+
+                          <button
+                            onClick={() =>
+                              setActivityPage((p) =>
+                                (activityPage * ITEMS_PER_PAGE < (activityData.activities?.length || 0))
+                                  ? p + 1
+                                  : p
+                              )
+                            }
+                            disabled={activityPage * ITEMS_PER_PAGE >= (activityData.activities?.length || 0)}
+                          >
+                            →
+                          </button>
+                        </div>
                       </div>
                     ) : (
                       <div className={styles.activityEmpty}>
