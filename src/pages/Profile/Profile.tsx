@@ -60,9 +60,9 @@ export default function Profile(){
 
    const cached = localStorage.getItem("oratio-profile")
 
-   if(cached){
+   if(cached && !navigator.onLine){
     setProfile(JSON.parse(cached))
-   }
+  }
 
    /* ============================= */
    /* API SE ONLINE */
@@ -156,6 +156,47 @@ export default function Profile(){
     })
   : null
 
+  const streak = profile.spiritualProgress?.prayerStreak || 0
+
+function getStreakInfo(streak:number){
+
+  if(streak === 0){
+    return { emoji: "❄️", color: "#999", label: "Comece hoje" }
+  }
+
+  if(streak >= 1 && streak <= 3){
+    return { emoji: "🔥", color: "#ff6b6b", label: "Discípulo" }
+  }
+
+  if(streak >= 4 && streak <= 7){
+    return { emoji: "🔥", color: "#ff922b", label: "Servo de Deus" }
+  }
+
+  if(streak >= 8 && streak <= 15){
+    return { emoji: "🔥", color: "#fcc419", label: "Fiel Perseverante" }
+  }
+
+  if(streak >= 16 && streak <= 30){
+    return { emoji: "🔥", color: "#51cf66", label: "Intercessor" }
+  }
+
+  if(streak >= 31 && streak <= 90){
+    return { emoji: "🔥🔥", color: "#339af0", label: "Consagrado" }
+  }
+
+  if(streak >= 91 && streak <= 180){
+    return { emoji: "🔥🔥🔥", color: "#845ef7", label: "Consagrado" }
+  }
+
+  if(streak >= 181 && streak <= 365){
+    return { emoji: "🔥🔥🔥🔥", color: "#f783ac", label: "Lendário" }
+  }
+
+  return { emoji: "🔥🔥🔥🔥", color: "#ff0000", label: "Testemunha de Cristo" }
+}
+
+const streakInfo = getStreakInfo(streak)
+
  return(
 
   <div className={styles.page}>
@@ -233,6 +274,46 @@ export default function Profile(){
     <div className={styles.card}>
 
       <h3>Vida Espiritual</h3>
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: "16px",
+          padding: "12px",
+          borderRadius: "12px",
+          background: "#fff5e6",
+          border: "1px solid #ffe0b2"
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          
+          <span style={{ fontSize: "22px" }}>
+            {streakInfo.emoji}
+          </span>
+
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span style={{ fontSize: "14px", fontWeight: 600 }}>
+              Sequência
+            </span>
+            <span style={{ fontSize: "12px", color: "#666" }}>
+              {streakInfo.label}
+            </span>
+          </div>
+
+        </div>
+
+        <span
+          style={{
+            fontSize: "18px",
+            fontWeight: 700,
+            color: streakInfo.color
+          }}
+        >
+          {streak} {streak === 1 ? "dia" : "dias"}
+        </span>
+      </div>
 
       <div className={styles.progressBox}>
 

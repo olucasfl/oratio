@@ -45,6 +45,17 @@ export default function AdminPanel(){
     return () => clearTimeout(timer)
   }, [searchTerm, filterAdmin, filterVerified, filterActive])
 
+  function getActivityIcon(type: string) {
+  switch (type) {
+    case "LOGIN": return "🟢"
+    case "PRAYER": return "🙏"
+    case "ROSARY": return "📿"
+    case "VOX": return "🤖"
+    case "CONSECRATION": return "✝️"
+    default: return "📌"
+  }
+}
+
   async function getCurrentUser(){
     try{
       const profile = await getProfile()
@@ -253,8 +264,10 @@ export default function AdminPanel(){
               <div className={styles.rowHeader}>
                 <span>Nome</span>
                 <span>Email</span>
+                <span>Criado em</span>
                 <span>Ver.</span>
                 <span>Admin</span>
+                <span>Streak</span>
                 <span>Ações</span>
               </div>
               {users.length === 0 ? (
@@ -264,26 +277,40 @@ export default function AdminPanel(){
                   <div key={user.id} className={styles.row}>
                     <span className={styles.nameCell}>{user.name}</span>
                     <span className={styles.emailCell}>{user.email}</span>
+
+                    <span>
+                      {new Date(user.createdAt).toLocaleDateString("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit"
+                      })}
+                    </span>
+
                     <span>{user.emailVerified ? "✓" : "-"}</span>
+
                     <span>
                       <button
                         className={user.isAdmin ? styles.adminActive : styles.adminToggle}
                         disabled={updateId === user.id}
                         onClick={()=>toggleAdmin(user.id, user.isAdmin)}
-                        aria-label={`Tornar ${user.isAdmin ? "não " : ""}administrador`}
                       >
                         {updateId === user.id ? "..." : user.isAdmin ? "Admin" : "Normal"}
                       </button>
                     </span>
+
+                    <span>
+                      🔥 {user.spiritualStats?.prayerStreak ?? 0}
+                    </span>
+
                     <span className={styles.actionsCell}>
                       <button
                         className={styles.btnIcon}
                         onClick={() => openDetailModal(user)}
                         title="Ver detalhes"
-                        disabled={detailLoading}
                       >
                         <Eye size={16}/>
                       </button>
+
                       {user.id !== currentUserId && (
                         <button
                           className={styles.btnIconDelete}
@@ -337,105 +364,132 @@ export default function AdminPanel(){
 
       {/* MODAL DETALHES DO USUÁRIO */}
       {detailModal.show && detailModal.user && (
-        <div className={styles.modalOverlay} onClick={()=>{
-          setDetailModal({ show:false, user:null })
+        <div className={styles.modalOverlay} onClick={() => {
+          setDetailModal({ show: false, user: null })
           setActivityData(null)
         }}>
-          <div className={styles.modalLarge} onClick={(e)=>e.stopPropagation()}>
+          <div className={styles.modalLarge} onClick={(e) => e.stopPropagation()}>
+            
             <button
               className={styles.modalClose}
-              onClick={()=>{
-                setDetailModal({ show:false, user:null })
+              onClick={() => {
+                setDetailModal({ show: false, user: null })
                 setActivityData(null)
               }}
             >
               ×
             </button>
-            <h2>{detailModal.user.name}</h2>
 
-            <div className={styles.detailSections}>
-              {/* BASIC INFO */}
-              <div className={styles.detailSection}>
-                <h3>Informações Básicas</h3>
-                <div className={styles.detailRow}>
-                  <strong>Nome:</strong> {detailModal.user.name}
-                </div>
-                <div className={styles.detailRow}>
-                  <strong>Email:</strong> {detailModal.user.email}
-                </div>
-                <div className={styles.detailRow}>
-                  <strong>Criado em:</strong> {new Date(detailModal.user.createdAt).toLocaleString("pt-BR")}
-                </div>
-                <div className={styles.detailRow}>
-                  <strong>Status Admin:</strong> {detailModal.user.isAdmin ? "✓ Administrador" : "Usuário normal"}
-                </div>
-                <div className={styles.detailRow}>
-                  <strong>Email Verificado:</strong> {detailModal.user.emailVerified ? "✓ Sim" : "✗ Não"}
-                </div>
+            {detailLoading ? (
+              <div className={styles.loadingSmall}>
+                Carregando detalhes...
               </div>
+            ) : (
+              <>
+                <h2>{detailModal.user.name}</h2>
 
-              {/* SPIRITUAL PROGRESS */}
-              <div className={styles.detailSection}>
-                <h3>Progresso Espiritual</h3>
-                <div className={styles.detailRow}>
-                  <strong>Orações Rezadas:</strong> {detailModal.user.spiritualStats?.prayersPrayed || 0}
-                </div>
-                <div className={styles.detailRow}>
-                  <strong>Terços Rezados:</strong> {detailModal.user.spiritualStats?.rosariesPrayed || 0}
-                </div>
-                <div className={styles.detailRow}>
-                  <strong>Sequência de Orações:</strong> {detailModal.user.spiritualStats?.prayerStreak || 0} dias
-                </div>
-                <div className={styles.detailRow}>
-                  <strong>Última Oração:</strong> {detailModal.user.spiritualStats?.lastPrayerDate 
-                    ? new Date(detailModal.user.spiritualStats.lastPrayerDate).toLocaleString("pt-BR")
-                    : "Nenhuma registrada"}
-                </div>
-              </div>
+                <div className={styles.detailSections}>
 
-              {/* CONSECRATION */}
-              <div className={styles.detailSection}>
-                <h3>Consagração</h3>
-                <div className={styles.detailRow}>
-                  <strong>Iniciada:</strong> {detailModal.user.consecration?.started ? "✓ Sim" : "✗ Não"}
-                </div>
-                <div className={styles.detailRow}>
-                  <strong>Dias Completados:</strong> {detailModal.user.consecration?.daysCompleted || 0} / 33
-                </div>
-              </div>
-
-              {/* ACTIVITY */}
-              <div className={styles.detailSection}>
-                <h3>Ações</h3>
-                {activityLoading ? (
-                  <div className={styles.activityLoading}>Carregando atividades...</div>
-                ) : activityData?.activities && activityData.activities.length > 0 ? (
-                  <div className={styles.activityList}>
-                    {activityData.activities.map((activity: any, index: number) => (
-                      <div key={index} className={styles.activityItem}>
-                        <span className={styles.activityType}>{activity.type}</span>
-                        <span className={styles.activityAction}>{activity.action}</span>
-                        <span className={styles.activityTime}>{formatActivityTime(activity.timestamp)}</span>
-                      </div>
-                    ))}
+                  {/* BASIC INFO */}
+                  <div className={styles.detailSection}>
+                    <h3>Informações Básicas</h3>
+                    <div className={styles.detailRow}>
+                      <strong>Nome:</strong> {detailModal.user.name}
+                    </div>
+                    <div className={styles.detailRow}>
+                      <strong>Email:</strong> {detailModal.user.email}
+                    </div>
+                    <div className={styles.detailRow}>
+                      <strong>Criado em:</strong> {new Date(detailModal.user.createdAt).toLocaleString("pt-BR")}
+                    </div>
+                    <div className={styles.detailRow}>
+                      <strong>Status Admin:</strong> {detailModal.user.isAdmin ? "✓ Administrador" : "Usuário normal"}
+                    </div>
+                    <div className={styles.detailRow}>
+                      <strong>Email Verificado:</strong> {detailModal.user.emailVerified ? "✓ Sim" : "✗ Não"}
+                    </div>
                   </div>
-                ) : (
-                  <div className={styles.activityEmpty}>Sem atividades nos últimos 7 dias</div>
-                )}
-              </div>
-            </div>
 
-            <div className={styles.modalButtonsLarge}>
-              <button
-                className={styles.closeModalBtn}
-                onClick={()=>{
-                  setDetailModal({ show:false, user:null })
-                  setActivityData(null)
-                }}
-              >
-                Fechar
-              </button>
-            </div>
+                  {/* SPIRITUAL PROGRESS */}
+                  <div className={styles.detailSection}>
+                    <h3>Progresso Espiritual</h3>
+                    <div className={styles.detailRow}>
+                      <strong>Orações Rezadas:</strong> {detailModal.user.spiritualStats?.prayersPrayed || 0}
+                    </div>
+                    <div className={styles.detailRow}>
+                      <strong>Terços Rezados:</strong> {detailModal.user.spiritualStats?.rosariesPrayed || 0}
+                    </div>
+                    <div className={styles.detailRow}>
+                      <strong>Sequência de Orações:</strong> {detailModal.user.spiritualStats?.prayerStreak || 0} dias
+                    </div>
+                    <div className={styles.detailRow}>
+                      <strong>Última Oração:</strong> {detailModal.user.spiritualStats?.lastPrayerDate 
+                        ? new Date(detailModal.user.spiritualStats.lastPrayerDate).toLocaleString("pt-BR")
+                        : "Nenhuma registrada"}
+                    </div>
+                  </div>
+
+                  {/* CONSECRATION */}
+                  <div className={styles.detailSection}>
+                    <h3>Consagração</h3>
+                    <div className={styles.detailRow}>
+                      <strong>Iniciada:</strong> {detailModal.user.consecration?.started ? "✓ Sim" : "✗ Não"}
+                    </div>
+                    <div className={styles.detailRow}>
+                      <strong>Dias Completados:</strong> {detailModal.user.consecration?.daysCompleted || 0} / 33
+                    </div>
+                  </div>
+
+                  {/* ACTIVITY */}
+                  <div className={styles.detailSection}>
+                    <h3>Ações</h3>
+
+                    {activityLoading ? (
+                      <div className={styles.activityLoading}>
+                        Carregando atividades...
+                      </div>
+                    ) : activityData?.activities && activityData.activities.length > 0 ? (
+                      <div className={styles.activityList}>
+                        {activityData.activities.map((activity: any, index: number) => (
+                          <div key={index} className={styles.activityItem}>
+                            <span>{getActivityIcon(activity.type)}</span>
+
+                            <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                              <span className={styles.activityAction}>{activity.action}</span>
+                              <span style={{ fontSize: "11px", color: "#888" }}>
+                                {activity.type}
+                              </span>
+                            </div>
+
+                            <span className={styles.activityTime}>
+                              {formatActivityTime(activity.timestamp)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className={styles.activityEmpty}>
+                        Sem atividades nos últimos 7 dias
+                      </div>
+                    )}
+                  </div>
+
+                </div>
+
+                <div className={styles.modalButtonsLarge}>
+                  <button
+                    className={styles.closeModalBtn}
+                    onClick={() => {
+                      setDetailModal({ show: false, user: null })
+                      setActivityData(null)
+                    }}
+                  >
+                    Fechar
+                  </button>
+                </div>
+              </>
+            )}
+
           </div>
         </div>
       )}

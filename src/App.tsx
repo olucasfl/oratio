@@ -31,6 +31,7 @@ import RosaryHome from "./pages/Prayers/RosaryHome"
 import RosaryPage from "./pages/Prayers/RosaryPage"
 import Catecismo from "./pages/Catecismo/Catecismo"
 import Tratado from "./pages/Consecration/Tratado"
+import { sendActivityPing } from "./services/activityService"
 
 function App(){
 
@@ -66,7 +67,15 @@ const bootLoader = async () => {
 
   if(token){
 
-   getProgress().catch(()=>{})
+    getProgress().catch(()=>{})
+
+    const lastPing = localStorage.getItem("last_ping")
+    const now = Date.now()
+
+    if (!lastPing || now - Number(lastPing) > 1000 * 60 * 10) {
+    sendActivityPing().catch(()=>{})
+    localStorage.setItem("last_ping", now.toString())
+    }
 
   }
 
