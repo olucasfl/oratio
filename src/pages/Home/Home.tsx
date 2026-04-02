@@ -39,6 +39,7 @@ export default function Home(){
 
  const [liturgy,setLiturgy] = useState<LiturgyData | null>(null)
  const [modal,setModal] = useState<LiturgyReading | null>(null)
+ const [selector,setSelector] = useState<LiturgyReading[] | null>(null)
  const [loadingLiturgy,setLoadingLiturgy] = useState(true)
  const [liturgyError,setLiturgyError] = useState<string | null>(null)
 
@@ -85,17 +86,18 @@ export default function Home(){
  },[])
 
  useEffect(()=>{
-  if(!modal) return
+  if(!modal && !selector) return
 
   function onEsc(e:KeyboardEvent){
    if(e.key === "Escape"){
     setModal(null)
+    setSelector(null)
    }
   }
 
   window.addEventListener("keydown", onEsc)
   return () => window.removeEventListener("keydown", onEsc)
- },[modal])
+ },[modal, selector])
 
  function handleLogout(){
   localStorage.removeItem("access_token")
@@ -143,37 +145,37 @@ export default function Home(){
   }
  }
 
- function getReadingByType(type:"primeira" | "segunda" | "salmo" | "evangelho"){
-  if(!liturgy?.leituras) return null
+  function openModal(type:"primeira" | "segunda" | "salmo" | "evangelho"){
 
-  if(type === "segunda"){
-   const second = liturgy.leituras.segundaLeitura ?? []
-   if(second.length === 0){
-    return {
-     titulo:"Segunda Leitura",
-     referencia:"",
-     texto:"Hoje não possui segunda leitura."
-    } as LiturgyReading
-   }
-   return second[0] ?? null
+    if(!liturgy?.leituras) return
+
+    let readings: LiturgyReading[] = []
+
+    if(type === "primeira"){
+        readings = liturgy.leituras.primeiraLeitura ?? []
+    }
+
+    if(type === "segunda"){
+        readings = liturgy.leituras.segundaLeitura ?? []
+    }
+
+    if(type === "salmo"){
+        readings = liturgy.leituras.salmo ?? []
+    }
+
+    if(type === "evangelho"){
+        readings = liturgy.leituras.evangelho ?? []
+    }
+
+    if(readings.length === 0) return
+
+    if(readings.length === 1){
+        setModal(readings[0])
+        return
+    }
+
+    setSelector(readings)
   }
-
-  if(type === "primeira"){
-   return liturgy.leituras.primeiraLeitura?.[0] ?? null
-  }
-
-  if(type === "salmo"){
-   return liturgy.leituras.salmo?.[0] ?? null
-  }
-
-  return liturgy.leituras.evangelho?.[0] ?? null
- }
-
- function openModal(type:"primeira" | "segunda" | "salmo" | "evangelho"){
-  const reading = getReadingByType(type)
-  if(!reading) return
-  setModal(reading)
- }
 
  function formatVerses(text:string){
 
@@ -254,7 +256,7 @@ export default function Home(){
       </button>
 
       <button onClick={()=>openModal("evangelho")}>
-       Evangelho
+        Evangelho {(liturgy.leituras?.evangelho?.length ?? 0) > 1 && `(${liturgy.leituras?.evangelho?.length})`}
       </button>
      </div>
     )}
@@ -274,6 +276,58 @@ export default function Home(){
      </section>
     ))}
    </div>
+
+   {selector && (
+  <div
+    className={styles.modalOverlay}
+    onClick={()=>setSelector(null)}
+  >
+    <div
+      className={styles.modal}
+      onClick={(e)=>e.stopPropagation()}
+    >
+
+      <h2 className={styles.modalTitle}>
+        Escolha a leitura
+      </h2>
+
+      <div style={{display:"flex", flexDirection:"column", gap:"12px"}}>
+
+        {selector.map((item,index)=>(
+            <button
+                key={index}
+                className={styles.primaryButton}
+                onClick={()=>{
+                    setSelector(null)
+                    setTimeout(()=> setModal(item), 0)
+                }}
+                >
+                <div>
+                    <strong>
+                    {item.titulo || `Leitura ${index+1}`}
+                    </strong>
+
+                    {item.referencia && (
+                    <div style={{ fontSize: "0.9em", opacity: 0.8 }}>
+                        {item.referencia}
+                    </div>
+                    )}
+                </div>
+            </button>
+            ))}
+
+        </div>
+
+        <button
+            className={styles.closeButton}
+            onClick={()=>setSelector(null)}
+        >
+            Fechar
+        </button>
+
+        </div>
+    </div>
+    )}
 
    {modal && (
     <div

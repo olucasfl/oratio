@@ -265,7 +265,7 @@
  white-space:pre-line;
  margin-bottom:8px;
  text-align:justify;
- line-height:1.95;
+ line-height:2.1;
  font-size:clamp(17px, 2.1vw, 20px);
  font-family:Georgia, serif;
  color:#333;
@@ -287,14 +287,6 @@
 
 .closeButton:hover{
  background:var(--oratio-primary-dark);
-}
-
-::global(.verse){
- font-size:12px;
- vertical-align:super;
- margin-right:4px;
- font-weight:700;
- color:#666;
 }
 
 ::global(.capitular){
