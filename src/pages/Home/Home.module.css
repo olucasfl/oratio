@@ -220,20 +220,25 @@
   18px
   calc(18px + env(safe-area-inset-bottom));
  background:rgba(0,0,0,.56);
- overflow:auto;
+ overflow:hidden;
+ overscroll-behavior: none;
 }
 
 .modal{
- width:100%;
- max-width:670px;
- max-height:86dvh;
- overflow:auto;
- border-radius:var(--home-card-radius);
- border:1px solid var(--oratio-card-border);
- background:#fff;
- box-shadow:var(--oratio-shadow-strong);
- padding:28px 24px 24px;
- animation:fadeUp .24s ease;
+  width:100%;
+  max-width:670px;
+  max-height:86dvh;
+
+  overflow-y:auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+
+  border-radius:var(--home-card-radius);
+  border:1px solid var(--oratio-card-border);
+  background:#fff;
+  box-shadow:var(--oratio-shadow-strong);
+  padding:28px 24px 24px;
+  animation:fadeUp .24s ease;
 }
 
 .modalTitle{
