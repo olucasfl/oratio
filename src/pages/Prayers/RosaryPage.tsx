@@ -153,7 +153,9 @@ export default function RosaryPage(){
 
  const step = steps[current]
 
- const isAveMaria = step.title?.includes("Ave Maria")
+ const isBeadPrayer =
+  step.title?.startsWith("Ave Maria") ||
+  step.title?.startsWith("Pela Sua dolorosa Paixão")
 
  const isLastStep = current === steps.length-1
 
@@ -169,7 +171,7 @@ export default function RosaryPage(){
  const initialAveMariaIndexes = steps
   .map((s:any,i:number)=>({step:s,index:i}))
   .filter(item =>
-   item.step.title?.includes("Ave Maria") &&
+   item.step.title?.startsWith("Ave Maria") &&
    item.index < firstMysteryIndex
   )
   .slice(0,3)
@@ -196,17 +198,23 @@ export default function RosaryPage(){
 
  for(let i=current;i>=0;i--){
 
-  if(steps[i].title === "Pai Nosso"){
+  if(
+    steps[i].title === "Pai Nosso" ||
+    steps[i].title?.includes("Dezena")
+  ){
    decadeStart = i
    break
   }
 
  }
 
- const isInsideDecade =
-  isAveMaria &&
-  decadeStart !== -1 &&
-  steps[decadeStart-1]?.type === "mystery"
+  const isInsideDecade =
+    isBeadPrayer &&
+    decadeStart !== -1 &&
+    (
+      steps[decadeStart-1]?.type === "mystery" ||
+      steps[decadeStart]?.title?.includes("Dezena")
+    )
 
 
  /* =====================
@@ -214,13 +222,16 @@ export default function RosaryPage(){
  ===================== */
 
  let aveIndex = 0
+ const aveLimit = step.title?.includes("/7") ? 7 : 10
 
  if(isInsideDecade){
 
   const decadeSteps = steps.slice(decadeStart,current+1)
 
   aveIndex = decadeSteps.filter(
-   (s:any)=>s.title?.includes("Ave Maria")
+    (s:any)=>
+      s.title?.startsWith("Ave Maria") ||
+      s.title?.startsWith("Pela Sua dolorosa Paixão")
   ).length
 
  }
@@ -312,7 +323,7 @@ export default function RosaryPage(){
 
      <div className={styles.rosary}>
 
-      {Array.from({length:10}).map((_,i)=>{
+      {Array.from({length:aveLimit}).map((_,i)=>{
 
        const active = i < aveIndex
 
@@ -360,14 +371,14 @@ export default function RosaryPage(){
       <div className={styles.prayer}>
 
        <h2>
-        {isAveMaria ? "Ave Maria" : step.title}
+        {isBeadPrayer ? "Ave Maria" : step.title}
        </h2>
 
        <pre className={styles.text}>
-        {rosaryPrayers[
-         step.title.replace(/\s\d+\/10/,"")
-        ]}
-       </pre>
+          {step.text || rosaryPrayers[
+            step.title.replace(/\s\d+\/\d+/,"")
+          ]}
+        </pre>
 
       </div>
 
