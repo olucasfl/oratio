@@ -232,9 +232,9 @@ export default function Home(){
  function formatVerses(text:string){
 
   let formatted = text.replace(
-   /(\d+)(?=[A-Za-z“])/g,
-   '<span class="verse">$1</span>'
-  )
+  /(\d+)(?=[A-Za-zÀ-ÿ“])/g,
+  '<span class="verse">$1</span>'
+)
 
   formatted = formatted.replace(
    /^([A-Za-zÀ-ÿ])/,

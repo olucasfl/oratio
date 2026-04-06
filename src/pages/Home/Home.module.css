@@ -226,7 +226,7 @@
 
  pointer-events: all;
  touch-action: none;
- user-select: none;
+ user-select: text;
 
  overflow:hidden;
  overscroll-behavior: none;
@@ -236,6 +236,7 @@
 .modal{
   pointer-events: auto;
 
+  padding:28px 24px 24px;
   width:100%;
   max-width:670px;
   max-height:86dvh;
