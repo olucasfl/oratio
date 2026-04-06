@@ -211,20 +211,31 @@
 .modalOverlay{
  position:fixed;
  inset:0;
- z-index:2000;
+ z-index:9999;
+
  display:flex;
  align-items:center;
  justify-content:center;
+
  padding:
   calc(18px + env(safe-area-inset-top))
   18px
   calc(18px + env(safe-area-inset-bottom));
+
  background:rgba(0,0,0,.56);
+
+ pointer-events: all;
+ touch-action: none;
+ user-select: none;
+
  overflow:hidden;
  overscroll-behavior: none;
+ cursor: default;
 }
 
 .modal{
+  pointer-events: auto;
+
   width:100%;
   max-width:670px;
   max-height:86dvh;
@@ -234,11 +245,10 @@
   -webkit-overflow-scrolling: touch;
 
   border-radius:var(--home-card-radius);
-  border:1px solid var(--oratio-card-border);
   background:#fff;
-  box-shadow:var(--oratio-shadow-strong);
-  padding:28px 24px 24px;
-  animation:fadeUp .24s ease;
+
+  touch-action: auto;
+  overscroll-behavior-y: contain;
 }
 
 .modalTitle{
