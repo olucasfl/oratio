@@ -7,10 +7,12 @@ import { isPWA } from "../../utils/isPwa"
 import { preloadConsecration } from "../../services/consecrationService"
 
 type LiturgyReading = {
+ tipo?: string
  titulo?: string
  referencia?: string
  texto?: string
  refrao?: string
+
 }
 
 type LiturgyData = {
@@ -19,6 +21,7 @@ type LiturgyData = {
   segundaLeitura?: LiturgyReading[]
   salmo?: LiturgyReading[]
   evangelho?: LiturgyReading[]
+  extras?: LiturgyReading[]
  }
 }
 
@@ -160,11 +163,15 @@ export default function Home(){
   }
  }
 
-  function openModal(type:"primeira" | "segunda" | "salmo" | "evangelho"){
+  function openModal(type:"primeira" | "segunda" | "salmo" | "evangelho" | "extra"){
 
     if(!liturgy?.leituras) return
 
     let readings: LiturgyReading[] = []
+
+    if(type === "extra"){
+        readings = liturgy.leituras.extras ?? []
+    }
 
     if(type === "primeira"){
         readings = liturgy.leituras.primeiraLeitura ?? []
@@ -182,7 +189,13 @@ export default function Home(){
         readings = liturgy.leituras.evangelho ?? []
     }
 
-    if(readings.length === 0) return
+    if(readings.length === 0){
+        setModal({
+            titulo: "",
+            texto: "Hoje não possui segunda leitura"
+        })
+        return
+    }
 
     if(readings.length === 1){
         setModal(readings[0])
@@ -258,6 +271,13 @@ export default function Home(){
 
     {liturgy && (
      <div className={styles.liturgyButtons}>
+
+        {(liturgy.leituras?.extras?.length ?? 0) > 0 && (
+        <button onClick={()=>openModal("extra")}>
+            Extra {(liturgy.leituras?.extras?.length ?? 0) > 1 && `(${liturgy.leituras?.extras?.length})`}
+        </button>
+        )}
+
       <button onClick={()=>openModal("primeira")}>
        Primeira Leitura
       </button>
@@ -317,16 +337,37 @@ export default function Home(){
                     setTimeout(()=> setModal(item), 0)
                 }}
                 >
-                <div>
-                    <strong>
-                    {item.titulo || `Leitura ${index+1}`}
-                    </strong>
+                <div style={{
+                display:"flex",
+                flexDirection:"column",
+                alignItems:"flex-start",
+                gap:"2px"
+                }}>
 
-                    {item.referencia && (
-                    <div style={{ fontSize: "0.9em", opacity: 0.8 }}>
-                        {item.referencia}
-                    </div>
-                    )}
+                {item.tipo && (
+                    <span style={{
+                    fontSize: "0.75rem",
+                    fontWeight: "bold",
+                    textTransform: "uppercase",
+                    opacity: 0.7
+                    }}>
+                    {item.tipo}
+                    </span>
+                )}
+
+                <strong style={{ fontSize: "1rem" }}>
+                    {item.titulo || `Leitura ${index+1}`}
+                </strong>
+
+                {item.referencia && (
+                    <span style={{
+                    fontSize: "0.85rem",
+                    opacity: 0.8
+                    }}>
+                    {item.referencia}
+                    </span>
+                )}
+
                 </div>
             </button>
             ))}
