@@ -370,9 +370,7 @@ export default function RosaryPage(){
 
       <div className={styles.prayer}>
 
-       <h2>
-        {isBeadPrayer ? "Ave Maria" : step.title}
-       </h2>
+       <h2>{step.title}</h2>
 
        <pre className={styles.text}>
           {step.text || rosaryPrayers[

@@ -1,6 +1,7 @@
 import styles from "./RosaryHome.module.css"
 import { useNavigate } from "react-router-dom"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
+import { ROSARY_DAYS } from "../../utils/rosaryDays"
 
 /* =========================
 TIPAGEM
@@ -58,15 +59,23 @@ export default function RosaryHome(){
 
     <div className={styles.list}>
 
-     {ROSARIES.map((r)=>(
-      <div
-       key={r.slug}
-       className={styles.card}
-       onClick={()=>goToRosary(r.slug)}
-      >
-       {r.name}
-      </div>
-     ))}
+    {ROSARIES.map((r)=>(
+    <div
+        key={r.slug}
+        className={styles.card}
+        onClick={()=>goToRosary(r.slug)}
+    >
+        <div className={styles.cardContent}>
+            <span className={styles.title}>{r.name}</span>
+
+            {ROSARY_DAYS[r.slug] && (
+                <span className={styles.days}>
+                {ROSARY_DAYS[r.slug]}
+                </span>
+            )}
+            </div>
+    </div>
+    ))}
 
     </div>
 
