@@ -24,7 +24,8 @@ const ROSARIES: Rosary[] = [
  { name:"Mistérios Luminosos", slug:"luminosos" },
 
  { name:"Terço das 7 Dores de Maria", slug:"sete-dores" },
- { name:"Terço da Divina Misericórdia", slug:"misericordia" }
+ { name:"Terço da Divina Misericórdia", slug:"misericordia" },
+ { name:"Terço do Sagrado Coração de Jesus", slug:"sagrado-coracao" }
 
 ]
 

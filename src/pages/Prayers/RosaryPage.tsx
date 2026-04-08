@@ -155,7 +155,8 @@ export default function RosaryPage(){
 
  const isBeadPrayer =
   step.title?.startsWith("Ave Maria") ||
-  step.title?.startsWith("Pela Sua dolorosa Paixão")
+  step.title?.startsWith("Pela Sua dolorosa Paixão") ||
+  step.title?.startsWith("Sagrado Coração de Jesus")
 
  const isLastStep = current === steps.length-1
 
@@ -165,8 +166,10 @@ export default function RosaryPage(){
  ===================== */
 
  const firstMysteryIndex = steps.findIndex(
-  (s:any)=>s.type === "mystery"
- )
+    (s:any)=>
+      s.type === "mystery" ||
+      s.title?.includes("Dezena")
+  )
 
  const initialAveMariaIndexes = steps
   .map((s:any,i:number)=>({step:s,index:i}))
@@ -230,7 +233,7 @@ export default function RosaryPage(){
 
   aveIndex = decadeSteps.filter(
     (s:any)=>
-      s.title?.startsWith("Ave Maria") ||
+      s.title?.match(/\d+\/\d+/) ||
       s.title?.startsWith("Pela Sua dolorosa Paixão")
   ).length
 
@@ -370,7 +373,7 @@ export default function RosaryPage(){
 
       <div className={styles.prayer}>
 
-       <h2>{step.title}</h2>
+       <h2>{step.title.replace(/\s\d+\/\d+/, "")}</h2>
 
        <pre className={styles.text}>
           {step.text || rosaryPrayers[
