@@ -156,7 +156,8 @@ export default function RosaryPage(){
  const isBeadPrayer =
   step.title?.startsWith("Ave Maria") ||
   step.title?.startsWith("Pela Sua dolorosa Paixão") ||
-  step.title?.startsWith("Sagrado Coração de Jesus")
+  step.title?.startsWith("Sagrado Coração de Jesus") ||
+  step.title?.startsWith("São José")
 
  const isLastStep = current === steps.length-1
 
@@ -203,7 +204,8 @@ export default function RosaryPage(){
 
   if(
     steps[i].title === "Pai Nosso" ||
-    steps[i].title?.includes("Dezena")
+    steps[i].title?.includes("Dezena") || 
+    steps[i].type === "mystery"
   ){
    decadeStart = i
    break
@@ -215,7 +217,7 @@ export default function RosaryPage(){
     isBeadPrayer &&
     decadeStart !== -1 &&
     (
-      steps[decadeStart-1]?.type === "mystery" ||
+      steps[decadeStart]?.type === "mystery" ||
       steps[decadeStart]?.title?.includes("Dezena")
     )
 
