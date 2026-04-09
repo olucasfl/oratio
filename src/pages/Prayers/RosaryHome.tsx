@@ -26,7 +26,9 @@ const ROSARIES: Rosary[] = [
  { name:"Terço das 7 Dores de Maria", slug:"sete-dores" },
  { name:"Terço da Divina Misericórdia", slug:"misericordia" },
  { name:"Terço do Sagrado Coração de Jesus", slug:"sagrado-coracao" },
- { name:"Terço de São José", slug:"sao-jose" }
+ { name:"Terço de São José", slug:"sao-jose" },
+ { name:"Terço de São Miguel Arcanjo", slug:"sao-miguel" },
+ { name: "Terço de São Bento", slug:"sao-bento"}
 
 ]
 
@@ -56,7 +58,7 @@ export default function RosaryHome(){
     <h1>Terços</h1>
 
     <p className={styles.subtitle}>
-     Escolha um conjunto de mistérios
+     Escolha um terço para rezar
     </p>
 
     <div className={styles.list}>

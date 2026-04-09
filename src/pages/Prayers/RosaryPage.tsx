@@ -289,7 +289,9 @@ export default function RosaryPage(){
 
        <h2>{step.title}</h2>
 
-       <p>{step.text}</p>
+       <div className={styles.text}>
+          {step.text}
+        </div>
 
       </div>
 
@@ -301,11 +303,11 @@ export default function RosaryPage(){
 
        <h2>{step.title.replace(/\s\d+\/\d+/, "")}</h2>
 
-       <pre className={styles.text}>
+       <div className={styles.text}>
           {step.text || rosaryPrayers[
             step.title.replace(/\s\d+\/\d+/,"")
           ]}
-        </pre>
+        </div>
 
       </div>
 
