@@ -38,15 +38,15 @@
  color:#fff;
  border-right:1px solid rgba(255,255,255,.1);
  box-shadow:var(--oratio-shadow-medium);
- z-index:20;
-   overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
+ z-index:42;
+ overflow-y:auto;
+ overflow-x:hidden;
+ -webkit-overflow-scrolling:touch;
  min-height:0;
- overscroll-behavior: contain;
+ overscroll-behavior:contain;
  height:100%;
  box-sizing:border-box;
- touch-action: pan-y;
+ touch-action:pan-y;
 }
 
 .sidebarHeader button{
@@ -87,7 +87,8 @@
  inset:0;
  background:rgba(0,0,0,.45);
  backdrop-filter:blur(2px);
- z-index:15;
+ z-index:35;
+ touch-action:none;
 }
 
 .sidebarTitle{
@@ -410,7 +411,7 @@
  left:0;
  right:0;
  bottom:0;
- z-index:25;
+ z-index:20;
  padding:12px 16px calc(env(safe-area-inset-bottom) + 12px);
  background:linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.95) 38%);
 }
@@ -615,6 +616,10 @@
 
  .open{
   left:0;
+ }
+
+ .sidebar.open ~ .inputWrapper{
+  display:none;
  }
 
  .chatArea{
