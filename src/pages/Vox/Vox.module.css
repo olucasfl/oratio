@@ -18,6 +18,7 @@
  height:100dvh;
  width:100%;
  overflow:hidden;
+ overscroll-behavior: none;
  background:var(--oratio-background);
  font-family:var(--oratio-font-text);
  color:var(--oratio-text-dark);
@@ -38,10 +39,14 @@
  border-right:1px solid rgba(255,255,255,.1);
  box-shadow:var(--oratio-shadow-medium);
  z-index:20;
- overflow:hidden;
+   overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
  min-height:0;
+ overscroll-behavior: contain;
  height:100%;
  box-sizing:border-box;
+ touch-action: pan-y;
 }
 
 .sidebarHeader button{
