@@ -66,6 +66,47 @@ export default function RosaryPage(){
 
  }
 
+ function getCurrentGroup(){
+
+  const currentStep = steps[current]
+  if(!currentStep?.title) return null
+
+  const baseTitle = currentStep.title.replace(/\s\d+\/\d+/,"")
+
+  // 🔥 IGNORAR ORAÇÕES QUE NÃO SÃO CONTAGEM
+  const ignore = ["Pai Nosso","Credo","Glória ao Pai","Salve Rainha"]
+
+  if(ignore.includes(baseTitle)) return null
+
+  // ← volta
+  let start = current
+  while(
+    start > 0 &&
+    steps[start - 1]?.title?.replace(/\s\d+\/\d+/,"") === baseTitle
+  ){
+    start--
+  }
+
+  // → avança
+  let end = current
+  while(
+    end < steps.length - 1 &&
+    steps[end + 1]?.title?.replace(/\s\d+\/\d+/,"") === baseTitle
+  ){
+    end++
+  }
+
+  const total = end - start + 1
+
+  if(total <= 1) return null
+
+  const index = current - start + 1
+
+  return { total, index }
+}
+
+  const group = getCurrentGroup()
+
  function next(){
 
   setCurrent((prev)=>{
@@ -153,94 +194,7 @@ export default function RosaryPage(){
 
  const step = steps[current]
 
- const isBeadPrayer =
-  step.title?.startsWith("Ave Maria") ||
-  step.title?.startsWith("Pela Sua dolorosa Paixão") ||
-  step.title?.startsWith("Sagrado Coração de Jesus") ||
-  step.title?.startsWith("São José")
-
  const isLastStep = current === steps.length-1
-
-
- /* =====================
- 3 AVE MARIAS INICIAIS
- ===================== */
-
- const firstMysteryIndex = steps.findIndex(
-    (s:any)=>
-      s.type === "mystery" ||
-      s.title?.includes("Dezena")
-  )
-
- const initialAveMariaIndexes = steps
-  .map((s:any,i:number)=>({step:s,index:i}))
-  .filter(item =>
-   item.step.title?.startsWith("Ave Maria") &&
-   item.index < firstMysteryIndex
-  )
-  .slice(0,3)
-
- const initialPositions = initialAveMariaIndexes.map(i=>i.index)
-
- const isInitialAveMaria = initialPositions.includes(current)
-
- let initialIndex = 0
-
- if(isInitialAveMaria){
-
-  initialIndex =
-   initialPositions.indexOf(current) + 1
-
- }
-
-
- /* =====================
- DETECTAR DEZENA
- ===================== */
-
- let decadeStart = -1
-
- for(let i=current;i>=0;i--){
-
-  if(
-    steps[i].title === "Pai Nosso" ||
-    steps[i].title?.includes("Dezena") || 
-    steps[i].type === "mystery"
-  ){
-   decadeStart = i
-   break
-  }
-
- }
-
-  const isInsideDecade =
-    isBeadPrayer &&
-    decadeStart !== -1 &&
-    (
-      steps[decadeStart]?.type === "mystery" ||
-      steps[decadeStart]?.title?.includes("Dezena")
-    )
-
-
- /* =====================
- CONTAGEM DA DEZENA
- ===================== */
-
- let aveIndex = 0
- const aveLimit = step.title?.includes("/7") ? 7 : 10
-
- if(isInsideDecade){
-
-  const decadeSteps = steps.slice(decadeStart,current+1)
-
-  aveIndex = decadeSteps.filter(
-    (s:any)=>
-      s.title?.match(/\d+\/\d+/) ||
-      s.title?.startsWith("Pela Sua dolorosa Paixão")
-  ).length
-
- }
-
 
  async function handleFinish(){
 
@@ -297,58 +251,28 @@ export default function RosaryPage(){
      ← Sair do Terço
     </button>
 
+    {group && group.total > 1 && (
 
-    {isInitialAveMaria && (
+    <div className={styles.rosary}>
 
-     <div className={styles.rosary}>
+      {Array.from({ length: group.total }).map((_, i) => {
 
-      {Array.from({length:3}).map((_,i)=>{
+        const active = i < group.index
 
-       const active = i < initialIndex
-
-       return(
-
-        <span
-         key={i}
-         className={active ? styles.beadActive : styles.bead}
-        >
-         {i+1}
-        </span>
-
-       )
+        return (
+          <span
+            key={i}
+            className={active ? styles.beadActive : styles.bead}
+          >
+            {i + 1}
+          </span>
+        )
 
       })}
 
-     </div>
+    </div>
 
-    )}
-
-
-    {isInsideDecade && (
-
-     <div className={styles.rosary}>
-
-      {Array.from({length:aveLimit}).map((_,i)=>{
-
-       const active = i < aveIndex
-
-       return(
-
-        <span
-         key={i}
-         className={active ? styles.beadActive : styles.bead}
-        >
-         {i+1}
-        </span>
-
-       )
-
-      })}
-
-     </div>
-
-    )}
-
+  )}
 
     <div
      key={current}
