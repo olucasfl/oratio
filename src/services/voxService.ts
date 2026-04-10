@@ -21,10 +21,6 @@ async function parseJson(response: Response){
  }
 }
 
-/* =========================
-   PEGAR CONVERSA ATIVA (🔥 NOVO)
-========================= */
-
 export async function getActiveConversation(){
 
  try{
@@ -56,10 +52,6 @@ export async function getActiveConversation(){
  }
 
 }
-
-/* =========================
-   CRIAR CONVERSA (INTELIGENTE)
-========================= */
 
 export async function createConversation(){
 
@@ -93,10 +85,6 @@ export async function createConversation(){
  }
 
 }
-
-/* =========================
-   ENVIAR MENSAGEM
-========================= */
 
 export async function askVox(
  message:string,
@@ -156,10 +144,6 @@ export async function askVox(
 
 }
 
-/* =========================
-   LISTAR CONVERSAS
-========================= */
-
 export async function getConversations(){
 
  try{
@@ -177,10 +161,6 @@ export async function getConversations(){
  }
 
 }
-
-/* =========================
-   PEGAR MENSAGENS
-========================= */
 
 export async function getMessages(conversationId:string){
 
