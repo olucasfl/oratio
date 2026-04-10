@@ -119,11 +119,46 @@ export default function Vox(){
     // 🔥 pega conversa ativa do backend
     const active = await getActiveConversation()
 
-    if(!active?.id) throw new Error()
+    if(active?.error){
+      if(active.error === "UNAUTHORIZED"){
+        throw new Error("UNAUTHORIZED")
+      }
+
+      if(list?.[0]?.id){
+        await openConversation(list[0].id)
+        return
+      }
+
+      const conv = await createConversation()
+      if(!conv?.id){
+        if(conv?.error === "UNAUTHORIZED"){
+          throw new Error("UNAUTHORIZED")
+        }
+        throw new Error()
+      }
+      await openConversation(conv.id)
+      return
+    }
+
+    if(!active?.id){
+      if(list?.[0]?.id){
+        await openConversation(list[0].id)
+        return
+      }
+
+      const conv = await createConversation()
+      if(!conv?.id) throw new Error()
+      await openConversation(conv.id)
+      return
+    }
 
     await openConversation(active.id)
 
-  }catch{
+  }catch(error:any){
+    if(error?.message === "UNAUTHORIZED"){
+      setError("Sua sessão expirou. Faça login novamente.")
+      return
+    }
     setError("Não foi possível carregar suas conversas.")
   }finally{
     setLoadingConversation(false)
@@ -143,8 +178,6 @@ export default function Vox(){
     setConversationId(id)
     setMenuOpen(false)
     setLoadingConversation(true)
-
-    setMessages([])
 
     const msgs = await getMessages(id)
     if(!Array.isArray(msgs)){
@@ -239,13 +272,14 @@ export default function Vox(){
         setError("O Vox demorou para responder. Tente novamente.")
       }else if(res?.error === "LIMIT_EXCEEDED"){
         setError("Limite diário atingido.")
+      }else if(res?.error === "NETWORK_ERROR"){
+        setError("Erro de conexão. Verifique sua internet.")
       }else if(res?.error === "AI_PROVIDER_ERROR"){
         setError("Erro na comunicação com a IA.")
       }else{
         setError(res?.message || "Erro inesperado no envio da mensagem.")
       }
 
-      setMessages(prev => prev.filter(msg => msg.id !== userMessage.id))
       return
     }
 
@@ -267,7 +301,6 @@ export default function Vox(){
     }else{
       setError("Erro de conexão. Verifique sua internet.")
     }
-    setMessages(prev => prev.filter(msg => msg.id !== userMessage.id))
 
   }finally{
     setLoading(false)
