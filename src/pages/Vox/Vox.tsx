@@ -113,8 +113,17 @@ export default function Vox(){
     setError(null)
     setLoadingConversation(true)
 
-    const list = await getConversations()
-    setConversations(list || [])
+    let list = await getConversations()
+    if(list === null){
+      const retry = await getConversations()
+      if(retry !== null){
+        list = retry
+      }
+    }
+
+    if(list !== null){
+      setConversations(list)
+    }
 
     // 🔥 pega conversa ativa do backend
     const active = await getActiveConversation()

@@ -152,12 +152,14 @@ export async function getConversations(){
    headers:getAuthHeaders()
   })
 
-  if(!res.ok) throw new Error()
+  if(!res.ok){
+   return null
+  }
 
   return await res.json()
 
  }catch{
-  return []
+  return null
  }
 
 }
