@@ -88,6 +88,16 @@ export default function Home(){
   preloadConsecration()
  },[])
 
+ useEffect(() => {
+
+  const token = localStorage.getItem("access_token")
+
+  if(!token){
+    navigate("/login", { replace: true })
+  }
+
+}, [])
+
  useEffect(()=>{
   if(!modal && !selector) return
 

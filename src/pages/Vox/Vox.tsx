@@ -133,7 +133,7 @@ export default function Vox(){
       }
     }
 
-    if(list !== null){
+    if(Array.isArray(list)){
       setConversations(list)
     }
 
@@ -314,7 +314,9 @@ export default function Vox(){
     setMessages(prev => [...prev,aiMessage])
 
     const list = await getConversations()
-    setConversations(list || [])
+    if(Array.isArray(list)){
+      setConversations(list)
+    }
 
   }catch(error:any){
 
@@ -357,7 +359,9 @@ export default function Vox(){
     }
 
     const list = await getConversations()
-    setConversations(list || [])
+    if(Array.isArray(list)){
+      setConversations(list)
+    }
     await openConversation(newConv.id)
   }catch{
     setError("Não foi possível apagar a conversa.")
@@ -395,7 +399,9 @@ export default function Vox(){
       }
 
       const list = await getConversations()
-      setConversations(list || [])
+      if(Array.isArray(list)){
+        setConversations(list)
+      }
 
       setRenameOpen(false)
       setRenameValue("")
