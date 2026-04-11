@@ -126,25 +126,25 @@ export default function Vox(){
     setLoadingConversation(true)
 
     let list = await getConversations()
-    if(list === null){
-      const retry = await getConversations()
-      if(retry !== null){
-        list = retry
-      }
+
+    if(list?.error === "UNAUTHORIZED"){
+      console.log("Retry conversations...")
+      await new Promise(res => setTimeout(res, 300))
+      list = await getConversations()
     }
 
     if(Array.isArray(list)){
       setConversations(list)
     }
 
-    const active = await getActiveConversation()
+    let active = await getActiveConversation()
 
-    if(active?.error){
+    if(active?.error === "UNAUTHORIZED"){
+      console.log("Primeira tentativa falhou, retry automático...")
 
-      if(active.error === "UNAUTHORIZED"){
-        setError("Sua sessão expirou. Faça login novamente.")
-        return
-      }
+      await new Promise(res => setTimeout(res, 300))
+
+      active = await getActiveConversation()
 
       if(list?.[0]?.id){
         await openConversation(list[0].id)
