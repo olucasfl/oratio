@@ -7,6 +7,10 @@ const BASE_URL = "https://finance-api-y0ol.onrender.com/oratio/voxai"
 function getAuthHeaders(){
  const token = localStorage.getItem("access_token")
 
+ if(!token){
+  throw new Error("NO_TOKEN")
+ }
+
  return {
   "Content-Type":"application/json",
   "Authorization":`Bearer ${token}`
@@ -45,11 +49,16 @@ export async function getActiveConversation(){
   return await res.json()
 
  }catch(error:any){
+
+  if(error.message === "NO_TOKEN"){
+    return { error:"UNAUTHORIZED", status:401 }
+  }
+
   return {
    error:"NETWORK_ERROR",
    message: error?.message || "Não foi possível conectar ao servidor."
   }
- }
+}
 
 }
 
@@ -78,11 +87,16 @@ export async function createConversation(){
   return await res.json()
 
  }catch(error:any){
+
+  if(error.message === "NO_TOKEN"){
+    return { error:"UNAUTHORIZED", status:401 }
+  }
+
   return {
    error:"NETWORK_ERROR",
    message: error?.message || "Não foi possível conectar ao servidor."
   }
- }
+}
 
 }
 
@@ -131,6 +145,15 @@ export async function askVox(
   return await res.json()
 
  }catch(error:any){
+
+  if(error.message === "NO_TOKEN"){
+    return {
+      success:false,
+      error:"UNAUTHORIZED",
+      message:"Sessão expirada."
+    }
+  }
+
   const message = error?.name === "AbortError"
    ? "A requisição para o Vox expirou."
    : "Erro ao conectar com o Vox."
@@ -140,7 +163,7 @@ export async function askVox(
    error:"NETWORK_ERROR",
    message
   }
- }
+}
 
 }
 
@@ -153,14 +176,24 @@ export async function getConversations(){
   })
 
   if(!res.ok){
-   return null
-  }
+
+   if(res.status === 401){
+      return { error:"UNAUTHORIZED" }
+   }
+
+   return { error:"UNKNOWN" }
+   }
 
   return await res.json()
 
- }catch{
-  return null
- }
+ }catch(error:any){
+
+   if(error.message === "NO_TOKEN"){
+      return { error:"UNAUTHORIZED" }
+   }
+
+   return { error:"UNKNOWN" }
+   }
 
 }
 
@@ -176,14 +209,24 @@ export async function getMessages(conversationId:string){
   )
 
   if(!res.ok){
-   return null
-  }
+
+   if(res.status === 401){
+      return { error:"UNAUTHORIZED" }
+   }
+
+   return { error:"UNKNOWN" }
+   }
 
   return await res.json()
 
- }catch{
-  return null
- }
+ }catch(error:any){
+
+  if(error.message === "NO_TOKEN"){
+    return { error:"UNAUTHORIZED" }
+  }
+
+  return { error:"UNKNOWN" }
+}
 
 }
 
@@ -199,13 +242,25 @@ export async function deleteConversation(conversationId:string){
    }
   )
 
-  if(!res.ok) throw new Error()
+  if(!res.ok){
+
+  if(res.status === 401){
+    return { error:"UNAUTHORIZED" }
+  }
+
+  return { error:"UNKNOWN" }
+}
 
   return await res.json()
 
- }catch{
-  return null
- }
+ }catch(error:any){
+
+  if(error.message === "NO_TOKEN"){
+    return { error:"UNAUTHORIZED" }
+  }
+
+  return { error:"UNKNOWN" }
+}
 
 }
 
@@ -225,12 +280,24 @@ export async function renameConversation(
    }
   )
 
-  if(!res.ok) throw new Error()
+  if(!res.ok){
+
+  if(res.status === 401){
+    return { error:"UNAUTHORIZED" }
+  }
+
+  return { error:"UNKNOWN" }
+}
 
   return await res.json()
 
- }catch{
-  return null
- }
+ }catch(error:any){
+
+  if(error.message === "NO_TOKEN"){
+    return { error:"UNAUTHORIZED" }
+  }
+
+  return { error:"UNKNOWN" }
+}
 
 }

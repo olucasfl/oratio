@@ -90,24 +90,36 @@ export default function Vox(){
   }
 }, [menuOpen])
 
- /* =========================
-    INIT (🔥 NOVO)
- ========================= */
-
  useEffect(()=>{
 
-  if(initialized.current) return
-  initialized.current = true
+    if(initialized.current) return
 
-  init()
+    const token = localStorage.getItem("access_token")
 
- },[])
+    if(!token){
+      setError("Sua sessão expirou. Faça login novamente.")
+      return
+    }
+
+    initialized.current = true
+
+    init()
+
+  },[])
 
  useEffect(()=>{
   textareaRef.current?.focus()
  },[])
 
  async function init(){
+
+  const token = localStorage.getItem("access_token")
+
+  if(!token){
+    setError("Sua sessão expirou. Faça login novamente.")
+    return
+  }
+
   try{
 
     setError(null)
@@ -125,12 +137,13 @@ export default function Vox(){
       setConversations(list)
     }
 
-    // 🔥 pega conversa ativa do backend
     const active = await getActiveConversation()
 
     if(active?.error){
+
       if(active.error === "UNAUTHORIZED"){
-        throw new Error("UNAUTHORIZED")
+        setError("Sua sessão expirou. Faça login novamente.")
+        return
       }
 
       if(list?.[0]?.id){
