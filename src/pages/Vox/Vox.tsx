@@ -176,6 +176,12 @@ export default function Vox(){
 
     await openConversation(active.id)
 
+    const finalList = await getConversations()
+
+    if(Array.isArray(finalList)){
+      setConversations(finalList)
+    }
+
   }catch(error:any){
     if(error?.message === "UNAUTHORIZED"){
       setError("Sua sessão expirou. Faça login novamente.")
