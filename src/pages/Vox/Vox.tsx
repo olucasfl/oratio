@@ -90,22 +90,14 @@ export default function Vox(){
   }
 }, [menuOpen])
 
- useEffect(()=>{
+useEffect(()=>{
+  if(initialized.current) return
+  initialized.current = true
 
-    if(initialized.current) return
-
-    const token = localStorage.getItem("access_token")
-
-    if(!token){
-      setError("Sua sessão expirou. Faça login novamente.")
-      return
-    }
-
-    initialized.current = true
-
+  setTimeout(()=>{
     init()
-
-  },[])
+  }, 0)
+},[])
 
  useEffect(()=>{
   textareaRef.current?.focus()
@@ -113,85 +105,65 @@ export default function Vox(){
 
  async function init(){
 
-  const token = localStorage.getItem("access_token")
+    try{
 
-  if(!token){
-    setError("Sua sessão expirou. Faça login novamente.")
-    return
-  }
+      setError(null)
+      setLoadingConversation(true)
 
-  try{
+      const list = await getConversations()
 
-    setError(null)
-    setLoadingConversation(true)
-
-    let list = await getConversations()
-
-    if(list?.error === "UNAUTHORIZED"){
-      console.log("Retry conversations...")
-      await new Promise(res => setTimeout(res, 300))
-      list = await getConversations()
-    }
-
-    if(Array.isArray(list)){
-      setConversations(list)
-    }
-
-    let active = await getActiveConversation()
-
-    if(active?.error === "UNAUTHORIZED"){
-      console.log("Primeira tentativa falhou, retry automático...")
-
-      await new Promise(res => setTimeout(res, 300))
-
-      active = await getActiveConversation()
-
-      if(list?.[0]?.id){
-        await openConversation(list[0].id)
-        return
+      if(Array.isArray(list)){
+        setConversations(list)
       }
 
-      const conv = await createConversation()
-      if(!conv?.id){
-        if(conv?.error === "UNAUTHORIZED"){
-          throw new Error("UNAUTHORIZED")
+      const active = await getActiveConversation()
+
+      if(active?.error){
+
+        if(list?.[0]?.id){
+          await openConversation(list[0].id)
+          return
         }
-        throw new Error()
-      }
-      await openConversation(conv.id)
-      return
-    }
 
-    if(!active?.id){
-      if(list?.[0]?.id){
-        await openConversation(list[0].id)
+        const conv = await createConversation()
+        if(!conv?.id){
+          throw new Error()
+        }
+
+        await openConversation(conv.id)
         return
       }
 
-      const conv = await createConversation()
-      if(!conv?.id) throw new Error()
-      await openConversation(conv.id)
-      return
+      if(!active?.id){
+
+        if(list?.[0]?.id){
+          await openConversation(list[0].id)
+          return
+        }
+
+        const conv = await createConversation()
+        if(!conv?.id){
+          throw new Error()
+        }
+
+        await openConversation(conv.id)
+        return
+      }
+
+      await openConversation(active.id)
+
+      const finalList = await getConversations()
+
+      if(Array.isArray(finalList)){
+        setConversations(finalList)
+      }
+
+    }catch{
+      setError("Não foi possível carregar suas conversas.")
+    }finally{
+      setLoadingConversation(false)
     }
-
-    await openConversation(active.id)
-
-    const finalList = await getConversations()
-
-    if(Array.isArray(finalList)){
-      setConversations(finalList)
-    }
-
-  }catch(error:any){
-    if(error?.message === "UNAUTHORIZED"){
-      setError("Sua sessão expirou. Faça login novamente.")
-      return
-    }
-    setError("Não foi possível carregar suas conversas.")
-  }finally{
-    setLoadingConversation(false)
   }
- }
 
  /* =========================
     ABRIR CONVERSA
@@ -208,12 +180,10 @@ export default function Vox(){
     setLoadingConversation(true)
 
     const msgs = await getMessages(id)
-    if(!Array.isArray(msgs)){
-      throw new Error("INVALID_MESSAGES_PAYLOAD")
-    }
+
     if(requestId !== openConversationRequest.current) return
 
-    setMessages(msgs)
+    setMessages(msgs || [])
 
   }catch{
     setError("Erro ao abrir conversa.")
@@ -286,9 +256,7 @@ export default function Vox(){
 
     if(!res?.success || !res?.response){
 
-      if(res?.error === "UNAUTHORIZED"){
-        setError("Sua sessão expirou. Faça login novamente.")
-      }else if(res?.error === "RATE_LIMIT"){
+      if(res?.error === "RATE_LIMIT"){
         setError("Você está enviando mensagens muito rápido.")
       }else if(res?.error === "MESSAGE_TOO_LONG"){
         setError("A mensagem deve ter no máximo 1000 caracteres.")
@@ -325,12 +293,7 @@ export default function Vox(){
     }
 
   }catch(error:any){
-
-    if(error?.response?.status === 401){
-      setError("Sua sessão expirou. Faça login novamente.")
-    }else{
-      setError("Erro de conexão. Verifique sua internet.")
-    }
+    setError("Erro ao processar sua mensagem.")
 
   }finally{
     setLoading(false)

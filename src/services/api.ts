@@ -2,7 +2,6 @@ import axios, { AxiosError } from "axios";
 import type { InternalAxiosRequestConfig } from "axios";
 
 /*
-
 ================================
 AXIOS INSTANCE
 ================================
@@ -17,8 +16,37 @@ const api = axios.create({
 
 /*
 ================================
+CONTROLE DE REFRESH (ANTI-BUG)
+================================
+*/
+
+let isRefreshing = false;
+let failedQueue: {
+  resolve: (token: string) => void;
+  reject: (err: any) => void;
+}[] = [];
+
+function processQueue(error: any, token: string | null = null) {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token as string);
+    }
+  });
+
+  failedQueue = [];
+}
+
+function logout() {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+  window.location.href = "/login";
+}
+
+/*
+================================
 REQUEST INTERCEPTOR
-Adiciona access_token
 ================================
 */
 
@@ -31,13 +59,11 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   }
 
   return config;
-
 });
 
 /*
 ================================
 RESPONSE INTERCEPTOR
-Refresh automático do token
 ================================
 */
 
@@ -50,39 +76,51 @@ api.interceptors.response.use(
     const originalRequest: any = error.config;
 
     /*
-    Se der 401 e ainda não tentou refresh
+    Se não tem config, só retorna erro
     */
+    if (!originalRequest) {
+      return Promise.reject(error);
+    }
 
+    /*
+    Se deu 401 e não tentou refresh ainda
+    */
     if (
       error.response?.status === 401 &&
-      !originalRequest?._retry &&
-      !originalRequest?.url?.includes("/auth/refresh")
+      !originalRequest._retry &&
+      !originalRequest.url?.includes("/auth/refresh")
     ) {
 
+      /*
+      🔥 Se já está fazendo refresh → fila
+      */
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({
+            resolve: (token: string) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              resolve(api(originalRequest));
+            },
+            reject: (err: any) => reject(err),
+          });
+        });
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
 
         const refreshToken = localStorage.getItem("refresh_token");
 
-        /*
-        Se não existir refresh token → logout
-        */
-
         if (!refreshToken) {
-
-          localStorage.removeItem("access_token");
-          localStorage.removeItem("refresh_token");
-
-          window.location.href = "/login";
-
+          logout();
           return Promise.reject(error);
         }
 
         /*
-        Faz refresh do token
+        🔥 REFRESH TOKEN
         */
-
         const response = await axios.post(
           `${import.meta.env.VITE_API_URL}/auth/refresh`,
           {
@@ -99,45 +137,40 @@ api.interceptors.response.use(
         const newRefreshToken = response.data.refresh_token;
 
         /*
-        Salva novos tokens
+        🔥 salva novos tokens
         */
-
         localStorage.setItem("access_token", newAccessToken);
         localStorage.setItem("refresh_token", newRefreshToken);
 
         /*
-        Atualiza header da requisição original
+        🔥 libera fila
         */
-
-        originalRequest.headers = {
-          ...originalRequest.headers,
-          Authorization: `Bearer ${newAccessToken}`
-        };
+        processQueue(null, newAccessToken);
 
         /*
-        Refaz requisição original
+        🔥 refaz request original
         */
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
         return api(originalRequest);
 
-      } catch (refreshError) {
+      } catch (err) {
 
         /*
-        Refresh token expirou → logout
+        ❌ refresh falhou → logout
         */
+        processQueue(err, null);
+        logout();
 
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+        return Promise.reject(err);
 
-        window.location.href = "/login";
-
-        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 
     return Promise.reject(error);
   }
-
 );
 
 export default api;

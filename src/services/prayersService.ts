@@ -26,18 +26,8 @@ export async function getPrayer(id:string){
 
 export async function completePrayer(){
 
- const token = localStorage.getItem("access_token")
+  const res = await api.post("/oratio/prayers/complete")
 
- const res = await api.post(
-  "/oratio/prayers/complete",
-  {},
-  {
-   headers:{
-    Authorization:`Bearer ${token}`
-   }
-  }
- )
-
- return res.data
+  return res.data
 
 }
