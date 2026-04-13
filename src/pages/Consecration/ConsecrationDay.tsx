@@ -18,6 +18,9 @@ export default function ConsecrationDay(){
  const [data,setData] = useState<any>(null)
  const [progress,setProgress] = useState<any>(null)
  const [loading,setLoading] = useState(true)
+ const [actionLoading,setActionLoading] = useState(false)
+ const [successMessage,setSuccessMessage] = useState<string | null>(null)
+ const [errorMessage,setErrorMessage] = useState<string | null>(null)
 
  const [isOffline,setIsOffline] = useState(!navigator.onLine)
 
@@ -51,12 +54,6 @@ export default function ConsecrationDay(){
   if(!day) return
 
   try{
-
-   setLoading(true)
-
-   /* ============================= */
-   /* CACHE LOCAL */
-   /* ============================= */
 
    const cachedDay =
     localStorage.getItem(`oratio-day-${day}`)
@@ -114,8 +111,8 @@ export default function ConsecrationDay(){
 
  function offlineWarning(){
 
-  alert(
-   "Você está offline. Para registrar a conclusão do dia é necessário conexão com a internet."
+  setErrorMessage(
+   "Você está offline. Para registrar a conclusão do dia é necessária conexão com a internet."
   )
 
  }
@@ -186,9 +183,23 @@ export default function ConsecrationDay(){
    return
   }
 
-  await completeDay(data.dayNumber)
+  setErrorMessage(null)
+  setActionLoading(true)
 
-  load()
+  try{
+   await completeDay(data.dayNumber)
+
+   setSuccessMessage(
+    `Dia ${data.dayNumber} concluído com sucesso!`
+   )
+
+   await load()
+  }catch(err){
+   console.error(err)
+   setErrorMessage("Erro ao registrar a conclusão. Tente novamente.")
+  }finally{
+   setActionLoading(false)
+  }
 
  }
 
@@ -199,38 +210,85 @@ export default function ConsecrationDay(){
    return
   }
 
-  await uncompleteDay(data.dayNumber)
+  setErrorMessage(null)
+  setActionLoading(true)
 
-  load()
+  try{
+   await uncompleteDay(data.dayNumber)
+   setSuccessMessage(
+    `A conclusão do dia ${data.dayNumber} foi desfeita.`
+   )
+   await load()
+  }catch(err){
+   console.error(err)
+   setErrorMessage("Erro ao desmarcar a conclusão. Tente novamente.")
+  }finally{
+   setActionLoading(false)
+  }
 
  }
 
  return(
 
-  <div className={styles.container}>
+  <>
 
-   <button
-    className={styles.back}
-    onClick={()=>navigate(-1)}
-   >
-    ← Voltar
-   </button>
+   {(successMessage || errorMessage) && (
+    <div
+     className={styles.popupOverlay}
+     onClick={() => {
+      setSuccessMessage(null)
+      setErrorMessage(null)
+     }}
+    >
+     <div
+      className={styles.popupBox}
+      onClick={(e)=>e.stopPropagation()}
+     >
+      <strong className={styles.popupTitle}>
+       Oratio
+      </strong>
 
-   {isOffline && (
+      <p className={styles.popupText}>
+       {successMessage || errorMessage}
+      </p>
 
-    <div style={{
-     background:"#fff3cd",
-     padding:"10px",
-     borderRadius:"8px",
-     marginBottom:"16px",
-     fontSize:"14px"
-    }}>
-     Você está offline. As orações estão disponíveis, mas registrar progresso requer conexão.
+      <button
+       className={styles.popupClose}
+       onClick={() => {
+        setSuccessMessage(null)
+        setErrorMessage(null)
+       }}
+      >
+       Fechar
+      </button>
+     </div>
     </div>
-
    )}
 
-   <div className={styles.header}>
+   <div className={styles.container}>
+
+    <button
+     className={styles.back}
+     onClick={()=>navigate(-1)}
+    >
+     ← Voltar
+    </button>
+
+    {isOffline && (
+
+     <div style={{
+      background:"#fff3cd",
+      padding:"10px",
+      borderRadius:"8px",
+      marginBottom:"16px",
+      fontSize:"14px"
+     }}>
+      Você está offline. As orações estão disponíveis, mas registrar progresso requer conexão.
+     </div>
+
+    )}
+
+    <div className={styles.header}>
 
     <h1>
      Dia {data.dayNumber}
@@ -276,17 +334,15 @@ export default function ConsecrationDay(){
    {!completed && (
 
     <button
-     disabled={!canComplete || isOffline}
+     disabled={!canComplete || isOffline || actionLoading}
      className={
-      canComplete && !isOffline
+      canComplete && !isOffline && !actionLoading
       ? styles.completeButton
       : styles.completeDisabled
      }
      onClick={handleComplete}
     >
-
-     Marcar dia como concluído
-
+     {actionLoading ? "Registrando..." : "Marcar dia como concluído"}
     </button>
 
    )}
@@ -295,17 +351,17 @@ export default function ConsecrationDay(){
 
     <button
      className={styles.undoButton}
-     disabled={isOffline}
+     disabled={isOffline || actionLoading}
      onClick={handleUndo}
     >
-
-     Desmarcar conclusão
-
+     {actionLoading ? "Processando..." : "Desmarcar conclusão"}
     </button>
 
    )}
 
   </div>
+
+  </>
 
  )
 }
