@@ -2,13 +2,12 @@ import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 
 import styles from "./Catecismo.module.css"
-import { Document, Page, pdfjs } from "react-pdf"
+import { Document, Page } from "react-pdf"
+import "../../utils/pdfConfig"
 
 import "react-pdf/dist/Page/TextLayer.css"
 import "react-pdf/dist/Page/AnnotationLayer.css"
 
-import worker from "pdfjs-dist/build/pdf.worker.min.mjs?url"
-pdfjs.GlobalWorkerOptions.workerSrc = worker
 
 export default function Catecismo(){
 
