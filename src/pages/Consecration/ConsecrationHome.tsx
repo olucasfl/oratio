@@ -114,16 +114,18 @@ export default function ConsecrationHome(){
     }
 
  function parseDate(date:string){
-  const [y,m,d] = date.split("-").map(Number)
-  return new Date(y,m-1,d)
- }
+    const [y,m,d] = date.split("-").map(Number)
+    return new Date(Date.UTC(y, m-1, d))
+  }
 
- function calculateStartDate(date:string){
-  if(!date) return null
-  const d = parseDate(date)
-  d.setDate(d.getDate()-33)
-  return d
- }
+  function calculateStartDate(date:string){
+    if(!date) return null
+
+    const d = parseDate(date)
+    d.setUTCDate(d.getUTCDate() - 33)
+
+    return d
+  }
 
  function calculateConsecrationDate(startDate:string){
 
@@ -135,27 +137,26 @@ export default function ConsecrationHome(){
 
  if(!y || !m || !d) return ""
 
- const date = new Date(y,m-1,d)
+  const date = new Date(Date.UTC(y, m-1, d))
 
- date.setDate(date.getDate()+33)
+  date.setUTCDate(date.getUTCDate() + 33)
 
- const year = date.getFullYear()
- const month = String(date.getMonth()+1).padStart(2,"0")
- const day = String(date.getDate()).padStart(2,"0")
+  const year = date.getUTCFullYear()
+  const month = String(date.getUTCMonth() + 1).padStart(2,"0")
+  const day = String(date.getUTCDate()).padStart(2,"0")
 
  return `${year}-${month}-${day}`
 
 }
 
- function formatDateBR(date:Date){
+  function formatDateBR(date:Date){
 
-  const day = String(date.getDate()).padStart(2,"0")
-  const month = String(date.getMonth()+1).padStart(2,"0")
-  const year = date.getFullYear()
+    const day = String(date.getUTCDate()).padStart(2,"0")
+    const month = String(date.getUTCMonth()+1).padStart(2,"0")
+    const year = date.getUTCFullYear()
 
-  return `${day}/${month}/${year}`
-
- }
+    return `${day}/${month}/${year}`
+  }
 
  function daysUntilStart(startDate:Date){
 
