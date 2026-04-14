@@ -34,6 +34,7 @@ type FeatureItem = {
 
 const LITURGY_URL = "https://finance-api-y0ol.onrender.com/liturgia"
 const LITURGY_CACHE_KEY = "last_liturgy"
+const APP_VERSION = "v3"
 
 export default function Home(){
  const navigate = useNavigate()
@@ -82,11 +83,27 @@ export default function Home(){
   }
  ]
 
- useEffect(()=>{
-  loadLiturgyFromCache()
-  void loadLiturgy()
-  preloadConsecration()
- },[])
+  useEffect(()=>{
+
+    /* 🔥 CONTROLE GLOBAL DE VERSÃO */
+    const currentVersion = localStorage.getItem("app_version")
+
+    if(currentVersion !== APP_VERSION){
+
+      console.log("Atualizando app... limpando cache")
+
+      localStorage.clear()
+
+      localStorage.setItem("app_version", APP_VERSION)
+
+    }
+
+    /* 🔥 CARREGA DADOS */
+    loadLiturgyFromCache()
+    void loadLiturgy()
+    preloadConsecration()
+
+  },[])
 
  useEffect(() => {
 
@@ -176,7 +193,9 @@ export default function Home(){
   setLiturgyError(null)
 
   try{
-   const res = await fetch(LITURGY_URL)
+   const res = await fetch(LITURGY_URL, {
+      cache: "no-store"
+    })
    if(!res.ok){
     throw new Error("LITURGY_FETCH_FAILED")
    }
