@@ -253,13 +253,17 @@ export default function ConsecrationDay(){
       </p>
 
       <button
-       className={styles.popupClose}
-       onClick={() => {
-        setSuccessMessage(null)
-        setErrorMessage(null)
-       }}
+        className={styles.popupClose}
+        onClick={() => {
+          setSuccessMessage(null)
+          setErrorMessage(null)
+
+          if(data?.stage?.id){
+            navigate(`/oratio/consecration/stage/${data.stage.id}`)
+          }
+        }}
       >
-       Fechar
+        Fechar
       </button>
      </div>
     </div>
