@@ -381,13 +381,23 @@ export default function ConsecrationHome(){
 
  if(loading){
 
-  return(
-   <div className={styles.loading}>
-    <p>Carregando consagração...</p>
-   </div>
-  )
+    return(
+    <div className={styles.loading}>
 
- }
+      <button
+        className={styles.back}
+        onClick={()=>navigate("/oratio/consecration")}
+        style={{marginBottom:"16px"}}
+      >
+        ← Voltar
+      </button>
+
+      <p>Carregando consagração...</p>
+
+    </div>
+    )
+
+  }
 
  return(
 
