@@ -49,65 +49,58 @@ export default function ConsecrationDay(){
 
  },[day])
 
- async function load(){
+  async function load(){
 
   if(!day) return
 
   try{
 
-   const cachedDay =
+    const cachedDay =
     localStorage.getItem(`oratio-day-${day}`)
 
-   const cachedProgress =
+    const cachedProgress =
     localStorage.getItem("oratio-consecration-progress")
 
-   if(cachedDay){
+    /* 🔥 MOSTRA CACHE PRIMEIRO */
+    if(cachedDay){
     setData(JSON.parse(cachedDay))
-   }
+    }
 
-   if(cachedProgress){
+    if(cachedProgress){
     setProgress(JSON.parse(cachedProgress))
-   }
+    }
 
-   /* ============================= */
-   /* API SE ONLINE */
-   /* ============================= */
-
-   if(!navigator.onLine){
+    /* 🔥 SEMPRE BUSCA API (SE ONLINE) */
+    if(!navigator.onLine){
     return
-   }
+    }
 
-   const [dayData,progressData] = await Promise.all([
+    const [dayData,progressData] = await Promise.all([
+      getDay(Number(day)),
+      getProgress()
+    ])
 
-    getDay(Number(day)),
-    getProgress()
+    /* 🔥 ATUALIZA TELA COM DADO NOVO */
+    setData(dayData)
+    setProgress(progressData)
 
-   ])
+    /* 🔥 ATUALIZA CACHE */
+    localStorage.setItem(
+      `oratio-day-${day}`,
+      JSON.stringify(dayData)
+    )
 
-   setData(dayData)
-   setProgress(progressData)
-
-   localStorage.setItem(
-    `oratio-day-${day}`,
-    JSON.stringify(dayData)
-   )
-
-   localStorage.setItem(
-    "oratio-consecration-progress",
-    JSON.stringify(progressData)
-   )
+    localStorage.setItem(
+      "oratio-consecration-progress",
+      JSON.stringify(progressData)
+    )
 
   }catch{
-
-   console.log("Erro ao carregar dia")
-
+    console.log("Erro ao carregar dia")
   }finally{
-
-   setLoading(false)
-
+    setLoading(false)
   }
-
- }
+  }
 
  function offlineWarning(){
 

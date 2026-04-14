@@ -39,87 +39,88 @@ const [loading,setLoading] = useState(true)
 
 useEffect(()=>{
 
-const isStandalone =
-window.matchMedia("(display-mode: standalone)").matches ||
-(window.navigator as any).standalone === true
+  /* ============================= */
+  /* 🔥 VERSIONAMENTO DE CACHE */
+  /* ============================= */
 
+  const APP_VERSION = "1.2"
 
-/* =================================
-APP BOOT LOADER
-================================= */
+  const savedVersion = localStorage.getItem("app_version")
 
-const bootLoader = async () => {
+  if(savedVersion !== APP_VERSION){
+    console.log("🔄 Nova versão detectada, limpando cache...")
+    localStorage.clear()
+    localStorage.setItem("app_version", APP_VERSION)
+  }
 
- try{
+  /* ============================= */
+  /* DETECTAR PWA */
+  /* ============================= */
 
-  const token = localStorage.getItem("access_token")
+  const isStandalone =
+    window.matchMedia("(display-mode: standalone)").matches ||
+    (window.navigator as any).standalone === true
 
-  /* =================================
-  PRELOAD CONSAGRAÇÃO (sempre)
-  ================================= */
+  /* ============================= */
+  /* APP BOOT LOADER */
+  /* ============================= */
 
-  preloadConsecration().catch(()=>{})
+  const bootLoader = async () => {
 
-  /* =================================
-  SE USUÁRIO LOGADO
-  CARREGA PROGRESSO
-  ================================= */
+    try{
 
-  if(token){
+      const token = localStorage.getItem("access_token")
 
-    getProgress().catch(()=>{})
+      /* PRELOAD CONSAGRAÇÃO */
+      preloadConsecration().catch(()=>{})
 
-    const lastPing = localStorage.getItem("last_ping")
-    const now = Date.now()
+      /* SE LOGADO */
+      if(token){
 
-    if (!lastPing || now - Number(lastPing) > 1000 * 60 * 10) {
-    sendActivityPing().catch(()=>{})
-    localStorage.setItem("last_ping", now.toString())
+        getProgress().catch(()=>{})
+
+        const lastPing = localStorage.getItem("last_ping")
+        const now = Date.now()
+
+        if (!lastPing || now - Number(lastPing) > 1000 * 60 * 10) {
+          sendActivityPing().catch(()=>{})
+          localStorage.setItem("last_ping", now.toString())
+        }
+
+      }
+
+    }catch{
+      console.log("Erro ao iniciar aplicativo")
     }
 
   }
 
- }catch{
+  /* ============================= */
+  /* INICIAR APP */
+  /* ============================= */
 
-  console.log("Erro ao iniciar aplicativo")
+  const startApp = async () => {
+    await bootLoader()
+    setLoading(false)
+  }
 
- }
+  /* ============================= */
+  /* SPLASH */
+  /* ============================= */
 
-}
+  if(isStandalone){
 
+    const timer = setTimeout(()=>{
+      startApp()
+    },2500)
 
-/* =================================
-INICIAR APP
-================================= */
+    return () => clearTimeout(timer)
 
-const startApp = async () => {
+  }else{
 
- await bootLoader()
+    startApp()
 
- setLoading(false)
-
-}
-
-
-/* =================================
-SPLASH APENAS NO PWA
-================================= */
-
-if(isStandalone){
-
- const timer = setTimeout(()=>{
-
-  startApp()
-
- },2500)
-
- return () => clearTimeout(timer)
-
-}else{
-
- startApp()
-
-}
+  }
 
 },[])
 
