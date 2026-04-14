@@ -24,6 +24,14 @@ export default function ConsecrationDay(){
 
  const [isOffline,setIsOffline] = useState(!navigator.onLine)
 
+ function offlineWarning(){
+    setErrorMessage(
+      "Você está offline. Para registrar a ação é necessário conexão com a internet."
+    )
+  }
+
+ const CACHE_VERSION = "v2"
+
  useEffect(()=>{
 
   function handleOnline(){
@@ -51,64 +59,54 @@ export default function ConsecrationDay(){
 
   async function load(){
 
-  if(!day) return
+    if(!day) return
 
-  try{
+    try{
 
-    const cachedDay =
-    localStorage.getItem(`oratio-day-${day}`)
+      const cachedDay =
+      localStorage.getItem(`oratio-day-${day}-${CACHE_VERSION}`)
 
-    const cachedProgress =
-    localStorage.getItem("oratio-consecration-progress")
+      const cachedProgress =
+      localStorage.getItem(`oratio-consecration-progress-${CACHE_VERSION}`)
 
-    /* 🔥 MOSTRA CACHE PRIMEIRO */
-    if(cachedDay){
-    setData(JSON.parse(cachedDay))
+      if(!navigator.onLine){
+
+        if(cachedDay){
+          setData(JSON.parse(cachedDay))
+        }
+
+        if(cachedProgress){
+          setProgress(JSON.parse(cachedProgress))
+        }
+
+        setLoading(false)
+        return
+      }
+
+      const [dayData,progressData] = await Promise.all([
+        getDay(Number(day)),
+        getProgress()
+      ])
+
+      setData(dayData)
+      setProgress(progressData)
+
+      localStorage.setItem(
+        `oratio-day-${day}-${CACHE_VERSION}`,
+        JSON.stringify(dayData)
+      )
+
+      localStorage.setItem(
+        `oratio-consecration-progress-${CACHE_VERSION}`,
+        JSON.stringify(progressData)
+      )
+
+    }catch{
+      console.log("Erro ao carregar dia")
+    }finally{
+      setLoading(false)
     }
-
-    if(cachedProgress){
-    setProgress(JSON.parse(cachedProgress))
-    }
-
-    /* 🔥 SEMPRE BUSCA API (SE ONLINE) */
-    if(!navigator.onLine){
-    return
-    }
-
-    const [dayData,progressData] = await Promise.all([
-      getDay(Number(day)),
-      getProgress()
-    ])
-
-    /* 🔥 ATUALIZA TELA COM DADO NOVO */
-    setData(dayData)
-    setProgress(progressData)
-
-    /* 🔥 ATUALIZA CACHE */
-    localStorage.setItem(
-      `oratio-day-${day}`,
-      JSON.stringify(dayData)
-    )
-
-    localStorage.setItem(
-      "oratio-consecration-progress",
-      JSON.stringify(progressData)
-    )
-
-  }catch{
-    console.log("Erro ao carregar dia")
-  }finally{
-    setLoading(false)
   }
-  }
-
- function offlineWarning(){
-
-  setErrorMessage(
-   "Você está offline. Para registrar a conclusão do dia é necessária conexão com a internet."
-  )
-
- }
 
  /* ============================= */
  /* LOADING SCREEN */
