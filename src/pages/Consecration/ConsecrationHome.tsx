@@ -387,7 +387,7 @@ export default function ConsecrationHome(){
 
       <button
         className={styles.back}
-        onClick={()=>navigate("/oratio/consecration")}
+        onClick={()=>navigate("/oratio/home")}
         style={{marginBottom:"16px"}}
       >
         ← Voltar
