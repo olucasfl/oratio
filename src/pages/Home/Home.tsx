@@ -34,7 +34,6 @@ type FeatureItem = {
 
 const LITURGY_URL = "https://finance-api-y0ol.onrender.com/liturgia"
 const LITURGY_CACHE_KEY = "last_liturgy"
-const APP_VERSION = "v4"
 
 export default function Home(){
  const navigate = useNavigate()
@@ -84,19 +83,6 @@ export default function Home(){
  ]
 
   useEffect(()=>{
-
-    /* 🔥 CONTROLE GLOBAL DE VERSÃO */
-    const currentVersion = localStorage.getItem("app_version")
-
-    if(currentVersion !== APP_VERSION){
-
-      console.log("Atualizando app... limpando cache")
-
-      localStorage.removeItem(LITURGY_CACHE_KEY)
-
-      localStorage.setItem("app_version", APP_VERSION)
-
-    }
 
     /* 🔥 CARREGA DADOS */
     loadLiturgyFromCache()

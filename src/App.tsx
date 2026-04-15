@@ -43,14 +43,16 @@ useEffect(()=>{
   /* 🔥 VERSIONAMENTO DE CACHE */
   /* ============================= */
 
-  const APP_VERSION = "1.2"
+  const APP_VERSION = "v4"
 
   const savedVersion = localStorage.getItem("app_version")
 
-  if(savedVersion !== APP_VERSION){
-    console.log("🔄 Nova versão detectada, limpando cache...")
-    localStorage.clear()
-    localStorage.setItem("app_version", APP_VERSION)
+  if (savedVersion !== APP_VERSION) {
+  console.log(`Atualizando app para versão ${APP_VERSION}`)
+
+  localStorage.removeItem("last_liturgy")
+
+  localStorage.setItem("app_version", APP_VERSION)
   }
 
   /* ============================= */
