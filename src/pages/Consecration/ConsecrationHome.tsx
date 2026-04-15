@@ -73,10 +73,8 @@ export default function ConsecrationHome(){
 
     setProgress(parsed)
 
-    if(parsed?.startDate){
-        setConsecrationDate(
-        calculateConsecrationDate(parsed.startDate)
-        )
+    if(parsed?.consecrationDate){
+      setConsecrationDate(parsed.consecrationDate)
     }
 
     }
@@ -89,10 +87,8 @@ export default function ConsecrationHome(){
 
     setProgress(data)
 
-    if(data?.startDate){
-    setConsecrationDate(
-        calculateConsecrationDate(data.startDate)
-    )
+    if(data?.consecrationDate){
+      setConsecrationDate(data.consecrationDate)
     }
 
     localStorage.setItem(PROGRESS_KEY,JSON.stringify(data))
@@ -126,28 +122,6 @@ export default function ConsecrationHome(){
 
     return d
   }
-
- function calculateConsecrationDate(startDate:string){
-
- if(!startDate) return ""
-
- const datePart = startDate.split("T")[0]
-
- const [y,m,d] = datePart.split("-").map(Number)
-
- if(!y || !m || !d) return ""
-
-  const date = new Date(y, m-1, d)
-
-  date.setDate(date.getDate() + 33)
-
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, "0")
-  const day = String(date.getDate()).padStart(2, "0")
-
-  return `${year}-${month}-${day}`
-
-}
 
   function formatDateBR(date:Date){
 
