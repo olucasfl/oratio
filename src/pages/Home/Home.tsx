@@ -92,7 +92,7 @@ export default function Home(){
 
       console.log("Atualizando app... limpando cache")
 
-      localStorage.clear()
+      localStorage.removeItem(LITURGY_CACHE_KEY)
 
       localStorage.setItem("app_version", APP_VERSION)
 

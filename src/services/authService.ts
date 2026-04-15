@@ -1,4 +1,3 @@
-import axios from "axios";
 import api from "./api";
 
 type AuthResponse = {
@@ -11,20 +10,17 @@ export async function login(
   password: string
 ): Promise<AuthResponse> {
 
-  const response = await axios.post<AuthResponse>(
+  const response = await api.post<AuthResponse>(
     `${import.meta.env.VITE_API_URL}/auth/login`,
-    { email, password },
-    {
-      headers: {
-        "x-app": "oratio"
-      }
-    }
+    { email, password }
   );
 
   const { access_token, refresh_token } = response.data;
 
   localStorage.setItem("access_token", access_token);
   localStorage.setItem("refresh_token", refresh_token);
+
+  api.defaults.headers.Authorization = `Bearer ${access_token}`;
 
   return response.data;
 }
