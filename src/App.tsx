@@ -88,7 +88,7 @@ useEffect(()=>{
       /* SE LOGADO */
       if(token){
 
-        getProgress().catch(()=>{})
+        await getProgress().catch(()=>{})
 
         const lastPing = localStorage.getItem("last_ping")
         const now = Date.now()
