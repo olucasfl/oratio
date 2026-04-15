@@ -67,20 +67,29 @@ export default function ConsecrationDay(){
         localStorage.getItem(`oratio-day-${day}-${CACHE_VERSION}`)
 
       const cachedProgress =
-        localStorage.getItem(`oratio-consecration-progress-${CACHE_VERSION}`)
+        localStorage.getItem("oratio_consecration_progress")
 
-      if(cachedDay){
-        setData(JSON.parse(cachedDay))
-      }
-
-      if(cachedProgress){
-        setProgress(JSON.parse(cachedProgress))
-      }
+      /* ============================= */
+      /* OFFLINE */
+      /* ============================= */
 
       if(!navigator.onLine){
+
+        if(cachedDay){
+          setData(JSON.parse(cachedDay))
+        }
+
+        if(cachedProgress){
+          setProgress(JSON.parse(cachedProgress))
+        }
+
         setLoading(false)
         return
       }
+
+      /* ============================= */
+      /* ONLINE */
+      /* ============================= */
 
       const [dayData,progressData] = await Promise.all([
         getDay(Number(day)),
@@ -95,13 +104,24 @@ export default function ConsecrationDay(){
         JSON.stringify(dayData)
       )
 
-      localStorage.setItem(
-        `oratio-consecration-progress-${CACHE_VERSION}`,
-        JSON.stringify(progressData)
-      )
-
     }catch{
+
       console.log("Erro ao carregar dia")
+
+      const cachedDay =
+        localStorage.getItem(`oratio-day-${day}-${CACHE_VERSION}`)
+
+      const cachedProgress =
+        localStorage.getItem("oratio_consecration_progress")
+
+      if(cachedDay){
+        setData(JSON.parse(cachedDay))
+      }
+
+      if(cachedProgress){
+        setProgress(JSON.parse(cachedProgress))
+      }
+
     }finally{
       setLoading(false)
     }

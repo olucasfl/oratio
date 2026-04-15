@@ -75,7 +75,7 @@ export async function getProgress(){
 
   if(cached) return cached
 
-  throw new Error("Sem conexão")
+  return null
 
  }
 
