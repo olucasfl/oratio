@@ -122,7 +122,7 @@ export default function ConsecrationHome(){
     if(!date) return null
 
     const d = parseDate(date)
-    d.setUTCDate(d.getUTCDate() - 33)
+    d.setDate(d.getDate() - 33)
 
     return d
   }
@@ -139,21 +139,21 @@ export default function ConsecrationHome(){
 
   const date = new Date(y, m-1, d)
 
-  date.setUTCDate(date.getUTCDate() + 33)
+  date.setDate(date.getDate() + 33)
 
-  const year = date.getUTCFullYear()
-  const month = String(date.getUTCMonth() + 1).padStart(2,"0")
-  const day = String(date.getUTCDate()).padStart(2,"0")
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
 
- return `${year}-${month}-${day}`
+  return `${year}-${month}-${day}`
 
 }
 
   function formatDateBR(date:Date){
 
-    const day = String(date.getUTCDate()).padStart(2,"0")
-    const month = String(date.getUTCMonth()+1).padStart(2,"0")
-    const year = date.getUTCFullYear()
+    const day = String(date.getDate())
+    const month = String(date.getMonth()+1)
+    const year = date.getFullYear()
 
     return `${day}/${month}/${year}`
   }
