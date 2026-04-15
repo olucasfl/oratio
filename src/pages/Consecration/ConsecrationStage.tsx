@@ -10,6 +10,8 @@ import {
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
+const CACHE_VERSION = "v2"
+
 export default function ConsecrationStage(){
 
  const { stageId } = useParams()
@@ -55,10 +57,10 @@ export default function ConsecrationStage(){
    setLoading(true)
 
    const cachedDays =
-    localStorage.getItem(`oratio-stage-days-${stageId}`)
+    localStorage.getItem(`oratio-stage-days-${stageId}-${CACHE_VERSION}`)
 
    const cachedProgress =
-    localStorage.getItem("oratio-consecration-progress")
+    localStorage.getItem(`oratio-consecration-progress-${CACHE_VERSION}`)
 
    if(cachedDays){
     setDays(JSON.parse(cachedDays))
@@ -69,8 +71,9 @@ export default function ConsecrationStage(){
    }
 
    if(!navigator.onLine){
-    return
-   }
+      setLoading(false)
+      return
+    }
 
    const [daysData,progressData] = await Promise.all([
     getStageDays(stageId),
@@ -80,14 +83,14 @@ export default function ConsecrationStage(){
    setDays(daysData)
    setProgress(progressData)
 
-   localStorage.setItem(
-    `oratio-stage-days-${stageId}`,
-    JSON.stringify(daysData)
-   )
+      localStorage.setItem(
+        `oratio-consecration-progress-${CACHE_VERSION}`,
+        JSON.stringify(progressData)
+    )
 
    localStorage.setItem(
-    "oratio-consecration-progress",
-    JSON.stringify(progressData)
+    `oratio-stage-days-${stageId}-${CACHE_VERSION}`,
+    JSON.stringify(daysData)
    )
 
   }catch{

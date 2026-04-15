@@ -115,7 +115,7 @@ export default function ConsecrationHome(){
 
  function parseDate(date:string){
     const [y,m,d] = date.split("-").map(Number)
-    return new Date(Date.UTC(y, m-1, d))
+    return new Date(y, m-1, d)
   }
 
   function calculateStartDate(date:string){
@@ -137,7 +137,7 @@ export default function ConsecrationHome(){
 
  if(!y || !m || !d) return ""
 
-  const date = new Date(Date.UTC(y, m-1, d))
+  const date = new Date(y, m-1, d)
 
   date.setUTCDate(date.getUTCDate() + 33)
 

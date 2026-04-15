@@ -64,21 +64,20 @@ export default function ConsecrationDay(){
     try{
 
       const cachedDay =
-      localStorage.getItem(`oratio-day-${day}-${CACHE_VERSION}`)
+        localStorage.getItem(`oratio-day-${day}-${CACHE_VERSION}`)
 
       const cachedProgress =
-      localStorage.getItem(`oratio-consecration-progress-${CACHE_VERSION}`)
+        localStorage.getItem(`oratio-consecration-progress-${CACHE_VERSION}`)
+
+      if(cachedDay){
+        setData(JSON.parse(cachedDay))
+      }
+
+      if(cachedProgress){
+        setProgress(JSON.parse(cachedProgress))
+      }
 
       if(!navigator.onLine){
-
-        if(cachedDay){
-          setData(JSON.parse(cachedDay))
-        }
-
-        if(cachedProgress){
-          setProgress(JSON.parse(cachedProgress))
-        }
-
         setLoading(false)
         return
       }
