@@ -182,7 +182,6 @@ export default function ConsecrationDay(){
 
  const canComplete =
 
-  progress.startedToday &&
   progress.currentDay >= data.dayNumber &&
   progress.completedDays === data.dayNumber - 1
 
