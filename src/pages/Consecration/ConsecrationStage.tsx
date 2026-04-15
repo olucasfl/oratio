@@ -10,8 +10,6 @@ import {
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
-const CACHE_VERSION = "v2"
-
 export default function ConsecrationStage(){
 
  const { stageId } = useParams()
@@ -54,53 +52,54 @@ export default function ConsecrationStage(){
 
   try{
 
-   setLoading(true)
+    setLoading(true)
 
-   const cachedDays =
-    localStorage.getItem(`oratio-stage-days-${stageId}-${CACHE_VERSION}`)
+    /* ============================= */
+    /* OFFLINE → usa cache */
+    /* ============================= */
 
+    if(!navigator.onLine){
 
-   if(cachedDays && !navigator.onLine){
-      setDays(JSON.parse(cachedDays))
+      const cachedProgress =
+        localStorage.getItem("oratio_consecration_progress")
+
+      if(cachedProgress){
+        setProgress(JSON.parse(cachedProgress))
+      }
+
+      const cachedDays =
+        localStorage.getItem(`stage_${stageId}`)
+
+      if(cachedDays){
+        setDays(JSON.parse(cachedDays))
+      }
+
+      return
     }
 
-   if(!navigator.onLine){
+    /* ============================= */
+    /* ONLINE → SEMPRE API */
+    /* ============================= */
 
-    const cachedProgress =
-      localStorage.getItem("oratio_consecration_progress")
+    const [daysData, progressData] = await Promise.all([
+      getStageDays(stageId),
+      getProgress()
+    ])
 
-    if(cachedProgress){
-      setProgress(JSON.parse(cachedProgress))
-    }
-
-    setLoading(false)
-    return
-  }
-
-   const [daysData,progressData] = await Promise.all([
-    getStageDays(stageId),
-    getProgress()
-   ])
-
-   setDays(daysData)
-   setProgress(progressData)
-
-   localStorage.setItem(
-    `oratio-stage-days-${stageId}-${CACHE_VERSION}`,
-    JSON.stringify(daysData)
-   )
+    setDays(daysData)
+    setProgress(progressData)
 
   }catch{
 
-   console.log("Erro ao carregar estágio")
+    console.log("Erro ao carregar estágio")
 
   }finally{
 
-   setLoading(false)
+    setLoading(false)
 
   }
 
- }
+}
 
  if(loading){
 

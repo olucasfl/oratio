@@ -30,8 +30,6 @@ export default function ConsecrationDay(){
     )
   }
 
- const CACHE_VERSION = "v2"
-
  useEffect(()=>{
 
   function handleOnline(){
@@ -63,11 +61,7 @@ export default function ConsecrationDay(){
 
     try{
 
-      const cachedDay =
-        localStorage.getItem(`oratio-day-${day}-${CACHE_VERSION}`)
-
-      const cachedProgress =
-        localStorage.getItem("oratio_consecration_progress")
+      setLoading(true)
 
       /* ============================= */
       /* OFFLINE */
@@ -75,23 +69,28 @@ export default function ConsecrationDay(){
 
       if(!navigator.onLine){
 
-        if(cachedDay){
-          setData(JSON.parse(cachedDay))
-        }
+        const cachedProgress =
+          localStorage.getItem("oratio_consecration_progress")
 
         if(cachedProgress){
           setProgress(JSON.parse(cachedProgress))
         }
 
-        setLoading(false)
+        const cachedDay =
+          localStorage.getItem(`oratio_consecration_days_${day}`)
+
+        if(cachedDay){
+          setData(JSON.parse(cachedDay))
+        }
+
         return
       }
 
       /* ============================= */
-      /* ONLINE */
+      /* ONLINE → SEMPRE API */
       /* ============================= */
 
-      const [dayData,progressData] = await Promise.all([
+      const [dayData, progressData] = await Promise.all([
         getDay(Number(day)),
         getProgress()
       ])
@@ -99,32 +98,14 @@ export default function ConsecrationDay(){
       setData(dayData)
       setProgress(progressData)
 
-      localStorage.setItem(
-        `oratio-day-${day}-${CACHE_VERSION}`,
-        JSON.stringify(dayData)
-      )
-
     }catch{
 
       console.log("Erro ao carregar dia")
 
-      const cachedDay =
-        localStorage.getItem(`oratio-day-${day}-${CACHE_VERSION}`)
-
-      const cachedProgress =
-        localStorage.getItem("oratio_consecration_progress")
-
-      if(cachedDay){
-        setData(JSON.parse(cachedDay))
-      }
-
-      if(cachedProgress){
-        setProgress(JSON.parse(cachedProgress))
-      }
-
     }finally{
       setLoading(false)
     }
+
   }
 
  /* ============================= */
