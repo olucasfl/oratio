@@ -34,7 +34,7 @@ type FeatureItem = {
 
 const LITURGY_URL = "https://finance-api-y0ol.onrender.com/liturgia"
 const LITURGY_CACHE_KEY = "last_liturgy"
-const APP_VERSION = "v3"
+const APP_VERSION = "v4"
 
 export default function Home(){
  const navigate = useNavigate()
