@@ -1,0 +1,339 @@
+/* ========================= */
+/* CONTAINER */
+/* ========================= */
+
+.container{
+  padding:16px;
+  max-width:900px;
+  margin:auto;
+
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+
+  min-height:100vh;
+
+  background:
+    radial-gradient(circle at top,#ffffff60,transparent 60%),
+    var(--oratio-background);
+
+  animation:fadePage .4s ease;
+}
+
+/* ========================= */
+/* BOTÃO VOLTAR */
+/* ========================= */
+
+.backButton{
+  align-self:flex-start;
+
+  padding:8px 14px;
+
+  background:transparent;
+  color:var(--oratio-primary);
+
+  border:1px solid var(--oratio-primary);
+  border-radius:var(--oratio-radius-sm);
+
+  font-size:14px;
+  font-weight:600;
+
+  cursor:pointer;
+  transition:var(--oratio-transition);
+}
+
+.backButton:hover{
+  background:var(--oratio-primary);
+  color:white;
+}
+
+/* ========================= */
+/* HEADER */
+/* ========================= */
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  background:var(--oratio-card-bg);
+  padding:16px;
+
+  border-radius:var(--oratio-radius-md);
+  box-shadow:var(--oratio-shadow-soft);
+}
+
+.header button{
+  border:none;
+  background:transparent;
+  font-size:20px;
+  cursor:pointer;
+  color:var(--oratio-primary);
+}
+
+.header h2{
+  margin:0;
+  font-family:var(--oratio-font-title);
+  color:var(--oratio-primary);
+
+  font-size:18px;
+  text-align:center;
+}
+
+.header span{
+  font-size:13px;
+  color:var(--oratio-text-soft);
+}
+
+/* ========================= */
+/* SEÇÕES */
+/* ========================= */
+
+.section{
+  background:var(--oratio-card-bg);
+
+  border-radius:var(--oratio-radius-md);
+  padding:18px;
+
+  box-shadow:var(--oratio-shadow-soft);
+
+  animation:fadeUp .4s ease;
+}
+
+.sectionTitle{
+  margin-bottom:18px;
+
+  font-family:var(--oratio-font-title);
+  font-size:20px;
+  font-weight:700;
+
+  color:var(--oratio-primary);
+
+  padding-bottom:8px;
+
+  border-bottom:2px solid var(--oratio-card-border);
+
+  letter-spacing:1px;
+  text-transform:uppercase;
+
+  position:relative;
+}
+
+/* linha decorativa */
+.sectionTitle::after{
+  content:"";
+  position:absolute;
+  bottom:-2px;
+  left:0;
+
+  width:40px;
+  height:2px;
+
+  background:var(--oratio-primary);
+}
+
+/* ========================= */
+/* CONTEÚDO */
+/* ========================= */
+
+.block{
+  margin-bottom:18px;
+  border-left:4px solid transparent;
+  padding-left:10px;
+  transition:var(--oratio-transition);
+}
+
+.block:hover{
+  border-left:4px solid var(--oratio-primary);
+}
+
+/* 🔥 LEITURAS */
+
+.blockLeitura{
+  margin-bottom:20px;
+  padding:10px;
+
+  border-radius:var(--oratio-radius-sm);
+
+  background:#faf8f5; /* neutro */
+  border-left:3px solid #ddd; /* bem leve */
+}
+
+/* 🔥 EVANGELHO */
+
+.blockEvangelho{
+  margin-bottom:22px;
+  padding:16px;
+
+  border-radius:var(--oratio-radius-md);
+
+  background:linear-gradient(
+    135deg,
+    rgba(176,24,26,0.08),
+    rgba(176,24,26,0.02)
+  );
+
+  border:2px solid var(--oratio-primary);
+}
+
+/* ========================= */
+/* TÍTULOS */
+/* ========================= */
+
+.blockTitle{
+  margin-bottom:6px;
+
+  font-size:15px;
+  font-weight:700;
+
+  color:var(--oratio-secondary-dark);
+
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+
+.subBlock{
+  margin-left:8px;
+  margin-bottom:10px;
+}
+
+.subTitle{
+  margin-bottom:4px;
+
+  font-size:14px;
+  font-weight:600;
+
+  color:var(--oratio-primary);
+}
+
+/* ========================= */
+/* TEXTO */
+/* ========================= */
+
+.text{
+  line-height:1.9;
+  text-align:justify;
+
+  font-family:var(--oratio-font-text);
+  font-size:17px;
+
+  color:var(--oratio-text-dark);
+
+  margin-bottom:8px;
+}
+
+/* ========================= */
+/* SALMO */
+/* ========================= */
+
+.refrao{
+  font-weight:700;
+  color:var(--oratio-primary);
+
+  margin-bottom:10px;
+  font-size:16px;
+}
+
+/* ========================= */
+/* PADRE / RESPOSTA */
+/* ========================= */
+
+.padre{
+  color:var(--oratio-primary);
+  font-weight:700;
+  margin-right:6px;
+}
+
+.assembleia{
+  color:#1e3a8a;
+  font-weight:700;
+  margin-right:6px;
+}
+
+.todos{
+  color:#444;
+  font-weight:700;
+  margin-right:6px;
+}
+
+/* ========================= */
+/* LOADING */
+/* ========================= */
+
+.loading{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
+
+  font-size:18px;
+  color:var(--oratio-text-soft);
+}
+
+/* ========================= */
+/* MOBILE FIRST */
+/* ========================= */
+
+@media(max-width:600px){
+
+  .container{
+    padding:14px;
+    gap:16px;
+  }
+
+  .header{
+    padding:14px;
+  }
+
+  .header h2{
+    font-size:16px;
+  }
+
+  .section{
+    padding:16px;
+  }
+
+  .sectionTitle{
+    font-size:16px;
+  }
+
+  .text{
+    font-size:16px;
+    line-height:2;
+  }
+
+  .blockEvangelho{
+    padding:14px;
+  }
+
+}
+
+/* ========================= */
+/* PWA SAFE AREA */
+/* ========================= */
+
+@supports(padding: max(0px)){
+  .container{
+    padding-bottom:calc(20px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ========================= */
+/* ANIMAÇÕES */
+/* ========================= */
+
+@keyframes fadePage{
+  from{ opacity:0 }
+  to{ opacity:1 }
+}
+
+@keyframes fadeUp{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}

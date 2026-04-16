@@ -32,6 +32,7 @@ import RosaryPage from "./pages/Prayers/RosaryPage"
 import Catecismo from "./pages/Catecismo/Catecismo"
 import Tratado from "./pages/Consecration/Tratado"
 import { sendActivityPing } from "./services/activityService"
+import LiturgiaFull from "./pages/Liturgia/LiturgiaFull"
 
 function App(){
 
@@ -225,6 +226,8 @@ element={
 <Route path="/oratio/catecismo" element={<Catecismo />} />
 
 <Route path="/oratio/tratado" element={<Tratado />} />
+
+<Route path="/oratio/liturgia-completa" element={<LiturgiaFull />} />
 
 <Route
  path="/oratio/vox"

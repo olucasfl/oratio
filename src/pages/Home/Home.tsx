@@ -332,6 +332,13 @@ export default function Home(){
       <button onClick={()=>openModal("evangelho")}>
         Evangelho {(liturgy.leituras?.evangelho?.length ?? 0) > 1 && `(${liturgy.leituras?.evangelho?.length})`}
       </button>
+
+      <button
+        className={styles.primaryButton}
+        onClick={()=>navigate("/oratio/liturgia-completa")}
+      >
+        Ver Liturgia Completa
+      </button>
      </div>
     )}
    </section>
