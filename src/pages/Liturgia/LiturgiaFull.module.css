@@ -337,3 +337,63 @@
     transform:translateY(0);
   }
 }
+
+/* ========================= */
+/* AVISO LITURGIA */
+/* ========================= */
+
+.aviso{
+  position:relative;
+
+  background:#fff8e1;
+  border-left:4px solid #d4a017;
+
+  padding:12px 36px 12px 12px;
+  border-radius:var(--oratio-radius-sm);
+
+  font-size:14px;
+  line-height:1.5;
+
+  color:#5a4a00;
+
+  box-shadow:var(--oratio-shadow-soft);
+
+  animation:fadeUp .3s ease;
+}
+
+.aviso p{
+  margin:0;
+}
+
+.aviso button{
+  position:absolute;
+  top:6px;
+  right:10px;
+
+  border:none;
+  background:transparent;
+
+  font-size:18px;
+  cursor:pointer;
+
+  color:#5a4a00;
+}
+
+/* ========================= */
+/* MOBILE AJUSTE */
+/* ========================= */
+
+@media(max-width:600px){
+
+  .aviso{
+    font-size:13px;
+    padding:10px 32px 10px 10px;
+  }
+
+  .aviso button{
+    font-size:16px;
+    top:4px;
+    right:8px;
+  }
+
+}

@@ -6,6 +6,8 @@ export default function LiturgiaFull(){
 
   const [missa, setMissa] = useState<any>(null)
   const [dataSelecionada, setDataSelecionada] = useState(new Date())
+  const [showAviso, setShowAviso] = useState(true)
+
   const API = import.meta.env.VITE_API_URL
   const navigate = useNavigate()
 
@@ -31,6 +33,10 @@ export default function LiturgiaFull(){
     newDate.setDate(newDate.getDate() + offset)
     setDataSelecionada(newDate)
   }
+
+  function fecharAviso(){
+    setShowAviso(false)
+    }
 
   if(!missa) return (
     <div className={styles.loading}>
@@ -59,6 +65,20 @@ export default function LiturgiaFull(){
 
         <button onClick={()=>changeDay(1)}>▶</button>
       </div>
+
+      {/* 🔥 AVISO */}
+      {showAviso && (
+        <div className={styles.aviso}>
+          <p>
+            Esta liturgia segue a estrutura padrão da Santa Missa da Igreja Católica.
+            Em celebrações específicas, solenidades ou variações locais, podem ocorrer
+            diferenças nos textos ou na ordem. Utilize este conteúdo como apoio para
+            acompanhamento da Missa.
+          </p>
+
+          <button onClick={fecharAviso}>×</button>
+        </div>
+      )}
 
       {/* SEÇÕES */}
       {missa.secoes.map((secao:any, i:number)=>(
@@ -119,7 +139,6 @@ function renderConteudo(conteudo:any){
 
 function renderValor(valor:any):any{
 
-  /* TEXTO SIMPLES */
   if(typeof valor === "string"){
     return (
       <p className={styles.text} style={{ whiteSpace: "pre-line" }}>
@@ -128,23 +147,18 @@ function renderValor(valor:any):any{
     )
   }
 
-  /* ARRAY (Padre / Assembleia) */
   if(Array.isArray(valor)){
     return valor.map((item,i)=>(
       <p key={i} className={styles.text}>
-
         {item.padre && <span className={styles.padre}>Padre:</span>}
         {item.assembleia && <span className={styles.assembleia}>Assembleia:</span>}
         {item.todos && <span className={styles.todos}>Todos:</span>}
-
         {item.padre || item.assembleia || item.todos}
       </p>
     ))
   }
 
-  /* SALMO ESPECIAL */
   if(typeof valor === "object" && valor.refrao){
-
     return (
       <div>
         <p className={styles.refrao}>
@@ -158,7 +172,6 @@ function renderValor(valor:any):any{
     )
   }
 
-  /* OBJETO GENÉRICO */
   if(typeof valor === "object"){
     return Object.entries(valor).map(([k,v]:any,i)=>(
       <div key={i} className={styles.subBlock}>
