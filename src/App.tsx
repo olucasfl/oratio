@@ -43,7 +43,7 @@ useEffect(()=>{
   /* 🔥 VERSIONAMENTO DE CACHE */
   /* ============================= */
 
-  const APP_VERSION = "v5"
+  const APP_VERSION = "v6"
 
   const savedVersion = localStorage.getItem("app_version")
 
