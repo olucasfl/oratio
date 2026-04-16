@@ -6,7 +6,8 @@ const CACHE_NAME = "oratio-cache-v14"
 
 const APP_SHELL = [
  "/",
- "/index.html"
+ "/index.html",
+ "/oratio/consecration"
 ]
 
 /* ============================= */
@@ -41,12 +42,14 @@ self.addEventListener("activate", (event) => {
    return Promise.all(
     cacheNames.map((cache) => {
 
-     if (cache !== CACHE_NAME) {
-      return caches.delete(cache)
-     }
+        if (cache.startsWith("oratio-cache-") && cache !== CACHE_NAME) {
+        return caches.delete(cache)
+        }
+
+        return Promise.resolve()
 
     })
-   )
+    )
 
   })
  )
@@ -94,12 +97,12 @@ self.addEventListener("fetch", (event) => {
  /* ============================= */
 
  if (
-  url.pathname.startsWith("/auth") ||
-  url.origin.includes("render.com") ||
-  url.origin.includes("vercel.app")
- ) {
-  return
- }
+    url.origin.includes("render.com") ||
+    url.pathname.startsWith("/auth") ||
+    url.pathname.startsWith("/oratio")
+    ) {
+    return
+    }
 
  /* ============================= */
  /* NAVEGAÇÃO (React Router) */
@@ -160,23 +163,14 @@ self.addEventListener("fetch", (event) => {
 
   caches.open(CACHE_NAME).then(async (cache) => {
 
-   const cached = await cache.match(request)
-
-   if (cached) return cached
-
    try {
-
     const response = await fetch(request)
-
     cache.put(request, response.clone())
-
     return response
-
-   } catch {
-
+    } catch {
+    const cached = await cache.match(request)
     return cached
-
-   }
+    }
 
   })
 

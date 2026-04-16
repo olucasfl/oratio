@@ -1,18 +1,33 @@
-export function saveLocal(key: string, data: any) {
-  localStorage.setItem(key, JSON.stringify(data));
+export function saveLocal(key: string, data: any, ttlMinutes = 10) {
+  const now = Date.now()
+
+  const item = {
+    data,
+    expiry: now + ttlMinutes * 60 * 1000
+  }
+
+  localStorage.setItem(key, JSON.stringify(item))
 }
 
 export function getLocal(key: string) {
-  const raw = localStorage.getItem(key);
-  if (!raw) return null;
+  const raw = localStorage.getItem(key)
+  if (!raw) return null
 
   try {
-    return JSON.parse(raw);
+    const item = JSON.parse(raw)
+
+    if (!item.expiry || Date.now() > item.expiry) {
+      localStorage.removeItem(key)
+      return null
+    }
+
+    return item.data
   } catch {
-    return null;
+    localStorage.removeItem(key)
+    return null
   }
 }
 
 export function removeLocal(key: string) {
-  localStorage.removeItem(key);
+  localStorage.removeItem(key)
 }

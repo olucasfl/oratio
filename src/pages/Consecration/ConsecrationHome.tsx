@@ -57,57 +57,71 @@ export default function ConsecrationHome(){
 
  },[])
 
- async function load(){
-
-    let cached = localStorage.getItem(PROGRESS_KEY)
+  async function load(){
 
     try{
 
-    if(!cached){
-    setLoading(true)
-    }
+      setLoading(true)
 
-    if(cached){
+      if(!navigator.onLine){
 
-    const parsed = JSON.parse(cached)
+        const cached =
+          localStorage.getItem(PROGRESS_KEY)
 
-    setProgress(parsed)
+        if(cached){
+          const parsed = JSON.parse(cached)
+          setProgress(parsed)
 
-    if(parsed?.consecrationDate){
-      setConsecrationDate(parsed.consecrationDate)
-    }
+          if(parsed?.consecrationDate){
+            setConsecrationDate(parsed.consecrationDate)
+          }
+        }else{
+          setProgress(null)
+        }
 
-    }
+        return
+      }
 
-    if(!navigator.onLine){
-    return
-    }
+      const data = await getProgress()
 
-    const data = await getProgress()
+      // 🔥 CORREÇÃO AQUI
+      if(!data){
+        setProgress(null)
+        return
+      }
 
-    setProgress(data)
+      setProgress(data)
 
-    if(data?.consecrationDate){
-      setConsecrationDate(data.consecrationDate)
-    }
-
-    localStorage.setItem(PROGRESS_KEY,JSON.stringify(data))
+      if(data?.consecrationDate){
+        setConsecrationDate(data.consecrationDate)
+      }
 
     }catch(err){
 
-    console.error("Erro ao carregar progresso",err)
+      console.error("Erro ao carregar progresso",err)
 
-    if(!cached){
-    setInfo("Não foi possível carregar os dados.")
-    }
+      const cached =
+        localStorage.getItem(PROGRESS_KEY)
+
+      if(cached){
+        const parsed = JSON.parse(cached)
+        setProgress(parsed)
+
+        if(parsed?.consecrationDate){
+          setConsecrationDate(parsed.consecrationDate)
+        }
+      }else{
+        setProgress(null)
+        setInfo("Não foi possível carregar os dados.")
+      }
 
     }finally{
 
-    setLoading(false)
+      setLoading(false)
 
     }
 
-    }
+  }
 
  function parseDate(date:string){
     const [y,m,d] = date.split("-").map(Number)
@@ -354,7 +368,7 @@ export default function ConsecrationHome(){
 
  }
 
- if(loading){
+ if(loading && progress === null){
 
     return(
     <div className={styles.loading}>

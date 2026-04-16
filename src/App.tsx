@@ -48,11 +48,20 @@ useEffect(()=>{
   const savedVersion = localStorage.getItem("app_version")
 
   if (savedVersion !== APP_VERSION) {
-  console.log(`Atualizando app para versão ${APP_VERSION}`)
+    console.log(`Atualizando app para versão ${APP_VERSION}`)
 
-  localStorage.removeItem("last_liturgy")
+    /* 🔥 LIMPA CACHE CRÍTICO */
+    Object.keys(localStorage).forEach(key => {
+      if (
+        key.includes("oratio") ||
+        key.includes("stage_") ||
+        key.includes("consecration")
+      ) {
+        localStorage.removeItem(key)
+      }
+    })
 
-  localStorage.setItem("app_version", APP_VERSION)
+    localStorage.setItem("app_version", APP_VERSION)
   }
 
   /* ============================= */
@@ -74,12 +83,12 @@ useEffect(()=>{
       const token = localStorage.getItem("access_token")
 
       /* PRELOAD CONSAGRAÇÃO */
-      preloadConsecration().catch(()=>{})
+      await preloadConsecration().catch(()=>{})
 
       /* SE LOGADO */
       if(token){
 
-        getProgress().catch(()=>{})
+        await getProgress().catch(()=>{})
 
         const lastPing = localStorage.getItem("last_ping")
         const now = Date.now()

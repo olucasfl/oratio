@@ -11,48 +11,93 @@ const ALL_DAYS_KEY = "oratio_consecration_all_days"
 
 export async function preloadConsecration(){
 
- const cachedDays = getLocal(ALL_DAYS_KEY)
+  const cached = getLocal(ALL_DAYS_KEY)
 
- if(cachedDays) return
+  /* ============================= */
+  /* 1. SE TEM CACHE → USA */
+  /* ============================= */
 
- try{
+  if(cached){
+    console.log("Usando cache da consagração")
 
-  const res = await api.get("/oratio/consecration/all-days")
+    /* ============================= */
+    /* 2. ATUALIZA EM BACKGROUND */
+    /* ============================= */
 
-  const days = res.data
+    api.get("/oratio/consecration/all-days")
+      .then(res => {
 
-  saveLocal(ALL_DAYS_KEY,days)
+        const days = res.data
 
-  days.forEach((day:any)=>{
-   saveLocal(`${DAYS_KEY}_${day.dayNumber}`,day)
-  })
+        saveLocal(ALL_DAYS_KEY, days, 60)
 
-  const stages:any = {}
+        days.forEach((day:any)=>{
+          saveLocal(`${DAYS_KEY}_${day.dayNumber}`, day, 60)
+        })
 
-  days.forEach((day:any)=>{
+        const stages:any = {}
 
-   const stageId = day.stage.id
+        days.forEach((day:any)=>{
+          const stageId = day.stage.id
 
-   if(!stages[stageId]){
-    stages[stageId] = []
-   }
+          if(!stages[stageId]){
+            stages[stageId] = []
+          }
 
-   stages[stageId].push(day)
+          stages[stageId].push(day)
+        })
 
-  })
+        Object.keys(stages).forEach(stageId=>{
+          saveLocal(`stage_${stageId}`, stages[stageId], 60)
+        })
 
-  Object.keys(stages).forEach(stageId=>{
-   saveLocal(`stage_${stageId}`,stages[stageId])
-  })
+        console.log("Cache atualizado em background")
 
-  console.log("Consagração pré-carregada")
+      })
+      .catch(() => {
+        console.log("Erro ao atualizar em background")
+      })
 
- }catch{
+    return
+  }
 
-  console.log("Erro no preload da consagração")
+  /* ============================= */
+  /* 3. SEM CACHE → API NORMAL */
+  /* ============================= */
 
- }
+  try{
 
+    const res = await api.get("/oratio/consecration/all-days")
+
+    const days = res.data
+
+    saveLocal(ALL_DAYS_KEY, days, 60)
+
+    days.forEach((day:any)=>{
+      saveLocal(`${DAYS_KEY}_${day.dayNumber}`, day, 60)
+    })
+
+    const stages:any = {}
+
+    days.forEach((day:any)=>{
+      const stageId = day.stage.id
+
+      if(!stages[stageId]){
+        stages[stageId] = []
+      }
+
+      stages[stageId].push(day)
+    })
+
+    Object.keys(stages).forEach(stageId=>{
+      saveLocal(`stage_${stageId}`, stages[stageId], 60)
+    })
+
+    console.log("Consagração carregada da API")
+
+  }catch{
+    console.log("Erro no preload")
+  }
 }
 
 /* ============================= */
@@ -65,7 +110,7 @@ export async function getProgress(){
 
   const res = await api.get("/oratio/consecration/progress")
 
-  saveLocal(PROGRESS_KEY,res.data)
+  saveLocal(PROGRESS_KEY, res.data, 5)
 
   return res.data
 
@@ -75,7 +120,7 @@ export async function getProgress(){
 
   if(cached) return cached
 
-  throw new Error("Sem conexão")
+  return null
 
  }
 
@@ -115,7 +160,7 @@ export async function getDay(day:number){
 
   const res = await api.get(`/oratio/consecration/day/${day}`)
 
-  saveLocal(`${DAYS_KEY}_${day}`,res.data)
+  saveLocal(`${DAYS_KEY}_${day}`,res.data, 60)
 
   return res.data
 
@@ -145,7 +190,7 @@ export async function getStageDays(stageId:string){
 
   const res = await api.get(`/oratio/consecration/stage/${stageId}/days`)
 
-  saveLocal(`stage_${stageId}`,res.data)
+  saveLocal(`stage_${stageId}`,res.data, 60)
 
   return res.data
 

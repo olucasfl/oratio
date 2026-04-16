@@ -30,8 +30,6 @@ export default function ConsecrationDay(){
     )
   }
 
- const CACHE_VERSION = "v2"
-
  useEffect(()=>{
 
   function handleOnline(){
@@ -63,26 +61,36 @@ export default function ConsecrationDay(){
 
     try{
 
-      const cachedDay =
-        localStorage.getItem(`oratio-day-${day}-${CACHE_VERSION}`)
+      setLoading(true)
 
-      const cachedProgress =
-        localStorage.getItem(`oratio-consecration-progress-${CACHE_VERSION}`)
-
-      if(cachedDay){
-        setData(JSON.parse(cachedDay))
-      }
-
-      if(cachedProgress){
-        setProgress(JSON.parse(cachedProgress))
-      }
+      /* ============================= */
+      /* OFFLINE */
+      /* ============================= */
 
       if(!navigator.onLine){
-        setLoading(false)
+
+        const cachedProgress =
+          localStorage.getItem("oratio_consecration_progress")
+
+        if(cachedProgress){
+          setProgress(JSON.parse(cachedProgress))
+        }
+
+        const cachedDay =
+          localStorage.getItem(`oratio_consecration_days_${day}`)
+
+        if(cachedDay){
+          setData(JSON.parse(cachedDay))
+        }
+
         return
       }
 
-      const [dayData,progressData] = await Promise.all([
+      /* ============================= */
+      /* ONLINE → SEMPRE API */
+      /* ============================= */
+
+      const [dayData, progressData] = await Promise.all([
         getDay(Number(day)),
         getProgress()
       ])
@@ -90,21 +98,14 @@ export default function ConsecrationDay(){
       setData(dayData)
       setProgress(progressData)
 
-      localStorage.setItem(
-        `oratio-day-${day}-${CACHE_VERSION}`,
-        JSON.stringify(dayData)
-      )
-
-      localStorage.setItem(
-        `oratio-consecration-progress-${CACHE_VERSION}`,
-        JSON.stringify(progressData)
-      )
-
     }catch{
+
       console.log("Erro ao carregar dia")
+
     }finally{
       setLoading(false)
     }
+
   }
 
  /* ============================= */
@@ -162,7 +163,6 @@ export default function ConsecrationDay(){
 
  const canComplete =
 
-  progress.startedToday &&
   progress.currentDay >= data.dayNumber &&
   progress.completedDays === data.dayNumber - 1
 
