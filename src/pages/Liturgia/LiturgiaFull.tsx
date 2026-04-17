@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import styles from "./LiturgiaFull.module.css"
+import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
 
 export default function LiturgiaFull(){
 
@@ -54,16 +55,36 @@ export default function LiturgiaFull(){
 
       {/* HEADER */}
       <div className={styles.header}>
-        <button onClick={()=>changeDay(-1)}>◀</button>
 
-        <div>
+        <button
+          className={styles.navButton}
+          onClick={()=>changeDay(-1)}
+        >
+          <ChevronLeft size={22} />
+        </button>
+
+        <div className={styles.headerCenter}>
+
           <h2>{missa.liturgia}</h2>
-          <span>
-            {missa.data} • {missa.tipo === "domingo" ? "Domingo" : "Semana"}
-          </span>
+
+          <div className={styles.headerInfo}>
+            <Calendar size={14} />
+            <span>{missa.data}</span>
+
+            <span className={`${styles.badge} ${missa.tipo === "domingo" ? styles.badgeDomingo : styles.badgeFerial}`}>
+              {missa.tipo === "domingo" ? "Dominical" : "Ferial"}
+            </span>
+          </div>
+
         </div>
 
-        <button onClick={()=>changeDay(1)}>▶</button>
+        <button
+          className={styles.navButton}
+          onClick={()=>changeDay(1)}
+        >
+          <ChevronRight size={22} />
+        </button>
+
       </div>
 
       {/* 🔥 AVISO */}
@@ -89,7 +110,7 @@ export default function LiturgiaFull(){
           </h3>
 
           <div className={styles.sectionContent}>
-            {renderConteudo(secao.conteudo)}
+            {renderConteudo(secao.conteudo, secao.titulo)}
           </div>
 
         </div>
@@ -103,26 +124,58 @@ export default function LiturgiaFull(){
 /* RENDER */
 /* ========================= */
 
-function renderConteudo(conteudo:any){
+const ORDEM_SECOES: Record<string, string[]> = {
+  "Ritos Iniciais": [
+    "entrada","sinalDaCruz","saudacao","atoPenitencial","gloria","coleta"
+  ],
+  "Liturgia da Palavra": [
+    "primeiraLeitura","salmo","segundaLeitura","aclamacao","evangelho","credo"
+  ],
+  "Liturgia Eucarística": [
+    "ofertorio","convite","prefacio","santo","consagracao","misterioDaFe","posConsagracao","doxologia"
+  ],
+  "Ritos da Comunhão": [
+    "convitePaiNosso","paiNosso","embolo","ritoDaPaz","cordeiro","convite","antifona","depois"
+  ]
+}
 
-  return Object.entries(conteudo).map(([key,value]:any,i)=>{
+function formatVerses(text:string){
 
-    if(!value) return null
+    let formatted = (text || "").replace(
+      /(\d+)(?=[A-Za-zÀ-ÿ“])/g,
+      '<span class="verse">$1</span>'
+    )
+
+    formatted = formatted.replace(
+      /^([A-Za-zÀ-ÿ])/,
+      '<span class="capitular">$1</span>'
+    )
+
+    return formatted
+  }
+
+function renderConteudo(conteudo:any, tituloSecao:string){
+
+  const ordem: string[] = ORDEM_SECOES[tituloSecao] || Object.keys(conteudo)
+
+  return ordem.map((key, i) => {
+    const value = conteudo[key]
+    if(value === null || value === undefined) return null
+
+    // 🔥 EVANGELHO ESPECIAL
+    if(key === "evangelho"){
+      return renderEvangelho(value, i)
+    }
 
     const isLeitura =
       key.toLowerCase().includes("leitura") ||
-      key === "evangelho" ||
       key === "salmo"
-
-    const isEvangelho = key === "evangelho"
 
     return(
       <div
         key={i}
         className={
-          isEvangelho
-            ? styles.blockEvangelho
-            : isLeitura
+          isLeitura
             ? styles.blockLeitura
             : styles.block
         }
@@ -131,43 +184,136 @@ function renderConteudo(conteudo:any){
           {formatTitulo(key)}
         </h4>
 
-        {renderValor(value)}
+        {renderValor(value, isLeitura)}
       </div>
     )
   })
 }
 
-function renderValor(valor:any):any{
+function renderEvangelho(evangelho:any, keyIndex:number){
+  return(
+    <div key={keyIndex} className={styles.blockEvangelho}>
+
+      <h4 className={styles.blockTitle}>Evangelho</h4>
+
+      {evangelho.abertura?.map((item:any,i:number)=>(
+        <p key={i} className={styles.text}>
+          {item.padre && <span className={styles.padre}>Padre: </span>}
+          {item.assembleia && <span className={styles.assembleia}>Assembleia: </span>}
+          <span
+              dangerouslySetInnerHTML={{
+                __html: formatVerses(
+                  item.padre || item.assembleia || ""
+                )
+              }}
+            />
+        </p>
+      ))}
+
+      <p className={styles.refrao}>
+        {evangelho.referencia}
+      </p>
+
+      <p
+        className={styles.text}
+        dangerouslySetInnerHTML={{
+          __html: formatVerses(evangelho.texto)
+        }}
+      />
+
+      {evangelho.final?.map((item:any,i:number)=>(
+        <p key={i} className={styles.text}>
+          {item.padre && <span className={styles.padre}>Padre: </span>}
+          {item.assembleia && <span className={styles.assembleia}>Assembleia: </span>}
+          <span
+              dangerouslySetInnerHTML={{
+                __html: formatVerses(
+                  item.padre || item.assembleia || ""
+                )
+              }}
+            />
+        </p>
+      ))}
+
+    </div>
+  )
+}
+
+function renderValor(valor:any, isLeitura:boolean = false):any{
 
   if(typeof valor === "string"){
     return (
-      <p className={styles.text} style={{ whiteSpace: "pre-line" }}>
-        {valor}
-      </p>
+      <p
+        className={styles.text}
+        dangerouslySetInnerHTML={{
+          __html: isLeitura ? formatVerses(valor) : valor
+        }}
+      />
     )
   }
 
   if(Array.isArray(valor)){
-    return valor.map((item,i)=>(
-      <p key={i} className={styles.text}>
-        {item.padre && <span className={styles.padre}>Padre:</span>}
-        {item.assembleia && <span className={styles.assembleia}>Assembleia:</span>}
-        {item.todos && <span className={styles.todos}>Todos:</span>}
-        {item.padre || item.assembleia || item.todos}
-      </p>
-    ))
+    return valor.map((item,i)=>{
+
+      if(Array.isArray(item)){
+        return item.map((subItem, j)=>(
+          <p key={`${i}-${j}`} className={styles.text}>
+            {subItem.padre && <span className={styles.padre}>Padre: </span>}
+            {subItem.assembleia && <span className={styles.assembleia}>Assembleia: </span>}
+            {subItem.todos && <span className={styles.todos}>Todos: </span>}
+
+            <span
+              dangerouslySetInnerHTML={{
+                __html: isLeitura
+                ? formatVerses(subItem.padre || subItem.assembleia || subItem.todos || "")
+                : (subItem.padre || subItem.assembleia || subItem.todos || "")
+              }}
+            />
+          </p>
+        ))
+      }
+
+      return(
+        <p key={i} className={styles.text}>
+          {item.padre && <span className={styles.padre}>Padre: </span>}
+          {item.assembleia && <span className={styles.assembleia}>Assembleia: </span>}
+          {item.todos && <span className={styles.todos}>Todos: </span>}
+
+          <span
+            dangerouslySetInnerHTML={{
+              __html: isLeitura
+                ? formatVerses(item.padre || item.assembleia || item.todos || "")
+                : (item.padre || item.assembleia || item.todos || "")
+            }}
+          />
+        </p>
+      )
+    })
   }
 
   if(typeof valor === "object" && valor.refrao){
     return (
       <div>
+
+        {valor.referencia && (
+          <p className={styles.subTitle}>
+            {valor.referencia}
+          </p>
+        )}
+
         <p className={styles.refrao}>
           ℟. {valor.refrao}
         </p>
 
-        <p className={styles.text} style={{ whiteSpace:"pre-line" }}>
-          {valor.texto}
-        </p>
+        <p
+          className={styles.text}
+          dangerouslySetInnerHTML={{
+            __html: isLeitura
+              ? formatVerses(valor.texto)
+              : valor.texto
+          }}
+        />
+
       </div>
     )
   }
@@ -175,8 +321,10 @@ function renderValor(valor:any):any{
   if(typeof valor === "object"){
     return Object.entries(valor).map(([k,v]:any,i)=>(
       <div key={i} className={styles.subBlock}>
-        <h5 className={styles.subTitle}>{formatTitulo(k)}</h5>
-        {renderValor(v)}
+        {!["abertura","final","texto","titulo","referencia"].includes(k) && (
+          <h5 className={styles.subTitle}>{formatTitulo(k)}</h5>
+        )}
+        {renderValor(v, isLeitura)}
       </div>
     ))
   }
@@ -188,4 +336,22 @@ function formatTitulo(text:string){
   return text
     .replace(/([A-Z])/g," $1")
     .replace(/^./, str => str.toUpperCase())
+    .replace("Pai Nosso", "Pai-Nosso")
+    .replace("Rito Da Paz", "Rito da Paz")
+    .replace("Pos Consagracao", "Pós-consagração")
+    .replace("Antifona", "Antífona")
+    .replace("Bencao", "Bênção")
+    .replace("Convite Pai Nosso", "Convite ao Pai-Nosso")
+    .replace("Anamnese_oblacao", "Anamnese e Oblação")
+    .replace("Epiclese", "Epíclese")
+    .replace("Intercessoes", "Intercessões")
+    .replace("Titulo", "Título")
+    .replace("Referencia", "Referência")
+    .replace("Misterio Da Fe", "Mistério da fé")
+    .replace("Ofertorio", "Ofertório")
+    .replace("Prefacio", "Prefácio")
+    .replace("Consagracao", "Consagração")
+    .replace("Saudacao", "Saudação")
+    .replace("Embolo", "Êmbolo")
+    .replace("Cordeiro", "Cordeiro de Deus")
 }
