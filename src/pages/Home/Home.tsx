@@ -41,10 +41,11 @@ export default function Home(){
  const today = useMemo(() => new Date().toLocaleDateString("pt-BR"), [])
 
  const [liturgy,setLiturgy] = useState<LiturgyData | null>(null)
- const [modal,setModal] = useState<LiturgyReading | null>(null)
+ const [modal,setModal] = useState<(LiturgyReading & { tipoLeitura?: string }) | null>(null)
  const [selector,setSelector] = useState<LiturgyReading[] | null>(null)
  const [loadingLiturgy,setLoadingLiturgy] = useState(true)
  const [liturgyError,setLiturgyError] = useState<string | null>(null)
+ const [currentType, setCurrentType] = useState<"primeira" | "segunda" | "salmo" | "evangelho" | "extra" | null>(null)
 
  const features:FeatureItem[] = [
   {
@@ -204,6 +205,8 @@ export default function Home(){
 
   function openModal(type:"primeira" | "segunda" | "salmo" | "evangelho" | "extra"){
 
+    setCurrentType(type)
+
     if(!liturgy?.leituras) return
 
     let readings: LiturgyReading[] = []
@@ -231,13 +234,13 @@ export default function Home(){
     if(readings.length === 0){
         setModal({
             titulo: "",
-            texto: "Hoje não possui segunda leitura"
+            texto: "Hoje não há leitura disponível"
         })
         return
     }
 
     if(readings.length === 1){
-        setModal(readings[0])
+        setModal({ ...readings[0], tipoLeitura: type })
         return
     }
 
@@ -259,6 +262,24 @@ export default function Home(){
   return formatted
 
  }
+
+ function getRespostaFinal(tipo?: string){
+    if(tipo === "evangelho"){
+      return {
+        padre: "Palavra da Salvação.",
+        assembleia: "Glória a vós, Senhor."
+      }
+    }
+
+    if(tipo === "primeira" || tipo === "segunda" || tipo === "extra"){
+      return {
+        padre: "Palavra do Senhor.",
+        assembleia: "Graças a Deus."
+      }
+    }
+
+    return null
+  }
 
  return(
   <div className={styles.container}>
@@ -380,7 +401,7 @@ export default function Home(){
                 className={styles.primaryButton}
                 onClick={()=>{
                     setSelector(null)
-                    setTimeout(()=> setModal(item), 0)
+                    setTimeout(()=> setModal({ ...item, tipoLeitura: currentType || undefined }), 0)
                 }}
                 >
                 <div style={{
@@ -461,6 +482,37 @@ export default function Home(){
         __html: formatVerses(modal.texto || "")
        }}
       />
+
+      {(() => {
+        const resposta = getRespostaFinal(modal.tipoLeitura)
+
+        if(!resposta) return null
+
+        return (
+          <div style={{
+            marginTop: "28px",
+            paddingTop: "16px",
+            borderTop: "1px solid rgba(0,0,0,0.1)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "6px"
+          }}>
+            <p style={{
+              fontSize: "0.95rem"
+            }}>
+              <strong>P.</strong> {resposta.padre}
+            </p>
+
+            <p style={{
+              fontSize: "1rem",
+              fontWeight: "600",
+              color: "#b0181a"
+            }}>
+              <strong>R.</strong> {resposta.assembleia}
+            </p>
+          </div>
+        )
+      })()}
 
       <button
        className={styles.closeButton}
