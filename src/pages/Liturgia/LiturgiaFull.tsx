@@ -132,7 +132,7 @@ const ORDEM_SECOES: Record<string, string[]> = {
     "primeiraLeitura","salmo","segundaLeitura","aclamacao","evangelho","credo"
   ],
   "Liturgia Eucarística": [
-    "ofertorio","convite","prefacio","santo","consagracao","misterioDaFe","posConsagracao","doxologia"
+    "tituloOracaoEucaristica","ofertorio","convite","oracaoSobreOferendas","prefacio","santo","inicioOracaoEucaristica","epicleseAntesConsagracao","consagracao","misterioDaFe","posConsagracao","doxologia"
   ],
   "Ritos da Comunhão": [
     "convitePaiNosso","paiNosso","embolo","ritoDaPaz","cordeiro","convite","antifona","depois"
@@ -180,9 +180,18 @@ function renderConteudo(conteudo:any, tituloSecao:string){
             : styles.block
         }
       >
-        <h4 className={styles.blockTitle}>
-          {formatTitulo(key)}
-        </h4>
+        {![
+            "inicioOracaoEucaristica",
+            "epicleseAntesConsagracao",
+            "consagracao",
+            "misterioDaFe",
+            "posConsagracao",
+            "doxologia"
+            ].includes(key) && (
+            <h4 className={styles.blockTitle}>
+                {formatTitulo(key)}
+            </h4>
+            )}
 
         {renderValor(value, isLeitura)}
       </div>
@@ -319,15 +328,20 @@ function renderValor(valor:any, isLeitura:boolean = false):any{
   }
 
   if(typeof valor === "object"){
-    return Object.entries(valor).map(([k,v]:any,i)=>(
-      <div key={i} className={styles.subBlock}>
-        {!["abertura","final","texto","titulo","referencia"].includes(k) && (
-          <h5 className={styles.subTitle}>{formatTitulo(k)}</h5>
-        )}
-        {renderValor(v, isLeitura)}
-      </div>
-    ))
-  }
+    return Object.entries(valor).map(([k,v]:any,i)=>{
+
+        if(v === null || v === undefined) return null // 🔥 ESSA LINHA
+
+        return(
+        <div key={i} className={styles.subBlock}>
+            {!["abertura","final","texto","titulo","referencia"].includes(k) && (
+            <h5 className={styles.subTitle}>{formatTitulo(k)}</h5>
+            )}
+            {renderValor(v, isLeitura)}
+        </div>
+        )
+    })
+    }
 
   return null
 }
