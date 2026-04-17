@@ -97,13 +97,18 @@
   color:var(--oratio-primary);
 
   cursor:pointer;
-  transition:0.2s;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.1s ease;
 }
 
 .navButton:active{
   transform:scale(0.92);
   background:var(--oratio-primary);
   color:white;
+  box-shadow:0 2px 6px rgba(0,0,0,0.2);
+  transition:none;
 }
 
 .headerCenter{
