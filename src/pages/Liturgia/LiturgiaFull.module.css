@@ -98,8 +98,8 @@
 
   cursor:pointer;
   transition:
-    background 0.25s ease,
-    color 0.25s ease,
+    background 0.75s ease,
+    color 0.75s ease,
     transform 0.1s ease;
 }
 
