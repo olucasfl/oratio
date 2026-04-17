@@ -42,9 +42,11 @@
   transition:var(--oratio-transition);
 }
 
-.backButton:hover{
-  background:var(--oratio-primary);
-  color:white;
+@media (hover: hover){
+  .backButton:hover{
+    background:var(--oratio-primary);
+    color:white;
+  }
 }
 
 /* ========================= */
@@ -100,12 +102,8 @@
 
 .navButton:active{
   transform:scale(0.92);
-}
-
-.navButton:hover{
   background:var(--oratio-primary);
   color:white;
-  transform:scale(1.05);
 }
 
 .headerCenter{
