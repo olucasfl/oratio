@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import styles from "./LiturgiaFull.module.css"
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
+import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
 export default function LiturgiaFull(){
 
@@ -46,6 +47,7 @@ export default function LiturgiaFull(){
   )
 
   return(
+    <>
     <div className={styles.container}>
 
       {/* BOTÃO VOLTAR */}
@@ -116,7 +118,11 @@ export default function LiturgiaFull(){
         </div>
       ))}
 
+    <div className={styles.pageSpacer}></div>
     </div>
+
+    <BottomNavbar/>
+  </>
   )
 }
 
