@@ -212,22 +212,7 @@ export async function getStageDays(stageId:string){
 
 export async function completeDay(day:number){
 
- const progress = getLocal(PROGRESS_KEY)
-
- if(progress){
-
-  progress.completedDays = day
-  progress.currentDay = day + 1
-
-  saveLocal(PROGRESS_KEY,progress)
-
- }
-
- try{
-
   await api.post(`/oratio/consecration/complete/${day}`)
-
- }catch{}
 
 }
 
@@ -237,22 +222,7 @@ export async function completeDay(day:number){
 
 export async function uncompleteDay(day:number){
 
- const progress = getLocal(PROGRESS_KEY)
-
- if(progress){
-
-  progress.completedDays = day - 1
-  progress.currentDay = day
-
-  saveLocal(PROGRESS_KEY,progress)
-
- }
-
- try{
-
   await api.delete(`/oratio/consecration/complete/${day}`)
-
- }catch{}
 
 }
 
@@ -262,23 +232,9 @@ export async function uncompleteDay(day:number){
 
 export async function updateStartDate(consecrationDate:string){
 
- const progress = getLocal(PROGRESS_KEY)
-
- if(progress){
-
-  progress.startDate = consecrationDate
-
-  saveLocal(PROGRESS_KEY,progress)
-
- }
-
- try{
-
   await api.put("/oratio/consecration/consecration-date",{
-   consecrationDate
+    consecrationDate
   })
-
- }catch{}
 
 }
 
