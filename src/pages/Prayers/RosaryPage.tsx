@@ -73,12 +73,10 @@ export default function RosaryPage(){
 
   const baseTitle = currentStep.title.replace(/\s\d+\/\d+/,"")
 
-  // 🔥 IGNORAR ORAÇÕES QUE NÃO SÃO CONTAGEM
-  const ignore = ["Pai Nosso","Credo","Glória ao Pai","Salve Rainha"]
+  const ignore = ["Sinal da Santa Cruz", "Pai Nosso","Credo","Glória ao Pai","Salve Rainha", "Jaculatória de Fátima", "Oração ao Espírito Santo"]
 
   if(ignore.includes(baseTitle)) return null
 
-  // ← volta
   let start = current
   while(
     start > 0 &&
@@ -318,38 +316,21 @@ export default function RosaryPage(){
 
     <div className={styles.controls}>
 
-     {!isLastStep && (
+      {current > 0 && (
+        <button className={styles.prev} onClick={prev}>
+          Anterior
+        </button>
+      )}
 
-      <>
-
-       <button
-        className={styles.prev}
-        onClick={prev}
-       >
-        Anterior
-       </button>
-
-       <button
-        className={styles.next}
-        onClick={next}
-       >
-        Próximo
-       </button>
-
-      </>
-
-     )}
-
-     {isLastStep && (
-
-      <button
-       className={styles.finish}
-       onClick={handleFinish}
-      >
-       Concluir Terço
-      </button>
-
-     )}
+      {isLastStep ? (
+        <button className={styles.finish} onClick={handleFinish}>
+          Concluir
+        </button>
+      ) : (
+        <button className={styles.next} onClick={next}>
+          Próximo
+        </button>
+      )}
 
     </div>
 

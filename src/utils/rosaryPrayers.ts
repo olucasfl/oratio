@@ -1,6 +1,13 @@
 export const rosaryPrayers:any = {
 
- Credo: `Creio em Deus Pai todo-poderoso,
+    "Sinal da Santa Cruz": `Pelo sinal da Santa Cruz, 
+    (†) livrai-nos Deus, nosso Senhor, 
+    (†) dos nossos inimigos. 
+    (†) Em nome do Pai, e do Filho e do Espírito Santo. 
+    
+    Amém.`,
+
+    "Credo": `Creio em Deus Pai todo-poderoso,
 Criador do céu e da terra.
 E em Jesus Cristo,
 seu único Filho, nosso Senhor,
@@ -53,6 +60,11 @@ ao Filho
 e ao Espírito Santo.
 Como era no princípio,
 agora e sempre.
+
+Amém.`,
+
+"Jaculatória de Fátima": `Ó meu Jesus, perdoai-nos, livrai-nos do fogo do inferno;
+levai as almas todas para o Céu, principalmente as que mais precisarem da vossa misericórdia.
 
 Amém.`,
 
