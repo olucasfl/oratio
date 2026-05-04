@@ -574,12 +574,23 @@ export default function ConsecrationHome(){
         )}
 
        </div>
-
+       
       )
 
      })}
 
+        <div
+            className={styles.tratadoCard}
+            onClick={()=>navigate("/oratio/consecration/finalizacao")}
+          >
+            <h3>Finalização</h3>
+            <span className={styles.stageStatus}>
+              Última etapa
+            </span>
+          </div>
+
     </div>
+    
 
    )}
 

@@ -33,6 +33,8 @@ import Catecismo from "./pages/Catecismo/Catecismo"
 import Tratado from "./pages/Consecration/Tratado"
 import { sendActivityPing } from "./services/activityService"
 import LiturgiaFull from "./pages/Liturgia/LiturgiaFull"
+import ConsecrationFinal from "./pages/Consecration/ConsecrationFinal"
+import ConsecrationCarta from "./components/ConsecrationCarta/ConsecrationCarta"
 
 function App(){
 
@@ -194,6 +196,16 @@ element={
 <ConsecrationDay />
 </ProtectedRoute>
 }
+/>
+
+<Route
+  path="/oratio/consecration/finalizacao"
+  element={<ConsecrationFinal />}
+/>
+
+<Route
+  path="/oratio/consecration/carta"
+  element={< ConsecrationCarta />}
 />
 
 <Route path="/oratio/prayers" element={<PrayersCategories/>}/>
