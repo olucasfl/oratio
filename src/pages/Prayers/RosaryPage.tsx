@@ -21,6 +21,7 @@ export default function RosaryPage(){
  const [current,setCurrent] = useState(0)
  const [loading,setLoading] = useState(true)
  const [finished,setFinished] = useState(false)
+ const [finishing, setFinishing] = useState(false)
 
  const [direction,setDirection] = useState<"next"|"prev">("next")
 
@@ -196,25 +197,31 @@ export default function RosaryPage(){
 
  async function handleFinish(){
 
-  try{
+    if(finishing) return
 
-   await finishRosary()
+    try{
 
-   setFinished(true)
+    setFinishing(true)
 
-   setTimeout(()=>{
+    await finishRosary()
 
-    navigate("/oratio/rosary")
+    setFinished(true)
 
-   },2000)
+    setTimeout(()=>{
+      navigate("/oratio/rosary")
+    },2000)
 
-  }catch{
+    }catch{
 
-   console.log("Erro ao finalizar terço")
+    console.log("Erro ao finalizar terço")
+
+    }finally{
+
+    setFinishing(false)
+
+    }
 
   }
-
- }
 
  return(
 
@@ -314,7 +321,7 @@ export default function RosaryPage(){
     </div>
 
 
-    <div className={styles.controls}>
+    <div className={styles.bottomBar}>
 
       {current > 0 && (
         <button className={styles.prev} onClick={prev}>
@@ -323,8 +330,16 @@ export default function RosaryPage(){
       )}
 
       {isLastStep ? (
-        <button className={styles.finish} onClick={handleFinish}>
-          Concluir
+        <button
+          className={styles.finish}
+          onClick={handleFinish}
+          disabled={finishing}
+        >
+          {finishing ? (
+            <div className={styles.spinner}></div>
+          ) : (
+            "Concluir"
+          )}
         </button>
       ) : (
         <button className={styles.next} onClick={next}>
@@ -333,6 +348,8 @@ export default function RosaryPage(){
       )}
 
     </div>
+
+    <div className={styles.pageSpacer}></div>
 
    </div>
 
