@@ -305,19 +305,47 @@ export default function Journey(){
 
                 <div className={styles.memberStats}>
 
-                  <div className={styles.badge}>
+                  <div className={styles.statCard}>
 
-                    <Flame size={16}/>
+                    <div className={styles.statIconFlame}>
 
-                    {member.currentStreak}
+                      <Flame size={16}/>
+
+                    </div>
+
+                    <div className={styles.statContent}>
+
+                      <span className={styles.statLabel}>
+                        Sequência
+                      </span>
+
+                      <strong className={styles.statValue}>
+                        {member.currentStreak}
+                      </strong>
+
+                    </div>
 
                   </div>
 
-                  <div className={styles.badge}>
+                  <div className={styles.statCard}>
 
-                    <Star size={16}/>
+                    <div className={styles.statIconStar}>
 
-                    {member.totalPoints}
+                      <Star size={16}/>
+
+                    </div>
+
+                    <div className={styles.statContent}>
+
+                      <span className={styles.statLabel}>
+                        Pontos
+                      </span>
+
+                      <strong className={styles.statValue}>
+                        {member.totalPoints}
+                      </strong>
+
+                    </div>
 
                   </div>
 

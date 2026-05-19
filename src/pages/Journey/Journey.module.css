@@ -142,25 +142,91 @@
 
 }
 
-.badge{
+.statCard{
 
   display:flex;
 
   align-items:center;
 
-  gap:6px;
+  gap:10px;
 
   background:white;
 
   border:1px solid #eadfce;
 
-  padding:8px 12px;
+  padding:10px 14px;
+
+  border-radius:16px;
+
+  min-width:110px;
+
+}
+
+.statIconFlame{
+
+  width:34px;
+
+  height:34px;
 
   border-radius:12px;
 
-  color:#5b5248;
+  background:#fff1ec;
 
-  font-weight:600;
+  color:#d4551f;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+}
+
+.statIconStar{
+
+  width:34px;
+
+  height:34px;
+
+  border-radius:12px;
+
+  background:#fff7e7;
+
+  color:#d4a017;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+}
+
+.statContent{
+
+  display:flex;
+
+  flex-direction:column;
+
+  line-height:1.1;
+
+}
+
+.statLabel{
+
+  font-size:12px;
+
+  color:#8b8174;
+
+  font-weight:500;
+
+}
+
+.statValue{
+
+  font-size:16px;
+
+  color:#3f352d;
 
 }
 
@@ -580,5 +646,490 @@
   border-top-color:#b0181a;
 
   animation:spin .7s linear infinite;
+
+}
+
+@media(max-width:768px){
+
+  .container{
+
+    padding:
+      calc(env(safe-area-inset-top) + 18px)
+      14px
+      calc(env(safe-area-inset-bottom) + 24px);
+
+  }
+
+  .card{
+
+    padding:22px;
+
+    border-radius:24px;
+
+    box-shadow:
+      0 6px 24px rgba(0,0,0,.05);
+
+  }
+
+  /*
+  =========================
+  BACK BUTTON
+  =========================
+  */
+
+  .backButton{
+
+    margin-bottom:14px;
+
+    font-size:14px;
+
+    padding-left:2px;
+
+  }
+
+  /*
+  =========================
+  HEADER
+  =========================
+  */
+
+  .header{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    text-align:left;
+
+    gap:16px;
+
+    margin-bottom:28px;
+
+  }
+
+  .icon{
+
+    width:64px;
+
+    height:64px;
+
+    border-radius:18px;
+
+    flex-shrink:0;
+
+  }
+
+  .header h1{
+
+    font-size:34px;
+
+    line-height:1;
+
+    letter-spacing:-1px;
+
+  }
+
+  .header p{
+
+    font-size:14px;
+
+    margin-top:6px;
+
+  }
+
+  /*
+  =========================
+  MEMBERS
+  =========================
+  */
+
+  .members{
+
+    grid-template-columns:1fr;
+
+    gap:16px;
+
+  }
+
+  .member{
+
+    padding:18px;
+
+    border-radius:20px;
+
+  }
+
+  .memberTop{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:18px;
+
+  }
+
+  .member h2{
+
+    font-size:30px;
+
+    line-height:1;
+
+  }
+
+  .member span{
+
+    font-size:14px;
+
+  }
+
+  /*
+  =========================
+  STATS
+  =========================
+  */
+
+  .memberStats{
+
+    width:100%;
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:10px;
+
+  }
+
+  .statCard{
+
+    min-width:unset;
+
+    width:100%;
+
+    padding:12px;
+
+    border-radius:16px;
+
+  }
+
+  .statIconFlame,
+  .statIconStar{
+
+    width:36px;
+
+    height:36px;
+
+    border-radius:12px;
+
+  }
+
+  .statLabel{
+
+    font-size:11px;
+
+  }
+
+  .statValue{
+
+    font-size:15px;
+
+  }
+
+  /*
+  =========================
+  PROGRESS
+  =========================
+  */
+
+  .progressBar{
+
+    height:13px;
+
+    margin-top:2px;
+
+  }
+
+  .progressFill{
+
+    transition:
+      width .35s ease,
+      opacity .25s ease;
+
+  }
+
+  /*
+  =========================
+  INTENTIONS
+  =========================
+  */
+
+  .intentionsSection{
+
+    margin-top:34px;
+
+  }
+
+  .intentionsTitle h3{
+
+    font-size:26px;
+
+    line-height:1.1;
+
+  }
+
+  .intentionsHeader p{
+
+    font-size:14px;
+
+    line-height:1.5;
+
+  }
+
+  /*
+  =========================
+  INPUT
+  =========================
+  */
+
+  .intentInputBox{
+
+    flex-direction:column;
+
+    gap:12px;
+
+  }
+
+  .intentInputBox input{
+
+    height:54px;
+
+    border-radius:16px;
+
+    font-size:15px;
+
+    padding:0 16px;
+
+  }
+
+  .intentInputBox input::placeholder{
+
+    font-size:14px;
+
+  }
+
+  .intentInputBox button{
+
+    width:100%;
+
+    height:54px;
+
+    justify-content:center;
+
+    border-radius:16px;
+
+    font-size:15px;
+
+    transition:
+      transform .15s ease,
+      opacity .2s ease;
+
+  }
+
+  .intentInputBox button:active{
+
+    transform:scale(.98);
+
+  }
+
+  /*
+  =========================
+  WALL
+  =========================
+  */
+
+  .intentionsWall{
+
+    grid-template-columns:1fr;
+
+    gap:14px;
+
+  }
+
+  .intentCard{
+
+    border-radius:18px;
+
+    padding:16px;
+
+    gap:14px;
+
+    animation:
+      fadeUp .35s ease;
+
+  }
+
+  .intentText{
+
+    font-size:15px;
+
+    line-height:1.5;
+
+    padding-right:28px;
+
+  }
+
+  .intentFooter{
+
+    align-items:flex-end;
+
+    gap:12px;
+
+  }
+
+  .intentFooter span{
+
+    font-size:13px;
+
+    line-height:1.4;
+
+  }
+
+  .intentFooter button{
+
+    width:38px;
+
+    height:38px;
+
+    border-radius:12px;
+
+    flex-shrink:0;
+
+  }
+
+  /*
+  =========================
+  EMPTY
+  =========================
+  */
+
+  .emptyIntentions{
+
+    padding:26px 18px;
+
+    border-radius:18px;
+
+    font-size:14px;
+
+    line-height:1.5;
+
+  }
+
+  /*
+  =========================
+  DELETE BUTTON
+  =========================
+  */
+
+  .deleteButton{
+
+    height:54px;
+
+    border-radius:18px;
+
+    margin-top:34px;
+
+    font-size:15px;
+
+    transition:
+      transform .15s ease,
+      opacity .2s ease;
+
+  }
+
+  .deleteButton:active{
+
+    transform:scale(.985);
+
+  }
+
+}
+
+/*
+=========================
+SMALL DEVICES
+=========================
+*/
+
+@media(max-width:420px){
+
+  .container{
+
+    padding:
+      calc(env(safe-area-inset-top) + 14px)
+      12px
+      calc(env(safe-area-inset-bottom) + 18px);
+
+  }
+
+  .card{
+
+    padding:18px;
+
+    border-radius:22px;
+
+  }
+
+  .header h1{
+
+    font-size:30px;
+
+  }
+
+  .member h2{
+
+    font-size:26px;
+
+  }
+
+  .intentionsTitle h3{
+
+    font-size:23px;
+
+  }
+
+  .intentCard{
+
+    padding:15px;
+
+  }
+
+}
+
+/*
+=========================
+ANIMATIONS
+=========================
+*/
+
+@keyframes fadeUp{
+
+  from{
+
+    opacity:0;
+
+    transform:
+      translateY(10px);
+
+  }
+
+  to{
+
+    opacity:1;
+
+    transform:
+      translateY(0);
+
+  }
 
 }
