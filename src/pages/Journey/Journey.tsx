@@ -406,7 +406,7 @@ export default function Journey(){
             <input
               type="text"
               placeholder="
-              Coloque suas intenções"
+              Escreva aqui suas intenções..."
               value={newIntent}
               onChange={(e)=>
                 setNewIntent(e.target.value)
