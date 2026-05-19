@@ -5,6 +5,8 @@ import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 import { LogOut, User } from "lucide-react"
 import { isPWA } from "../../utils/isPwa"
 import { preloadConsecration } from "../../services/consecrationService"
+import JourneyCard
+from "../../components/JourneyCard/JourneyCard"
 
 type LiturgyReading = {
  tipo?: string
@@ -363,6 +365,8 @@ export default function Home(){
      </div>
     )}
    </section>
+
+   <JourneyCard />
 
    <div className={styles.featuresGrid}>
     {features.map(item => (

@@ -35,6 +35,7 @@ import { sendActivityPing } from "./services/activityService"
 import LiturgiaFull from "./pages/Liturgia/LiturgiaFull"
 import ConsecrationFinal from "./pages/Consecration/ConsecrationFinal"
 import ConsecrationCarta from "./components/ConsecrationCarta/ConsecrationCarta"
+import Journey from "./pages/Journey/Journey"
 
 function App(){
 
@@ -269,6 +270,15 @@ element={
 />
 
 <Route path="*" element={<Navigate to="/login" replace />} />
+
+<Route
+ path="/oratio/journey"
+ element={
+  <ProtectedRoute>
+   <Journey/>
+  </ProtectedRoute>
+ }
+/>
 
 </Routes>
 
