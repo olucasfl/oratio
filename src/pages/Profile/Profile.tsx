@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect,useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 import styles from "./Profile.module.css"
@@ -7,7 +7,14 @@ import { getProfile } from "../../services/profileService"
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
-import { ArrowLeft } from "lucide-react"
+import {
+ ArrowLeft,
+ Flame,
+ Crown,
+ Sparkles,
+ ShieldCheck,
+ User
+} from "lucide-react"
 
 export default function Profile(){
 
@@ -21,12 +28,17 @@ export default function Profile(){
  useEffect(()=>{
 
   function handleOnline(){
+
    setIsOffline(false)
+
    loadProfile()
+
   }
 
   function handleOffline(){
+
    setIsOffline(true)
+
   }
 
   window.addEventListener("online",handleOnline)
@@ -50,26 +62,26 @@ export default function Profile(){
    const token = localStorage.getItem("access_token")
 
    if(!token){
+
     navigate("/login")
+
     return
+
    }
 
-   /* ============================= */
-   /* CACHE LOCAL */
-   /* ============================= */
-
-   const cached = localStorage.getItem("oratio-profile")
+   const cached =
+    localStorage.getItem("oratio-profile")
 
    if(cached && !navigator.onLine){
-    setProfile(JSON.parse(cached))
-  }
 
-   /* ============================= */
-   /* API SE ONLINE */
-   /* ============================= */
+    setProfile(JSON.parse(cached))
+
+   }
 
    if(!navigator.onLine){
+
     return
+
    }
 
    const data = await getProfile()
@@ -84,13 +96,19 @@ export default function Profile(){
   }catch(err:any){
 
    if(err?.response?.status === 401){
+
     navigate("/login")
+
    }else{
+
     console.log("Erro ao carregar perfil")
+
    }
 
   }finally{
+
    setLoading(false)
+
   }
 
  }
@@ -105,24 +123,15 @@ export default function Profile(){
 
  }
 
- /* ============================= */
- /* LOADING */
- /* ============================= */
-
  if(loading){
 
   return(
 
    <div className={styles.loading}>
 
-    <p>Carregando perfil...</p>
+    <div className={styles.spinner}></div>
 
-    <button
-     className={styles.back}
-     onClick={()=>navigate("/oratio/home")}
-    >
-     ← Voltar
-    </button>
+    <p>Carregando perfil...</p>
 
    </div>
 
@@ -135,73 +144,142 @@ export default function Profile(){
   return(
 
    <div className={styles.loading}>
+
     Não foi possível carregar o perfil
+
    </div>
 
   )
 
  }
 
- const days = profile.spiritualProgress?.daysCompleted || 0
- const prayers = profile.spiritualProgress?.prayersPrayed || 0
- const rosaries = profile.spiritualProgress?.rosariesPrayed || 0
- const lastPrayer = profile.spiritualProgress?.lastPrayerDate
+ const days =
+  profile.spiritualProgress?.daysCompleted || 0
 
- const progress = Math.min((days / 33) * 100,100)
+ const prayers =
+  profile.spiritualProgress?.prayersPrayed || 0
+
+ const rosaries =
+  profile.spiritualProgress?.rosariesPrayed || 0
+
+ const lastPrayer =
+  profile.spiritualProgress?.lastPrayerDate
+
+ const streak =
+  profile.spiritualProgress?.prayerStreak || 0
+
+ const progress =
+  Math.min((days / 33) * 100,100)
 
  const lastPrayerFormatted = lastPrayer
-  ? new Date(lastPrayer).toLocaleString("pt-BR",{
+  ? new Date(lastPrayer).toLocaleString(
+     "pt-BR",
+     {
       dateStyle:"short",
       timeStyle:"short"
-    })
+     }
+    )
   : null
 
-  const streak = profile.spiritualProgress?.prayerStreak || 0
-
-function getStreakInfo(streak:number){
+ function getStreakInfo(streak:number){
 
   if(streak === 0){
-    return { emoji: "❄️", color: "#999", label: "Comece hoje" }
+
+   return {
+    emoji:"❄️",
+    color:"#999",
+    label:"Comece hoje"
+   }
+
   }
 
-  if(streak >= 1 && streak <= 3){
-    return { emoji: "🔥", color: "#ff6b6b", label: "Discípulo" }
+  if(streak <= 3){
+
+   return {
+    emoji:"🔥",
+    color:"#ff6b6b",
+    label:"Discípulo"
+   }
+
   }
 
-  if(streak >= 4 && streak <= 7){
-    return { emoji: "🔥", color: "#ff922b", label: "Servo de Deus" }
+  if(streak <= 7){
+
+   return {
+    emoji:"🔥",
+    color:"#ff922b",
+    label:"Servo de Deus"
+   }
+
   }
 
-  if(streak >= 8 && streak <= 15){
-    return { emoji: "🔥", color: "#fcc419", label: "Fiel Perseverante" }
+  if(streak <= 15){
+
+   return {
+    emoji:"🔥",
+    color:"#fcc419",
+    label:"Fiel Perseverante"
+   }
+
   }
 
-  if(streak >= 16 && streak <= 30){
-    return { emoji: "🔥", color: "#51cf66", label: "Intercessor" }
+  if(streak <= 30){
+
+   return {
+    emoji:"🔥",
+    color:"#51cf66",
+    label:"Intercessor"
+   }
+
   }
 
-  if(streak >= 31 && streak <= 90){
-    return { emoji: "🔥🔥", color: "#339af0", label: "Consagrado" }
+  if(streak <= 90){
+
+   return {
+    emoji:"🔥🔥",
+    color:"#339af0",
+    label:"Consagrado"
+   }
+
   }
 
-  if(streak >= 91 && streak <= 180){
-    return { emoji: "🔥🔥🔥", color: "#845ef7", label: "Consagrado" }
+  if(streak <= 180){
+
+   return {
+    emoji:"🔥🔥🔥",
+    color:"#845ef7",
+    label:"Consagrado"
+   }
+
   }
 
-  if(streak >= 181 && streak <= 365){
-    return { emoji: "🔥🔥🔥🔥", color: "#f783ac", label: "Lendário" }
+  if(streak <= 365){
+
+   return {
+    emoji:"🔥🔥🔥🔥",
+    color:"#f783ac",
+    label:"Lendário"
+   }
+
   }
 
-  return { emoji: "🔥🔥🔥🔥", color: "#ff0000", label: "Testemunha de Cristo" }
-}
+  return {
 
-const streakInfo = getStreakInfo(streak)
+   emoji:"🔥🔥🔥🔥",
+   color:"#ff0000",
+   label:"Testemunha de Cristo"
+
+  }
+
+ }
+
+ const streakInfo = getStreakInfo(streak)
 
  return(
 
   <div className={styles.page}>
 
-   {/* HEADER */}
+   <div className={styles.backgroundGlow}></div>
 
    <header className={styles.header}>
 
@@ -209,7 +287,9 @@ const streakInfo = getStreakInfo(streak)
      className={styles.backButton}
      onClick={()=>navigate(-1)}
     >
+
      <ArrowLeft size={22}/>
+
     </button>
 
     <h1>Perfil</h1>
@@ -220,189 +300,243 @@ const streakInfo = getStreakInfo(streak)
 
     {isOffline && (
 
-     <div style={{
-      background:"#fff3cd",
-      padding:"10px",
-      borderRadius:"8px",
-      marginBottom:"16px",
-      fontSize:"14px"
-     }}>
-      Você está offline. Os dados exibidos podem estar desatualizados.
+     <div className={styles.offlineBanner}>
+
+      Você está offline. Os dados podem
+      estar desatualizados.
+
      </div>
 
     )}
 
-    {/* CARD USUÁRIO */}
+    {/* HERO */}
 
-    <div className={styles.profileCard}>
+    <div className={styles.profileHero}>
 
      <div className={styles.avatar}>
+
       {profile.name?.charAt(0)}
+
      </div>
 
-     <div className={styles.userInfo}>
+     <div className={styles.heroInfo}>
 
       <h2>{profile.name}</h2>
 
-      <p className={styles.email}>
-       {profile.email}
-      </p>
+      <p>{profile.email}</p>
 
-      <span className={styles.memberSince}>
-       Membro desde {new Date(profile.createdAt).toLocaleDateString("pt-BR")}
+      <span>
+
+       Membro desde{" "}
+
+       {new Date(profile.createdAt)
+        .toLocaleDateString("pt-BR")}
+
       </span>
 
      </div>
 
     </div>
 
+    {/* ADMIN */}
+
     {profile.isAdmin && (
-      <div className={styles.adminCard}>
-        <h3>painel administrador</h3>
-        <p>Você é administrador. Acesse o painel para gerenciar usuários e estatísticas.</p>
-        <button
-          className={styles.adminButton}
-          onClick={()=>navigate("/oratio/admin")}
-        >
-          Ir para painel admin
-        </button>
+
+     <div className={styles.adminCard}>
+
+      <div className={styles.adminTop}>
+
+       <ShieldCheck size={22}/>
+
+       <h3>Painel Administrador</h3>
+
       </div>
+
+      <p>
+
+       Gerencie usuários, estatísticas
+       e dados do aplicativo.
+
+      </p>
+
+      <button
+       className={styles.adminButton}
+       onClick={()=>navigate("/oratio/admin")}
+      >
+
+       Abrir painel admin
+
+      </button>
+
+     </div>
+
     )}
 
     {/* VIDA ESPIRITUAL */}
 
     <div className={styles.card}>
 
+     <div className={styles.cardTitle}>
+
+      <Sparkles size={20}/>
+
       <h3>Vida Espiritual</h3>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: "16px",
-          padding: "12px",
-          borderRadius: "12px",
-          background: "#fff5e6",
-          border: "1px solid #ffe0b2"
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          
-          <span style={{ fontSize: "22px" }}>
-            {streakInfo.emoji}
-          </span>
+     </div>
 
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <span style={{ fontSize: "14px", fontWeight: 600 }}>
-              Sequência
-            </span>
-            <span style={{ fontSize: "12px", color: "#666" }}>
-              {streakInfo.label}
-            </span>
-          </div>
+     {/* STREAK */}
 
-        </div>
+     <div className={styles.streakCard}>
 
-        <span
-          style={{
-            fontSize: "18px",
-            fontWeight: 700,
-            color: streakInfo.color
-          }}
-        >
-          {streak} {streak === 1 ? "dia" : "dias"}
+      <div className={styles.streakLeft}>
+
+       <div className={styles.streakIcon}>
+
+        <Flame size={22}/>
+
+       </div>
+
+       <div>
+
+        <span className={styles.streakLabel}>
+         Sequência de oração
         </span>
-      </div>
 
-      <div className={styles.progressBox}>
+        <p className={styles.streakSubtitle}>
+         {streakInfo.label}
+        </p>
 
-        <div className={styles.progressInfo}>
-
-          <span>Consagração</span>
-
-          <span>
-            {days} / 33 dias
-          </span>
-
-        </div>
-
-        <div className={styles.progressBar}>
-
-          <div
-            className={styles.progressFill}
-            style={{width:`${progress}%`}}
-          />
-
-        </div>
+       </div>
 
       </div>
 
-      <p className={styles.consecrationStatus}>
+      <div
+       className={styles.streakDays}
+       style={{ color: streakInfo.color }}
+      >
 
-        {profile.spiritualProgress?.consecrationStarted
-         ? "Consagração em andamento"
-         : "Consagração ainda não iniciada"}
+       {streak}
+
+       <span>
+        {streak === 1 ? "dia" : "dias"}
+       </span>
+
+      </div>
+
+     </div>
+
+     {/* CONSAGRAÇÃO */}
+
+     <div className={styles.progressCard}>
+
+      <div className={styles.progressHeader}>
+
+       <div className={styles.progressTitle}>
+
+        <Crown size={18}/>
+
+        <span>Consagração</span>
+
+       </div>
+
+       <strong>
+
+        {days}/33
+
+       </strong>
+
+      </div>
+
+      <div className={styles.progressBar}>
+
+       <div
+        className={styles.progressFill}
+        style={{ width:`${progress}%` }}
+       />
+
+      </div>
+
+      <p className={styles.progressText}>
+
+       {profile.spiritualProgress
+        ?.consecrationStarted
+
+        ? "Consagração em andamento"
+
+        : "Consagração ainda não iniciada"}
 
       </p>
 
-      {/* STATS */}
+     </div>
 
-      <div className={styles.statsBox}>
+     {/* STATS */}
 
-        <div className={styles.stat}>
+     <div className={styles.statsGrid}>
 
-          <span className={styles.statLabel}>
-            Orações rezadas
-          </span>
+      <div className={styles.statCard}>
 
-          <span className={styles.statValue}>
-            {prayers}
-          </span>
+       <span className={styles.statLabel}>
+        Orações
+       </span>
 
-        </div>
-
-        <div className={styles.stat}>
-
-          <span className={styles.statLabel}>
-            Terços rezados
-          </span>
-
-          <span className={styles.statValue}>
-            {rosaries}
-          </span>
-
-        </div>
-
-        {lastPrayerFormatted && (
-
-        <div className={styles.stat}>
-
-          <span className={styles.statLabel}>
-            Última oração
-          </span>
-
-          <span className={styles.statValueSmall}>
-            {lastPrayerFormatted}
-          </span>
-
-        </div>
-
-        )}
+       <strong className={styles.statValue}>
+        {prayers}
+       </strong>
 
       </div>
 
-    </div>
+      <div className={styles.statCard}>
 
+       <span className={styles.statLabel}>
+        Terços
+       </span>
+
+       <strong className={styles.statValue}>
+        {rosaries}
+       </strong>
+
+      </div>
+
+      {lastPrayerFormatted && (
+
+       <div
+        className={`${styles.statCard} ${styles.full}`}
+       >
+
+        <span className={styles.statLabel}>
+         Última oração
+        </span>
+
+        <strong
+         className={styles.statValueSmall}
+        >
+         {lastPrayerFormatted}
+        </strong>
+
+       </div>
+
+      )}
+
+     </div>
+
+    </div>
 
     {/* CONTA */}
 
     <div className={styles.card}>
 
-     <h3>Conta</h3>
+     <div className={styles.cardTitle}>
+
+      <User size={18}/>
+
+      <h3>Conta</h3>
+
+     </div>
 
      <p className={styles.userId}>
+
       ID: {profile.id}
+
      </p>
 
     </div>
@@ -413,7 +547,9 @@ const streakInfo = getStreakInfo(streak)
      className={styles.logout}
      onClick={logout}
     >
+
      Sair da conta
+
     </button>
 
    </div>
@@ -423,4 +559,5 @@ const streakInfo = getStreakInfo(streak)
   </div>
 
  )
+
 }

@@ -1,280 +1,569 @@
 .page{
 
- min-height:100dvh;
+  min-height:100dvh;
 
- display:flex;
- flex-direction:column;
- align-items:center;
+  width:100%;
 
- padding:40px 16px 0;
+  display:flex;
 
- width:100%;
+  flex-direction:column;
+
+  align-items:center;
+
+  padding:
+    calc(env(safe-area-inset-top) + 34px)
+    18px
+    calc(env(safe-area-inset-bottom) + 10px);
+
+  background:
+    linear-gradient(
+      180deg,
+      #f5f1e9 0%,
+      #f3eee5 100%
+    );
+
+  box-sizing:border-box;
 
 }
 
-
-/* CONTAINER */
+/*
+=========================
+CONTAINER
+=========================
+*/
 
 .container{
 
- width:100%;
- max-width:680px;
+  width:100%;
 
- margin:0 auto;
+  max-width:760px;
 
- padding:36px 28px;
+  background:
+    rgba(255,255,255,.92);
 
- background:var(--oratio-card-bg);
+  backdrop-filter:blur(10px);
 
- border-radius:var(--oratio-radius-lg);
+  border:1px solid #ebe2d5;
 
- box-shadow:var(--oratio-shadow-medium);
+  border-radius:32px;
 
- border:1px solid var(--oratio-card-border);
+  padding:34px;
 
- box-sizing:border-box;
+  box-shadow:
+    0 14px 40px rgba(0,0,0,.06);
 
-}
-
-
-/* TITULO */
-
-h1{
-
- text-align:center;
-
- font-family:var(--oratio-font-title);
-
- font-size:34px;
-
- color:var(--oratio-primary);
-
- margin-bottom:28px;
-
- line-height:1.2;
-
- /* evita quebrar layout com nomes grandes */
- overflow-wrap:break-word;
- word-break:break-word;
- hyphens:auto;
+  box-sizing:border-box;
 
 }
 
+/*
+=========================
+BACK
+=========================
+*/
 
-/* LISTA */
+.backButton{
+
+  border:none;
+
+  background:transparent;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:6px;
+
+  color:#9f191b;
+
+  font-size:15px;
+
+  font-weight:600;
+
+  cursor:pointer;
+
+  margin-bottom:24px;
+
+  transition:.2s;
+
+}
+
+.backButton:hover{
+
+  opacity:.75;
+
+  transform:translateX(-2px);
+
+}
+
+/*
+=========================
+HEADER
+=========================
+*/
+
+.header{
+
+  margin-bottom:34px;
+
+}
+
+.badge{
+
+  width:max-content;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  background:#f9f0f0;
+
+  color:#a11c1c;
+
+  padding:10px 16px;
+
+  border-radius:999px;
+
+  margin-bottom:20px;
+
+  font-size:14px;
+
+  font-weight:600;
+
+}
+
+.header h1{
+
+  font-family:
+    var(--oratio-font-title);
+
+  font-size:52px;
+
+  line-height:1;
+
+  color:#a11c1c;
+
+  margin-bottom:16px;
+
+  letter-spacing:-1px;
+
+}
+
+.header p{
+
+  max-width:560px;
+
+  color:#7d7468;
+
+  font-size:16px;
+
+  line-height:1.7;
+
+}
+
+/*
+=========================
+CATEGORIES
+=========================
+*/
 
 .categories{
 
- display:flex;
- flex-direction:column;
+  display:flex;
 
- gap:16px;
+  flex-direction:column;
 
- width:100%;
+  gap:18px;
 
 }
 
-
-/* CARD */
+/*
+=========================
+CARD
+=========================
+*/
 
 .card{
 
- background:var(--oratio-secondary);
+  width:100%;
 
- padding:20px 22px;
+  border:none;
 
- border-radius:var(--oratio-radius-md);
+  background:
+    linear-gradient(
+      180deg,
+      #faf7f2,
+      #f6f1e9
+    );
 
- cursor:pointer;
+  border:1px solid #eadfce;
 
- font-family:var(--oratio-font-title);
+  border-radius:24px;
 
- font-size:18px;
+  padding:22px;
 
- border-left:5px solid var(--oratio-primary);
+  display:flex;
 
- transition:var(--oratio-transition);
+  align-items:center;
 
- min-height:60px;
+  justify-content:space-between;
 
- display:flex;
- align-items:center;
+  cursor:pointer;
 
- width:100%;
+  transition:.25s;
 
- box-sizing:border-box;
+  text-align:left;
 
 }
 
 .card:hover{
 
- transform:translateY(-2px);
+  transform:translateY(-3px);
 
- box-shadow:var(--oratio-shadow-soft);
+  border-color:#d9c8b2;
+
+  box-shadow:
+    0 12px 26px rgba(0,0,0,.06);
 
 }
 
+.cardLeft{
 
-/* VAZIO */
+  display:flex;
+
+  align-items:center;
+
+  gap:18px;
+
+}
+
+.iconBox{
+
+  width:58px;
+
+  height:58px;
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #b0181a,
+      #8e1315
+    );
+
+  color:white;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  flex-shrink:0;
+
+  box-shadow:
+    0 10px 22px rgba(176,24,26,.18);
+
+}
+
+.cardInfo{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:4px;
+
+}
+
+.cardInfo strong{
+
+  font-family:
+    var(--oratio-font-title);
+
+  font-size:24px;
+
+  color:#3d342d;
+
+}
+
+.cardInfo span{
+
+  color:#857a6d;
+
+  font-size:14px;
+
+}
+
+.arrow{
+
+  color:#b0181a;
+
+  font-size:24px;
+
+  font-weight:700;
+
+}
+
+/*
+=========================
+EMPTY
+=========================
+*/
 
 .empty{
 
- text-align:center;
+  background:#faf7f2;
 
- color:var(--oratio-text-soft);
+  border:1px dashed #d7c8b6;
 
- font-size:15px;
+  border-radius:22px;
 
-}
+  padding:42px 24px;
 
+  text-align:center;
 
-/* LOADING */
+  color:#7d7468;
 
-.loading{
+  display:flex;
 
- display:flex;
+  flex-direction:column;
 
- align-items:center;
- justify-content:center;
+  align-items:center;
 
- height:100dvh;
-
- font-size:18px;
-
- color:var(--oratio-text-soft);
-
- text-align:center;
-
- padding:20px;
+  gap:14px;
 
 }
 
+/*
+=========================
+SKELETON
+=========================
+*/
 
-/* BOTÃO VOLTAR */
+.skeleton{
 
-.back{
+  width:100%;
 
- margin-bottom:20px;
+  height:108px;
 
- background:none;
- border:none;
+  border-radius:24px;
 
- color:var(--oratio-primary);
+  background:
+    linear-gradient(
+      90deg,
+      #f2ece2 25%,
+      #f8f4ee 50%,
+      #f2ece2 75%
+    );
 
- cursor:pointer;
+  background-size:400% 100%;
 
- font-size:16px;
-
- padding:6px 10px;
-
- border-radius:8px;
-
- transition:0.2s;
-
- align-self:flex-start;
-
-}
-
-.back:hover{
- opacity:.7;
-}
-
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:720px){
-
-.page{
- padding-top:28px;
-}
-
-.container{
-
- margin:0;
-
- padding:28px 20px;
-
- border-radius:18px;
+  animation:
+    shimmer 1.4s infinite linear;
 
 }
 
-h1{
- font-size:28px;
-}
+@keyframes shimmer{
 
-.card{
+  0%{
+    background-position:100% 0;
+  }
 
- font-size:17px;
-
- padding:18px 18px;
-
- min-height:56px;
+  100%{
+    background-position:-100% 0;
+  }
 
 }
 
-}
-
-
-/* MOBILE PEQUENO */
-
-@media(max-width:420px){
-
-.page{
- padding-top:20px;
-}
-
-.container{
-
- padding:24px 16px;
-
-}
-
-h1{
- font-size:24px;
-}
-
-.card{
-
- font-size:16px;
-
- padding:16px;
-
- min-height:52px;
-
-}
-
-}
-
-
-/* SAFE AREA PARA PWA */
-
-@supports(padding:max(0px)){
-
-.page{
-
- padding-left:max(16px, env(safe-area-inset-left));
- padding-right:max(16px, env(safe-area-inset-right));
-
-}
-
-.container{
-
- padding-left:max(20px, env(safe-area-inset-left));
- padding-right:max(20px, env(safe-area-inset-right));
-
-}
-
-}
-
-
-/* ESPAÇO PARA NAVBAR */
+/*
+=========================
+SPACER
+=========================
+*/
 
 .pageSpacer{
 
- height:110px;
+  height:110px;
 
- flex-shrink:0;
+  flex-shrink:0;
+
+}
+
+/*
+=========================
+TABLET
+=========================
+*/
+
+@media(max-width:768px){
+
+  .page{
+
+    padding:
+      calc(env(safe-area-inset-top) + 22px)
+      14px
+      calc(env(safe-area-inset-bottom) + 12px);
+
+  }
+
+  .container{
+
+    padding:26px 20px;
+
+    border-radius:26px;
+
+  }
+
+  .header h1{
+
+    font-size:40px;
+
+  }
+
+  .header p{
+
+    font-size:15px;
+
+    line-height:1.6;
+
+  }
+
+  .card{
+
+    padding:18px;
+
+    border-radius:22px;
+
+  }
+
+  .iconBox{
+
+    width:52px;
+
+    height:52px;
+
+    border-radius:16px;
+
+  }
+
+  .cardInfo strong{
+
+    font-size:21px;
+
+  }
+
+}
+
+/*
+=========================
+MOBILE
+=========================
+*/
+
+@media(max-width:480px){
+
+  .container{
+
+    padding:22px 16px;
+
+    border-radius:24px;
+
+  }
+
+  .header{
+
+    margin-bottom:28px;
+
+  }
+
+  .header h1{
+
+    font-size:34px;
+
+  }
+
+  .header p{
+
+    font-size:14px;
+
+  }
+
+  .badge{
+
+    font-size:13px;
+
+    padding:9px 14px;
+
+  }
+
+  .card{
+
+    padding:16px;
+
+    border-radius:20px;
+
+  }
+
+  .cardLeft{
+
+    gap:14px;
+
+  }
+
+  .iconBox{
+
+    width:48px;
+
+    height:48px;
+
+    border-radius:15px;
+
+  }
+
+  .cardInfo strong{
+
+    font-size:18px;
+
+    line-height:1.2;
+
+  }
+
+  .cardInfo span{
+
+    font-size:13px;
+
+  }
+
+  .arrow{
+
+    font-size:20px;
+
+  }
+
+}
+
+/*
+=========================
+VERY SMALL DEVICES
+=========================
+*/
+
+@media(max-width:360px){
+
+  .header h1{
+
+    font-size:30px;
+
+  }
+
+  .cardInfo strong{
+
+    font-size:16px;
+
+  }
 
 }

@@ -1,278 +1,537 @@
-/* =============================
-PAGE
-============================= */
-
 .page{
 
- min-height:100vh;
+  min-height:100dvh;
 
- display:flex;
- flex-direction:column;
+  width:100%;
 
- align-items:center;
+  display:flex;
 
- padding:20px 16px 0;
+  flex-direction:column;
 
- box-sizing:border-box;
+  align-items:center;
+
+  padding:
+    calc(env(safe-area-inset-top) + 28px)
+    18px
+    calc(env(safe-area-inset-bottom) + 10px);
+
+  background:
+    linear-gradient(
+      180deg,
+      #f5f1e9 0%,
+      #f3eee5 100%
+    );
+
+  box-sizing:border-box;
 
 }
 
-
-/* =============================
+/*
+=========================
 CONTAINER
-============================= */
+=========================
+*/
 
 .container{
 
- width:100%;
- max-width:680px;
+  width:100%;
 
- margin:20px auto;
+  max-width:760px;
 
- padding:28px 22px;
+  background:
+    rgba(255,255,255,.92);
 
- background:var(--oratio-card-bg);
+  backdrop-filter:blur(10px);
 
- border-radius:var(--oratio-radius-lg);
+  border:1px solid #ebe2d5;
 
- border:1px solid var(--oratio-card-border);
+  border-radius:32px;
 
- box-shadow:var(--oratio-shadow-medium);
+  padding:34px;
 
- box-sizing:border-box;
+  box-shadow:
+    0 14px 40px rgba(0,0,0,.06);
+
+  box-sizing:border-box;
 
 }
 
-
-/* =============================
+/*
+=========================
 BACK BUTTON
-============================= */
+=========================
+*/
 
-.back{
+.backButton{
 
- margin-bottom:18px;
+  border:none;
 
- background:none;
- border:none;
+  background:transparent;
 
- color:var(--oratio-primary);
+  display:flex;
 
- cursor:pointer;
+  align-items:center;
 
- font-size:15px;
+  gap:6px;
 
- padding:6px 8px;
+  color:#9f191b;
 
- border-radius:8px;
+  font-size:15px;
 
- transition:.2s;
+  font-weight:600;
 
-}
+  cursor:pointer;
 
-.back:hover{
- opacity:.7;
-}
+  margin-bottom:24px;
 
-
-/* =============================
-TITLE
-============================= */
-
-h1{
-
- font-family:var(--oratio-font-title);
-
- font-size:32px;
-
- color:var(--oratio-primary);
-
- margin-bottom:26px;
-
- text-align:center;
-
- /* quebra palavras grandes */
- overflow-wrap:break-word;
- word-break:break-word;
-
- /* adiciona hífen automático */
- hyphens:auto;
+  transition:.2s;
 
 }
 
+.backButton:hover{
 
-/* =============================
+  opacity:.75;
+
+  transform:translateX(-2px);
+
+}
+
+/*
+=========================
+HEADER
+=========================
+*/
+
+.header{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:18px;
+
+  margin-bottom:30px;
+
+}
+
+.iconBox{
+
+  width:64px;
+
+  height:64px;
+
+  border-radius:20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #b0181a,
+      #8e1315
+    );
+
+  color:white;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  flex-shrink:0;
+
+  box-shadow:
+    0 10px 22px rgba(176,24,26,.18);
+
+}
+
+.header h1{
+
+  font-family:
+    var(--oratio-font-title);
+
+  font-size:44px;
+
+  line-height:1.1;
+
+  color:#a11c1c;
+
+  margin-bottom:8px;
+
+  letter-spacing:-1px;
+
+  overflow-wrap:break-word;
+
+  word-break:break-word;
+
+}
+
+.header p{
+
+  color:#7d7468;
+
+  font-size:15px;
+
+}
+
+/*
+=========================
 PRAYER BOX
-============================= */
+=========================
+*/
 
-.prayer{
+.prayerBox{
 
- background:var(--oratio-secondary);
+  background:
+    linear-gradient(
+      180deg,
+      #faf7f2,
+      #f6f1e9
+    );
 
- padding:22px;
+  border:1px solid #eadfce;
 
- border-radius:var(--oratio-radius-md);
+  border-radius:28px;
 
- border-left:4px solid var(--oratio-primary);
+  padding:28px;
 
- box-shadow:var(--oratio-shadow-soft);
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.04);
 
 }
 
-
-/* =============================
+/*
+=========================
 TEXT
-============================= */
+=========================
+*/
 
 .text{
 
- white-space:pre-wrap;
+  white-space:pre-wrap;
 
- font-size:16px;
+  font-size:18px;
 
- line-height:1.85;
+  line-height:2;
 
- font-family:Georgia,serif;
+  font-family:
+    Georgia,
+    serif;
 
- color:#333;
+  color:#3b332d;
+
+  margin:0;
 
 }
 
-
-/* =============================
+/*
+=========================
 COMPLETE BUTTON
-============================= */
+=========================
+*/
 
-.complete{
+.completeButton{
 
- margin-top:26px;
+  margin-top:28px;
 
- width:100%;
+  width:100%;
 
- background:var(--oratio-primary);
+  height:62px;
 
- color:white;
+  border:none;
 
- padding:15px;
+  border-radius:22px;
 
- border:none;
+  background:
+    linear-gradient(
+      135deg,
+      #b0181a,
+      #8f1315
+    );
 
- border-radius:10px;
+  color:white;
 
- font-size:16px;
+  font-size:17px;
 
- cursor:pointer;
+  font-weight:700;
 
- transition:.2s;
+  cursor:pointer;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:10px;
+
+  transition:.25s;
+
+  box-shadow:
+    0 12px 24px rgba(176,24,26,.20);
 
 }
 
-.complete:hover{
+.completeButton:hover{
 
- background:var(--oratio-primary-dark);
-
- transform:translateY(-2px);
+  transform:translateY(-2px);
 
 }
 
+.completeButton:disabled{
 
-/* =============================
+  opacity:.75;
+
+  cursor:not-allowed;
+
+}
+
+/*
+=========================
+SPINNER
+=========================
+*/
+
+.buttonSpinner{
+
+  animation:
+    spin 1s linear infinite;
+
+}
+
+.spinner{
+
+  animation:
+    spin 1s linear infinite;
+
+  color:#b0181a;
+
+}
+
+@keyframes spin{
+
+  from{
+    transform:rotate(0deg);
+  }
+
+  to{
+    transform:rotate(360deg);
+  }
+
+}
+
+/*
+=========================
 LOADING
-============================= */
+=========================
+*/
 
-.loading{
+.loadingPage{
 
- display:flex;
+  min-height:100dvh;
 
- flex-direction:column;
+  display:flex;
 
- align-items:center;
- justify-content:center;
+  align-items:center;
 
- height:100vh;
+  justify-content:center;
 
- font-size:17px;
+  padding:20px;
 
- color:var(--oratio-text-soft);
-
- gap:20px;
-
-}
-
-
-/* =============================
-TABLET
-============================= */
-
-@media(max-width:768px){
-
-.container{
-
- padding:24px 20px;
+  background:
+    linear-gradient(
+      180deg,
+      #f5f1e9 0%,
+      #f3eee5 100%
+    );
 
 }
 
-h1{
- font-size:28px;
-}
+.loadingCard{
 
-.text{
- font-size:15.8px;
-}
+  background:white;
 
-}
+  border-radius:28px;
 
+  padding:42px 34px;
 
-/* =============================
-SMALL MOBILE
-============================= */
+  display:flex;
 
-@media(max-width:420px){
+  flex-direction:column;
 
-.page{
- padding:18px 14px 0;
-}
+  align-items:center;
 
-.container{
+  gap:18px;
 
- padding:22px 18px;
+  border:1px solid #ebe2d5;
 
-}
+  box-shadow:
+    0 14px 40px rgba(0,0,0,.06);
 
-h1{
- font-size:24px;
-}
+  color:#7d7468;
 
-.text{
- font-size:15px;
- line-height:1.8;
-}
+  text-align:center;
 
 }
 
-
-/* =============================
-SAFE AREA (iPhone notch)
-============================= */
-
-@supports(padding:max(0px)){
-
-.page{
-
- padding-left:max(16px, env(safe-area-inset-left));
- padding-right:max(16px, env(safe-area-inset-right));
-
-}
-
-}
-
-
-/* =============================
-SPACE FOR NAVBAR
-============================= */
+/*
+=========================
+SPACER
+=========================
+*/
 
 .pageSpacer{
 
- height:110px;
- flex-shrink:0;
+  height:110px;
+
+  flex-shrink:0;
+
+}
+
+/*
+=========================
+TABLET
+=========================
+*/
+
+@media(max-width:768px){
+
+  .page{
+
+    padding:
+      calc(env(safe-area-inset-top) + 22px)
+      14px
+      calc(env(safe-area-inset-bottom) + 12px);
+
+  }
+
+  .container{
+
+    padding:26px 20px;
+
+    border-radius:26px;
+
+  }
+
+  .header{
+
+    align-items:flex-start;
+
+  }
+
+  .header h1{
+
+    font-size:34px;
+
+  }
+
+  .prayerBox{
+
+    padding:22px;
+
+  }
+
+  .text{
+
+    font-size:16px;
+
+    line-height:1.9;
+
+  }
+
+}
+
+/*
+=========================
+MOBILE
+=========================
+*/
+
+@media(max-width:480px){
+
+  .container{
+
+    padding:22px 16px;
+
+    border-radius:24px;
+
+  }
+
+  .header{
+
+    gap:14px;
+
+    margin-bottom:24px;
+
+  }
+
+  .iconBox{
+
+    width:54px;
+
+    height:54px;
+
+    border-radius:16px;
+
+  }
+
+  .header h1{
+
+    font-size:28px;
+
+  }
+
+  .header p{
+
+    font-size:14px;
+
+  }
+
+  .prayerBox{
+
+    padding:20px 18px;
+
+    border-radius:22px;
+
+  }
+
+  .text{
+
+    font-size:15.5px;
+
+    line-height:1.9;
+
+  }
+
+  .completeButton{
+
+    height:58px;
+
+    border-radius:20px;
+
+    font-size:16px;
+
+  }
+
+}
+
+/*
+=========================
+VERY SMALL DEVICES
+=========================
+*/
+
+@media(max-width:360px){
+
+  .header h1{
+
+    font-size:24px;
+
+  }
+
+  .text{
+
+    font-size:15px;
+
+  }
 
 }

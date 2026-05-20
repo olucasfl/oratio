@@ -1,169 +1,278 @@
 import { useEffect,useState } from "react"
-import { useParams,useNavigate } from "react-router-dom"
+import {
+  useParams,
+  useNavigate
+} from "react-router-dom"
+
+import {
+  ChevronLeft,
+  Search,
+  BookOpen,
+  Sparkles
+} from "lucide-react"
 
 import styles from "./CategoryPrayers.module.css"
 
-import { getPrayersByCategory } from "../../services/prayersService"
+import {
+  getPrayersByCategory
+} from "../../services/prayersService"
 
-import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
+import BottomNavbar
+from "../../components/BottomNavbar/BottomNavbar"
 
 /* =========================
 NORMALIZAR TEXTO
-remove acentos e lowercase
 ========================= */
 
-function normalizeText(text:string){
+function normalizeText(
+  text:string
+){
 
- return text
-  .normalize("NFD")
-  .replace(/[\u0300-\u036f]/g,"")
-  .toLowerCase()
+  return text
+    .normalize("NFD")
+    .replace(
+      /[\u0300-\u036f]/g,
+      ""
+    )
+    .toLowerCase()
 
 }
 
 export default function CategoryPrayers(){
 
- const { slug } = useParams()
+  const { slug } = useParams()
 
- const navigate = useNavigate()
+  const navigate = useNavigate()
 
- const [prayers,setPrayers] = useState<any[]>([])
- const [loading,setLoading] = useState(true)
+  const [prayers,setPrayers] =
+    useState<any[]>([])
 
- const [search,setSearch] = useState("")
+  const [loading,setLoading] =
+    useState(true)
 
- useEffect(()=>{
-  load()
- },[slug])
+  const [search,setSearch] =
+    useState("")
 
- async function load(){
+  useEffect(()=>{
 
-  if(!slug) return
+    load()
 
-  try{
+  },[slug])
 
-   const data = await getPrayersByCategory(slug)
+  async function load(){
 
-   setPrayers(data || [])
+    if(!slug){
+      return
+    }
 
-  }catch{
+    try{
 
-   console.log("Erro ao carregar orações")
+      const data =
+        await getPrayersByCategory(slug)
 
-  }finally{
+      setPrayers(data || [])
 
-   setLoading(false)
+    }catch{
+
+      console.log(
+        "Erro ao carregar orações"
+      )
+
+    }finally{
+
+      setLoading(false)
+
+    }
 
   }
 
- }
+  /*
+  =========================
+  FILTRO
+  =========================
+  */
 
- /* =========================
- FILTRO DE BUSCA
- ========================= */
+  const searchText =
+    normalizeText(search.trim())
 
- const searchText = normalizeText(search.trim())
+  const filteredPrayers =
+    !searchText
+      ? prayers
+      : prayers.filter((p:any)=>{
 
- const filteredPrayers = !searchText
-  ? prayers
-  : prayers.filter((p:any)=>{
+          const title =
+            normalizeText(
+              p?.title || ""
+            )
 
-     const prayerTitle = normalizeText(p?.title || "")
+          return title.includes(
+            searchText
+          )
 
-     return prayerTitle.includes(searchText)
-
-    })
-
- if(loading){
+        })
 
   return(
 
-   <div className={styles.loading}>
+    <main className={styles.page}>
 
-    <p>Carregando orações...</p>
+      <section className={styles.container}>
 
-    <button
-     className={styles.back}
-     onClick={()=>navigate(-1)}
-    >
-     ← Voltar
-    </button>
+        <button
+          className={styles.backButton}
+          onClick={()=>navigate(-1)}
+        >
 
-   </div>
+          <ChevronLeft size={18}/>
+
+          <span>
+            Voltar
+          </span>
+
+        </button>
+
+        <div className={styles.header}>
+
+          <div className={styles.badge}>
+
+            <Sparkles size={17}/>
+
+            <span>
+              Biblioteca Católica
+            </span>
+
+          </div>
+
+          <h1>
+            Orações
+          </h1>
+
+          <p>
+            Explore orações,
+            devoções e momentos
+            de espiritualidade.
+          </p>
+
+        </div>
+
+        {/* =========================
+        BUSCA
+        ========================= */}
+
+        <div className={styles.searchWrapper}>
+
+          <div className={styles.searchBox}>
+
+            <Search size={18}/>
+
+            <input
+              type="text"
+              placeholder="Pesquisar oração..."
+              value={search}
+              onChange={(e)=>
+                setSearch(
+                  e.target.value
+                )
+              }
+            />
+
+          </div>
+
+        </div>
+
+        {/* =========================
+        LISTA
+        ========================= */}
+
+        <div className={styles.list}>
+
+          {loading && (
+
+            <>
+              {[1,2,3,4].map(item=>(
+
+                <div
+                  key={item}
+                  className={styles.skeleton}
+                />
+
+              ))}
+            </>
+
+          )}
+
+          {!loading &&
+          filteredPrayers.length === 0 && (
+
+            <div className={styles.empty}>
+
+              <BookOpen size={34}/>
+
+              <p>
+                Nenhuma oração
+                encontrada.
+              </p>
+
+            </div>
+
+          )}
+
+          {!loading &&
+          filteredPrayers.map(p=>(
+
+            <button
+              key={p.id}
+              className={styles.card}
+              onClick={()=>
+                navigate(
+                  `/oratio/prayer/${p.id}`
+                )
+              }
+            >
+
+              <div className={styles.cardLeft}>
+
+                <div
+                  className={styles.iconBox}
+                >
+
+                  <BookOpen size={20}/>
+
+                </div>
+
+                <div
+                  className={styles.cardInfo}
+                >
+
+                  <strong>
+                    {p.title}
+                  </strong>
+
+                  <span>
+                    Abrir oração
+                  </span>
+
+                </div>
+
+              </div>
+
+              <div className={styles.arrow}>
+                →
+              </div>
+
+            </button>
+
+          ))}
+
+        </div>
+
+      </section>
+
+      <div className={styles.pageSpacer}/>
+
+      <BottomNavbar/>
+
+    </main>
 
   )
-
- }
-
- return(
-
-  <div className={styles.page}>
-
-   <div className={styles.container}>
-
-    <button
-     className={styles.back}
-     onClick={()=>navigate(-1)}
-    >
-     ← Voltar
-    </button>
-
-    <h1>Orações</h1>
-
-    {/* =========================
-    BUSCA
-    ========================= */}
-
-    <div className={styles.searchBox}>
-
-     <input
-      type="text"
-      placeholder="Pesquisar oração..."
-      value={search}
-      onChange={(e)=>setSearch(e.target.value)}
-      className={styles.searchInput}
-     />
-
-    </div>
-
-    {/* =========================
-    LISTA
-    ========================= */}
-
-    <div className={styles.list}>
-
-     {filteredPrayers.length === 0 && (
-
-      <p className={styles.empty}>
-       Nenhuma oração encontrada.
-      </p>
-
-     )}
-
-     {filteredPrayers.map(p=>(
-
-      <div
-       key={p.id}
-       className={styles.card}
-       onClick={()=>navigate(`/oratio/prayer/${p.id}`)}
-      >
-
-       {p.title}
-
-      </div>
-
-     ))}
-
-    </div>
-
-   </div>
-
-   <div className={styles.pageSpacer}></div>
-
-   <BottomNavbar/>
-
-  </div>
-
- )
 
 }

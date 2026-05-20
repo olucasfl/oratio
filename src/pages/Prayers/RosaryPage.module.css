@@ -1,35 +1,89 @@
-.page {
-  padding:40px 24px;
+.page{
 
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+ min-height:100dvh;
 
-  background: var(--oratio-background);
+ padding:
+  max(28px, env(safe-area-inset-top))
+  max(18px, env(safe-area-inset-right))
+  0
+  max(18px, env(safe-area-inset-left));
+
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+
+ background:
+ linear-gradient(
+  180deg,
+  #f7f1e8 0%,
+  #f2ebe0 100%
+ );
+
+ overflow-x:hidden;
+
 }
+
+/* =========================
+CONTAINER
+========================= */
 
 .container{
 
  width:100%;
- max-width:720px;
+ max-width:760px;
 
- background:var(--oratio-card-bg);
+ background:
+ rgba(255,255,255,.82);
 
- border-radius:var(--oratio-radius-lg);
+ backdrop-filter:blur(14px);
 
- border:1px solid var(--oratio-card-border);
+ border-radius:32px;
 
- box-shadow:var(--oratio-shadow-medium);
+ border:1px solid rgba(255,255,255,.5);
 
- padding:36px;
+ box-shadow:
+  0 20px 60px rgba(0,0,0,.08);
+
+ padding:34px 28px;
 
  text-align:center;
 
  overflow:hidden;
 
+ position:relative;
+
 }
 
-/* VOLTAR */
+/* brilho decorativo */
+
+.container::before{
+
+ content:"";
+
+ position:absolute;
+
+ top:-120px;
+ right:-120px;
+
+ width:240px;
+ height:240px;
+
+ border-radius:50%;
+
+ background:
+ radial-gradient(
+  circle,
+  rgba(176,24,26,.12) 0%,
+  transparent 72%
+ );
+
+ pointer-events:none;
+
+}
+
+/* =========================
+BACK BUTTON
+========================= */
 
 .back{
 
@@ -40,13 +94,97 @@
 
  font-family:var(--oratio-font-title);
 
+ display:flex;
+ align-items:center;
+ gap:8px;
+
  cursor:pointer;
 
- margin-bottom:16px;
+ margin-bottom:22px;
+
+ font-size:15px;
+ font-weight:600;
+
+ transition:.2s ease;
+
+ -webkit-tap-highlight-color:transparent;
 
 }
 
-/* ROSARIO */
+.back:hover{
+
+ opacity:.8;
+ transform:translateX(-2px);
+
+}
+
+/* =========================
+PROGRESS
+========================= */
+
+.progressWrapper{
+
+ margin-bottom:24px;
+
+ display:flex;
+ flex-direction:column;
+
+ gap:10px;
+
+}
+
+.progressTop{
+
+ display:flex;
+
+ justify-content:space-between;
+ align-items:center;
+
+ font-size:14px;
+ font-weight:700;
+
+ color:#6e6256;
+
+}
+
+.progressBar{
+
+ width:100%;
+ height:14px;
+
+ background:#eadfce;
+
+ border-radius:999px;
+
+ overflow:hidden;
+
+ position:relative;
+
+}
+
+.progressFill{
+
+ height:100%;
+
+ border-radius:999px;
+
+ background:
+ linear-gradient(
+  90deg,
+  #b0181a,
+  #d14143
+ );
+
+ transition:.35s ease;
+
+ box-shadow:
+  0 0 18px rgba(176,24,26,.35);
+
+}
+
+/* =========================
+ROSARY BEADS
+========================= */
 
 .rosary{
 
@@ -58,15 +196,15 @@
 
  gap:8px;
 
- margin-bottom:20px;
+ margin-bottom:28px;
 
 }
 
 .bead,
 .beadActive{
 
- width:26px;
- height:26px;
+ width:28px;
+ height:28px;
 
  border-radius:50%;
 
@@ -75,50 +213,64 @@
  justify-content:center;
 
  font-size:12px;
- font-weight:600;
+ font-weight:700;
 
- transition:all .25s ease;
+ transition:.25s ease;
 
 }
 
 .bead{
 
- background:#e2e2e2;
- color:#666;
+ background:#e7dfd4;
+
+ color:#7b7065;
 
 }
 
 .beadActive{
 
- background:var(--oratio-primary);
+ background:
+ linear-gradient(
+  135deg,
+  #b0181a,
+  #871214
+ );
+
  color:white;
 
- transform:scale(1.15);
+ transform:scale(1.12);
 
- box-shadow:0 0 8px rgba(0,0,0,.25);
+ box-shadow:
+  0 6px 14px rgba(176,24,26,.28);
 
 }
 
-/* ANIMAÇÕES */
+/* =========================
+ANIMATIONS
+========================= */
 
 .slideNext{
- animation:slideNext .25s ease-out;
+ animation:slideNext .28s ease;
 }
 
 .slidePrev{
- animation:slidePrev .25s ease-out;
+ animation:slidePrev .28s ease;
 }
 
 @keyframes slideNext{
 
  from{
   opacity:0;
-  transform:translateX(40px);
+  transform:
+   translateX(34px)
+   scale(.98);
  }
 
  to{
   opacity:1;
-  transform:translateX(0);
+  transform:
+   translateX(0)
+   scale(1);
  }
 
 }
@@ -127,266 +279,294 @@
 
  from{
   opacity:0;
-  transform:translateX(-40px);
+  transform:
+   translateX(-34px)
+   scale(.98);
  }
 
  to{
   opacity:1;
-  transform:translateX(0);
+  transform:
+   translateX(0)
+   scale(1);
  }
 
 }
 
-/* ORAÇÃO */
+/* =========================
+PRAYER / MYSTERY CARD
+========================= */
 
-.prayer h2{
+.prayer,
+.mystery{
+
+ background:
+ linear-gradient(
+  180deg,
+  rgba(255,255,255,.72),
+  rgba(250,247,242,.95)
+ );
+
+ border:1px solid #ede2d5;
+
+ border-radius:28px;
+
+ padding:34px 28px;
+
+ box-shadow:
+  0 10px 30px rgba(0,0,0,.04);
+
+}
+
+/* =========================
+TITLE
+========================= */
+
+.prayer h2,
+.mystery h2{
 
  font-family:var(--oratio-font-title);
 
- font-size:42px;
-
  color:var(--oratio-primary);
+
+ line-height:1.15;
+
+ letter-spacing:-0.5px;
 
  margin-bottom:18px;
 
 }
 
-.text {
+.prayer h2{
+ font-size:42px;
+}
+
+.mystery h2{
+ font-size:38px;
+}
+
+/* =========================
+TEXT
+========================= */
+
+.text{
 
  white-space:pre-wrap;
 
  font-family:Georgia,serif;
 
- font-size:18px;
+ font-size:20px;
 
- margin-top: 14px;
+ line-height:2.15;
 
- line-height:2.1;
+ letter-spacing:.2px;
 
- letter-spacing:0.3px;
+ color:#372f29;
 
-}
-
-/* MISTERIO */
-
-.mystery h2{
-
- font-family:var(--oratio-font-title);
-
- font-size:36px;
-
- color:var(--oratio-primary);
-
- margin-bottom:12px;
+ text-align:left;
 
 }
 
-.mystery p{
+/* =========================
+BOTTOM BAR
+========================= */
 
- font-size:18px;
+.bottomBar{
 
- color:var(--oratio-text-soft);
+ position:fixed;
+
+ left:50%;
+ bottom:max(14px, env(safe-area-inset-bottom));
+
+ transform:translateX(-50%);
+
+ width:calc(100% - 22px);
+ max-width:760px;
+
+ display:flex;
+ gap:12px;
+
+ padding:14px;
+
+ z-index:100;
+
+ background:
+ rgba(255,255,255,.84);
+
+ backdrop-filter:blur(16px);
+
+ border:1px solid rgba(255,255,255,.55);
+
+ border-radius:24px;
+
+ box-shadow:
+  0 14px 40px rgba(0,0,0,.12);
 
 }
 
-/* CONTROLES */
-
-.controls {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 50px;
-}
+/* =========================
+BUTTONS
+========================= */
 
 .prev,
 .next,
-.finish {
+.finish{
 
-  flex: 1;
+ flex:1;
 
-  padding: 16px;
+ height:58px;
 
-  border-radius: 16px;
+ border:none;
 
-  font-size: 16px;
-  font-weight: 600;
+ border-radius:18px;
 
-  border: none;
+ font-size:16px;
+ font-weight:700;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
 
-  cursor: pointer;
+ cursor:pointer;
 
-  transition: all .15s ease;
+ transition:.18s ease;
+
+ -webkit-tap-highlight-color:transparent;
 
 }
 
-/* CORES */
+.prev{
 
-.prev {
-  background: #f2f2f2;
-  color: #444;
+ background:#f1ece5;
+
+ color:#4d433a;
+
 }
 
 .next,
-.finish {
+.finish{
 
-  background: linear-gradient(135deg, #b91c1c, #7f1d1d);
+ background:
+ linear-gradient(
+  135deg,
+  #b0181a,
+  #851113
+ );
 
-  color: white;
+ color:white;
 
-  box-shadow: 0 4px 12px rgba(185,28,28,0.3);
+ box-shadow:
+  0 10px 24px rgba(176,24,26,.24);
 
 }
 
-/* FEEDBACK DE TOQUE */
+.prev:hover,
+.next:hover,
+.finish:hover{
+
+ transform:translateY(-2px);
+
+}
 
 .prev:active,
 .next:active,
-.finish:active {
+.finish:active{
 
-  transform: scale(0.96);
-
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+ transform:scale(.97);
 
 }
 
-.prev,
-.next,
-.finish {
-  -webkit-tap-highlight-color: transparent;
-}
-
-@media (hover: hover) {
-
-  .prev:hover,
-  .next:hover{
-    background:var(--oratio-primary-dark);
-    transform:translateY(-2px);
-  }
-
-  .finish:hover{
-    background:var(--oratio-primary-dark);
-    transform:translateY(-2px);
-  }
-
-}
-
-
-
-/* LOADING */
+/* =========================
+LOADING
+========================= */
 
 .loading{
 
- display:flex;
+ min-height:100dvh;
 
+ display:flex;
  flex-direction:column;
 
  align-items:center;
  justify-content:center;
 
- height:100vh;
+ gap:18px;
 
- color:var(--oratio-text-soft);
-
-}
-
-/* MOBILE */
-
-@media(max-width:600px){
-
-.container{
-
- padding:26px 18px;
-
-}
-
-.prayer h2{
-
- font-size:34px;
-
-}
-
-.text{
+ color:#786d61;
 
  font-size:17px;
 
 }
 
-.controls{
-
- flex-direction:column;
-
- gap:12px;
-
-}
-
-.prev,
-.next{
-
- width:100%;
-
- padding:16px;
-
-}
-
-.rosary{
-
- gap:6px;
-
-}
-
-.bead,
-.beadActive{
-
- width:22px;
- height:22px;
-
- font-size:11px;
-
-}
-
-}
-
-.pageSpacer{
- height:120px;
-}
+/* =========================
+FINISHED OVERLAY
+========================= */
 
 .finishedOverlay{
 
  position:fixed;
 
- top:0;
- left:0;
+ inset:0;
 
- width:100%;
- height:100%;
-
- background:rgba(0,0,0,.35);
+ background:
+ rgba(0,0,0,.38);
 
  display:flex;
+
  align-items:center;
  justify-content:center;
 
  z-index:999;
 
+ padding:24px;
+
 }
 
 .finishedCard{
 
+ width:100%;
+ max-width:360px;
+
  background:white;
 
- padding:36px 30px;
+ border-radius:30px;
 
- border-radius:var(--oratio-radius-lg);
+ padding:36px 28px;
 
  text-align:center;
 
- box-shadow:var(--oratio-shadow-strong);
+ animation:finishFade .35s ease;
 
- animation:finishFade .4s ease;
+ box-shadow:
+  0 24px 60px rgba(0,0,0,.18);
+
+}
+
+.finishedIcon{
+
+ width:72px;
+ height:72px;
+
+ margin:0 auto 18px auto;
+
+ border-radius:50%;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ background:
+ linear-gradient(
+  135deg,
+  #b0181a,
+  #8c1315
+ );
+
+ color:white;
+
+ box-shadow:
+  0 12px 24px rgba(176,24,26,.3);
 
 }
 
@@ -394,7 +574,7 @@
 
  font-family:var(--oratio-font-title);
 
- font-size:28px;
+ font-size:30px;
 
  color:var(--oratio-primary);
 
@@ -404,11 +584,11 @@
 
 .finishedCard p{
 
- font-family:var(--oratio-font-text);
+ color:#75695d;
 
- font-size:17px;
+ font-size:16px;
 
- color:var(--oratio-text-soft);
+ line-height:1.6;
 
 }
 
@@ -416,65 +596,302 @@
 
  from{
   opacity:0;
-  transform:scale(.9);
+  transform:
+   translateY(16px)
+   scale(.96);
  }
 
  to{
   opacity:1;
-  transform:scale(1);
+  transform:
+   translateY(0)
+   scale(1);
  }
 
 }
 
-.spinner {
+/* =========================
+SPINNER
+========================= */
 
- width: 20px;
- height: 20px;
+.spinner{
 
- border: 3px solid rgba(255,255,255,0.3);
- border-top: 3px solid white;
+ width:22px;
+ height:22px;
 
- border-radius: 50%;
+ border-radius:50%;
 
- animation: spin .8s linear infinite;
+ border:
+  3px solid
+  rgba(255,255,255,.28);
+
+ border-top:
+  3px solid white;
+
+ animation:spin .7s linear infinite;
 
 }
 
-@keyframes spin {
- to {
-  transform: rotate(360deg);
+@keyframes spin{
+
+ to{
+  transform:rotate(360deg);
  }
+
 }
 
-.finish:disabled {
-  opacity: 0.6;
+.finish:disabled{
+
+ opacity:.75;
+ cursor:not-allowed;
+
 }
 
-.bottomBar {
+/* =========================
+SPACER
+========================= */
 
- position: fixed;
+.pageSpacer{
 
- bottom: 12px;
- left: 50%;
+ height:140px;
 
- transform: translateX(-50%);
+}
 
- width: calc(100% - 24px);
+/* =========================
+TABLET
+========================= */
 
- max-width: 720px;
+@media(max-width:768px){
 
- display: flex;
- gap: 10px;
+.container{
 
- padding: 12px 16px;
+ padding:28px 22px;
 
- z-index: 100;
+ border-radius:28px;
 
- background: rgba(255,255,255,0.85);
- backdrop-filter: blur(12px);
+}
 
- border-radius: 18px;
+.prayer,
+.mystery{
 
- box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+ padding:28px 22px;
+
+ border-radius:24px;
+
+}
+
+.prayer h2{
+ font-size:34px;
+}
+
+.mystery h2{
+ font-size:32px;
+}
+
+.text{
+
+ font-size:18px;
+ line-height:2;
+
+}
+
+.bottomBar{
+
+ width:calc(100% - 18px);
+
+ padding:12px;
+
+}
+
+.prev,
+.next,
+.finish{
+
+ height:54px;
+
+ font-size:15px;
+
+}
+
+}
+
+/* =========================
+MOBILE
+========================= */
+
+@media(max-width:560px){
+
+.page{
+
+ padding-top:
+  max(18px, env(safe-area-inset-top));
+
+}
+
+.container{
+
+ padding:22px 16px;
+
+ border-radius:24px;
+
+}
+
+.back{
+
+ font-size:14px;
+
+ margin-bottom:18px;
+
+}
+
+.progressWrapper{
+
+ margin-bottom:20px;
+
+}
+
+.progressTop{
+
+ font-size:13px;
+
+}
+
+.prayer,
+.mystery{
+
+ padding:24px 18px;
+
+ border-radius:22px;
+
+}
+
+.prayer h2{
+
+ font-size:28px;
+
+}
+
+.mystery h2{
+
+ font-size:26px;
+
+}
+
+.text{
+
+ font-size:16.5px;
+
+ line-height:1.95;
+
+}
+
+.rosary{
+
+ gap:6px;
+
+ margin-bottom:22px;
+
+}
+
+.bead,
+.beadActive{
+
+ width:24px;
+ height:24px;
+
+ font-size:11px;
+
+}
+
+.bottomBar{
+
+ gap:10px;
+
+ padding:10px;
+
+ border-radius:20px;
+
+}
+
+.prev,
+.next,
+.finish{
+
+ height:52px;
+
+ border-radius:16px;
+
+ font-size:15px;
+
+}
+
+.finishedCard{
+
+ padding:30px 22px;
+
+ border-radius:26px;
+
+}
+
+.finishedCard h2{
+
+ font-size:26px;
+
+}
+
+}
+
+/* =========================
+SMALL MOBILE
+========================= */
+
+@media(max-width:390px){
+
+.container{
+
+ padding:20px 14px;
+
+}
+
+.prayer,
+.mystery{
+
+ padding:22px 16px;
+
+}
+
+.prayer h2{
+
+ font-size:25px;
+
+}
+
+.mystery h2{
+
+ font-size:24px;
+
+}
+
+.text{
+
+ font-size:15.5px;
+
+ line-height:1.9;
+
+}
+
+.bottomBar{
+
+ flex-direction:column;
+
+}
+
+.prev,
+.next,
+.finish{
+
+ width:100%;
+
+}
 
 }

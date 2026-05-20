@@ -1,216 +1,655 @@
 .container{
- --home-content-max:1100px;
- --home-card-max:520px;
- --home-card-radius:20px;
+
+ --home-content-max:1180px;
+ --home-card-max:560px;
+
+ --home-card-radius:28px;
+
  --home-section-gap:30px;
- --home-top-offset:calc(16px + env(safe-area-inset-top));
+
+ --home-top-offset:
+ calc(16px + env(safe-area-inset-top));
 
  min-height:100dvh;
- padding:72px 20px calc(124px + env(safe-area-inset-bottom));
+
+ padding:
+  78px
+  20px
+  calc(130px + env(safe-area-inset-bottom));
+
  display:flex;
  flex-direction:column;
  align-items:center;
+
  gap:var(--home-section-gap);
+
  background:
-  radial-gradient(circle at top,#ffffff55,transparent 65%),
-  linear-gradient(to bottom,#fff8ef,transparent 40%),
-  var(--oratio-background);
- font-family:var(--oratio-font-text);
+ radial-gradient(
+  circle at top,
+  rgba(255,255,255,.6),
+  transparent 60%
+ ),
+ linear-gradient(
+  180deg,
+  #fff9f2 0%,
+  #f8f1e8 30%,
+  #f4ede3 100%
+ );
+
+ position:relative;
+
+ overflow:hidden;
+
  animation:fadePage .6s ease;
+
 }
 
+
+/* =========================
+BACKGROUND PREMIUM
+========================= */
+
+.container::before{
+
+ content:"";
+
+ position:absolute;
+
+ top:-220px;
+ right:-220px;
+
+ width:520px;
+ height:520px;
+
+ border-radius:50%;
+
+ background:
+ radial-gradient(
+  circle,
+  rgba(176,24,26,.12),
+  transparent 70%
+ );
+
+ pointer-events:none;
+
+}
+
+.container::after{
+
+ content:"";
+
+ position:absolute;
+
+ bottom:-180px;
+ left:-180px;
+
+ width:420px;
+ height:420px;
+
+ border-radius:50%;
+
+ background:
+ radial-gradient(
+  circle,
+  rgba(255,255,255,.45),
+  transparent 70%
+ );
+
+ pointer-events:none;
+
+}
+
+
+/* =========================
+TOP BUTTONS
+========================= */
+
 .topButtons{
+
  position:fixed;
+
  top:var(--home-top-offset);
  right:18px;
+
  display:flex;
- gap:10px;
- z-index:100;
+
+ gap:12px;
+
+ z-index:200;
+
 }
 
 .profileButton,
 .logoutButton{
- width:42px;
- height:42px;
+
+ width:46px;
+ height:46px;
+
  border:none;
+
  border-radius:50%;
+
  display:flex;
  align-items:center;
  justify-content:center;
+
  cursor:pointer;
- box-shadow:0 6px 18px rgba(0,0,0,.15);
- transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;
+
+ backdrop-filter:blur(12px);
+
+ box-shadow:
+  0 8px 24px rgba(0,0,0,.12);
+
+ transition:
+  transform .2s ease,
+  box-shadow .2s ease,
+  background .2s ease;
+
 }
 
 .profileButton{
- background:var(--oratio-secondary);
+
+ background:
+ rgba(255,255,255,.75);
+
  color:var(--oratio-primary);
+
 }
 
 .logoutButton{
- background:var(--oratio-primary);
- color:#fff;
+
+ background:
+ linear-gradient(
+  135deg,
+  #b0181a,
+  #891214
+ );
+
+ color:white;
+
 }
 
 .profileButton:hover,
 .logoutButton:hover{
- transform:translateY(-1px);
- box-shadow:0 10px 24px rgba(0,0,0,.2);
+
+ transform:translateY(-2px);
+
+ box-shadow:
+  0 14px 30px rgba(0,0,0,.16);
+
 }
 
-.profileButton:hover{
- filter:brightness(.98);
-}
 
-.logoutButton:hover{
- background:var(--oratio-primary-dark);
-}
+/* =========================
+HERO
+========================= */
 
 .hero{
+
  width:100%;
  max-width:var(--home-content-max);
+
  text-align:center;
+
+ position:relative;
+
+ z-index:2;
+
  animation:fadeUp .7s ease;
+
 }
 
 .logoWrapper{
+
  position:relative;
+
  display:inline-flex;
+
  align-items:center;
  justify-content:center;
- font-family:var(--oratio-font-title);
- font-size:clamp(48px, 8vw, 88px);
- letter-spacing:clamp(2px, .8vw, 4px);
+
+ font-family:
+ var(--oratio-font-title);
+
+ font-size:
+ clamp(52px,8vw,94px);
+
+ letter-spacing:
+ clamp(2px,.8vw,5px);
+
  color:var(--oratio-primary);
+
  line-height:1;
+
+ text-shadow:
+ 0 8px 24px rgba(0,0,0,.08);
+
 }
 
 .logoLeft,
 .logoRight{
+
  z-index:1;
+
 }
 
 .cross{
+
  position:relative;
- width:9px;
- height:clamp(94px, 13vw, 142px);
- margin:0 clamp(5px, .7vw, 10px);
- top:clamp(-8px, -.6vw, -5px);
- background:var(--oratio-primary);
- box-shadow:0 0 12px rgba(0,0,0,.22);
+
+ width:10px;
+
+ height:
+ clamp(98px,13vw,150px);
+
+ margin:
+ 0 clamp(6px,.8vw,12px);
+
+ top:-6px;
+
+ background:
+ linear-gradient(
+  180deg,
+  #b0181a,
+  #7e1113
+ );
+
+ border-radius:999px;
+
+ box-shadow:
+ 0 0 18px rgba(176,24,26,.25);
+
  z-index:2;
+
 }
 
 .cross::after{
+
  content:"";
+
  position:absolute;
+
  left:50%;
- top:clamp(22px, 2.2vw, 31px);
- width:clamp(170px, 24vw, 292px);
- height:9px;
+
+ top:
+ clamp(24px,2vw,34px);
+
+ width:
+ clamp(180px,24vw,310px);
+
+ height:10px;
+
  transform:translateX(-50%);
- background:var(--oratio-primary);
- box-shadow:0 0 12px rgba(0,0,0,.22);
+
+ border-radius:999px;
+
+ background:
+ linear-gradient(
+  90deg,
+  #b0181a,
+  #7e1113
+ );
+
+ box-shadow:
+ 0 0 18px rgba(176,24,26,.25);
+
 }
 
 .subtitle{
+
  margin-top:18px;
+
  color:var(--oratio-text-soft);
- font-size:clamp(14px, 1.9vw, 18px);
- letter-spacing:.25px;
+
+ font-size:
+ clamp(14px,1.9vw,18px);
+
+ letter-spacing:.4px;
+
+ opacity:.9;
+
 }
 
+
+/* =========================
+LITURGY CARD
+========================= */
+
 .liturgyCard{
+
  width:100%;
  max-width:var(--home-content-max);
- background:var(--oratio-card-bg);
- border:1px solid var(--oratio-card-border);
- border-radius:var(--home-card-radius);
- box-shadow:var(--oratio-shadow-medium);
- padding:30px 28px;
+
+ background:
+ rgba(255,255,255,.82);
+
+ backdrop-filter:blur(16px);
+
+ border:
+ 1px solid rgba(255,255,255,.6);
+
+ border-radius:
+ var(--home-card-radius);
+
+ box-shadow:
+ 0 12px 40px rgba(0,0,0,.08);
+
+ padding:34px 30px;
+
  text-align:center;
- animation:fadeUp .75s ease;
+
+ position:relative;
+
+ overflow:hidden;
+
+ z-index:2;
+
+ animation:fadeUp .8s ease;
+
+}
+
+.liturgyCard::before{
+
+ content:"";
+
+ position:absolute;
+
+ top:-120px;
+ right:-120px;
+
+ width:260px;
+ height:260px;
+
+ border-radius:50%;
+
+ background:
+ radial-gradient(
+  circle,
+  rgba(176,24,26,.08),
+  transparent 70%
+ );
+
+}
+
+.sectionHeader{
+
+ margin-bottom:22px;
+
+}
+
+.sectionBadge{
+
+ display:inline-flex;
+
+ align-items:center;
+ justify-content:center;
+
+ padding:8px 14px;
+
+ border-radius:999px;
+
+ background:
+ rgba(176,24,26,.1);
+
+ color:var(--oratio-primary);
+
+ font-size:12px;
+
+ font-weight:700;
+
+ letter-spacing:1px;
+
+ margin-bottom:14px;
+
 }
 
 .liturgyCard h2{
- margin:0 0 14px;
+
+ margin:0;
+
  color:var(--oratio-primary);
- font-size:clamp(22px, 3vw, 30px);
+
+ font-size:
+ clamp(24px,3vw,34px);
+
+ line-height:1.1;
+
 }
 
+
+/* =========================
+TEXTOS
+========================= */
+
 .infoText{
+
  color:var(--oratio-text-soft);
+
+ font-size:15px;
+
 }
 
 .errorText{
+
  color:#a01f22;
+
+ font-weight:600;
+
 }
 
+
+/* =========================
+BUTTONS
+========================= */
+
 .liturgyButtons{
+
  display:grid;
- grid-template-columns:repeat(4, minmax(0, 1fr));
- gap:12px;
+
+ grid-template-columns:
+ repeat(3,minmax(0,1fr));
+
+ gap:14px;
+
 }
 
 .liturgyButtons button,
 .primaryButton{
+
  border:none;
- border-radius:var(--oratio-radius-sm);
- background:var(--oratio-primary);
- color:#fff;
+
+ border-radius:18px;
+
+ background:
+ linear-gradient(
+  135deg,
+  #b0181a,
+  #861214
+ );
+
+ color:white;
+
  font-size:15px;
  font-weight:600;
- padding:13px 14px;
+
+ padding:15px 16px;
+
  cursor:pointer;
- transition:transform .2s ease, box-shadow .2s ease, background .2s ease;
+
+ min-height:56px;
+
+ box-shadow:
+ 0 8px 22px rgba(176,24,26,.18);
+
+ transition:
+  transform .2s ease,
+  box-shadow .2s ease,
+  filter .2s ease;
+
 }
 
 .liturgyButtons button:hover,
 .primaryButton:hover{
+
  transform:translateY(-2px);
- background:var(--oratio-primary-dark);
- box-shadow:0 8px 18px rgba(0,0,0,.18);
+
+ filter:brightness(1.02);
+
+ box-shadow:
+ 0 14px 30px rgba(176,24,26,.22);
+
 }
 
+
+/* =========================
+FEATURES GRID
+========================= */
+
 .featuresGrid{
+
  width:100%;
  max-width:var(--home-content-max);
+
  display:grid;
- grid-template-columns:repeat(2, minmax(0, 1fr));
- gap:20px;
+
+ grid-template-columns:
+ repeat(2,minmax(0,1fr));
+
+ gap:22px;
+
+ position:relative;
+
+ z-index:2;
+
 }
 
 .featureCard{
- background:var(--oratio-card-bg);
- border:1px solid var(--oratio-card-border);
- border-radius:var(--home-card-radius);
- box-shadow:var(--oratio-shadow-medium);
- text-align:center;
- padding:28px 24px;
+
+ position:relative;
+
+ background:
+ rgba(255,255,255,.82);
+
+ backdrop-filter:blur(16px);
+
+ border:
+ 1px solid rgba(255,255,255,.6);
+
+ border-radius:
+ var(--home-card-radius);
+
+ box-shadow:
+ 0 12px 40px rgba(0,0,0,.08);
+
+ padding:30px 26px;
+
  display:flex;
  flex-direction:column;
  justify-content:space-between;
- min-height:240px;
- animation:fadeUp .8s ease;
+
+ gap:24px;
+
+ min-height:260px;
+
+ overflow:hidden;
+
+ transition:
+  transform .25s ease,
+  box-shadow .25s ease;
+
+}
+
+.featureCard::before{
+
+ content:"";
+
+ position:absolute;
+
+ top:-80px;
+ right:-80px;
+
+ width:180px;
+ height:180px;
+
+ border-radius:50%;
+
+ background:
+ radial-gradient(
+  circle,
+  rgba(176,24,26,.08),
+  transparent 70%
+ );
+
+}
+
+.featureCard:hover{
+
+ transform:translateY(-4px);
+
+ box-shadow:
+ 0 18px 42px rgba(0,0,0,.12);
+
+}
+
+.cardBadge{
+
+ align-self:flex-start;
+
+ background:
+ rgba(176,24,26,.12);
+
+ color:var(--oratio-primary);
+
+ padding:8px 12px;
+
+ border-radius:999px;
+
+ font-size:11px;
+
+ font-weight:700;
+
+ letter-spacing:1px;
+
 }
 
 .featureCard h2{
- margin:0 0 14px;
+
+ margin:0 0 12px;
+
  color:var(--oratio-primary);
- font-size:clamp(22px, 2.1vw, 28px);
- letter-spacing:.3px;
+
+ font-size:
+ clamp(22px,2vw,30px);
+
+ line-height:1.2;
+
 }
 
 .featureCard p{
- margin:0 0 22px;
- font-size:16px;
- line-height:1.65;
+
+ margin:0;
+
  color:var(--oratio-text-dark);
+
+ font-size:16px;
+
+ line-height:1.75;
+
+ white-space: pre-line;
+
 }
 
+
+/* =========================
+MODAL
+========================= */
+
 .modalOverlay{
+
  position:fixed;
+
  inset:0;
+
  z-index:9999;
 
  display:flex;
@@ -218,180 +657,531 @@
  justify-content:center;
 
  padding:
-  calc(18px + env(safe-area-inset-top))
-  18px
-  calc(18px + env(safe-area-inset-bottom));
+ calc(18px + env(safe-area-inset-top))
+ 18px
+ calc(18px + env(safe-area-inset-bottom));
 
- background:rgba(0,0,0,.56);
+ background:
+ rgba(0,0,0,.58);
 
- pointer-events: all;
- touch-action: none;
- user-select: text;
+ backdrop-filter:blur(6px);
 
- overflow:hidden;
- overscroll-behavior: none;
- cursor: default;
+ animation:fadePage .2s ease;
+
 }
 
 .modal{
-  pointer-events: auto;
 
-  padding:28px 24px 24px;
-  width:100%;
-  max-width:670px;
-  max-height:86dvh;
+ width:100%;
+ max-width:700px;
 
-  overflow-y:auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
+ max-height:88dvh;
 
-  border-radius:var(--home-card-radius);
-  background:#fff;
+ overflow-y:auto;
 
-  touch-action: auto;
-  overscroll-behavior-y: contain;
+ padding:30px 24px;
+
+ background:white;
+
+ border-radius:28px;
+
+ box-shadow:
+ 0 30px 60px rgba(0,0,0,.25);
+
+ animation:modalUp .25s ease;
+
 }
 
 .modalTitle{
- margin:0 0 8px;
+
+ margin:0 0 10px;
+
  text-align:center;
+
  color:var(--oratio-primary);
- font-size:clamp(22px, 3vw, 30px);
+
+ font-size:
+ clamp(24px,3vw,34px);
+
+ line-height:1.2;
+
 }
 
 .modalReference{
- margin:0 0 20px;
+
+ margin:0 0 22px;
+
  text-align:center;
- font-size:clamp(16px, 2vw, 20px);
+
+ font-size:17px;
+
  color:var(--oratio-text-soft);
+
  font-style:italic;
+
 }
 
 .modalRefrao{
- margin:0 0 16px;
- padding:12px;
- border-radius:10px;
- background:#f4ede2;
+
+ margin:0 0 18px;
+
+ padding:14px;
+
+ border-radius:16px;
+
+ background:#f5ede3;
+
  text-align:center;
+
  font-style:italic;
- font-size:16px;
+
+ line-height:1.7;
+
 }
 
 .modalText{
+
  white-space:pre-line;
- margin-bottom:8px;
+
  text-align:justify;
+
  line-height:2.1;
- font-size:clamp(17px, 2.1vw, 20px);
- font-family:Georgia, serif;
- color:#333;
+
+ font-size:
+ clamp(17px,2vw,20px);
+
+ font-family:Georgia,serif;
+
+ color:#2f2f2f;
+
 }
 
 .closeButton{
+
  width:100%;
- margin-top:20px;
- padding:13px;
+
+ margin-top:24px;
+
  border:none;
- border-radius:var(--oratio-radius-sm);
- background:var(--oratio-primary);
- color:#fff;
+
+ border-radius:18px;
+
+ background:
+ linear-gradient(
+  135deg,
+  #b0181a,
+  #861214
+ );
+
+ color:white;
+
+ padding:15px;
+
  font-size:15px;
- font-weight:600;
+ font-weight:700;
+
  cursor:pointer;
- transition:background .2s ease;
+
+ transition:.2s;
+
 }
 
 .closeButton:hover{
- background:var(--oratio-primary-dark);
+
+ transform:translateY(-2px);
+
 }
+
+
+/* =========================
+SELECTOR
+========================= */
+
+.selectorList{
+
+ display:flex;
+ flex-direction:column;
+
+ gap:14px;
+
+}
+
+.selectorButton{
+
+ border:none;
+
+ border-radius:18px;
+
+ background:#faf6f0;
+
+ border:1px solid #eadfce;
+
+ padding:16px;
+
+ text-align:left;
+
+ cursor:pointer;
+
+ transition:.2s;
+
+ display:flex;
+ flex-direction:column;
+
+ gap:6px;
+
+}
+
+.selectorButton:hover{
+
+ transform:translateY(-2px);
+
+ box-shadow:
+ 0 10px 20px rgba(0,0,0,.06);
+
+}
+
+.selectorType{
+
+ font-size:11px;
+
+ font-weight:700;
+
+ letter-spacing:1px;
+
+ color:var(--oratio-primary);
+
+ text-transform:uppercase;
+
+}
+
+.selectorRef{
+
+ font-size:14px;
+
+ color:var(--oratio-text-soft);
+
+}
+
+
+/* =========================
+RESPOSTA
+========================= */
+
+.responseBox{
+
+ margin-top:28px;
+
+ padding-top:18px;
+
+ border-top:
+ 1px solid rgba(0,0,0,.08);
+
+ display:flex;
+ flex-direction:column;
+
+ gap:8px;
+
+}
+
+.responseText{
+
+ font-weight:700;
+
+ color:var(--oratio-primary);
+
+}
+
+
+/* =========================
+CAPITULAR
+========================= */
 
 ::global(.capitular){
+
  float:left;
- font-size:66px;
- line-height:56px;
+
+ font-size:68px;
+
+ line-height:54px;
+
  padding-right:10px;
+
  font-weight:700;
+
  color:var(--oratio-primary);
- font-family:Georgia, serif;
+
+ font-family:Georgia,serif;
+
 }
+
+
+/* =========================
+SPACER
+========================= */
 
 .pageSpacer{
- height:96px;
+
+ height:110px;
+
 }
 
-@media (max-width:1024px){
+
+/* =========================
+TABLET
+========================= */
+
+@media(max-width:1024px){
+
  .liturgyButtons{
-  grid-template-columns:repeat(2, minmax(0, 1fr));
+
+  grid-template-columns:
+  repeat(2,minmax(0,1fr));
+
  }
+
 }
 
-@media (max-width:768px){
+
+/* =========================
+MOBILE
+========================= */
+
+@media(max-width:768px){
+
  .container{
+
   --home-section-gap:24px;
-  padding:52px 14px calc(124px + env(safe-area-inset-bottom));
+
+  padding:
+   56px
+   14px
+   calc(128px + env(safe-area-inset-bottom));
+
  }
 
  .topButtons{
-  position:absolute;
-  top:calc(14px + env(safe-area-inset-top));
+
   right:14px;
+
+ }
+
+ .hero{
+
+  margin-top:10px;
+
+ }
+
+ .logoWrapper{
+
+  font-size:60px;
+
+ }
+
+ .cross{
+
+  height:100px;
+
+ }
+
+ .cross::after{
+
+  width:190px;
+
+ }
+
+ .subtitle{
+
+  margin-top:14px;
+
+  font-size:15px;
+
  }
 
  .liturgyCard,
  .featureCard{
-  border-radius:16px;
+
+  border-radius:22px;
+
  }
 
  .liturgyCard{
+
   padding:24px 18px;
+
  }
 
  .liturgyButtons{
+
   grid-template-columns:1fr;
+
  }
 
  .featuresGrid{
+
   grid-template-columns:1fr;
+
   max-width:var(--home-card-max);
-  gap:16px;
+
+  gap:18px;
+
  }
 
  .featureCard{
-  min-height:unset;
+
+  min-height:auto;
+
   padding:24px 18px;
+
+ }
+
+ .featureCard h2{
+
+  font-size:24px;
+
+ }
+
+ .featureCard p{
+
+  font-size:15px;
+
+  line-height:1.7;
+
  }
 
  .modal{
+
   max-height:90dvh;
+
   padding:24px 18px;
+
+  border-radius:22px;
+
  }
 
  .modalText{
-  line-height:1.8;
+
+  line-height:1.85;
+
+  font-size:17px;
+
  }
 
  ::global(.capitular){
-  font-size:52px;
-  line-height:46px;
+
+  font-size:54px;
+
+  line-height:44px;
+
  }
+
 }
 
+
+/* =========================
+SMALL MOBILE
+========================= */
+
+@media(max-width:420px){
+
+ .container{
+
+  padding-left:12px;
+  padding-right:12px;
+
+ }
+
+ .logoWrapper{
+
+  font-size:52px;
+
+ }
+
+ .cross{
+
+  width:8px;
+
+  height:90px;
+
+ }
+
+ .cross::after{
+
+  width:165px;
+  height:8px;
+
+ }
+
+ .liturgyCard{
+
+  padding:22px 16px;
+
+ }
+
+ .featureCard{
+
+  padding:22px 16px;
+
+ }
+
+ .liturgyButtons button,
+ .primaryButton,
+ .closeButton{
+
+  min-height:54px;
+
+  font-size:14px;
+
+ }
+
+ .modal{
+
+  padding:22px 16px;
+
+ }
+
+}
+
+
+/* =========================
+ANIMATIONS
+========================= */
+
 @keyframes fadePage{
+
  from{
   opacity:0;
  }
+
  to{
   opacity:1;
  }
+
 }
 
 @keyframes fadeUp{
+
  from{
   opacity:0;
   transform:translateY(14px);
  }
+
  to{
   opacity:1;
   transform:translateY(0);
  }
+
+}
+
+@keyframes modalUp{
+
+ from{
+  opacity:0;
+  transform:translateY(12px) scale(.98);
+ }
+
+ to{
+  opacity:1;
+  transform:translateY(0) scale(1);
+ }
+
 }
