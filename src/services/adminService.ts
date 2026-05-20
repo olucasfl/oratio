@@ -27,10 +27,17 @@ export async function getAllUsers(filters?: AdminFilters) {
   return res.data
 }
 
-export async function setAdminStatus(userId: string, isAdmin: boolean) {
-  const res = await api.patch(`/users/admin/users/${userId}`, { isAdmin })
-  return res.data
-}
+export async function setAdminStatus(
+    userId: string,
+    isAdmin: boolean,
+    adminPassword: string
+  ) {
+    const res = await api.patch(`/users/admin/users/${userId}`, {
+      isAdmin,
+      adminPassword,
+    })
+    return res.data
+  }
 
 export async function getUserDetail(userId: string) {
   const res = await api.get(`/users/admin/users/${userId}`)

@@ -24,11 +24,13 @@ const ROSARIES: Rosary[] = [
  { name:"Mistérios Luminosos", slug:"luminosos" },
 
  { name:"Terço das 7 Dores de Maria", slug:"sete-dores" },
+ { name:"Coroa de Nossa Senhora das Lágrimas", slug:"coroa-lagrimas" },
+ { name:"Terço de São Bento", slug:"sao-bento"},
  { name:"Terço da Divina Misericórdia", slug:"misericordia" },
  { name:"Terço do Sagrado Coração de Jesus", slug:"sagrado-coracao" },
  { name:"Terço de São José", slug:"sao-jose" },
  { name:"Terço de São Miguel Arcanjo", slug:"sao-miguel" },
- { name: "Terço de São Bento", slug:"sao-bento"}
+ { name:"Terço do Espírito Santo", slug:"espirito-santo" },
 
 ]
 

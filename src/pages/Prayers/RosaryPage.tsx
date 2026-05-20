@@ -21,6 +21,7 @@ export default function RosaryPage(){
  const [current,setCurrent] = useState(0)
  const [loading,setLoading] = useState(true)
  const [finished,setFinished] = useState(false)
+ const [finishing, setFinishing] = useState(false)
 
  const [direction,setDirection] = useState<"next"|"prev">("next")
 
@@ -73,12 +74,10 @@ export default function RosaryPage(){
 
   const baseTitle = currentStep.title.replace(/\s\d+\/\d+/,"")
 
-  // 🔥 IGNORAR ORAÇÕES QUE NÃO SÃO CONTAGEM
-  const ignore = ["Pai Nosso","Credo","Glória ao Pai","Salve Rainha"]
+  const ignore = ["Sinal da Santa Cruz", "Pai Nosso","Credo","Glória ao Pai","Salve Rainha", "Jaculatória de Fátima", "Oração ao Espírito Santo"]
 
   if(ignore.includes(baseTitle)) return null
 
-  // ← volta
   let start = current
   while(
     start > 0 &&
@@ -198,25 +197,31 @@ export default function RosaryPage(){
 
  async function handleFinish(){
 
-  try{
+    if(finishing) return
 
-   await finishRosary()
+    try{
 
-   setFinished(true)
+    setFinishing(true)
 
-   setTimeout(()=>{
+    await finishRosary()
 
-    navigate("/oratio/rosary")
+    setFinished(true)
 
-   },2000)
+    setTimeout(()=>{
+      navigate("/oratio/rosary")
+    },2000)
 
-  }catch{
+    }catch{
 
-   console.log("Erro ao finalizar terço")
+    console.log("Erro ao finalizar terço")
+
+    }finally{
+
+    setFinishing(false)
+
+    }
 
   }
-
- }
 
  return(
 
@@ -316,42 +321,35 @@ export default function RosaryPage(){
     </div>
 
 
-    <div className={styles.controls}>
+    <div className={styles.bottomBar}>
 
-     {!isLastStep && (
+      {current > 0 && (
+        <button className={styles.prev} onClick={prev}>
+          Anterior
+        </button>
+      )}
 
-      <>
-
-       <button
-        className={styles.prev}
-        onClick={prev}
-       >
-        Anterior
-       </button>
-
-       <button
-        className={styles.next}
-        onClick={next}
-       >
-        Próximo
-       </button>
-
-      </>
-
-     )}
-
-     {isLastStep && (
-
-      <button
-       className={styles.finish}
-       onClick={handleFinish}
-      >
-       Concluir Terço
-      </button>
-
-     )}
+      {isLastStep ? (
+        <button
+          className={styles.finish}
+          onClick={handleFinish}
+          disabled={finishing}
+        >
+          {finishing ? (
+            <div className={styles.spinner}></div>
+          ) : (
+            "Concluir"
+          )}
+        </button>
+      ) : (
+        <button className={styles.next} onClick={next}>
+          Próximo
+        </button>
+      )}
 
     </div>
+
+    <div className={styles.pageSpacer}></div>
 
    </div>
 

@@ -17,7 +17,6 @@ export default function AdminPanel(){
   const [users,setUsers] = useState<any[]>([])
   const [updateId,setUpdateId] = useState<string | null>(null)
   const [currentUserId,setCurrentUserId] = useState<string | null>(null)
-  const [confirmModal,setConfirmModal] = useState<{ show:boolean; userId:string | null }>({ show:false, userId:null })
   
   // Search e filters
   const [searchTerm,setSearchTerm] = useState("")
@@ -38,12 +37,27 @@ export default function AdminPanel(){
   const [activityPage, setActivityPage] = useState(1)
   const ITEMS_PER_PAGE = 20
 
+  const [adminPasswordModal, setAdminPasswordModal] = useState<{
+    show: boolean
+    userId: string | null
+    current: boolean
+  }>({
+    show: false,
+    userId: null,
+    current: false
+  })
+
+  const [adminPassword, setAdminPassword] = useState("")
+  const [adminLoading, setAdminLoading] = useState(false)
+
   useEffect(()=>{
     loadData()
     getCurrentUser()
   },[]) 
 
   useEffect(()=>{
+    if (adminPasswordModal.show) return
+
     const timer = setTimeout(() => loadData(), 300)
     return () => clearTimeout(timer)
   }, [searchTerm, filterAdmin, filterVerified, filterActive])
@@ -98,30 +112,40 @@ export default function AdminPanel(){
   }
 
   async function toggleAdmin(userId:string,current:boolean){
-    if(current && userId === currentUserId){
-      setConfirmModal({ show:true, userId })
-      return
-    }
+
+    setAdminPassword("")
     
-    await performToggleAdmin(userId, current)
+    setAdminPasswordModal({
+      show: true,
+      userId,
+      current
+    })
   }
 
-  async function performToggleAdmin(userId:string,current:boolean){
+  async function performToggleAdmin(userId:string,current:boolean, password:string){
     try{
       setUpdateId(userId)
-      await setAdminStatus(userId,!current)
+      setAdminLoading(true)
+
+      await setAdminStatus(userId, !current, password)
+
       setUsers((prev)=>prev.map((u)=>
         u.id === userId ? { ...u, isAdmin: !current } : u
       ))
+
       setError(null)
-      
+      setAdminPassword("")
+      setAdminPasswordModal({ show:false, userId:null, current:false })
+
       if(userId === currentUserId && current){
         setTimeout(()=>navigate("/oratio/profile"), 500)
       }
+
     }catch(err:any){
-      setError(err?.response?.data?.message || "Erro ao atualizar permissão")
+      setError(err?.response?.data?.message || "Senha inválida ou erro ao atualizar")
     }finally{
       setUpdateId(null)
+      setAdminLoading(false)
     }
   }
 
@@ -295,7 +319,7 @@ export default function AdminPanel(){
                     <span>
                       <button
                         className={user.isAdmin ? styles.adminActive : styles.adminToggle}
-                        disabled={updateId === user.id}
+                        disabled={adminLoading && updateId === user.id}
                         onClick={()=>toggleAdmin(user.id, user.isAdmin)}
                       >
                         {updateId === user.id ? "..." : user.isAdmin ? "Admin" : "Normal"}
@@ -336,35 +360,6 @@ export default function AdminPanel(){
           Este painel é restrito a administradores. Use com responsabilidade para evitar alterações indevidas.
         </p>
       </div>
-
-      {/* MODAL CONFIRMAÇÃO REMOÇÃO DE ADMIN */}
-      {confirmModal.show && (
-        <div className={styles.modalOverlay} onClick={()=>setConfirmModal({ show:false, userId:null })}>
-          <div className={styles.modal} onClick={(e)=>e.stopPropagation()}>
-            <h2>Remover sua permissão de admin?</h2>
-            <p>Tem certeza que deseja remover sua permissão de administrador? Você será redirecionado para o perfil e não poderá acessar este painel novamente.</p>
-            <div className={styles.modalButtons}>
-              <button 
-                className={styles.cancelBtn}
-                onClick={()=>setConfirmModal({ show:false, userId:null })}
-              >
-                Cancelar
-              </button>
-              <button 
-                className={styles.confirmBtn}
-                onClick={async ()=>{
-                  setConfirmModal({ show:false, userId:null })
-                  if(confirmModal.userId){
-                    await performToggleAdmin(confirmModal.userId, true)
-                  }
-                }}
-              >
-                Sim, remover
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* MODAL DETALHES DO USUÁRIO */}
       {detailModal.show && detailModal.user && (
@@ -563,6 +558,65 @@ export default function AdminPanel(){
           </div>
         </div>
       )}
+
+      {adminPasswordModal.show && (
+      <div 
+        className={styles.modalOverlay} 
+        onClick={()=>setAdminPasswordModal({ show:false, userId:null, current:false })}
+      >
+        <div className={styles.modal} onClick={(e)=>e.stopPropagation()}>
+          
+          <h2>
+            {adminPasswordModal.current 
+              ? "Remover admin" 
+              : "Tornar admin"}
+          </h2>
+
+          <p>
+            Digite a senha de segurança para confirmar esta ação.
+          </p>
+
+          <input
+            type="password"
+            placeholder="Senha de admin"
+            value={adminPassword}
+            onChange={(e)=>setAdminPassword(e.target.value)}
+            className={styles.input}
+            autoComplete="new-password"
+          />
+
+          <div className={styles.modalButtons}>
+            <button
+              className={styles.cancelBtn}
+              onClick={()=>{
+                setAdminPassword("")
+                setAdminPasswordModal({ show:false, userId:null, current:false })
+              }}
+              disabled={adminLoading}
+            >
+              Cancelar
+            </button>
+
+            <button
+              className={styles.confirmBtn}
+              disabled={!adminPassword || adminLoading}
+              onClick={()=>{
+                if(adminPasswordModal.userId){
+                  performToggleAdmin(
+                    adminPasswordModal.userId,
+                    adminPasswordModal.current,
+                    adminPassword
+                  )
+                }
+              }}
+            >
+              {adminLoading ? "Verificando..." : "Confirmar"}
+            </button>
+          </div>
+
+        </div>
+      </div>
+    )}
 
       <BottomNavbar/>
     </div>
