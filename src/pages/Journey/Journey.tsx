@@ -291,15 +291,43 @@ export default function Journey(){
 
               <div className={styles.memberTop}>
 
-                <div>
+                <div className={styles.memberInfoBlock}>
 
                   <h2>
                     {member.name}
                   </h2>
 
-                  <span>
-                    {member.rosariesCompleted}/4 terços
-                  </span>
+                  <div className={styles.rosaryProgressBadge}>
+
+                    <div className={styles.rosaryProgressTop}>
+
+                      <strong>
+                        {member.rosariesCompleted}/4
+                      </strong>
+
+                      <span>
+                        Terços rezados
+                      </span>
+
+                    </div>
+
+                    <div className={styles.miniProgress}>
+
+                      <div
+                        className={styles.miniProgressFill}
+                        style={{
+                          width:`${
+                            Math.min(
+                              member.rosariesCompleted,
+                              4
+                            ) * 25
+                          }%`
+                        }}
+                      />
+
+                    </div>
+
+                  </div>
 
                 </div>
 
@@ -350,22 +378,6 @@ export default function Journey(){
                   </div>
 
                 </div>
-
-              </div>
-
-              <div className={styles.progressBar}>
-
-                <div
-                  className={styles.progressFill}
-                  style={{
-                    width:`${
-                      Math.min(
-                        member.rosariesCompleted,
-                        4
-                      ) * 25
-                    }%`
-                  }}
-                />
 
               </div>
 

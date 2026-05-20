@@ -8,8 +8,8 @@ from "react-router-dom"
 
 import {
   HeartHandshake,
-  Flame,
-  ChevronRight
+  ChevronRight,
+  Star
 } from "lucide-react"
 
 import { getJourney }
@@ -224,12 +224,12 @@ export default function JourneyCard(){
 
               <div className={styles.points}>
 
-                <Flame size={16}/>
+                <Star size={16}/>
 
                 <span>
                   {loading
                     ? "--"
-                    : member.currentStreak
+                    : member.totalPoints
                   }
                 </span>
 

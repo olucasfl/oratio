@@ -266,23 +266,34 @@
 
 .points{
 
- display:flex;
+  display:flex;
 
- align-items:center;
+  align-items:center;
 
- gap:6px;
+  gap:8px;
 
- background:#f3e7d7;
+  background:#fffaf0;
 
- color:#b0181a;
+  color:#d4a017;
 
- padding:8px 12px;
+  padding:10px 14px;
 
- border-radius:999px;
+  border-radius:14px;
 
- font-weight:700;
+  font-weight:700;
 
- font-size:14px;
+  font-size:14px;
+
+  border:1px solid #f3dfab;
+
+  box-shadow:
+    0 6px 14px rgba(212,160,23,.08);
+
+}
+
+.points svg{
+
+  color:#d4a017;
 
 }
 
