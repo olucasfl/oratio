@@ -23,6 +23,7 @@ interface Message{
  id:string
  role:"user" | "assistant"
  content:string
+ createdAt?:string
 }
 
 interface Conversation{
@@ -59,11 +60,16 @@ export default function Vox(){
 
  const [error,setError] = useState<string | null>(null)
 
+ const [lastMessage,setLastMessage] = useState("")
+
+ const [copiedId,setCopiedId] = useState<string | null>(null)
+
  const bottomRef = useRef<HTMLDivElement | null>(null)
  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
  const initialized = useRef(false)
  const openConversationRequest = useRef(0)
+ const sendingRef = useRef(false)
 
  /* =========================
     SCROLL
@@ -71,7 +77,9 @@ export default function Vox(){
 
  useEffect(()=>{
   setTimeout(()=>{
-    bottomRef.current?.scrollIntoView({behavior:"smooth"})
+    bottomRef.current?.scrollIntoView({
+      behavior: messages.length < 3 ? "auto" : "smooth"
+    })
   },50)
  },[messages])
 
@@ -226,9 +234,16 @@ useEffect(()=>{
 
  async function sendMessage(){
 
-  const text = input.trim()
+  const text = input.replace(/\r/g,"")
 
-  if(!text || loading || loadingConversation || !conversationId) return
+  if(!text.trim() || loading || loadingConversation || !conversationId){
+    return
+  }
+
+  if(sendingRef.current) return
+  sendingRef.current = true
+
+  setLastMessage(text)
 
   if(text.length > 1000){
     setError("A mensagem deve ter no máximo 1000 caracteres.")
@@ -236,9 +251,10 @@ useEffect(()=>{
   }
 
   const userMessage:Message={
-    id:crypto.randomUUID(),
-    role:"user",
-    content:text
+  id:crypto.randomUUID(),
+  role:"user",
+  content:text,
+  createdAt:new Date().toISOString()
   }
 
   setMessages(prev => [...prev,userMessage])
@@ -280,9 +296,10 @@ useEffect(()=>{
     }
 
     const aiMessage:Message={
-      id:crypto.randomUUID(),
-      role:"assistant",
-      content: res.response
+    id:crypto.randomUUID(),
+    role:"assistant",
+    content: res.response,
+    createdAt:new Date().toISOString()
     }
 
     setMessages(prev => [...prev,aiMessage])
@@ -297,6 +314,8 @@ useEffect(()=>{
 
   }finally{
     setLoading(false)
+    sendingRef.current = false
+    textareaRef.current?.focus()
   }
  }
 
@@ -518,6 +537,24 @@ useEffect(()=>{
     </div>
    )}
 
+   {error && lastMessage && !loading && (
+
+    <div className={styles.retryWrapper}>
+
+      <button
+        className={styles.retryButton}
+        onClick={()=>{
+          setInput(lastMessage)
+          textareaRef.current?.focus()
+        }}
+      >
+        Tentar novamente
+      </button>
+
+    </div>
+
+  )}
+
    <main className={styles.chatArea}>
 
       {loadingConversation && (
@@ -554,15 +591,93 @@ useEffect(()=>{
        }`}
       >
 
-       {isUser ? msg.content : (
+       {isUser ? (
 
-        <div className={styles.markdownContent}>
-         <ReactMarkdown remarkPlugins={[remarkGfm]}>
-          {msg.content}
-         </ReactMarkdown>
-        </div>
+        <>
 
-       )}
+          <div className={styles.userMessageContent}>
+            {msg.content}
+          </div>
+
+          <small className={styles.messageTime}>
+            {new Date(msg.createdAt || "").toLocaleTimeString([],{
+              hour:"2-digit",
+              minute:"2-digit"
+            })}
+          </small>
+
+        </>
+
+      ) : (
+
+        <>
+
+          <div className={styles.aiMessageHeader}>
+
+            <button
+              className={styles.copyButton}
+              onClick={async ()=>{
+
+                await navigator.clipboard.writeText(msg.content)
+
+                setCopiedId(msg.id)
+
+                setTimeout(()=>{
+                  setCopiedId(null)
+                },2000)
+
+              }}
+            >
+              {copiedId === msg.id ? "Copiado!" : "Copiar"}
+            </button>
+
+          </div>
+
+          <div className={styles.markdownContent}>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+
+                p({children}){
+                  return <p className={styles.markdownParagraph}>{children}</p>
+                },
+
+                ul({children}){
+                  return <ul className={styles.markdownList}>{children}</ul>
+                },
+
+                ol({children}){
+                  return <ol className={styles.markdownList}>{children}</ol>
+                },
+
+                li({children}){
+                  return <li className={styles.markdownListItem}>{children}</li>
+                },
+
+                blockquote({children}){
+                  return (
+                    <blockquote className={styles.markdownQuote}>
+                      {children}
+                    </blockquote>
+                  )
+                }
+
+              }}
+            >
+              {msg.content}
+            </ReactMarkdown>
+          </div>
+
+          <small className={styles.messageTime}>
+            {new Date(msg.createdAt || "").toLocaleTimeString([],{
+              hour:"2-digit",
+              minute:"2-digit"
+            })}
+          </small>
+
+        </>
+
+      )}
 
       </div>
 
@@ -593,6 +708,10 @@ useEffect(()=>{
 
      <textarea
       ref={textareaRef}
+      spellCheck={true}
+      autoComplete="off"
+      autoCorrect="on"
+      autoCapitalize="sentences"
       value={input}
       onChange={handleChange}
       onKeyDown={handleKey}
@@ -607,7 +726,11 @@ useEffect(()=>{
         disabled={loading || loadingConversation || !input.trim()}
         aria-label="Enviar mensagem"
       >
-      {loading ? "..." : "↑"}
+      {loading ? (
+        <div className={styles.spinner}></div>
+      ) : (
+        "↑"
+      )}
      </button>
 
     </div>
