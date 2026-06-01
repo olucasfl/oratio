@@ -1,13 +1,15 @@
 import styles from "./Home.module.css"
 import { useNavigate } from "react-router-dom"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useCallback, useState } from "react"
 
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
 
 import {
  LogOut,
- User
+ User,
+ ChevronLeft,
+ ChevronRight
 } from "lucide-react"
 
 import { isPWA } from "../../utils/isPwa"
@@ -97,6 +99,21 @@ export default function Home(){
  const [liturgyError,
   setLiturgyError] = useState<string | null>(null)
 
+ const [dateOffset, setDateOffset] = useState(0)
+
+ const displayDateStr = useMemo(()=>{
+  const d = new Date()
+  d.setDate(d.getDate() + dateOffset)
+  return d.toLocaleDateString("pt-BR")
+ },[dateOffset])
+
+ const displayDateLabel = useMemo(()=>{
+  if(dateOffset === 0) return "Hoje"
+  if(dateOffset === -1) return "Ontem"
+  if(dateOffset === 1) return "Amanhã"
+  return displayDateStr
+ },[dateOffset, displayDateStr])
+
  const [
   currentType,
   setCurrentType
@@ -113,7 +130,7 @@ export default function Home(){
  FEATURES
  ========================= */
 
- const features:FeatureItem[] = [
+ const features = useMemo<FeatureItem[]>(()=>[
 
   {
    title:
@@ -146,6 +163,21 @@ export default function Home(){
 
    path:
    "/oratio/prayers"
+  },
+
+  {
+   title:"Guia para a Confissão",
+
+   description:
+   "Exame de consciência completo pelos 10 Mandamentos e Preceitos da Igreja, como se confessar corretamente e Ato de Contrição.",
+
+   actionLabel:
+   "Abrir Guia",
+
+   path:
+   "/oratio/confissao",
+
+   badge:"SACRAMENTO"
   },
 
   {
@@ -190,21 +222,27 @@ export default function Home(){
    badge:"IA"
   }
 
- ]
+ ],[])
 
  /* =========================
  INIT
  ========================= */
 
  useEffect(()=>{
+  preloadConsecration()
+ },[])
 
-  loadLiturgyFromCache()
+ useEffect(()=>{
+
+  if(dateOffset === 0){
+   loadLiturgyFromCache()
+  }else{
+   setLiturgy(null)
+  }
 
   void loadLiturgy()
 
-  preloadConsecration()
-
- },[])
+ },[dateOffset])
 
  /* =========================
  AUTH
@@ -334,19 +372,13 @@ export default function Home(){
  LOGOUT
  ========================= */
 
- function handleLogout(){
+ const handleLogout = useCallback(()=>{
 
-  localStorage.removeItem(
-   "access_token"
-  )
-
-  localStorage.removeItem(
-   "refresh_token"
-  )
-
+  localStorage.removeItem("access_token")
+  localStorage.removeItem("refresh_token")
   navigate("/login")
 
- }
+ },[navigate])
 
  /* =========================
  CACHE
@@ -392,42 +424,39 @@ export default function Home(){
 
   setLiturgyError(null)
 
+  const d = new Date()
+  d.setDate(d.getDate() + dateOffset)
+
+  const dia = String(d.getDate()).padStart(2,"0")
+  const mes = String(d.getMonth()+1).padStart(2,"0")
+  const ano = d.getFullYear()
+
+  const url = dateOffset === 0
+   ? LITURGY_URL
+   : `${LITURGY_URL}?dia=${dia}&mes=${mes}&ano=${ano}`
+
   try{
 
-   const res = await fetch(
-    LITURGY_URL,
-    {
-     cache:"no-store"
-    }
-   )
+   const res = await fetch(url, { cache:"no-store" })
 
-   if(!res.ok){
-
-    throw new Error()
-
-   }
+   if(!res.ok) throw new Error()
 
    const data = await res.json()
 
    setLiturgy(data)
 
-   localStorage.setItem(
-    LITURGY_CACHE_KEY,
-    JSON.stringify({
-     date:today,
-     data
-    })
-   )
+   if(dateOffset === 0){
+    localStorage.setItem(
+     LITURGY_CACHE_KEY,
+     JSON.stringify({ date:today, data })
+    )
+   }
 
   }catch{
 
-   if(!liturgy){
-
-    setLiturgyError(
-     "Não foi possível carregar a liturgia agora."
-    )
-
-   }
+   setLiturgyError(
+    "Não foi possível carregar a liturgia agora."
+   )
 
   }finally{
 
@@ -576,7 +605,7 @@ export default function Home(){
 
  return(
 
-  <div className={styles.container}>
+  <div className={`${styles.container} page-enter`}>
 
    {!pwa && (
 
@@ -642,9 +671,37 @@ export default function Home(){
       LITURGIA DO DIA
      </span>
 
-     <h2>
-      Liturgia {today}
-     </h2>
+     <div className={styles.liturgyDateNav}>
+
+      <button
+       className={styles.liturgyNavBtn}
+       onClick={()=>setDateOffset(o=>o-1)}
+       aria-label="Dia anterior"
+      >
+       <ChevronLeft size={18}/>
+      </button>
+
+      <h2>{displayDateLabel}</h2>
+
+      <button
+       className={styles.liturgyNavBtn}
+       onClick={()=>setDateOffset(o=>o+1)}
+       disabled={dateOffset >= 2}
+       aria-label="Próximo dia"
+      >
+       <ChevronRight size={18}/>
+      </button>
+
+     </div>
+
+     {dateOffset !== 0 && (
+      <button
+       className={styles.liturgyTodayBtn}
+       onClick={()=>setDateOffset(0)}
+      >
+       Voltar para hoje
+      </button>
+     )}
 
     </div>
 

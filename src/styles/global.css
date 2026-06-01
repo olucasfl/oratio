@@ -161,3 +161,33 @@ opacity:1;
  position:relative;
  top:-2px;
 }
+
+
+/* =========================
+ANIMAÇÃO DE ENTRADA DE PÁGINA
+========================= */
+
+@keyframes pageEnter{
+from{
+ opacity:0;
+ transform:translateY(10px);
+}
+to{
+ opacity:1;
+ transform:translateY(0);
+}
+}
+
+.page-enter{
+animation:pageEnter 0.28s ease both;
+}
+
+
+/* =========================
+FALLBACK SUSPENSE
+========================= */
+
+.oratio-loading{
+min-height:100vh;
+background-color:var(--oratio-background);
+}

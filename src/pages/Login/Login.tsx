@@ -20,6 +20,8 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [forgotOpen, setForgotOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [forgotSuccess, setForgotSuccess] = useState(false);
 
   /*
   ============================
@@ -47,6 +49,7 @@ export default function Login() {
 
     e.preventDefault();
     setLoading(true);
+    setError(null);
 
     try {
 
@@ -56,7 +59,7 @@ export default function Login() {
 
     } catch (err: any) {
 
-      alert(err?.response?.data?.message || "Erro ao fazer login");
+      setError(err?.response?.data?.message || "Erro ao fazer login");
 
     } finally {
 
@@ -78,13 +81,12 @@ export default function Login() {
 
       await forgotPassword(email);
 
-      alert("Enviaremos um email para redefinir sua senha.");
-
+      setForgotSuccess(true);
       setForgotOpen(false);
 
     }catch(err:any){
 
-      alert(err?.response?.data?.message || "Erro ao enviar email");
+      setError(err?.response?.data?.message || "Erro ao enviar email");
 
     }
 
@@ -92,7 +94,7 @@ export default function Login() {
 
   return (
 
-    <div className={styles.wrapper}>
+    <div className={`${styles.wrapper} page-enter`}>
 
       <div className={styles.card}>
 
@@ -102,6 +104,16 @@ export default function Login() {
           Aplicativo de espiritualidade católica
         </p>
 
+        {error && (
+          <p className={styles.errorMsg}>{error}</p>
+        )}
+
+        {forgotSuccess && (
+          <p className={styles.successMsg}>
+            Enviaremos um email para redefinir sua senha.
+          </p>
+        )}
+
         <form onSubmit={handleSubmit} className={styles.form}>
 
           <input
@@ -109,7 +121,7 @@ export default function Login() {
             type="email"
             placeholder="Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => { setEmail(e.target.value); setError(null) }}
             required
           />
 
@@ -118,7 +130,7 @@ export default function Login() {
             type="password"
             placeholder="Senha"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => { setPassword(e.target.value); setError(null) }}
             required
           />
 

@@ -139,7 +139,7 @@ export default function Catecismo(){
 
   return(
 
-    <div className={styles.container}>
+    <div className={`${styles.container} page-enter`}>
 
       {/* HEADER */}
       <div className={styles.header}>

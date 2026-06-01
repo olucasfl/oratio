@@ -48,7 +48,7 @@ export default function LiturgiaFull(){
 
   return(
     <>
-    <div className={styles.container}>
+    <div className={`${styles.container} page-enter`}>
 
       {/* BOTÃO VOLTAR */}
       <button className={styles.backButton} onClick={()=>navigate(-1)}>

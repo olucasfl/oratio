@@ -237,7 +237,7 @@ export default function Journey(){
 
   return(
 
-    <main className={styles.container}>
+    <main className={`${styles.container} page-enter`}>
 
       <button
         className={styles.backButton}

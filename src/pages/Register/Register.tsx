@@ -43,7 +43,7 @@ setLoading(false);
 
 return(
 
-<div className={styles.wrapper}>
+<div className={`${styles.wrapper} page-enter`}>
 
 <div className={styles.card}>
 

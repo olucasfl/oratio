@@ -10,6 +10,8 @@ import {
  uncompleteDay
 } from "../../services/consecrationService"
 
+import { useOffline } from "../../hooks/useOffline"
+
 export default function ConsecrationDay(){
 
  const { day } = useParams()
@@ -22,7 +24,7 @@ export default function ConsecrationDay(){
  const [successMessage,setSuccessMessage] = useState<string | null>(null)
  const [errorMessage,setErrorMessage] = useState<string | null>(null)
 
- const [isOffline,setIsOffline] = useState(!navigator.onLine)
+ const isOffline = useOffline()
 
  function offlineWarning(){
     setErrorMessage(
@@ -32,28 +34,15 @@ export default function ConsecrationDay(){
 
  useEffect(()=>{
 
-  function handleOnline(){
-   setIsOffline(false)
-   load()
-  }
-
-  function handleOffline(){
-   setIsOffline(true)
-  }
-
-  window.addEventListener("online",handleOnline)
-  window.addEventListener("offline",handleOffline)
-
   load()
 
-  return ()=>{
-
-   window.removeEventListener("online",handleOnline)
-   window.removeEventListener("offline",handleOffline)
-
-  }
-
  },[day])
+
+ useEffect(()=>{
+
+  if(!isOffline) load()
+
+ },[isOffline])
 
   async function load(){
 
@@ -259,7 +248,7 @@ export default function ConsecrationDay(){
     </div>
    )}
 
-   <div className={styles.container}>
+   <div className={`${styles.container} page-enter`}>
 
     <button
      className={styles.back}

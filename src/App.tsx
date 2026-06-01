@@ -1,41 +1,37 @@
 import { Routes, Route, Navigate } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { useState, useEffect, lazy, Suspense } from "react"
 
-import Login from "./pages/Login/Login"
-import Register from "./pages/Register/Register"
-import Home from "./pages/Home/Home"
-
-import ProtectedRoute from "./components/ProtectedRoute"
-
-import ConsecrationHome from "./pages/Consecration/ConsecrationHome"
-import ConsecrationDay from "./pages/Consecration/ConsecrationDay"
-import ConsecrationStage from "./pages/Consecration/ConsecrationStage"
-
-import BibliaHome from "./pages/Biblia/BibliaHome"
-import BibliaBook from "./pages/Biblia/BibliaBook"
-import BibliaChapter from "./pages/Biblia/BibliaChapter"
-
-import Vox from "./pages/Vox/Vox"
-
+/* Sempre carregados (boot + guard) */
 import Splash from "./components/Splash/Splash"
-import Profile from "./pages/Profile/Profile"
-import AdminPanel from "./pages/Profile/AdminPanel"
-
-/* services */
-
+import ProtectedRoute from "./components/ProtectedRoute"
 import { preloadConsecration, getProgress } from "./services/consecrationService"
-import PrayersCategories from "./pages/Prayers/PrayersCategories"
-import CategoryPrayers from "./pages/Prayers/CategoryPrayers"
-import Prayers from "./pages/Prayers/Prayers"
-import RosaryHome from "./pages/Prayers/RosaryHome"
-import RosaryPage from "./pages/Prayers/RosaryPage"
-import Catecismo from "./pages/Catecismo/Catecismo"
-import Tratado from "./pages/Consecration/Tratado"
 import { sendActivityPing } from "./services/activityService"
-import LiturgiaFull from "./pages/Liturgia/LiturgiaFull"
-import ConsecrationFinal from "./pages/Consecration/ConsecrationFinal"
-import ConsecrationCarta from "./components/ConsecrationCarta/ConsecrationCarta"
-import Journey from "./pages/Journey/Journey"
+
+/* Páginas carregadas sob demanda */
+const Login            = lazy(() => import("./pages/Login/Login"))
+const Register         = lazy(() => import("./pages/Register/Register"))
+const Home             = lazy(() => import("./pages/Home/Home"))
+const ConsecrationHome = lazy(() => import("./pages/Consecration/ConsecrationHome"))
+const ConsecrationDay  = lazy(() => import("./pages/Consecration/ConsecrationDay"))
+const ConsecrationStage= lazy(() => import("./pages/Consecration/ConsecrationStage"))
+const ConsecrationFinal= lazy(() => import("./pages/Consecration/ConsecrationFinal"))
+const ConsecrationCarta= lazy(() => import("./components/ConsecrationCarta/ConsecrationCarta"))
+const Tratado          = lazy(() => import("./pages/Consecration/Tratado"))
+const BibliaHome       = lazy(() => import("./pages/Biblia/BibliaHome"))
+const BibliaBook       = lazy(() => import("./pages/Biblia/BibliaBook"))
+const BibliaChapter    = lazy(() => import("./pages/Biblia/BibliaChapter"))
+const Vox              = lazy(() => import("./pages/Vox/Vox"))
+const Profile          = lazy(() => import("./pages/Profile/Profile"))
+const AdminPanel       = lazy(() => import("./pages/Profile/AdminPanel"))
+const PrayersCategories= lazy(() => import("./pages/Prayers/PrayersCategories"))
+const CategoryPrayers  = lazy(() => import("./pages/Prayers/CategoryPrayers"))
+const Prayers          = lazy(() => import("./pages/Prayers/Prayers"))
+const RosaryHome       = lazy(() => import("./pages/Prayers/RosaryHome"))
+const RosaryPage       = lazy(() => import("./pages/Prayers/RosaryPage"))
+const Catecismo        = lazy(() => import("./pages/Catecismo/Catecismo"))
+const LiturgiaFull     = lazy(() => import("./pages/Liturgia/LiturgiaFull"))
+const Journey          = lazy(() => import("./pages/Journey/Journey"))
+const Confissao        = lazy(() => import("./pages/Confissao/Confissao"))
 
 function App(){
 
@@ -155,6 +151,8 @@ ROTAS
 
 return(
 
+<Suspense fallback={<div className="oratio-loading" />}>
+
 <Routes>
 
 <Route path="/" element={<Navigate to="/login" replace />} />
@@ -269,6 +267,15 @@ element={
  }
 />
 
+<Route
+ path="/oratio/confissao"
+ element={
+  <ProtectedRoute>
+   <Confissao/>
+  </ProtectedRoute>
+ }
+/>
+
 <Route path="*" element={<Navigate to="/login" replace />} />
 
 <Route
@@ -281,6 +288,8 @@ element={
 />
 
 </Routes>
+
+</Suspense>
 
 )
 

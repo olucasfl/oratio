@@ -116,7 +116,7 @@ export default function Tratado(){
 
   return(
 
-    <div className={styles.container}>
+    <div className={`${styles.container} page-enter`}>
 
       {/* HEADER */}
       <div className={styles.header}>

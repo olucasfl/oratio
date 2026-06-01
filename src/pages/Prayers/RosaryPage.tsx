@@ -419,7 +419,7 @@ export default function RosaryPage(){
   return(
 
     <main
-      className={styles.page}
+      className={`${styles.page} page-enter`}
       onTouchStart={
         handleTouchStart
       }

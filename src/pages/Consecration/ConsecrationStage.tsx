@@ -10,6 +10,8 @@ import {
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
+import { useOffline } from "../../hooks/useOffline"
+
 export default function ConsecrationStage(){
 
  const { stageId } = useParams()
@@ -19,32 +21,19 @@ export default function ConsecrationStage(){
  const [progress,setProgress] = useState<any>(null)
  const [loading,setLoading] = useState(true)
 
- const [isOffline,setIsOffline] = useState(!navigator.onLine)
+ const isOffline = useOffline()
 
  useEffect(()=>{
 
-  function handleOnline(){
-   setIsOffline(false)
-   load()
-  }
-
-  function handleOffline(){
-   setIsOffline(true)
-  }
-
-  window.addEventListener("online",handleOnline)
-  window.addEventListener("offline",handleOffline)
-
   load()
 
-  return ()=>{
-
-   window.removeEventListener("online",handleOnline)
-   window.removeEventListener("offline",handleOffline)
-
-  }
-
  },[stageId])
+
+ useEffect(()=>{
+
+  if(!isOffline) load()
+
+ },[isOffline])
 
  async function load(){
 
@@ -155,7 +144,7 @@ export default function ConsecrationStage(){
 
  return(
 
-  <div className={styles.container}>
+  <div className={`${styles.container} page-enter`}>
 
    <button
     className={styles.back}

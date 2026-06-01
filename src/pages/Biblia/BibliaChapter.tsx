@@ -12,6 +12,9 @@ import {
 import { getChapter }
 from "../../services/bibliaService"
 
+import { useReadingSize }
+from "../../hooks/useReadingSize"
+
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
 
@@ -29,6 +32,8 @@ export default function BibliaChapter(){
 
  const [search,setSearch] =
   useState("")
+
+ const { size, fontSize, setSize } = useReadingSize()
 
  const verseRefs =
   useRef<Record<number,HTMLParagraphElement | null>>({})
@@ -81,7 +86,7 @@ export default function BibliaChapter(){
 
  return(
 
-  <div className={styles.container}>
+  <div className={`${styles.container} page-enter`}>
 
    <div className={styles.glow}></div>
 
@@ -115,7 +120,7 @@ export default function BibliaChapter(){
 
    </div>
 
-   {/* SEARCH */}
+   {/* SEARCH + TAMANHO */}
 
    <div className={styles.searchCard}>
 
@@ -126,6 +131,28 @@ export default function BibliaChapter(){
       <span>
         Buscar versículo
       </span>
+
+      <div className={styles.fontSizeBtns}>
+
+       <button
+        className={`${styles.fontBtn} ${size==="sm" ? styles.fontBtnActive : ""}`}
+        onClick={()=>setSize("sm")}
+        aria-label="Fonte pequena"
+       >A</button>
+
+       <button
+        className={`${styles.fontBtn} ${styles.fontBtnMd} ${size==="md" ? styles.fontBtnActive : ""}`}
+        onClick={()=>setSize("md")}
+        aria-label="Fonte média"
+       >A</button>
+
+       <button
+        className={`${styles.fontBtn} ${styles.fontBtnLg} ${size==="lg" ? styles.fontBtnActive : ""}`}
+        onClick={()=>setSize("lg")}
+        aria-label="Fonte grande"
+       >A</button>
+
+      </div>
 
     </div>
 
@@ -162,7 +189,7 @@ export default function BibliaChapter(){
 
    {/* TEXTO */}
 
-   <div className={styles.textCard}>
+   <div className={styles.textCard} style={{ "--reading-font": `${fontSize}px` } as React.CSSProperties}>
 
     <div className={styles.chapterHeader}>
 

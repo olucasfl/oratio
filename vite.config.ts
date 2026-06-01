@@ -25,7 +25,13 @@ manualChunks: {
 
 react: ["react","react-dom"],
 
-router: ["react-router-dom"]
+router: ["react-router-dom"],
+
+icons: ["lucide-react"],
+
+pdf: ["react-pdf","pdfjs-dist"],
+
+markdown: ["react-markdown","remark-gfm"]
 
 }
 

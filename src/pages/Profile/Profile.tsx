@@ -1,5 +1,6 @@
-import { useEffect,useState } from "react"
+import { useEffect,useState,useMemo } from "react"
 import { useNavigate } from "react-router-dom"
+import { useOffline } from "../../hooks/useOffline"
 
 import styles from "./Profile.module.css"
 
@@ -23,37 +24,19 @@ export default function Profile(){
  const [profile,setProfile] = useState<any>(null)
  const [loading,setLoading] = useState(true)
 
- const [isOffline,setIsOffline] = useState(!navigator.onLine)
+ const isOffline = useOffline()
 
  useEffect(()=>{
 
-  function handleOnline(){
-
-   setIsOffline(false)
-
-   loadProfile()
-
-  }
-
-  function handleOffline(){
-
-   setIsOffline(true)
-
-  }
-
-  window.addEventListener("online",handleOnline)
-  window.addEventListener("offline",handleOffline)
-
   loadProfile()
 
-  return ()=>{
-
-   window.removeEventListener("online",handleOnline)
-   window.removeEventListener("offline",handleOffline)
-
-  }
-
  },[])
+
+ useEffect(()=>{
+
+  if(!isOffline) loadProfile()
+
+ },[isOffline])
 
  async function loadProfile(){
 
@@ -277,7 +260,7 @@ export default function Profile(){
 
  return(
 
-  <div className={styles.page}>
+  <div className={`${styles.page} page-enter`}>
 
    <div className={styles.backgroundGlow}></div>
 
@@ -561,3 +544,5 @@ export default function Profile(){
  )
 
 }
+
+

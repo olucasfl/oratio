@@ -121,7 +121,7 @@ export default function ConsecrationFinal(){
 
   return(
 
-    <div className={styles.container}>
+    <div className={`${styles.container} page-enter`}>
 
       <button
         className={styles.back}

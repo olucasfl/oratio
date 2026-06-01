@@ -1,10 +1,12 @@
 import styles from "./BibliaHome.module.css"
 import { useNavigate } from "react-router-dom"
-import { useEffect,useState } from "react"
+import { useEffect,useState,useCallback } from "react"
 
 import {
  getOldTestament,
- getNewTestament
+ getNewTestament,
+ searchVerses,
+ type VerseResult
 } from "../../services/bibliaService"
 
 import BottomNavbar
@@ -17,6 +19,8 @@ import {
  Cross
 } from "lucide-react"
 
+type SearchMode = "livros" | "versiculos"
+
 export default function BibliaHome(){
 
  const navigate = useNavigate()
@@ -25,53 +29,83 @@ export default function BibliaHome(){
  const novo = getNewTestament()
 
  const [search,setSearch] = useState("")
+ const [searchMode,setSearchMode] = useState<SearchMode>("livros")
+ const [verseQuery,setVerseQuery] = useState("")
+ const [verseResults,setVerseResults] = useState<VerseResult[]>([])
+ const [searching,setSearching] = useState(false)
+
+ useEffect(()=>{
+  window.scrollTo({ top:0, behavior:"instant" })
+ },[])
+
+ /* ==============================
+  BUSCA DE VERS\u00cdCULOS (debounced)
+ ============================== */
 
  useEffect(()=>{
 
-  window.scrollTo({
-   top:0,
-   behavior:"instant"
-  })
+  if(verseQuery.length < 3){
+   setVerseResults([])
+   setSearching(false)
+   return
+  }
 
- },[])
+  setSearching(true)
+
+  const timer = setTimeout(()=>{
+   const results = searchVerses(verseQuery)
+   setVerseResults(results)
+   setSearching(false)
+  }, 450)
+
+  return ()=>clearTimeout(timer)
+
+ },[verseQuery])
+
+ /* ==============================
+  FILTRO DE LIVROS
+ ============================== */
 
  function removeAccents(text:string){
-
-  return text
-   .normalize("NFD")
-   .replace(/[\u0300-\u036f]/g,"")
-   .toLowerCase()
-
+  return text.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()
  }
 
  function filterBooks(books:any[]){
+  const q = removeAccents(search)
+  return books.filter((book:any)=>removeAccents(book.nome).includes(q))
+ }
 
-  const normalizedSearch =
-   removeAccents(search)
+ const antigoFiltrado = filterBooks(antigo)
+ const novoFiltrado   = filterBooks(novo)
+ const totalBooks     = antigo.length + novo.length
 
-  return books.filter((book:any)=>{
+ /* ==============================
+  HIGHLIGHT
+ ============================== */
 
-   const normalizedName =
-    removeAccents(book.nome)
+ function highlight(text:string, query:string){
 
-   return normalizedName.includes(normalizedSearch)
+  if(!query) return text
 
-  })
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")
+  const regex = new RegExp(`(${escaped})`, "gi")
+  const parts = text.split(regex)
+
+  return parts.map((part)=>
+   regex.test(part)
+    ? `<mark>${part}</mark>`
+    : part
+  ).join("")
 
  }
 
- const antigoFiltrado =
-  filterBooks(antigo)
-
- const novoFiltrado =
-  filterBooks(novo)
-
- const totalBooks =
-  antigo.length + novo.length
+ const goToVerse = useCallback((r:VerseResult)=>{
+  navigate(`/oratio/biblia/${r.book}/${r.chapter}`)
+ },[navigate])
 
  return(
 
-  <div className={styles.container}>
+  <div className={`${styles.container} page-enter`}>
 
    <div className={styles.glow}></div>
 
@@ -112,26 +146,139 @@ export default function BibliaHome(){
 
    </div>
 
-   {/* SEARCH */}
+   {/* ABAS DE BUSCA */}
 
-   <div className={styles.searchWrapper}>
+   <div className={styles.searchTabs}>
 
-    <Search
-      size={18}
-      className={styles.searchIcon}
-    />
+    <button
+     className={`${styles.searchTab} ${searchMode==="livros" ? styles.searchTabActive : ""}`}
+     onClick={()=>setSearchMode("livros")}
+    >
+     <BookOpen size={14}/> Livros
+    </button>
 
-    <input
+    <button
+     className={`${styles.searchTab} ${searchMode==="versiculos" ? styles.searchTabActive : ""}`}
+     onClick={()=>setSearchMode("versiculos")}
+    >
+     <Search size={14}/> Versículos
+    </button>
+
+   </div>
+
+   {/* SEARCH — LIVROS */}
+
+   {searchMode === "livros" && (
+    <div className={styles.searchWrapper}>
+     <Search size={18} className={styles.searchIcon}/>
+     <input
       type="search"
       placeholder="Pesquisar livro..."
       value={search}
       onChange={(e)=>setSearch(e.target.value)}
       className={styles.searchInput}
-    />
+     />
+    </div>
+   )}
 
-   </div>
+   {/* SEARCH — VERSÍCULOS */}
 
-   {/* ANTIGO TESTAMENTO */}
+   {searchMode === "versiculos" && (
+    <>
+    <p className={styles.verseSearchDesc}>
+     Pesquise por palavras ou frases em todos os livros da Bíblia.
+     <br/>
+     <span>Ex: "não temas", "luz do mundo", "amor"</span>
+    </p>
+    <div className={styles.searchWrapper}>
+     <Search size={18} className={styles.searchIcon}/>
+     <input
+      type="search"
+      placeholder="Buscar na Bíblia..."
+      value={verseQuery}
+      onChange={(e)=>setVerseQuery(e.target.value)}
+      className={styles.searchInput}
+      autoFocus
+     />
+    </div>
+    </>
+   )}
+
+   {/* RESULTADOS DE VERSÍCULOS */}
+
+   {searchMode === "versiculos" && (
+
+    <div className={styles.verseResultsSection}>
+
+     {verseQuery.length > 0 && verseQuery.length < 3 && (
+      <p className={styles.verseHint}>
+       Digite ao menos 3 caracteres para buscar.
+      </p>
+     )}
+
+     {searching && (
+      <p className={styles.verseHint}>Buscando...</p>
+     )}
+
+     {!searching && verseQuery.length >= 3 && verseResults.length === 0 && (
+      <div className={styles.empty}>
+       <BookOpen size={36}/>
+       <h3>Nenhum versículo encontrado</h3>
+       <p>Tente outras palavras.</p>
+      </div>
+     )}
+
+     {!searching && verseResults.length > 0 && (
+      <>
+       <p className={styles.verseCount}>
+        {verseResults.length === 50
+         ? "Primeiros 50 resultados"
+         : `${verseResults.length} resultado${verseResults.length > 1 ? "s" : ""}`}
+       </p>
+
+       <div className={styles.verseResultsList}>
+
+        {verseResults.map((r,i)=>(
+
+         <button
+          key={i}
+          className={styles.verseCard}
+          onClick={()=>goToVerse(r)}
+         >
+
+          <div className={styles.verseCardRef}>
+           <BookOpen size={13}/>
+           <strong>{r.book} {r.chapter},{r.verse}</strong>
+          </div>
+
+          <p
+           className={styles.verseCardText}
+           dangerouslySetInnerHTML={{
+            __html: highlight(
+             r.text.length > 120
+              ? r.text.slice(0,120) + "…"
+              : r.text,
+             verseQuery
+            )
+           }}
+          />
+
+         </button>
+
+        ))}
+
+       </div>
+      </>
+     )}
+
+    </div>
+
+   )}
+
+   {/* LIVROS (só quando modo livros) */}
+
+   {searchMode === "livros" && (
+   <>
 
    {antigoFiltrado.length > 0 && (
 
@@ -256,6 +403,9 @@ export default function BibliaHome(){
 
     </div>
 
+   )}
+
+   </>
    )}
 
    <div className={styles.pageSpacer}></div>

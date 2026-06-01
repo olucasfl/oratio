@@ -486,7 +486,7 @@ export default function AdminPanel(){
 
  return(
 
-  <div className={styles.page}>
+  <div className={`${styles.page} page-enter`}>
 
    <div className={styles.backgroundGlow}></div>
 

@@ -518,3 +518,133 @@
   }
 
 }
+
+
+/* ========================= */
+/* ABAS DE BUSCA             */
+/* ========================= */
+
+.searchTabs{
+  display:flex;
+  gap:8px;
+  width:100%;
+  max-width:500px;
+  margin-bottom:4px;
+}
+
+.searchTab{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:10px 16px;
+  border-radius:var(--oratio-radius-sm);
+  border:1.5px solid var(--oratio-card-border);
+  background:var(--oratio-card-bg);
+  color:var(--oratio-text-soft);
+  font-family:var(--oratio-font-text);
+  font-size:15px;
+  cursor:pointer;
+  transition:var(--oratio-transition);
+}
+
+.searchTabActive{
+  background:var(--oratio-primary);
+  border-color:var(--oratio-primary);
+  color:#fff;
+  font-weight:600;
+}
+
+
+/* ========================= */
+/* RESULTADOS DE VERSÍCULOS  */
+/* ========================= */
+
+.verseSearchDesc{
+  width:100%;
+  max-width:500px;
+  font-size:14px;
+  color:var(--oratio-text-soft);
+  line-height:1.6;
+  text-align:center;
+  padding:4px 0 2px;
+}
+
+.verseSearchDesc span{
+  font-style:italic;
+  font-size:13px;
+  color:var(--oratio-primary);
+  opacity:.8;
+}
+
+.verseResultsSection{
+  width:100%;
+  max-width:500px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.verseHint{
+  text-align:center;
+  color:var(--oratio-text-soft);
+  font-size:14px;
+  padding:20px 0;
+}
+
+.verseCount{
+  font-size:13px;
+  color:var(--oratio-text-soft);
+  text-align:right;
+}
+
+.verseResultsList{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.verseCard{
+  width:100%;
+  text-align:left;
+  background:var(--oratio-card-bg);
+  border:1.5px solid var(--oratio-card-border);
+  border-radius:var(--oratio-radius-md);
+  padding:14px 16px;
+  cursor:pointer;
+  transition:var(--oratio-transition);
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.verseCard:active{
+  background:var(--oratio-secondary);
+  transform:scale(.99);
+}
+
+.verseCardRef{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  color:var(--oratio-primary);
+  font-size:13px;
+  font-weight:700;
+  font-family:var(--oratio-font-title);
+  letter-spacing:.5px;
+}
+
+.verseCardText{
+  font-family:var(--oratio-font-text);
+  font-size:15px;
+  color:var(--oratio-text-dark);
+  line-height:1.5;
+}
+
+.verseCardText mark{
+  background:rgba(176,24,26,.15);
+  color:var(--oratio-primary);
+  border-radius:3px;
+  padding:0 2px;
+}

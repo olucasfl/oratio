@@ -171,7 +171,7 @@ export default function Prayers(){
 
   return(
 
-    <main className={styles.page}>
+    <main className={`${styles.page} page-enter`}>
 
       <section className={styles.container}>
 

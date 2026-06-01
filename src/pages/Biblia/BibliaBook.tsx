@@ -67,7 +67,7 @@ export default function BibliaBook(){
 
  return(
 
-  <div className={styles.container}>
+  <div className={`${styles.container} page-enter`}>
 
     {/* GLOW */}
     <div className={styles.glowTop}></div>

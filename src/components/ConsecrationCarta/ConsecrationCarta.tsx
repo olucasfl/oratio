@@ -27,7 +27,7 @@ export default function ConsecrationCarta(){
 
   return(
 
-    <div className={styles.container}>
+    <div className={`${styles.container} page-enter`}>
 
       {/* ================= HEADER ================= */}
 
