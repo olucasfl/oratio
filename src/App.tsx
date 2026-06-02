@@ -113,6 +113,22 @@ useEffect(()=>{
 
   const startApp = async () => {
     await bootLoader()
+
+    // Corrige o URL enquanto o splash ainda está cobrindo a tela,
+    // evitando que as rotas pisquem na posição errada ao renderizar.
+    const token = localStorage.getItem("access_token")
+    const path  = window.location.pathname
+
+    if (!token) {
+      if (path !== "/login" && path !== "/register") {
+        window.history.replaceState(null, "", "/login")
+      }
+    } else {
+      if (path === "/" || path === "/login") {
+        window.history.replaceState(null, "", "/oratio/home")
+      }
+    }
+
     setLoading(false)
   }
 
@@ -138,34 +154,26 @@ useEffect(()=>{
 
 
 /* =================================
-PRELOAD ROUTES
+PRELOAD ROUTES (durante o splash)
 ================================= */
 
 useEffect(()=>{
-  if(loading) return
-
-  const schedule = (cb: ()=>void) =>
-    'requestIdleCallback' in window
-      ? (window as any).requestIdleCallback(cb)
-      : setTimeout(cb, 400)
-
-  schedule(()=>{
-    void import("./pages/Confissao/Confissao")
-    void import("./pages/Prayers/PrayersCategories")
-    void import("./pages/Prayers/CategoryPrayers")
-    void import("./pages/Prayers/Prayers")
-    void import("./pages/Prayers/RosaryHome")
-    void import("./pages/Biblia/BibliaHome")
-    void import("./pages/Biblia/BibliaBook")
-    void import("./pages/Consecration/ConsecrationHome")
-    void import("./pages/Consecration/ConsecrationDay")
-    void import("./pages/Vox/Vox")
-    void import("./pages/Catecismo/Catecismo")
-    void import("./pages/Liturgia/LiturgiaFull")
-    void import("./pages/Journey/Journey")
-    void import("./pages/Profile/Profile")
-  })
-},[loading])
+  void import("./pages/Home/Home")
+  void import("./pages/Confissao/Confissao")
+  void import("./pages/Prayers/PrayersCategories")
+  void import("./pages/Prayers/CategoryPrayers")
+  void import("./pages/Prayers/Prayers")
+  void import("./pages/Prayers/RosaryHome")
+  void import("./pages/Biblia/BibliaHome")
+  void import("./pages/Biblia/BibliaBook")
+  void import("./pages/Consecration/ConsecrationHome")
+  void import("./pages/Consecration/ConsecrationDay")
+  void import("./pages/Vox/Vox")
+  void import("./pages/Catecismo/Catecismo")
+  void import("./pages/Liturgia/LiturgiaFull")
+  void import("./pages/Journey/Journey")
+  void import("./pages/Profile/Profile")
+},[]) // roda 1x na montagem, enquanto o splash ainda está visível
 
 /* =================================
 SPLASH

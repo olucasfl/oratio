@@ -245,25 +245,6 @@ export default function Home(){
  },[dateOffset])
 
  /* =========================
- AUTH
- ========================= */
-
- useEffect(()=>{
-
-  const token =
-  localStorage.getItem("access_token")
-
-  if(!token){
-
-   navigate("/login", {
-    replace:true
-   })
-
-  }
-
- },[])
-
- /* =========================
  ESC FECHAR MODAL
  ========================= */
 
