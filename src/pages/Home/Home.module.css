@@ -272,7 +272,7 @@ HERO
  left:50%;
 
  top:
- clamp(24px,2vw,34px);
+ clamp(16px,2vw,34px);
 
  width:
  clamp(180px,24vw,310px);
