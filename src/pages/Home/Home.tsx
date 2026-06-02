@@ -133,22 +133,6 @@ export default function Home(){
  const features = useMemo<FeatureItem[]>(()=>[
 
   {
-   title:
-   "Consagração à Nossa Senhora",
-
-   description:
-   "Um caminho espiritual de 33 dias segundo o método de São Luís Maria Grignion de Montfort.",
-
-   actionLabel:
-   "Iniciar Consagração",
-
-   path:
-   "/oratio/consecration",
-
-   badge:"33 DIAS"
-  },
-
-  {
    title:"Orações",
 
    description:
@@ -178,6 +162,22 @@ export default function Home(){
    "/oratio/confissao",
 
    badge:"SACRAMENTO"
+  },
+
+  {
+   title:
+   "Consagração à Nossa Senhora",
+
+   description:
+   "Um caminho espiritual de 33 dias segundo o método de São Luís Maria Grignion de Montfort.",
+
+   actionLabel:
+   "Iniciar Consagração",
+
+   path:
+   "/oratio/consecration",
+
+   badge:"33 DIAS"
   },
 
   {

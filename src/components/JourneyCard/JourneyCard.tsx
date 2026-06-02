@@ -95,18 +95,37 @@ export default function JourneyCard(){
           <div className={styles.iconWrapper}>
             <HeartHandshake size={28} strokeWidth={2.2}/>
           </div>
-          <div style={{flex:1,display:"flex",flexDirection:"column",gap:6}}>
-            <div className="skeleton" style={{height:18,width:"55%",borderRadius:6}}/>
-            <div className="skeleton" style={{height:14,width:"70%",borderRadius:4}}/>
+          <div style={{flex:1,display:"flex",flexDirection:"column",gap:8}}>
+            <div className="skeleton" style={{height:16,width:"58%",borderRadius:6}}/>
+            <div className="skeleton" style={{height:12,width:"75%",borderRadius:4}}/>
           </div>
         </div>
 
-        <div style={{display:"flex",flexDirection:"column",gap:12}}>
-          <div className="skeleton" style={{height:10,width:"100%",borderRadius:99}}/>
-          <div className="skeleton" style={{height:64,width:"100%",borderRadius:14}}/>
-          <div className="skeleton" style={{height:64,width:"100%",borderRadius:14}}/>
-          <div className="skeleton" style={{height:44,width:"100%",borderRadius:10}}/>
+        <div style={{display:"flex",flexDirection:"column",gap:8}}>
+          <div style={{display:"flex",justifyContent:"space-between"}}>
+            <div className="skeleton" style={{height:12,width:"38%",borderRadius:4}}/>
+            <div className="skeleton" style={{height:12,width:"12%",borderRadius:4}}/>
+          </div>
+          <div className="skeleton" style={{height:14,width:"100%",borderRadius:99}}/>
         </div>
+
+        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+          {[0,1].map(i=>(
+            <div key={i} style={{background:"rgba(255,255,255,.55)",border:"1px solid #ece3d7",borderRadius:20,padding:18}}>
+              <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:14}}>
+                <div className="skeleton" style={{minWidth:46,height:46,borderRadius:"50%"}}/>
+                <div style={{flex:1,display:"flex",flexDirection:"column",gap:6}}>
+                  <div className="skeleton" style={{height:14,width:"50%",borderRadius:4}}/>
+                  <div className="skeleton" style={{height:11,width:"36%",borderRadius:4}}/>
+                </div>
+                <div className="skeleton" style={{width:64,height:40,borderRadius:14}}/>
+              </div>
+              <div className="skeleton" style={{height:12,width:"100%",borderRadius:99}}/>
+            </div>
+          ))}
+        </div>
+
+        <div className="skeleton" style={{height:56,borderRadius:18}}/>
 
       </section>
     )
