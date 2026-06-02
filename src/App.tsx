@@ -137,6 +137,36 @@ useEffect(()=>{
 
 
 /* =================================
+PRELOAD ROUTES
+================================= */
+
+useEffect(()=>{
+  if(loading) return
+
+  const schedule = (cb: ()=>void) =>
+    'requestIdleCallback' in window
+      ? (window as any).requestIdleCallback(cb)
+      : setTimeout(cb, 400)
+
+  schedule(()=>{
+    void import("./pages/Confissao/Confissao")
+    void import("./pages/Prayers/PrayersCategories")
+    void import("./pages/Prayers/CategoryPrayers")
+    void import("./pages/Prayers/Prayers")
+    void import("./pages/Prayers/RosaryHome")
+    void import("./pages/Biblia/BibliaHome")
+    void import("./pages/Biblia/BibliaBook")
+    void import("./pages/Consecration/ConsecrationHome")
+    void import("./pages/Consecration/ConsecrationDay")
+    void import("./pages/Vox/Vox")
+    void import("./pages/Catecismo/Catecismo")
+    void import("./pages/Liturgia/LiturgiaFull")
+    void import("./pages/Journey/Journey")
+    void import("./pages/Profile/Profile")
+  })
+},[loading])
+
+/* =================================
 SPLASH
 ================================= */
 

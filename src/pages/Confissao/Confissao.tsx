@@ -26,13 +26,15 @@ export default function Confissao() {
   const [oracaoOpen, setOracaoOpen] = useState(false)
 
   useEffect(() => {
-    window.scrollTo(0, 0)
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
   }, [])
 
   function handleTabChange(newTab: Tab) {
     setTab(newTab)
     setOpenSection(null)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
   }
 
   function toggleSection(i: number) {
