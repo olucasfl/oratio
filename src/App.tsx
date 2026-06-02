@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom"
 import { useState, useEffect, lazy, Suspense } from "react"
+import ScrollToTop from "./components/ScrollToTop"
 
 /* Sempre carregados (boot + guard) */
 import Splash from "./components/Splash/Splash"
@@ -182,6 +183,8 @@ ROTAS
 return(
 
 <Suspense fallback={<div className="oratio-loading" />}>
+
+<ScrollToTop />
 
 <Routes>
 

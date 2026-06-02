@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from "react"
+import { useState, Fragment } from "react"
 import { useNavigate } from "react-router-dom"
 import { ChevronDown, ChevronUp, Cross, BookOpen, Heart } from "lucide-react"
 
@@ -24,11 +24,6 @@ export default function Confissao() {
   const [tab, setTab] = useState<Tab>("como")
   const [openSection, setOpenSection] = useState<number | null>(null)
   const [oracaoOpen, setOracaoOpen] = useState(false)
-
-  useEffect(() => {
-    document.documentElement.scrollTop = 0
-    document.body.scrollTop = 0
-  }, [])
 
   function handleTabChange(newTab: Tab) {
     setTab(newTab)
