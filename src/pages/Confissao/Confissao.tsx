@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect, Fragment } from "react"
 import { useNavigate } from "react-router-dom"
 import { ChevronDown, ChevronUp, Cross, BookOpen, Heart } from "lucide-react"
 
@@ -22,8 +22,18 @@ export default function Confissao() {
 
   const navigate = useNavigate()
   const [tab, setTab] = useState<Tab>("como")
-  const [openSection, setOpenSection] = useState<number | null>(0)
+  const [openSection, setOpenSection] = useState<number | null>(null)
   const [oracaoOpen, setOracaoOpen] = useState(false)
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+  function handleTabChange(newTab: Tab) {
+    setTab(newTab)
+    setOpenSection(null)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   function toggleSection(i: number) {
     setOpenSection(prev => prev === i ? null : i)
@@ -65,21 +75,21 @@ export default function Confissao() {
 
         <button
           className={`${styles.tab} ${tab === "como" ? styles.tabActive : ""}`}
-          onClick={() => setTab("como")}
+          onClick={() => handleTabChange("como")}
         >
           <BookOpen size={14} /> Como Confessar
         </button>
 
         <button
           className={`${styles.tab} ${tab === "exame" ? styles.tabActive : ""}`}
-          onClick={() => setTab("exame")}
+          onClick={() => handleTabChange("exame")}
         >
           <Cross size={14} /> Exame
         </button>
 
         <button
           className={`${styles.tab} ${tab === "ato" ? styles.tabActive : ""}`}
-          onClick={() => setTab("ato")}
+          onClick={() => handleTabChange("ato")}
         >
           <Heart size={14} /> Ato de Contrição
         </button>
@@ -187,49 +197,63 @@ export default function Confissao() {
 
             {EXAME_SECTIONS.map((section, i) => (
 
-              <div key={i} className={styles.accordion}>
+              <Fragment key={i}>
 
-                <button
-                  className={`${styles.accordionHeader} ${openSection === i ? styles.accordionHeaderOpen : ""}`}
-                  onClick={() => toggleSection(i)}
-                >
-                  <div className={styles.accordionTitle}>
-                    <span className={styles.accordionNum}>{i === 0 ? "✦" : String(i)}</span>
-                    <div>
-                      <strong>{section.titulo}</strong>
-                      {section.subtitulo && (
-                        <span className={styles.accordionSub}>{section.subtitulo}</span>
-                      )}
-                    </div>
+                {section.grupoCabecalho && (
+                  <div className={styles.groupHeader}>
+                    <div className={styles.groupHeaderLine} />
+                    <span className={styles.groupHeaderText}>{section.grupoCabecalho}</span>
+                    <div className={styles.groupHeaderLine} />
                   </div>
-                  {openSection === i
-                    ? <ChevronUp size={18} />
-                    : <ChevronDown size={18} />
-                  }
-                </button>
-
-                {openSection === i && (
-
-                  <div className={styles.accordionBody}>
-
-                    {section.intro && (
-                      <p className={styles.sectionIntro}>{section.intro}</p>
-                    )}
-
-                    <ul className={styles.itemList}>
-                      {section.itens.map((item, j) => (
-                        <li key={j} className={styles.item}>
-                          <span className={styles.itemCross}>✦</span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                  </div>
-
                 )}
 
-              </div>
+                <div className={styles.accordion}>
+
+                  <button
+                    className={`${styles.accordionHeader} ${openSection === i ? styles.accordionHeaderOpen : ""}`}
+                    onClick={() => toggleSection(i)}
+                  >
+                    <div className={styles.accordionTitle}>
+                      <span className={`${styles.accordionNum} ${section.badgeVariant === 'capital' ? styles.accordionNumCapital : ""}`}>
+                        {section.tag ?? (i === 0 ? "✦" : String(i))}
+                      </span>
+                      <div>
+                        <strong>{section.titulo}</strong>
+                        {section.subtitulo && (
+                          <span className={styles.accordionSub}>{section.subtitulo}</span>
+                        )}
+                      </div>
+                    </div>
+                    {openSection === i
+                      ? <ChevronUp size={18} />
+                      : <ChevronDown size={18} />
+                    }
+                  </button>
+
+                  {openSection === i && (
+
+                    <div className={styles.accordionBody}>
+
+                      {section.intro && (
+                        <p className={styles.sectionIntro}>{section.intro}</p>
+                      )}
+
+                      <ul className={styles.itemList}>
+                        {section.itens.map((item, j) => (
+                          <li key={j} className={styles.item}>
+                            <span className={styles.itemCross}>✦</span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+
+                    </div>
+
+                  )}
+
+                </div>
+
+              </Fragment>
 
             ))}
 

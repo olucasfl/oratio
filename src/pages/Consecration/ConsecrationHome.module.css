@@ -24,21 +24,54 @@ animation:fadePage .5s ease;
 
 
 /* ========================= */
-/* LOADING */
+/* SKELETON                  */
 /* ========================= */
 
-.loading{
+.skeletonHero{
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ gap:12px;
+ width:100%;
+ max-width:420px;
+ margin-bottom:28px;
+}
 
-height:100vh;
+.skeletonIcon{
+ width:64px;
+ height:64px;
+ border-radius:18px;
+}
 
-display:flex;
-align-items:center;
-justify-content:center;
+.skeletonTitle{
+ width:70%;
+ height:32px;
+}
 
-font-size:18px;
+.skeletonSub{
+ width:55%;
+ height:18px;
+}
 
-color:var(--oratio-text-soft);
+.skeletonCard{
+ width:100%;
+ max-width:420px;
+ height:180px;
+ border-radius:16px;
+ margin-bottom:20px;
+}
 
+.skeletonStages{
+ width:100%;
+ max-width:420px;
+ display:flex;
+ flex-direction:column;
+ gap:12px;
+}
+
+.skeletonStage{
+ height:72px;
+ border-radius:14px;
 }
 
 
@@ -77,23 +110,245 @@ outline-offset:4px;
 
 
 /* ========================= */
-/* HEADER */
+/* HERO                      */
 /* ========================= */
 
-.header{
+.hero{
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ gap:8px;
+ margin-bottom:24px;
+ width:100%;
+ max-width:420px;
+ text-align:center;
+ animation:fadeUp .5s ease;
+}
 
-font-family:var(--oratio-font-title);
+.heroIcon{
+ width:64px;
+ height:64px;
+ border-radius:18px;
+ background:linear-gradient(135deg, var(--oratio-primary), #7b1113);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ color:#fff;
+ box-shadow:0 8px 24px rgba(176,24,26,.30);
+ margin-bottom:4px;
+}
 
-font-size:40px;
+.heroBadge{
+ font-family:var(--oratio-font-title);
+ font-size:11px;
+ letter-spacing:1.5px;
+ color:var(--oratio-primary);
+ background:rgba(176,24,26,.08);
+ padding:4px 12px;
+ border-radius:99px;
+ text-transform:uppercase;
+}
 
-color:var(--oratio-primary);
+.heroTitle{
+ font-family:var(--oratio-font-title);
+ font-size:24px;
+ color:var(--oratio-primary-dark);
+ letter-spacing:.8px;
+ line-height:1.2;
+}
 
-margin-bottom:30px;
+.heroSub{
+ font-family:var(--oratio-font-text);
+ font-size:15px;
+ color:var(--oratio-text-soft);
+ line-height:1.5;
+}
 
-animation:fadeUp .5s ease;
 
-text-align:center;
+/* ========================= */
+/* DIA ATUAL                 */
+/* ========================= */
 
+.currentDayCard{
+ width:100%;
+ max-width:420px;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:12px;
+ background:linear-gradient(135deg, var(--oratio-primary), #7b1113);
+ border:none;
+ border-radius:16px;
+ padding:18px 20px;
+ cursor:pointer;
+ margin-bottom:16px;
+ box-shadow:0 8px 24px rgba(176,24,26,.30);
+ transition:all .2s;
+ animation:fadeUp .5s ease;
+}
+
+.currentDayCard:active{
+ transform:scale(.98);
+}
+
+.currentDayLeft{
+ display:flex;
+ align-items:baseline;
+ gap:6px;
+}
+
+.currentDayNum{
+ font-family:var(--oratio-font-title);
+ font-size:44px;
+ color:#fff;
+ line-height:1;
+}
+
+.currentDayLabel{
+ font-family:var(--oratio-font-text);
+ font-size:14px;
+ color:rgba(255,255,255,.75);
+}
+
+.currentDayRight{
+ display:flex;
+ flex-direction:column;
+ align-items:flex-end;
+ gap:4px;
+ color:#fff;
+ font-family:var(--oratio-font-text);
+ font-size:15px;
+ font-weight:600;
+}
+
+.currentDayArrow{
+ font-size:20px;
+}
+
+
+/* ========================= */
+/* CARD HINT                 */
+/* ========================= */
+
+.cardHint{
+ font-family:var(--oratio-font-text);
+ font-size:14px;
+ color:var(--oratio-text-soft);
+ margin-bottom:12px;
+ line-height:1.4;
+}
+
+
+/* ========================= */
+/* STAGE CARD ROW + BADGES   */
+/* ========================= */
+
+.stageCardRow{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:8px;
+ margin-bottom:4px;
+}
+
+.stageBadgeCurrent{
+ font-size:11px;
+ font-weight:700;
+ color:var(--oratio-primary);
+ background:rgba(176,24,26,.10);
+ padding:3px 9px;
+ border-radius:99px;
+ white-space:nowrap;
+}
+
+.stageBadgeDone{
+ font-size:14px;
+ color:#2e7d32;
+ font-weight:700;
+}
+
+.stageBadgeLate{
+ font-size:11px;
+ font-weight:700;
+ color:#e65100;
+ background:rgba(245,124,0,.10);
+ padding:3px 9px;
+ border-radius:99px;
+}
+
+
+/* ========================= */
+/* MODAL CUSTOM              */
+/* ========================= */
+
+.modalOverlay{
+ position:fixed;
+ inset:0;
+ z-index:200;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ background:rgba(0,0,0,.45);
+ backdrop-filter:blur(6px);
+ padding:20px;
+}
+
+.modal{
+ background:var(--oratio-card-bg);
+ border-radius:20px;
+ padding:28px 24px;
+ width:100%;
+ max-width:380px;
+ box-shadow:0 24px 60px rgba(0,0,0,.20);
+ border:1px solid var(--oratio-card-border);
+}
+
+.modalText{
+ font-family:var(--oratio-font-text);
+ font-size:17px;
+ color:var(--oratio-text-dark);
+ line-height:1.65;
+ margin-bottom:24px;
+}
+
+.modalBtns{
+ display:flex;
+ gap:10px;
+}
+
+.modalCancel{
+ flex:1;
+ padding:13px;
+ border-radius:10px;
+ border:1.5px solid var(--oratio-card-border);
+ background:transparent;
+ color:var(--oratio-text-soft);
+ font-family:var(--oratio-font-text);
+ font-size:15px;
+ cursor:pointer;
+ transition:var(--oratio-transition);
+}
+
+.modalCancel:hover{
+ background:var(--oratio-secondary);
+}
+
+.modalConfirm{
+ flex:1;
+ padding:13px;
+ border-radius:10px;
+ border:none;
+ background:var(--oratio-primary);
+ color:#fff;
+ font-family:var(--oratio-font-text);
+ font-size:15px;
+ font-weight:700;
+ cursor:pointer;
+ transition:var(--oratio-transition);
+}
+
+.modalConfirm:hover{
+ background:var(--oratio-primary-dark);
 }
 
 
@@ -772,12 +1027,21 @@ transform:scale(.99);
 /* título */
 .tratadoCard h3{
   font-family:var(--oratio-font-title);
-
   color:#5a3e2b;
-
   font-size:18px;
-
   margin-bottom:6px;
+}
+
+.tratadoCardRow{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:2px;
+}
+
+.tratadoIcon{
+  color:#8b5c2a;
+  flex-shrink:0;
 }
 
 /* subtítulo */
@@ -793,5 +1057,5 @@ transform:scale(.99);
 }
 
 .tratadoCard h3::before{
-  content:"📖 ";
+  content:"";
 }

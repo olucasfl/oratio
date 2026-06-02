@@ -202,27 +202,22 @@ export default function Journey(){
 
     return(
 
-      <main className={styles.container}>
+      <main className={`${styles.container} page-enter`}>
 
-        <button
-          className={styles.backButton}
-          onClick={()=>
-            navigate(-1)
-          }
-        >
-
+        <button className={styles.backButton} onClick={()=>navigate(-1)}>
           <ArrowLeft size={18}/>
-
           Voltar
-
         </button>
 
         <section className={styles.card}>
-
-          <div className={styles.loading}>
-            Carregando jornada...
+          <div style={{display:"flex",flexDirection:"column",gap:14}}>
+            <div className="skeleton" style={{height:24,width:"55%",borderRadius:8}}/>
+            <div className="skeleton" style={{height:16,width:"40%",borderRadius:6}}/>
+            <div className="skeleton" style={{height:12,width:"100%",borderRadius:99}}/>
+            <div className="skeleton" style={{height:72,width:"100%",borderRadius:14}}/>
+            <div className="skeleton" style={{height:72,width:"100%",borderRadius:14}}/>
+            <div className="skeleton" style={{height:44,width:"100%",borderRadius:10}}/>
           </div>
-
         </section>
 
       </main>

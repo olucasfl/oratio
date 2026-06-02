@@ -1,108 +1,103 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 
 import styles from "./ConsecrationCarta.module.css"
 
 import { Document, Page } from "react-pdf"
-
 import "react-pdf/dist/Page/TextLayer.css"
 import "react-pdf/dist/Page/AnnotationLayer.css"
 import "../../utils/pdfConfig"
 
-export default function ConsecrationCarta(){
+export default function ConsecrationCarta() {
 
-  const navigate = useNavigate()
-  const containerRef = useRef<HTMLDivElement>(null)
+  const navigate      = useNavigate()
+  const containerRef  = useRef<HTMLDivElement>(null)
+  const wrapRef       = useRef<HTMLDivElement>(null)
 
-  const [scale,setScale] = useState(1.2)
+  /* largura base calculada pelo container — resolve o problema mobile */
+  const [baseWidth,   setBaseWidth]   = useState<number | undefined>(undefined)
+  const [zoomLevel,   setZoomLevel]   = useState(1.0)
+  const [pdfLoading,  setPdfLoading]  = useState(true)
 
-  /* ================= SCROLL TOP ================= */
+  /* calcula a largura ao montar e no resize */
+  const computeWidth = useCallback(() => {
+    if (!wrapRef.current) return
+    const w = wrapRef.current.clientWidth - 24 // 12px padding cada lado
+    setBaseWidth(Math.max(w, 200))
+  }, [])
 
-  useEffect(()=>{
-    containerRef.current?.scrollTo({
-      top:0,
-      behavior:"smooth"
-    })
-  },[scale])
+  useEffect(() => {
+    computeWidth()
+    window.addEventListener("resize", computeWidth)
+    return () => window.removeEventListener("resize", computeWidth)
+  }, [computeWidth])
 
-  return(
+  /* largura final aplicada ao Page */
+  const pageWidth = baseWidth ? Math.round(baseWidth * zoomLevel) : undefined
+
+  function zoomIn()  { setZoomLevel(z => Math.min(z + 0.25, 3)) }
+  function zoomOut() { setZoomLevel(z => Math.max(z - 0.25, 0.5)) }
+  function resetZoom(){ setZoomLevel(1.0) }
+
+  return (
 
     <div className={`${styles.container} page-enter`}>
 
-      {/* ================= HEADER ================= */}
-
+      {/* HEADER */}
       <div className={styles.header}>
 
         <div className={styles.headerTop}>
+          <button className={styles.backButton} onClick={() => navigate(-1)}>←</button>
+          <span className={styles.title}>Carta de Consagração</span>
+          <div style={{ width: 38 }} />
+        </div>
 
-          <button
-            className={styles.backButton}
-            onClick={()=>navigate(-1)}
-          >
-            ←
+        {/* CONTROLES DE ZOOM */}
+        <div className={styles.zoomBar}>
+          <button className={styles.zoomBtn} onClick={zoomOut}>−</button>
+          <button className={styles.zoomReset} onClick={resetZoom}>
+            {Math.round(zoomLevel * 100)}%
           </button>
-
-          <div className={styles.title}>
-            Modelo da Carta
-          </div>
-
+          <button className={styles.zoomBtn} onClick={zoomIn}>+</button>
         </div>
 
       </div>
 
-      {/* ================= PDF ================= */}
-
-      <div
-        ref={containerRef}
-        className={`${styles.viewer} ${scale <= 1 ? styles.centered : ""}`}
-      >
-        <div>
-
+      {/* ÁREA DO PDF */}
+      <div ref={wrapRef} className={styles.wrapper}>
+        <div
+          ref={containerRef}
+          className={styles.viewer}
+        >
           <Document
             file="/modelo-carta-consagracao.pdf"
-            loading="Carregando PDF..."
-            error="Erro ao carregar PDF"
+            onLoadSuccess={() => setPdfLoading(false)}
+            loading={
+              <div className={styles.pdfLoading}>
+                <div className={styles.spinner} />
+                <span>Carregando carta...</span>
+              </div>
+            }
+            error={
+              <div className={styles.pdfError}>
+                Não foi possível carregar o PDF.
+              </div>
+            }
           >
-            <Page
-              key={scale}
-              pageNumber={1}
-              scale={scale}
-              renderTextLayer={false}
-              renderAnnotationLayer={false}
-            />
+            {!pdfLoading && (
+              <Page
+                pageNumber={1}
+                width={pageWidth}
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+              />
+            )}
           </Document>
-
         </div>
-      </div>
-
-      {/* ================= FOOTER ================= */}
-
-      <div className={styles.footer}>
-
-        {/* espaço vazio só pra centralizar igual tratado */}
-        <div style={{width:"34px"}} />
-
-        <span className={styles.pageInfo}>
-          1/1
-        </span>
-
-        <div className={styles.zoom}>
-
-          <button onClick={()=>setScale(s => Math.max(1, s - 0.2))}>
-            −
-          </button>
-
-          <span>{Math.round(scale * 100)}%</span>
-
-          <button onClick={()=>setScale(s => Math.min(4, s + 0.2))}>
-            +
-          </button>
-
-        </div>
-
       </div>
 
     </div>
 
   )
+
 }

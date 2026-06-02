@@ -259,21 +259,55 @@ background:#4b5563;
 }
 
 
-/* LOADING */
+/* ========================= */
+/* SKELETON                  */
+/* ========================= */
 
-.loading{
+.skeletonWrap{
+ display:flex;
+ flex-direction:column;
+ gap:20px;
+ padding-top:56px;
+}
 
-display:flex;
+.skeletonHeader{
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ gap:10px;
+ margin-bottom:8px;
+}
 
-align-items:center;
-justify-content:center;
+.skH1{
+ width:60%;
+ height:36px;
+}
 
-height:100vh;
+.skBadge{
+ width:40%;
+ height:18px;
+}
 
-font-size:18px;
+.skTitle{
+ width:75%;
+ height:24px;
+ align-self:center;
+}
 
-color:var(--oratio-text-soft);
+.skeletonPrayer{
+ display:flex;
+ flex-direction:column;
+ gap:10px;
+}
 
+.skPTitle{
+ width:45%;
+ height:20px;
+}
+
+.skPBody{
+ width:100%;
+ border-radius:14px;
 }
 
 

@@ -103,20 +103,31 @@ export default function ConsecrationDay(){
 
  if(loading){
   return(
+   <div className={`${styles.container} page-enter`}>
 
-   <div className={styles.loading}>
-
-    <p>Carregando orações...</p>
-
-    <button
-     className={styles.back}
-     onClick={()=>navigate(-1)}
-    >
+    <button className={styles.back} onClick={()=>navigate(-1)}>
      ← Voltar
     </button>
 
-   </div>
+    <div className={styles.skeletonWrap}>
 
+     <div className={styles.skeletonHeader}>
+      <div className={`skeleton ${styles.skH1}`}/>
+      <div className={`skeleton ${styles.skBadge}`}/>
+     </div>
+
+     <div className={`skeleton ${styles.skTitle}`}/>
+
+     {[180,140,220].map((h,i)=>(
+      <div key={i} className={styles.skeletonPrayer}>
+       <div className={`skeleton ${styles.skPTitle}`}/>
+       <div className={`skeleton ${styles.skPBody}`} style={{height:h}}/>
+      </div>
+     ))}
+
+    </div>
+
+   </div>
   )
  }
 

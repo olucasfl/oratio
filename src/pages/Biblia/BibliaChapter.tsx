@@ -1,4 +1,4 @@
-import { useParams,useNavigate } from "react-router-dom"
+import { useParams,useNavigate,useSearchParams } from "react-router-dom"
 import { useState,useRef,useEffect } from "react"
 
 import {
@@ -24,8 +24,10 @@ from "./BibliaChapter.module.css"
 export default function BibliaChapter(){
 
  const { book,chapter } = useParams()
+ const [searchParams]   = useSearchParams()
+ const navigate         = useNavigate()
 
- const navigate = useNavigate()
+ const targetVerse = Number(searchParams.get("verse")) || 0
 
  const capitulo =
   getChapter(book!,Number(chapter))
@@ -38,14 +40,34 @@ export default function BibliaChapter(){
  const verseRefs =
   useRef<Record<number,HTMLParagraphElement | null>>({})
 
+ /* scroll to top apenas quando não tem versículo alvo */
  useEffect(()=>{
-
-  window.scrollTo({
-   top:0,
-   behavior:"instant"
-  })
-
+  if(!targetVerse){
+   window.scrollTo({ top:0, behavior:"instant" })
+  }
  },[])
+
+ /* auto-scroll + highlight para o versículo vindo da busca */
+ useEffect(()=>{
+  if(!targetVerse) return
+
+  const timer = setTimeout(()=>{
+
+   const el = verseRefs.current[targetVerse]
+   if(!el) return
+
+   el.scrollIntoView({ behavior:"smooth", block:"center" })
+   el.classList.add(styles.highlight)
+
+   setTimeout(()=>{
+    el.classList.remove(styles.highlight)
+   }, 2500)
+
+  }, 250) // aguarda o DOM renderizar
+
+  return ()=> clearTimeout(timer)
+
+ },[targetVerse])
 
  function goToVerse(){
 

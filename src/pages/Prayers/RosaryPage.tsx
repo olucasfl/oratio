@@ -316,15 +316,26 @@ export default function RosaryPage(){
 
     return(
 
-      <div className={styles.loading}>
+      <main className={`${styles.page} page-enter`}>
 
-        <div className={styles.spinner}/>
+        <div style={{padding:"20px 20px 0"}}>
+          <button
+            style={{background:"none",border:"none",color:"var(--oratio-primary)",fontSize:15,cursor:"pointer",fontFamily:"var(--oratio-font-text)"}}
+            onClick={()=>navigate(-1)}
+          >
+            ← Voltar
+          </button>
+        </div>
 
-        <p>
-          Carregando terço...
-        </p>
+        <div style={{display:"flex",flexDirection:"column",gap:16,padding:"24px 20px"}}>
+          <div className="skeleton" style={{height:26,width:"65%",borderRadius:8}}/>
+          <div className="skeleton" style={{height:18,width:"45%",borderRadius:6}}/>
+          <div className="skeleton" style={{height:200,width:"100%",borderRadius:20}}/>
+          <div className="skeleton" style={{height:56,width:"100%",borderRadius:12}}/>
+          <div className="skeleton" style={{height:56,width:"100%",borderRadius:12}}/>
+        </div>
 
-      </div>
+      </main>
 
     )
 

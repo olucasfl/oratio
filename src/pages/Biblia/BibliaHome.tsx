@@ -100,7 +100,7 @@ export default function BibliaHome(){
  }
 
  const goToVerse = useCallback((r:VerseResult)=>{
-  navigate(`/oratio/biblia/${r.book}/${r.chapter}`)
+  navigate(`/oratio/biblia/${r.book}/${r.chapter}?verse=${r.verse}`)
  },[navigate])
 
  return(

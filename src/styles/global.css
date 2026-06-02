@@ -164,6 +164,28 @@ opacity:1;
 
 
 /* =========================
+SKELETON LOADER
+========================= */
+
+@keyframes skeletonShimmer{
+ 0%  { background-position:200% 0; }
+ 100%{ background-position:-200% 0; }
+}
+
+.skeleton{
+ background:linear-gradient(
+  90deg,
+  #ece4d9 25%,
+  #f5ede3 50%,
+  #ece4d9 75%
+ );
+ background-size:200% 100%;
+ animation:skeletonShimmer 1.5s infinite;
+ border-radius:8px;
+}
+
+
+/* =========================
 ANIMAÇÃO DE ENTRADA DE PÁGINA
 ========================= */
 

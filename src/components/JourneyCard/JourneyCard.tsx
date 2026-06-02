@@ -84,43 +84,41 @@ export default function JourneyCard(){
     return null
   }
 
-  /*
-  =========================
-  LOADING
-  =========================
-  */
+  /* ── skeleton ── */
+  if(loading){
+    return(
+      <section className={styles.card}>
 
-  const members =
-    loading
-      ? [
-          {
-            id:"1",
-            name:"Carregando...",
-            rosariesCompleted:0,
-            totalPoints:0,
-            currentStreak:0
-          },
-          {
-            id:"2",
-            name:"Carregando...",
-            rosariesCompleted:0,
-            totalPoints:0,
-            currentStreak:0
-          }
-        ]
-      : journey?.members || []
+        <div className={styles.backgroundGlow}/>
+
+        <div className={styles.header}>
+          <div className={styles.iconWrapper}>
+            <HeartHandshake size={28} strokeWidth={2.2}/>
+          </div>
+          <div style={{flex:1,display:"flex",flexDirection:"column",gap:6}}>
+            <div className="skeleton" style={{height:18,width:"55%",borderRadius:6}}/>
+            <div className="skeleton" style={{height:14,width:"70%",borderRadius:4}}/>
+          </div>
+        </div>
+
+        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+          <div className="skeleton" style={{height:10,width:"100%",borderRadius:99}}/>
+          <div className="skeleton" style={{height:64,width:"100%",borderRadius:14}}/>
+          <div className="skeleton" style={{height:64,width:"100%",borderRadius:14}}/>
+          <div className="skeleton" style={{height:44,width:"100%",borderRadius:10}}/>
+        </div>
+
+      </section>
+    )
+  }
+
+  const members = journey?.members || []
 
   const totalProgress =
-    journey
-      ? Math.min(
-          journey.members.reduce(
-            (acc,member)=>
-              acc + member.rosariesCompleted,
-            0
-          ),
-          8
-        )
-      : 0
+    Math.min(
+      members.reduce((acc,m)=>acc + m.rosariesCompleted, 0),
+      8
+    )
 
   return(
 
@@ -131,24 +129,12 @@ export default function JourneyCard(){
       <div className={styles.header}>
 
         <div className={styles.iconWrapper}>
-
-          <HeartHandshake
-            size={28}
-            strokeWidth={2.2}
-          />
-
+          <HeartHandshake size={28} strokeWidth={2.2}/>
         </div>
 
         <div>
-
-          <h2>
-            Jornada Espiritual
-          </h2>
-
-          <p>
-            Caminhada semanal de oração
-          </p>
-
+          <h2>Jornada Espiritual</h2>
+          <p>Caminhada semanal de oração</p>
         </div>
 
       </div>
@@ -156,33 +142,15 @@ export default function JourneyCard(){
       <div className={styles.globalProgress}>
 
         <div className={styles.globalTop}>
-
-          <span>
-            Progresso semanal
-          </span>
-
-          <span>
-            {loading
-              ? "--/8"
-              : `${totalProgress}/8`
-            }
-          </span>
-
+          <span>Progresso semanal</span>
+          <span>{totalProgress}/8</span>
         </div>
 
         <div className={styles.globalBar}>
-
           <div
             className={styles.globalFill}
-            style={{
-              width: `${
-                loading
-                  ? 20
-                  : (totalProgress / 8) * 100
-              }%`
-            }}
+            style={{ width:`${(totalProgress/8)*100}%` }}
           />
-
         </div>
 
       </div>
@@ -191,68 +159,31 @@ export default function JourneyCard(){
 
         {members.map(member=>(
 
-          <div
-            key={member.id}
-            className={styles.member}
-          >
+          <div key={member.id} className={styles.member}>
 
             <div className={styles.memberHeader}>
 
               <div className={styles.avatar}>
-
-                {loading
-                  ? "..."
-                  : member.name.charAt(0)
-                }
-
+                {member.name.charAt(0)}
               </div>
 
               <div className={styles.memberInfo}>
-
-                <strong>
-                  {member.name}
-                </strong>
-
-                <span>
-                  {loading
-                    ? "Carregando..."
-                    : `${member.rosariesCompleted}/4 terços`
-                  }
-                </span>
-
+                <strong>{member.name}</strong>
+                <span>{member.rosariesCompleted}/4 terços</span>
               </div>
 
               <div className={styles.points}>
-
                 <Star size={16}/>
-
-                <span>
-                  {loading
-                    ? "--"
-                    : member.totalPoints
-                  }
-                </span>
-
+                <span>{member.totalPoints}</span>
               </div>
 
             </div>
 
             <div className={styles.progressBar}>
-
               <div
                 className={styles.progressFill}
-                style={{
-                  width: `${
-                    loading
-                      ? 15
-                      : Math.min(
-                          member.rosariesCompleted,
-                          4
-                        ) * 25
-                  }%`
-                }}
+                style={{ width:`${Math.min(member.rosariesCompleted,4)*25}%` }}
               />
-
             </div>
 
           </div>
@@ -263,18 +194,10 @@ export default function JourneyCard(){
 
       <button
         className={styles.button}
-        onClick={()=>
-          navigate("/oratio/journey")
-        }
-        disabled={loading}
+        onClick={()=>navigate("/oratio/journey")}
       >
-
-        <span>
-          Abrir jornada
-        </span>
-
+        <span>Abrir jornada</span>
         <ChevronRight size={18}/>
-
       </button>
 
     </section>

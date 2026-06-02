@@ -107,35 +107,26 @@ export default function Prayers(){
 
     return(
 
-      <div className={styles.loadingPage}>
+      <main className={`${styles.page} page-enter`}>
 
-        <div className={styles.loadingCard}>
+        <section className={styles.container}>
 
-          <LoaderCircle
-            className={styles.spinner}
-            size={42}
-          />
-
-          <p>
-            Carregando oração...
-          </p>
-
-          <button
-            className={styles.backButton}
-            onClick={()=>navigate(-1)}
-          >
-
+          <button className={styles.backButton} onClick={()=>navigate(-1)}>
             <ChevronLeft size={18}/>
-
-            <span>
-              Voltar
-            </span>
-
+            <span>Voltar</span>
           </button>
 
-        </div>
+          <div style={{display:"flex",flexDirection:"column",gap:14,paddingTop:16}}>
+            <div className="skeleton" style={{height:28,width:"55%",borderRadius:8}}/>
+            <div className="skeleton" style={{height:18,width:"35%",borderRadius:6}}/>
+            <div className="skeleton" style={{height:160,width:"100%",borderRadius:16}}/>
+            <div className="skeleton" style={{height:120,width:"100%",borderRadius:16}}/>
+            <div className="skeleton" style={{height:120,width:"100%",borderRadius:16}}/>
+          </div>
 
-      </div>
+        </section>
+
+      </main>
 
     )
 

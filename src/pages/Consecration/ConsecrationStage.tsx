@@ -1,5 +1,6 @@
 import { useParams,useNavigate } from "react-router-dom"
 import { useEffect,useState } from "react"
+import { Check } from "lucide-react"
 
 import styles from "./ConsecrationStage.module.css"
 
@@ -9,31 +10,21 @@ import {
 } from "../../services/consecrationService"
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
-
 import { useOffline } from "../../hooks/useOffline"
 
 export default function ConsecrationStage(){
 
  const { stageId } = useParams()
- const navigate = useNavigate()
+ const navigate    = useNavigate()
 
- const [days,setDays] = useState<any[]>([])
- const [progress,setProgress] = useState<any>(null)
- const [loading,setLoading] = useState(true)
+ const [days,    setDays]    = useState<any[]>([])
+ const [progress,setProgress]= useState<any>(null)
+ const [loading, setLoading] = useState(true)
 
  const isOffline = useOffline()
 
- useEffect(()=>{
-
-  load()
-
- },[stageId])
-
- useEffect(()=>{
-
-  if(!isOffline) load()
-
- },[isOffline])
+ useEffect(()=>{ load() },[stageId])
+ useEffect(()=>{ if(!isOffline) load() },[isOffline])
 
  async function load(){
 
@@ -91,51 +82,33 @@ export default function ConsecrationStage(){
 }
 
  if(loading){
-
   return(
-
-   <div className={styles.loading}>
-
-    <p>Carregando estágio...</p>
-
-    <button
-     className={styles.back}
-     onClick={()=>navigate("/oratio/consecration")}
-    >
-     ← Voltar
-    </button>
-
+   <div className={`${styles.container} page-enter`}>
+    <button className={styles.back} onClick={()=>navigate("/oratio/consecration")}>← Voltar</button>
+    <div className={styles.skeletonWrap}>
+     <div className={`skeleton ${styles.skTitle}`}/>
+     <div className={`skeleton ${styles.skSub}`}/>
+     <div className={styles.skGrid}>
+      {[1,2,3,4,5,6,7].map(i=>(
+       <div key={i} className={`skeleton ${styles.skDay}`}/>
+      ))}
+     </div>
+    </div>
    </div>
-
   )
-
  }
 
  if(!progress){
-
   return(
-
-   <div className={styles.loading}>
-
-    <p>
+   <div className={`${styles.container} page-enter`}>
+    <button className={styles.back} onClick={()=>navigate("/oratio/consecration")}>← Voltar</button>
+    <p className={styles.emptyMsg}>
      {isOffline
       ? "Você está offline e este estágio ainda não foi carregado."
       : "Não foi possível carregar este estágio."}
     </p>
-
-    <div className={styles.headerTop}>
-      <button
-        className={styles.back}
-        onClick={()=>navigate("/oratio/consecration")}
-      >
-        ← Voltar
-      </button>
-    </div>
-
    </div>
-
   )
-
  }
 
  const stage = progress.stages?.find(
@@ -155,13 +128,7 @@ export default function ConsecrationStage(){
 
    {isOffline && (
 
-    <div style={{
-     background:"#fff3cd",
-     padding:"10px",
-     borderRadius:"8px",
-     marginBottom:"16px",
-     fontSize:"14px"
-    }}>
+    <div className={styles.offlineBanner}>
      Você está offline. Os dados podem estar desatualizados.
     </div>
 
@@ -219,7 +186,7 @@ export default function ConsecrationStage(){
        }
       >
 
-       {completed ? "✓" : day.dayNumber}
+       {completed ? <Check size={18}/> : day.dayNumber}
 
       </button>
 

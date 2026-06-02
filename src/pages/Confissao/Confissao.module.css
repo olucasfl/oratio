@@ -507,6 +507,36 @@
 }
 
 /* ========================= */
+/* GRUPO HEADER              */
+/* ========================= */
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 6px;
+}
+
+.groupHeaderLine {
+  flex: 1;
+  height: 1px;
+  background: rgba(90, 40, 10, .25);
+}
+
+.groupHeaderText {
+  font-family: var(--oratio-font-title);
+  font-size: 11px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: #7b3a0a;
+  white-space: nowrap;
+}
+
+.accordionNumCapital {
+  background: linear-gradient(135deg, #5c1f00, #8b3a0a) !important;
+}
+
+/* ========================= */
 /* SPACER                    */
 /* ========================= */
 

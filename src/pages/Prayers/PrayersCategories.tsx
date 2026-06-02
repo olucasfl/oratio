@@ -153,7 +153,7 @@ export default function PrayersCategories(){
 
                 <div
                   key={item}
-                  className={styles.skeleton}
+                  className={`skeleton ${styles.skeletonItem}`}
                 />
 
               ))}

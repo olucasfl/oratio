@@ -472,11 +472,28 @@ export default function AdminPanel(){
 
   return(
 
-   <div className={styles.loadingPage}>
+   <div className={`${styles.page} page-enter`}>
 
-    <div className={styles.spinner}></div>
+    <div className={styles.backgroundGlow}/>
 
-    <p>Carregando painel...</p>
+    <header className={styles.header}>
+     <button className={styles.backButton} onClick={()=>navigate(-1)}>
+      <ArrowLeft size={20}/>
+     </button>
+     <div className="skeleton" style={{height:22,width:140,borderRadius:8}}/>
+    </header>
+
+    <div style={{padding:"0 20px",display:"flex",flexDirection:"column",gap:16}}>
+     <div style={{display:"flex",gap:12}}>
+      <div className="skeleton" style={{flex:1,height:80,borderRadius:16}}/>
+      <div className="skeleton" style={{flex:1,height:80,borderRadius:16}}/>
+      <div className="skeleton" style={{flex:1,height:80,borderRadius:16}}/>
+     </div>
+     <div className="skeleton" style={{height:48,width:"100%",borderRadius:12}}/>
+     <div className="skeleton" style={{height:100,width:"100%",borderRadius:16}}/>
+     <div className="skeleton" style={{height:100,width:"100%",borderRadius:16}}/>
+     <div className="skeleton" style={{height:100,width:"100%",borderRadius:16}}/>
+    </div>
 
    </div>
 
