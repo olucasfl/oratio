@@ -59,6 +59,7 @@ export default function Vox(){
  const [deletingConversationId,setDeletingConversationId] = useState<string | null>(null)
 
  const [error,setError] = useState<string | null>(null)
+ const [errorCode,setErrorCode] = useState<string | null>(null)
 
  const [lastMessage,setLastMessage] = useState("")
 
@@ -266,27 +267,34 @@ useEffect(()=>{
 
   setLoading(true)
   setError(null)
+  setErrorCode(null)
 
   try{
     const res = await askVox(text, conversationId) as VoxAskResponse
 
     if(!res?.success || !res?.response){
 
-      if(res?.error === "RATE_LIMIT"){
-        setError("Você está enviando mensagens muito rápido.")
-      }else if(res?.error === "MESSAGE_TOO_LONG"){
+      setMessages(prev => prev.filter(m => m.id !== userMessage.id))
+      setInput(text)
+
+      const code = res?.error || "UNKNOWN_ERROR"
+      setErrorCode(code)
+
+      if(code === "RATE_LIMIT" || code === "RATE_LIMIT_GEMINI"){
+        setError("Você está enviando mensagens muito rápido. Aguarde alguns segundos.")
+      }else if(code === "MESSAGE_TOO_LONG"){
         setError("A mensagem deve ter no máximo 1000 caracteres.")
-      }else if(res?.error === "INVALID_CONVERSATION"){
+      }else if(code === "INVALID_CONVERSATION"){
         setError("Conversa inválida. Recarregue a página.")
-      }else if(res?.error === "EMPTY_MESSAGE"){
+      }else if(code === "EMPTY_MESSAGE"){
         setError("Digite uma mensagem antes de enviar.")
-      }else if(res?.error === "TIMEOUT"){
+      }else if(code === "TIMEOUT"){
         setError("O Vox demorou para responder. Tente novamente.")
-      }else if(res?.error === "LIMIT_EXCEEDED"){
-        setError("Limite diário atingido.")
-      }else if(res?.error === "NETWORK_ERROR"){
+      }else if(code === "LIMIT_EXCEEDED"){
+        setError("Limite diário atingido. Tente novamente mais tarde.")
+      }else if(code === "NETWORK_ERROR"){
         setError("Erro de conexão. Verifique sua internet.")
-      }else if(res?.error === "AI_PROVIDER_ERROR"){
+      }else if(code === "AI_PROVIDER_ERROR"){
         setError("Erro na comunicação com a IA.")
       }else{
         setError(res?.message || "Erro inesperado no envio da mensagem.")
@@ -310,6 +318,9 @@ useEffect(()=>{
     }
 
   }catch(error:any){
+    setMessages(prev => prev.filter(m => m.id !== userMessage.id))
+    setInput(text)
+    setErrorCode("UNKNOWN_ERROR")
     setError("Erro ao processar sua mensagem.")
 
   }finally{
@@ -408,6 +419,7 @@ useEffect(()=>{
  function handleChange(e:React.ChangeEvent<HTMLTextAreaElement>){
 
   setError(null)
+  setErrorCode(null)
   setInput(e.target.value)
 
   const el = textareaRef.current
@@ -533,27 +545,21 @@ useEffect(()=>{
 
    {error && (
     <div className={styles.errorBox} role="status" aria-live="polite">
-     {error}
+     <span>{error}</span>
+     {lastMessage && !loading && errorCode !== "LIMIT_EXCEEDED" && errorCode !== "INVALID_CONVERSATION" && (
+      <button
+       className={styles.retryButton}
+       onClick={()=>{
+        setError(null)
+        setErrorCode(null)
+        sendMessage()
+       }}
+      >
+       Tentar novamente
+      </button>
+     )}
     </div>
    )}
-
-   {error && lastMessage && !loading && (
-
-    <div className={styles.retryWrapper}>
-
-      <button
-        className={styles.retryButton}
-        onClick={()=>{
-          setInput(lastMessage)
-          textareaRef.current?.focus()
-        }}
-      >
-        Tentar novamente
-      </button>
-
-    </div>
-
-  )}
 
    <main className={styles.chatArea}>
 

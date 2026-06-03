@@ -270,13 +270,13 @@
  width:100%;
  max-width:var(--vox-content-max);
  padding:
-  calc(var(--vox-header-height) + env(safe-area-inset-top) + 24px)
+  calc(var(--vox-header-height) + env(safe-area-inset-top) + 20px)
   20px
-  calc(var(--vox-input-height) + env(safe-area-inset-bottom) + 26px)
+  calc(var(--vox-input-height) + env(safe-area-inset-bottom) + 20px)
   20px;
  display:flex;
  flex-direction:column;
- gap:18px;
+ gap:12px;
 }
 
 .message{
@@ -344,6 +344,11 @@
  box-shadow:var(--oratio-shadow-soft);
  z-index:40;
  animation:fadeIn .24s ease;
+ display:flex;
+ align-items:center;
+ gap:10px;
+ flex-wrap:wrap;
+ justify-content:center;
 }
 
 /* =========================
@@ -359,23 +364,23 @@
 }
 
 .markdownContent h1{
- margin:18px 0 8px;
- font-size:24px;
+ margin:14px 0 5px;
+ font-size:22px;
  line-height:1.2;
  color:var(--oratio-primary);
  font-family:var(--oratio-font-title);
 }
 
 .markdownContent h2{
- margin:16px 0 6px;
- font-size:20px;
+ margin:12px 0 4px;
+ font-size:19px;
  line-height:1.3;
  color:var(--oratio-secondary-dark);
 }
 
 .markdownContent h3{
- margin:12px 0 8px;
- font-size:18px;
+ margin:10px 0 4px;
+ font-size:17px;
  color:var(--oratio-primary);
 }
 
@@ -687,64 +692,22 @@
  }
 }
 
-.retryWrapper{
- display:flex;
- justify-content:center;
- margin-top:10px;
- z-index:45;
- position:relative;
-}
-
 .retryButton{
  border:none;
  border-radius:999px;
- padding:10px 16px;
- font-size:14px;
+ padding:5px 14px;
+ font-size:13px;
  font-weight:600;
  cursor:pointer;
  color:#fff;
- background:linear-gradient(
- 135deg,
- var(--oratio-primary),
- var(--oratio-primary-dark)
- );
- box-shadow:var(--oratio-shadow-soft);
+ white-space:nowrap;
+ background:linear-gradient(135deg, var(--oratio-primary), var(--oratio-primary-dark));
  transition:.2s ease;
+ flex-shrink:0;
 }
 
 .retryButton:hover{
- transform:translateY(-1px);
- filter:brightness(1.03);
-}
-
-.retryWrapper{
- display:flex;
- justify-content:center;
- margin-top:10px;
- z-index:45;
- position:relative;
-}
-
-.retryButton{
- border:none;
- border-radius:999px;
- padding:10px 16px;
- font-size:14px;
- font-weight:600;
- cursor:pointer;
- color:#fff;
- background:linear-gradient(
- 135deg,
- var(--oratio-primary),
- var(--oratio-primary-dark)
- );
- box-shadow:var(--oratio-shadow-soft);
- transition:.2s ease;
-}
-
-.retryButton:hover{
- transform:translateY(-1px);
- filter:brightness(1.03);
+ filter:brightness(1.08);
 }
 
 .userMessage{
@@ -796,15 +759,15 @@
 }
 
 .markdownParagraph + .markdownParagraph{
- margin-top:10px;
+ margin-top:7px;
 }
 
 .markdownList{
- margin:8px 0;
+ margin:6px 0;
  padding-left:20px;
  display:flex;
  flex-direction:column;
- gap:6px;
+ gap:4px;
 }
 
 .markdownListItem{
@@ -818,10 +781,10 @@
 }
 
 .markdownQuote{
- margin:10px 0;
- padding:10px 14px;
+ margin:7px 0;
+ padding:8px 12px;
  border-left:3px solid var(--oratio-primary);
- background:rgba(0,0,0,.02);
+ background:rgba(0,0,0,.025);
  border-radius:8px;
  font-style:italic;
 }
