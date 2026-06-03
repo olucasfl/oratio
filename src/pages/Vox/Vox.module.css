@@ -781,10 +781,27 @@
 }
 
 .markdownQuote{
- margin:7px 0;
- padding:8px 12px;
- border-left:3px solid var(--oratio-primary);
- background:rgba(0,0,0,.025);
- border-radius:8px;
+ margin:12px 0;
+ padding:14px 18px;
+ border-left:4px solid var(--oratio-primary);
+ background:var(--oratio-secondary);
+ border-radius:0 10px 10px 0;
+ font-family:var(--oratio-font-text);
+ font-size:16.5px;
  font-style:italic;
+ color:var(--oratio-secondary-dark);
+ line-height:1.75;
+}
+
+.markdownQuote p{
+ margin:0;
+ line-height:1.75;
+}
+
+.markdownQuote strong{
+ font-style:normal;
+ color:var(--oratio-primary);
+ font-size:14px;
+ font-family:var(--oratio-font-title);
+ letter-spacing:0.03em;
 }
