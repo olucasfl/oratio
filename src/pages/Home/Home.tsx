@@ -21,6 +21,8 @@ import {
 import JourneyCard
 from "../../components/JourneyCard/JourneyCard"
 
+import { FraseDiaria } from "../../components/FraseDiaria/FraseDiaria"
+
 /* =========================
 TIPAGENS
 ========================= */
@@ -641,6 +643,8 @@ export default function Home(){
     </p>
 
    </section>
+
+   <FraseDiaria />
 
    {/* LITURGIA */}
 
