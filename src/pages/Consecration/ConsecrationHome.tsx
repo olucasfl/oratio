@@ -13,6 +13,7 @@ import {
 
 import { useOffline } from "../../hooks/useOffline"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
+import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
 
 /* ─── tipos ─── */
 type ConfirmState = { message: string; onConfirm: () => void } | null
@@ -224,28 +225,13 @@ export default function ConsecrationHome() {
 
       {/* MODAL DE CONFIRMAÇÃO */}
 
-      {confirmModal && (
-        <div className={styles.modalOverlay} onClick={() => setConfirmModal(null)}>
-          <div className={styles.modal} onClick={e => e.stopPropagation()}>
-
-            <p className={styles.modalText}>
-              {confirmModal.message.split("\n").map((line, i) => (
-                <span key={i}>{line}<br/></span>
-              ))}
-            </p>
-
-            <div className={styles.modalBtns}>
-              <button className={styles.modalCancel} onClick={() => setConfirmModal(null)}>
-                Cancelar
-              </button>
-              <button className={styles.modalConfirm} onClick={confirmModal.onConfirm}>
-                Confirmar
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
+      <ConfirmModal
+        open={!!confirmModal}
+        message={confirmModal?.message ?? ""}
+        onConfirm={() => confirmModal?.onConfirm()}
+        onCancel={() => setConfirmModal(null)}
+        danger
+      />
 
       <button className={styles.back} onClick={() => navigate("/oratio/home")}>
         ← Voltar

@@ -15,6 +15,8 @@ import {
 import { getJourney }
 from "../../services/journeyService"
 
+import Skeleton from "../Skeleton/Skeleton"
+
 type JourneyMember = {
 
   id:string
@@ -96,36 +98,36 @@ export default function JourneyCard(){
             <HeartHandshake size={28} strokeWidth={2.2}/>
           </div>
           <div style={{flex:1,display:"flex",flexDirection:"column",gap:8}}>
-            <div className="skeleton" style={{height:16,width:"58%",borderRadius:6}}/>
-            <div className="skeleton" style={{height:12,width:"75%",borderRadius:4}}/>
+            <Skeleton height={16} width="58%" radius={6}/>
+            <Skeleton height={12} width="75%" radius={4}/>
           </div>
         </div>
 
         <div style={{display:"flex",flexDirection:"column",gap:8}}>
           <div style={{display:"flex",justifyContent:"space-between"}}>
-            <div className="skeleton" style={{height:12,width:"38%",borderRadius:4}}/>
-            <div className="skeleton" style={{height:12,width:"12%",borderRadius:4}}/>
+            <Skeleton height={12} width="38%" radius={4}/>
+            <Skeleton height={12} width="12%" radius={4}/>
           </div>
-          <div className="skeleton" style={{height:14,width:"100%",borderRadius:99}}/>
+          <Skeleton height={14} width="100%" radius={99}/>
         </div>
 
         <div style={{display:"flex",flexDirection:"column",gap:12}}>
           {[0,1].map(i=>(
             <div key={i} style={{background:"rgba(255,255,255,.55)",border:"1px solid #ece3d7",borderRadius:20,padding:18}}>
               <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:14}}>
-                <div className="skeleton" style={{minWidth:46,height:46,borderRadius:"50%"}}/>
+                <Skeleton height={46} circle style={{minWidth:46}}/>
                 <div style={{flex:1,display:"flex",flexDirection:"column",gap:6}}>
-                  <div className="skeleton" style={{height:14,width:"50%",borderRadius:4}}/>
-                  <div className="skeleton" style={{height:11,width:"36%",borderRadius:4}}/>
+                  <Skeleton height={14} width="50%" radius={4}/>
+                  <Skeleton height={11} width="36%" radius={4}/>
                 </div>
-                <div className="skeleton" style={{width:64,height:40,borderRadius:14}}/>
+                <Skeleton width={64} height={40} radius={14}/>
               </div>
-              <div className="skeleton" style={{height:12,width:"100%",borderRadius:99}}/>
+              <Skeleton height={12} width="100%" radius={99}/>
             </div>
           ))}
         </div>
 
-        <div className="skeleton" style={{height:56,borderRadius:18}}/>
+        <Skeleton height={56} radius={18}/>
 
       </section>
     )

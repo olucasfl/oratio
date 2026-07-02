@@ -11,6 +11,8 @@ import { Menu } from "lucide-react"
 import { Trash2, Pencil } from "lucide-react"
 import { deleteConversation, renameConversation } from "../../services/voxService"
 
+import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
+
 import {
  askVox,
  createConversation,
@@ -57,6 +59,7 @@ export default function Vox(){
  const [selectedConv,setSelectedConv] = useState<string | null>(null)
  const [renaming,setRenaming] = useState(false)
  const [deletingConversationId,setDeletingConversationId] = useState<string | null>(null)
+ const [confirmDeleteId,setConfirmDeleteId] = useState<string | null>(null)
 
  const [error,setError] = useState<string | null>(null)
  const [errorCode,setErrorCode] = useState<string | null>(null)
@@ -343,10 +346,11 @@ useEffect(()=>{
 
  // DELETAR CONVERSATION
 
- async function handleDeleteConversation(id:string){
+ function handleDeleteConversation(id:string){
+  setConfirmDeleteId(id)
+ }
 
-  const confirmDelete = confirm("Tem certeza que deseja apagar essa conversa?")
-  if(!confirmDelete) return
+ async function performDeleteConversation(id:string){
 
   try{
     setDeletingConversationId(id)
@@ -772,6 +776,18 @@ useEffect(()=>{
 
       </div>
     )}
+
+    <ConfirmModal
+      open={!!confirmDeleteId}
+      message="Tem certeza que deseja apagar essa conversa?"
+      onConfirm={()=>{
+        const id = confirmDeleteId
+        setConfirmDeleteId(null)
+        if(id) performDeleteConversation(id)
+      }}
+      onCancel={()=>setConfirmDeleteId(null)}
+      danger
+    />
   </div>
 
  )

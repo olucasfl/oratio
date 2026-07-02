@@ -17,6 +17,7 @@ import {
 } from "../../services/adminService"
 import { getProfile } from "../../services/profileService"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
+import Skeleton from "../../components/Skeleton/Skeleton"
 import styles from "./AdminPanel.module.css"
 
 type SortKey      = "createdAt" | "name" | "streak" | "prayers" | "rosaries"
@@ -238,18 +239,18 @@ export default function AdminPanel() {
       <div className={styles.backgroundGlow}/>
       <header className={styles.header}>
         <button className={styles.backButton} onClick={() => navigate(-1)}><ArrowLeft size={20}/></button>
-        <div className="skeleton" style={{ height: 22, width: 160, borderRadius: 8 }}/>
+        <Skeleton height={22} width={160} radius={8}/>
       </header>
       <div style={{ padding: "0 18px", display: "flex", flexDirection: "column", gap: 16 }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="skeleton" style={{ height: 90, borderRadius: 18 }}/>
+            <Skeleton key={i} height={90} radius={18}/>
           ))}
         </div>
-        <div className="skeleton" style={{ height: 48, borderRadius: 14 }}/>
-        <div className="skeleton" style={{ height: 96, borderRadius: 18 }}/>
+        <Skeleton height={48} radius={14}/>
+        <Skeleton height={96} radius={18}/>
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="skeleton" style={{ height: 80, borderRadius: 18 }}/>
+          <Skeleton key={i} height={80} radius={18}/>
         ))}
       </div>
     </div>
@@ -524,24 +525,24 @@ export default function AdminPanel() {
             {detailLoading ? (
               <div className={styles.modalSkeleton}>
                 <div style={{ display: "flex", gap: 16, alignItems: "center", marginBottom: 20 }}>
-                  <div className="skeleton" style={{ width: 68, height: 68, borderRadius: "50%", flexShrink: 0 }}/>
+                  <Skeleton width={68} height={68} circle/>
                   <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
-                    <div className="skeleton" style={{ height: 18, width: "55%", borderRadius: 6 }}/>
-                    <div className="skeleton" style={{ height: 13, width: "75%", borderRadius: 4 }}/>
+                    <Skeleton height={18} width="55%" radius={6}/>
+                    <Skeleton height={13} width="75%" radius={4}/>
                     <div style={{ display: "flex", gap: 6 }}>
-                      <div className="skeleton" style={{ height: 22, width: 60, borderRadius: 99 }}/>
-                      <div className="skeleton" style={{ height: 22, width: 80, borderRadius: 99 }}/>
+                      <Skeleton height={22} width={60} radius={99}/>
+                      <Skeleton height={22} width={80} radius={99}/>
                     </div>
                   </div>
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 20 }}>
                   {[...Array(4)].map((_, i) => (
-                    <div key={i} className="skeleton" style={{ height: 72, borderRadius: 16 }}/>
+                    <Skeleton key={i} height={72} radius={16}/>
                   ))}
                 </div>
-                <div className="skeleton" style={{ height: 18, width: 160, borderRadius: 6, marginBottom: 12 }}/>
+                <Skeleton height={18} width={160} radius={6} style={{ marginBottom: 12 }}/>
                 {[...Array(4)].map((_, i) => (
-                  <div key={i} className="skeleton" style={{ height: 58, borderRadius: 14, marginBottom: 8 }}/>
+                  <Skeleton key={i} height={58} radius={14} style={{ marginBottom: 8 }}/>
                 ))}
               </div>
             ) : (
@@ -592,7 +593,7 @@ export default function AdminPanel() {
                   {activityLoading ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                       {[...Array(5)].map((_, i) => (
-                        <div key={i} className="skeleton" style={{ height: 54, borderRadius: 14 }}/>
+                        <Skeleton key={i} height={54} radius={14}/>
                       ))}
                     </div>
                   ) : paginatedActivities.length > 0 ? (

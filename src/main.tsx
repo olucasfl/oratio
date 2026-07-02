@@ -6,6 +6,7 @@ import "./styles/global.css";
 import "./styles/variables.css";
 
 import App from "./App";
+import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
 
 /* ============================= */
 /* RENDER APP */
@@ -13,9 +14,11 @@ import App from "./App";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </ErrorBoundary>
   </StrictMode>
 );
 

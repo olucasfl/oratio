@@ -6,15 +6,28 @@ interface Props {
   email: string;
   open: boolean;
   onVerified: () => void;
+  onClose: () => void;
 }
 
 export default function VerifyEmailModal({
   email,
   open,
   onVerified,
+  onClose,
 }: Props) {
 
   const [status, setStatus] = useState("waiting");
+  const [resending, setResending] = useState(false);
+  const [resendMessage, setResendMessage] = useState("");
+
+  useEffect(() => {
+
+    if (!open) return;
+
+    setStatus("waiting");
+    setResendMessage("");
+
+  }, [open]);
 
   useEffect(() => {
 
@@ -44,7 +57,30 @@ export default function VerifyEmailModal({
 
     return () => clearInterval(interval);
 
-  }, [open]);
+  }, [open, email]);
+
+  async function handleResend() {
+
+    setResending(true);
+    setResendMessage("");
+
+    try {
+
+      await api.post("/auth/resend-verification", { email });
+
+      setResendMessage("Email reenviado! Confira sua caixa de entrada.");
+
+    } catch {
+
+      setResendMessage("Não foi possível reenviar agora. Tente novamente em instantes.");
+
+    } finally {
+
+      setResending(false);
+
+    }
+
+  }
 
   if (!open) return null;
 
@@ -53,6 +89,14 @@ export default function VerifyEmailModal({
     <div className={styles.overlay}>
 
       <div className={styles.modal}>
+
+        <button
+          className={styles.closeButton}
+          onClick={onClose}
+          aria-label="Fechar"
+        >
+          ×
+        </button>
 
         {status === "waiting" && (
           <>
@@ -67,6 +111,18 @@ export default function VerifyEmailModal({
             <p className={styles.sub}>
               Abra o email e clique no link para continuar.
             </p>
+
+            <button
+              className={styles.resendButton}
+              onClick={handleResend}
+              disabled={resending}
+            >
+              {resending ? "Reenviando..." : "Reenviar email"}
+            </button>
+
+            {resendMessage && (
+              <p className={styles.resendMessage}>{resendMessage}</p>
+            )}
           </>
         )}
 

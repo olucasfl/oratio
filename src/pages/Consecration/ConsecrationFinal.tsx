@@ -7,6 +7,7 @@ import styles from "./ConsecrationFinal.module.css"
 import { getProgress, resetConsecration } from "../../services/consecrationService"
 import { useOffline } from "../../hooks/useOffline"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
+import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
 
 type ConfirmState = { message: string; onConfirm: () => void } | null
 
@@ -86,17 +87,13 @@ export default function ConsecrationFinal() {
     <div className={`${styles.container} page-enter`}>
 
       {/* MODAL */}
-      {confirmModal && (
-        <div className={styles.overlay} onClick={() => setConfirmModal(null)}>
-          <div className={styles.modal} onClick={e => e.stopPropagation()}>
-            <p className={styles.modalText}>{confirmModal.message}</p>
-            <div className={styles.modalBtns}>
-              <button className={styles.modalCancel}  onClick={() => setConfirmModal(null)}>Cancelar</button>
-              <button className={styles.modalConfirm} onClick={confirmModal.onConfirm}>Confirmar</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmModal
+        open={!!confirmModal}
+        message={confirmModal?.message ?? ""}
+        onConfirm={() => confirmModal?.onConfirm()}
+        onCancel={() => setConfirmModal(null)}
+        danger
+      />
 
       <button className={styles.back} onClick={() => navigate(-1)}>← Voltar</button>
 

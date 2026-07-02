@@ -1,15 +1,13 @@
 import styles from "./Home.module.css"
 import { useNavigate } from "react-router-dom"
-import { useEffect, useMemo, useCallback, useState } from "react"
+import { useEffect, useMemo, useCallback } from "react"
 
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
 
 import {
  LogOut,
- User,
- ChevronLeft,
- ChevronRight
+ User
 } from "lucide-react"
 
 import { isPWA } from "../../utils/isPwa"
@@ -23,27 +21,13 @@ from "../../components/JourneyCard/JourneyCard"
 
 import { FraseDiaria } from "../../components/FraseDiaria/FraseDiaria"
 
+import LiturgyCard from "../../components/LiturgyCard/LiturgyCard"
+
+import { useLiturgy } from "../../hooks/useLiturgy"
+
 /* =========================
 TIPAGENS
 ========================= */
-
-type LiturgyReading = {
- tipo?: string
- titulo?: string
- referencia?: string
- texto?: string
- refrao?: string
-}
-
-type LiturgyData = {
- leituras?: {
-  primeiraLeitura?: LiturgyReading[]
-  segundaLeitura?: LiturgyReading[]
-  salmo?: LiturgyReading[]
-  evangelho?: LiturgyReading[]
-  extras?: LiturgyReading[]
- }
-}
 
 type FeatureItem = {
  title:string
@@ -52,16 +36,6 @@ type FeatureItem = {
  path:string
  badge?:string
 }
-
-/* =========================
-CONSTANTES
-========================= */
-
-const LITURGY_URL =
-"https://finance-api-y0ol.onrender.com/liturgia"
-
-const LITURGY_CACHE_KEY =
-"last_liturgy"
 
 /* =========================
 COMPONENTE
@@ -73,60 +47,14 @@ export default function Home(){
 
  const pwa = isPWA()
 
- const today = useMemo(
-  ()=>new Date().toLocaleDateString("pt-BR"),
- []
- )
-
- /* =========================
- STATES
- ========================= */
-
- const [liturgy,setLiturgy] =
- useState<LiturgyData | null>(null)
-
- const [modal,setModal] =
- useState<
- (LiturgyReading & {
-  tipoLeitura?: string
- }) | null
- >(null)
-
- const [selector,setSelector] =
- useState<LiturgyReading[] | null>(null)
-
- const [loadingLiturgy,
-  setLoadingLiturgy] = useState(true)
-
- const [liturgyError,
-  setLiturgyError] = useState<string | null>(null)
-
- const [dateOffset, setDateOffset] = useState(0)
-
- const displayDateStr = useMemo(()=>{
-  const d = new Date()
-  d.setDate(d.getDate() + dateOffset)
-  return d.toLocaleDateString("pt-BR")
- },[dateOffset])
-
- const displayDateLabel = useMemo(()=>{
-  if(dateOffset === 0) return "Hoje"
-  if(dateOffset === -1) return "Ontem"
-  if(dateOffset === 1) return "Amanhã"
-  return displayDateStr
- },[dateOffset, displayDateStr])
-
- const [
-  currentType,
-  setCurrentType
- ] = useState<
-  "primeira"
-  | "segunda"
-  | "salmo"
-  | "evangelho"
-  | "extra"
-  | null
- >(null)
+ const {
+  liturgy,
+  loadingLiturgy,
+  liturgyError,
+  dateOffset,
+  setDateOffset,
+  displayDateLabel
+ } = useLiturgy()
 
  /* =========================
  FEATURES
@@ -234,123 +162,6 @@ export default function Home(){
   preloadConsecration()
  },[])
 
- useEffect(()=>{
-
-  if(dateOffset === 0){
-   loadLiturgyFromCache()
-  }else{
-   setLiturgy(null)
-  }
-
-  void loadLiturgy()
-
- },[dateOffset])
-
- /* =========================
- ESC FECHAR MODAL
- ========================= */
-
- useEffect(()=>{
-
-  if(!modal && !selector) return
-
-  function onEsc(
-   e:KeyboardEvent
-  ){
-
-   if(e.key === "Escape"){
-
-    setModal(null)
-
-    setSelector(null)
-
-   }
-
-  }
-
-  window.addEventListener(
-   "keydown",
-   onEsc
-  )
-
-  return ()=>window.removeEventListener(
-   "keydown",
-   onEsc
-  )
-
- },[modal, selector])
-
- /* =========================
- LOCK BODY
- ========================= */
-
- useEffect(()=>{
-
-  if(modal || selector){
-
-   const scrollY = window.scrollY
-
-   document.body.style.position =
-   "fixed"
-
-   document.body.style.top =
-   `-${scrollY}px`
-
-   document.body.style.left = "0"
-
-   document.body.style.right = "0"
-
-   document.body.style.width = "100%"
-
-   document.body.style.overflow =
-   "hidden"
-
-  }else{
-
-   const scrollY =
-   document.body.style.top
-
-   document.body.style.position = ""
-
-   document.body.style.top = ""
-
-   document.body.style.left = ""
-
-   document.body.style.right = ""
-
-   document.body.style.width = ""
-
-   document.body.style.overflow = ""
-
-   if(scrollY){
-
-    window.scrollTo(
-     0,
-     parseInt(scrollY || "0") * -1
-    )
-
-   }
-
-  }
-
-  return ()=>{
-
-   document.body.style.position = ""
-
-   document.body.style.top = ""
-
-   document.body.style.left = ""
-
-   document.body.style.right = ""
-
-   document.body.style.width = ""
-
-   document.body.style.overflow = ""
-
-  }
-
- },[modal, selector])
-
  /* =========================
  LOGOUT
  ========================= */
@@ -362,225 +173,6 @@ export default function Home(){
   navigate("/login")
 
  },[navigate])
-
- /* =========================
- CACHE
- ========================= */
-
- function loadLiturgyFromCache(){
-
-  const saved =
-  localStorage.getItem(
-   LITURGY_CACHE_KEY
-  )
-
-  if(!saved) return
-
-  try{
-
-   const parsed =
-   JSON.parse(saved)
-
-   if(parsed?.date === today){
-
-    setLiturgy(parsed.data)
-
-   }
-
-  }catch{
-
-   localStorage.removeItem(
-    LITURGY_CACHE_KEY
-   )
-
-  }
-
- }
-
- /* =========================
- FETCH LITURGY
- ========================= */
-
- async function loadLiturgy(){
-
-  setLoadingLiturgy(true)
-
-  setLiturgyError(null)
-
-  const d = new Date()
-  d.setDate(d.getDate() + dateOffset)
-
-  const dia = String(d.getDate()).padStart(2,"0")
-  const mes = String(d.getMonth()+1).padStart(2,"0")
-  const ano = d.getFullYear()
-
-  const url = dateOffset === 0
-   ? LITURGY_URL
-   : `${LITURGY_URL}?dia=${dia}&mes=${mes}&ano=${ano}`
-
-  try{
-
-   const res = await fetch(url, { cache:"no-store" })
-
-   if(!res.ok) throw new Error()
-
-   const data = await res.json()
-
-   setLiturgy(data)
-
-   if(dateOffset === 0){
-    localStorage.setItem(
-     LITURGY_CACHE_KEY,
-     JSON.stringify({ date:today, data })
-    )
-   }
-
-  }catch{
-
-   setLiturgyError(
-    "Não foi possível carregar a liturgia agora."
-   )
-
-  }finally{
-
-   setLoadingLiturgy(false)
-
-  }
-
- }
-
- /* =========================
- MODAL
- ========================= */
-
- function openModal(
-  type:
-  | "primeira"
-  | "segunda"
-  | "salmo"
-  | "evangelho"
-  | "extra"
- ){
-
-  setCurrentType(type)
-
-  if(!liturgy?.leituras) return
-
-  let readings:LiturgyReading[] = []
-
-  if(type === "extra"){
-   readings =
-   liturgy.leituras.extras ?? []
-  }
-
-  if(type === "primeira"){
-   readings =
-   liturgy.leituras.primeiraLeitura ?? []
-  }
-
-  if(type === "segunda"){
-   readings =
-   liturgy.leituras.segundaLeitura ?? []
-  }
-
-  if(type === "salmo"){
-   readings =
-   liturgy.leituras.salmo ?? []
-  }
-
-  if(type === "evangelho"){
-   readings =
-   liturgy.leituras.evangelho ?? []
-  }
-
-  if(readings.length === 0){
-
-   setModal({
-    titulo:"",
-    texto:
-    "Hoje não há leitura disponível"
-   })
-
-   return
-
-  }
-
-  if(readings.length === 1){
-
-   setModal({
-    ...readings[0],
-    tipoLeitura:type
-   })
-
-   return
-
-  }
-
-  setSelector(readings)
-
- }
-
- /* =========================
- FORMATAR TEXTO
- ========================= */
-
- function formatVerses(
-  text:string
- ){
-
-  let formatted = text.replace(
-   /(\d+)(?=[A-Za-zÀ-ÿ“])/g,
-   '<span class="verse">$1</span>'
-  )
-
-  formatted = formatted.replace(
-   /^([A-Za-zÀ-ÿ])/,
-   '<span class="capitular">$1</span>'
-  )
-
-  return formatted
-
- }
-
- /* =========================
- RESPOSTA FINAL
- ========================= */
-
- function getRespostaFinal(
-  tipo?:string
- ){
-
-  if(tipo === "evangelho"){
-
-   return{
-    padre:
-    "Palavra da Salvação.",
-
-    assembleia:
-    "Glória a vós, Senhor."
-   }
-
-  }
-
-  if(
-   tipo === "primeira" ||
-   tipo === "segunda" ||
-   tipo === "extra"
-  ){
-
-   return{
-    padre:
-    "Palavra do Senhor.",
-
-    assembleia:
-    "Graças a Deus."
-   }
-
-  }
-
-  return null
-
- }
 
  /* =========================
  JSX
@@ -648,140 +240,14 @@ export default function Home(){
 
    {/* LITURGIA */}
 
-   <section className={styles.liturgyCard}>
-
-    <div className={styles.sectionHeader}>
-
-     <span className={styles.sectionBadge}>
-      LITURGIA DO DIA
-     </span>
-
-     <div className={styles.liturgyDateNav}>
-
-      <button
-       className={styles.liturgyNavBtn}
-       onClick={()=>setDateOffset(o=>o-1)}
-       aria-label="Dia anterior"
-      >
-       <ChevronLeft size={18}/>
-      </button>
-
-      <h2>{displayDateLabel}</h2>
-
-      <button
-       className={styles.liturgyNavBtn}
-       onClick={()=>setDateOffset(o=>o+1)}
-       disabled={dateOffset >= 2}
-       aria-label="Próximo dia"
-      >
-       <ChevronRight size={18}/>
-      </button>
-
-     </div>
-
-     {dateOffset !== 0 && (
-      <button
-       className={styles.liturgyTodayBtn}
-       onClick={()=>setDateOffset(0)}
-      >
-       Voltar para hoje
-      </button>
-     )}
-
-    </div>
-
-    {loadingLiturgy && !liturgy && (
-
-     <p className={styles.infoText}>
-      Carregando liturgia...
-     </p>
-
-    )}
-
-    {liturgyError && !liturgy && (
-
-     <p className={styles.errorText}>
-      {liturgyError}
-     </p>
-
-    )}
-
-    {liturgy && (
-
-     <div className={styles.liturgyButtons}>
-
-      {(liturgy.leituras?.extras?.length ?? 0) > 0 && (
-
-       <button
-        onClick={()=>
-         openModal("extra")
-        }
-       >
-
-        Extra
-
-       </button>
-
-      )}
-
-      <button
-       onClick={()=>
-        openModal("primeira")
-       }
-      >
-
-       Primeira Leitura
-
-      </button>
-
-      <button
-       onClick={()=>
-        openModal("salmo")
-       }
-      >
-
-       Salmo
-
-      </button>
-
-      <button
-       onClick={()=>
-        openModal("segunda")
-       }
-      >
-
-       Segunda Leitura
-
-      </button>
-
-      <button
-       onClick={()=>
-        openModal("evangelho")
-       }
-      >
-
-       Evangelho
-
-      </button>
-
-      <button
-       className={styles.primaryButton}
-       onClick={()=>
-        navigate(
-         "/oratio/liturgia-completa"
-        )
-       }
-      >
-
-       Ver Liturgia Completa
-
-      </button>
-
-     </div>
-
-    )}
-
-   </section>
+   <LiturgyCard
+    liturgy={liturgy}
+    loadingLiturgy={loadingLiturgy}
+    liturgyError={liturgyError}
+    dateOffset={dateOffset}
+    setDateOffset={setDateOffset}
+    displayDateLabel={displayDateLabel}
+   />
 
    {/* JORNADA */}
 
@@ -832,203 +298,6 @@ export default function Home(){
     ))}
 
    </div>
-
-   {/* SELECTOR */}
-
-   {selector && (
-
-    <div
-     className={styles.modalOverlay}
-     onClick={()=>
-      setSelector(null)
-     }
-    >
-
-     <div
-      className={styles.modal}
-      onClick={(e)=>
-       e.stopPropagation()
-      }
-     >
-
-      <h2 className={styles.modalTitle}>
-       Escolha a leitura
-      </h2>
-
-      <div
-       className={styles.selectorList}
-      >
-
-       {selector.map((item,index)=>(
-
-        <button
-         key={index}
-         className={styles.selectorButton}
-         onClick={()=>{
-
-          setSelector(null)
-
-          setTimeout(()=>{
-
-           setModal({
-            ...item,
-            tipoLeitura:
-            currentType || undefined
-           })
-
-          },0)
-
-         }}
-        >
-
-         {item.tipo && (
-
-          <span className={styles.selectorType}>
-           {item.tipo}
-          </span>
-
-         )}
-
-         <strong>
-          {item.titulo ||
-           `Leitura ${index + 1}`}
-         </strong>
-
-         {item.referencia && (
-
-          <span className={styles.selectorRef}>
-           {item.referencia}
-          </span>
-
-         )}
-
-        </button>
-
-       ))}
-
-      </div>
-
-      <button
-       className={styles.closeButton}
-       onClick={()=>
-        setSelector(null)
-       }
-      >
-
-       Fechar
-
-      </button>
-
-     </div>
-
-    </div>
-
-   )}
-
-   {/* MODAL */}
-
-   {modal && (
-
-    <div
-     className={styles.modalOverlay}
-     onClick={()=>
-      setModal(null)
-     }
-    >
-
-     <div
-      className={styles.modal}
-      onClick={(e)=>
-       e.stopPropagation()
-      }
-     >
-
-      <h2 className={styles.modalTitle}>
-       {modal.titulo ||
-        modal.referencia}
-      </h2>
-
-      <p className={styles.modalReference}>
-       {modal.referencia}
-      </p>
-
-      {modal.refrao && (
-
-       <p className={styles.modalRefrao}>
-        {modal.refrao}
-       </p>
-
-      )}
-
-      <div
-       className={styles.modalText}
-       dangerouslySetInnerHTML={{
-        __html:
-        formatVerses(
-         modal.texto || ""
-        )
-       }}
-      />
-
-      {(() => {
-
-       const resposta =
-       getRespostaFinal(
-        modal.tipoLeitura
-       )
-
-       if(!resposta) return null
-
-       return(
-
-        <div
-         className={
-          styles.responseBox
-         }
-        >
-
-         <p>
-
-          <strong>P.</strong>
-          {" "}
-          {resposta.padre}
-
-         </p>
-
-         <p
-          className={
-           styles.responseText
-          }
-         >
-
-          <strong>R.</strong>
-          {" "}
-          {resposta.assembleia}
-
-         </p>
-
-        </div>
-
-       )
-
-      })()}
-
-      <button
-       className={styles.closeButton}
-       onClick={()=>
-        setModal(null)
-       }
-      >
-
-       Fechar
-
-      </button>
-
-     </div>
-
-    </div>
-
-   )}
 
    <div className={styles.pageSpacer}></div>
 
