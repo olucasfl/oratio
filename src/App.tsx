@@ -5,6 +5,7 @@ import ScrollToTop from "./components/ScrollToTop"
 /* Sempre carregados (boot + guard) */
 import Splash from "./components/Splash/Splash"
 import ProtectedRoute from "./components/ProtectedRoute"
+import AdminRoute from "./components/AdminRoute"
 import { preloadConsecration, getProgress } from "./services/consecrationService"
 import { sendActivityPing } from "./services/activityService"
 
@@ -303,7 +304,9 @@ element={
  path="/oratio/admin"
  element={
   <ProtectedRoute>
-   <AdminPanel/>
+   <AdminRoute>
+    <AdminPanel/>
+   </AdminRoute>
   </ProtectedRoute>
  }
 />
