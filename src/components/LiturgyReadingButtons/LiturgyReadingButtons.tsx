@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { createPortal } from "react-dom"
 import { useNavigate } from "react-router-dom"
 
 import { useLockBodyScroll } from "../../hooks/useLockBodyScroll"
@@ -275,7 +276,7 @@ export default function LiturgyReadingButtons({ liturgy }: Props){
 
    {/* SELECTOR */}
 
-   {selector && (
+   {selector && createPortal(
 
     <div
      className={styles.modalOverlay}
@@ -361,13 +362,15 @@ export default function LiturgyReadingButtons({ liturgy }: Props){
 
      </div>
 
-    </div>
+    </div>,
+
+    document.body
 
    )}
 
    {/* MODAL */}
 
-   {modal && (
+   {modal && createPortal(
 
     <div
      className={styles.modalOverlay}
@@ -466,7 +469,9 @@ export default function LiturgyReadingButtons({ liturgy }: Props){
 
      </div>
 
-    </div>
+    </div>,
+
+    document.body
 
    )}
 
