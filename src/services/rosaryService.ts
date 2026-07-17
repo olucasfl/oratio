@@ -14,9 +14,9 @@ export async function startRosary(type:string, restart?:boolean){
 
 }
 
-export async function updateRosaryStep(type:string, step:number){
+export async function updateRosaryStep(type:string, step:number, elapsedSeconds?:number){
 
- const res = await api.post("/oratio/rosary/step", { type, step })
+ const res = await api.post("/oratio/rosary/step", { type, step, elapsedSeconds })
  return res.data
 
 }

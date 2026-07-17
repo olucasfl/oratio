@@ -97,6 +97,20 @@ export default function RosaryPage(){
   const touchStart =
     useRef<number | null>(null)
 
+  const elapsedRef =
+    useRef(0)
+
+  const currentRef =
+    useRef(0)
+
+  useEffect(()=>{
+    elapsedRef.current = elapsed
+  },[elapsed])
+
+  useEffect(()=>{
+    currentRef.current = current
+  },[current])
+
   /*
   =========================
   LOAD ROSARY
@@ -147,6 +161,10 @@ export default function RosaryPage(){
         )
 
       setSteps(data)
+
+      setElapsed(
+        session?.elapsedSeconds || 0
+      )
 
       if(
         session?.currentStep > 0 &&
@@ -209,6 +227,7 @@ export default function RosaryPage(){
     }
 
     setCurrent(0)
+    setElapsed(0)
 
   }
 
@@ -240,7 +259,7 @@ export default function RosaryPage(){
 
   /*
   =========================
-  SYNC STEP
+  SYNC STEP / TEMPO
   =========================
   */
 
@@ -250,10 +269,61 @@ export default function RosaryPage(){
 
     updateRosaryStep(
       type,
-      step
+      step,
+      elapsedRef.current
     ).catch(()=>{})
 
   }
+
+  function syncProgress(){
+
+    if(!type) return
+
+    updateRosaryStep(
+      type,
+      currentRef.current,
+      elapsedRef.current
+    ).catch(()=>{})
+
+  }
+
+  useEffect(()=>{
+
+    if(loading || resumePrompt){
+      return
+    }
+
+    const interval =
+      setInterval(
+        syncProgress,
+        20000
+      )
+
+    function handleVisibility(){
+
+      if(document.hidden){
+        syncProgress()
+      }
+
+    }
+
+    document.addEventListener(
+      "visibilitychange",
+      handleVisibility
+    )
+
+    return ()=>{
+
+      clearInterval(interval)
+
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibility
+      )
+
+    }
+
+  },[loading,resumePrompt,type])
 
   /*
   =========================
