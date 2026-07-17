@@ -19,7 +19,7 @@ const GRAUS = [
 
 export type Celebration = {
   nome: string
-  grau: string | null
+  grau: string
 }
 
 export function parseCelebration(liturgia?: string | null): Celebration | null {
