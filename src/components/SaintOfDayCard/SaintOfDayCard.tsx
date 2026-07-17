@@ -62,6 +62,12 @@ export default function SaintOfDayCard({ liturgy, dateOffset }: Props){
         {info.nome}
       </strong>
 
+      {info.opcional && (
+        <span className={styles.opcionalNote}>
+          Memória facultativa — a cor mostrada é a da estação
+        </span>
+      )}
+
       <span className={styles.hint}>
         Toque para saber mais
       </span>

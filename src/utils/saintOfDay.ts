@@ -3,7 +3,8 @@ import type { LiturgyData } from "../hooks/useLiturgy"
 import {
   parseCelebration,
   getLiturgicalColor,
-  normalizeCelebrationName
+  normalizeCelebrationName,
+  getFerialColor
 } from "./liturgicalCelebration"
 
 import {
@@ -24,6 +25,7 @@ export type SaintOfDayInfo = {
   corHexSoft: string
   data?: string
   bio: SaintBio | null
+  opcional: boolean
 }
 
 /*
@@ -44,17 +46,23 @@ export function resolveSaintOfDay(
   // dia comum (feria), sem celebração com nome próprio
   if(!celebration) return null
 
-  const color = getLiturgicalColor(liturgy.cor)
   const normalizedApiNome = normalizeCelebrationName(celebration.nome)
 
   let nome = celebration.nome
   let bio: SaintBio | null = null
+  let opcional = false
 
   const [diaStr, mesStr] = (liturgy.data || "").split("/")
   const dia = Number(diaStr)
   const mes = Number(mesStr)
 
+  let referenceDate: Date | null = null
+
   if(dia && mes){
+
+    const anoAtual = new Date().getFullYear()
+
+    referenceDate = new Date(anoAtual, mes - 1, dia)
 
     const fixedEntry = findSaintOfDay(dia, mes)
 
@@ -66,6 +74,7 @@ export function resolveSaintOfDay(
     if(fixedEntry && bateData){
 
       nome = fixedEntry.nome
+      opcional = !!fixedEntry.opcional
 
       if(fixedEntry.bioId){
         bio = SAINT_BIOS[fixedEntry.bioId] || null
@@ -90,14 +99,30 @@ export function resolveSaintOfDay(
 
   }
 
+  /*
+  Memória Facultativa confirmada: a Igreja permite não
+  celebrá-la, então a cor "correta" a exibir é a da
+  estação litúrgica em curso (normalmente verde), não a
+  do santo — o nome continua aparecendo, só como
+  informação extra.
+  */
+
+  const corParaExibir =
+    opcional && referenceDate
+      ? getFerialColor(referenceDate)
+      : liturgy.cor
+
+  const color = getLiturgicalColor(corParaExibir)
+
   return {
     nome,
     grau: celebration.grau,
-    cor: liturgy.cor || null,
+    cor: corParaExibir || null,
     corHex: color.hex,
     corHexSoft: color.hexSoft,
     data: liturgy.data,
-    bio
+    bio,
+    opcional
   }
 
 }

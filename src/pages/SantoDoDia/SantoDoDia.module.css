@@ -142,6 +142,26 @@
 
 }
 
+.opcionalNote{
+
+  color:#a89a89;
+
+  font-size:13.5px;
+
+  font-style:italic;
+
+  line-height:1.55;
+
+  margin:-14px 0 26px;
+
+  padding:12px 14px;
+
+  background:#faf7f2;
+
+  border-radius:12px;
+
+}
+
 .bio{
 
   border-top:1px solid #ebe2d5;

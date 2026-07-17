@@ -45,6 +45,20 @@ export type SaintOfDayEntry = {
   nome: string
   match: string[]
   bioId?: string
+  /*
+  true = Memória Facultativa confirmada (a Igreja permite
+  não celebrá-la). Nesses dias, a cor exibida é a da
+  estação litúrgica (normalmente verde), não a do santo —
+  o nome aparece só como informação extra.
+
+  A API nunca diferencia Obrigatória de Facultativa no
+  texto (as duas viram só "Memória"), então isso precisa
+  ser conferido e marcado manualmente, uma celebração de
+  cada vez. Por enquanto só as confirmadas por pesquisa
+  estão marcadas — as demais continuam mostrando a cor do
+  santo até serem conferidas.
+  */
+  opcional?: boolean
 }
 
 export const SAINTS_OF_THE_DAY: SaintOfDayEntry[] = [
@@ -182,7 +196,7 @@ export const SAINTS_OF_THE_DAY: SaintOfDayEntry[] = [
   { dia:2, mes:5, nome:"Santo Atanásio, bispo e doutor da Igreja", match:["atanasio"] },
   { dia:3, mes:5, nome:"São Filipe e São Tiago, Apóstolos", match:["filipe e sao tiago","filipe e tiago"] },
   { dia:4, mes:5, nome:"São Peregrino Laziosi", match:["peregrino laziosi","peregrino"] },
-  { dia:5, mes:5, nome:"Beato Nuno de Santa Maria (Nuno Álvares Pereira)", match:["nuno de santa maria","nuno alvares"] },
+  { dia:5, mes:5, nome:"Santo Nuno de Santa Maria (Nuno Álvares Pereira)", match:["nuno de santa maria","nuno alvares"] },
   { dia:6, mes:5, nome:"São Domingos Sávio", match:["domingos savio"] },
   { dia:7, mes:5, nome:"Santa Flávia Domitila", match:["flavia domitila"] },
   { dia:8, mes:5, nome:"São Pedro de Tarantásia", match:["pedro de tarantasia"] },
@@ -259,7 +273,7 @@ export const SAINTS_OF_THE_DAY: SaintOfDayEntry[] = [
   { dia:14, mes:7, nome:"São Camilo de Lellis, presbítero", match:["camilo de lellis"] },
   { dia:15, mes:7, nome:"São Boaventura, bispo e doutor da Igreja", match:["boaventura"] },
   { dia:16, mes:7, nome:"Nossa Senhora do Carmo", match:["nossa senhora do carmo","monte carmelo","carmelo"] },
-  { dia:17, mes:7, nome:"Beato Inácio de Azevedo e companheiros, mártires", match:["inacio de azevedo"] },
+  { dia:17, mes:7, nome:"Beato Inácio de Azevedo e companheiros, mártires", match:["inacio de azevedo"], opcional:true },
   { dia:18, mes:7, nome:"São Francisco Solano, frade e missionário", match:["francisco solano"] },
   { dia:19, mes:7, nome:"Santa Justa e Santa Rufina, mártires", match:["justa e rufina"] },
   { dia:20, mes:7, nome:"Santa Margarida de Antioquia, virgem e mártir", match:["margarida de antioquia"] },
@@ -309,7 +323,7 @@ export const SAINTS_OF_THE_DAY: SaintOfDayEntry[] = [
   { dia:31, mes:8, nome:"São Raimundo Nonato", match:["raimundo nonato"] },
 
   // ---------- SETEMBRO ----------
-  { dia:1, mes:9, nome:"Beata Beatriz da Silva, virgem", match:["beatriz da silva"] },
+  { dia:1, mes:9, nome:"Santa Beatriz da Silva, virgem", match:["beatriz da silva"] },
   { dia:2, mes:9, nome:"Santa Doroteia, virgem e mártir de Cesareia", match:["doroteia, virgem e martir de cesareia"] },
   { dia:3, mes:9, nome:"São Gregório Magno, Papa e doutor da Igreja", match:["gregorio magno"] },
   { dia:4, mes:9, nome:"Santa Rosália", match:["rosalia"] },
@@ -367,7 +381,7 @@ export const SAINTS_OF_THE_DAY: SaintOfDayEntry[] = [
   { dia:24, mes:10, nome:"Santo Antônio Maria Claret, bispo", match:["antonio maria claret"] },
   { dia:25, mes:10, nome:"Santo Antônio de Sant'Ana Galvão (Frei Galvão)", match:["frei galvao","antonio de sant ana galvao"] },
   { dia:26, mes:10, nome:"Santo Evaristo, Papa", match:["evaristo"] },
-  { dia:27, mes:10, nome:"São Gonçalo de Lagos, presbítero", match:["goncalo de lagos"] },
+  { dia:27, mes:10, nome:"Beato Gonçalo de Lagos, presbítero", match:["goncalo de lagos"] },
   { dia:28, mes:10, nome:"São Simão e São Judas Tadeu, Apóstolos", match:["simao e sao judas tadeu","judas tadeu, apostolo"], bioId:"sao-judas-tadeu" },
   { dia:29, mes:10, nome:"São Narciso", match:["narciso"] },
   { dia:30, mes:10, nome:"São Germano, bispo", match:["germano, bispo"] },
@@ -424,7 +438,7 @@ export const SAINTS_OF_THE_DAY: SaintOfDayEntry[] = [
   { dia:16, mes:12, nome:"Santa Adelaide", match:["adelaide"] },
   { dia:17, mes:12, nome:"Santa Olímpia", match:["olimpia"] },
   { dia:18, mes:12, nome:"Nossa Senhora do Ó (Expectativa do Parto)", match:["nossa senhora do o","expectativa do parto"] },
-  { dia:19, mes:12, nome:"Santo Urbano V, Papa", match:["urbano v"] },
+  { dia:19, mes:12, nome:"Beato Urbano V, Papa", match:["urbano v"] },
   { dia:20, mes:12, nome:"São Domingos de Silos", match:["domingos de silos"] },
   { dia:21, mes:12, nome:"São Pedro Canísio, presbítero e doutor da Igreja", match:["pedro canisio"] },
   { dia:22, mes:12, nome:"Santa Francisca Xavier Cabrini", match:["francisca xavier cabrini"] },

@@ -86,3 +86,94 @@ function normalize(text:string){
 export function normalizeCelebrationName(nome:string){
   return normalize(nome)
 }
+
+/*
+==========================================================
+COR DA FÉRIA (estação litúrgica)
+==========================================================
+
+Usada quando uma Memória é Facultativa (opcional): nesse
+caso, a cor "correta" para exibir é a da estação em curso
+(normalmente verde, no Tempo Comum), não a do santo — a
+memória fica só como informação extra, já que a Igreja
+permite ao celebrante optar por não celebrá-la.
+
+Calculada a partir da data da Páscoa daquele ano
+(algoritmo de Gauss/Meeus, o mesmo usado por qualquer
+calendário litúrgico de verdade) — nunca por uma lista
+fixa, que teria que ser refeita todo ano.
+*/
+
+function addDays(date:Date, days:number){
+  const d = new Date(date)
+  d.setDate(d.getDate() + days)
+  return d
+}
+
+function mostRecentSunday(date:Date){
+  return addDays(date, -date.getDay())
+}
+
+export function getEasterSunday(year:number){
+
+  const a = year % 19
+  const b = Math.floor(year / 100)
+  const c = year % 100
+  const d = Math.floor(b / 4)
+  const e = b % 4
+  const f = Math.floor((b + 8) / 25)
+  const g = Math.floor((b - f + 1) / 3)
+  const h = (19*a + b - d - g + 15) % 30
+  const i = Math.floor(c / 4)
+  const k = c % 4
+  const l = (32 + 2*e + 2*i - h - k) % 7
+  const m = Math.floor((a + 11*h + 22*l) / 451)
+  const month = Math.floor((h + l - 7*m + 114) / 31)
+  const day = ((h + l - 7*m + 114) % 31) + 1
+
+  return new Date(year, month - 1, day)
+
+}
+
+export function getFerialColor(date:Date){
+
+  const year = date.getFullYear()
+  const easter = getEasterSunday(year)
+
+  const ashWednesday = addDays(easter, -46)
+  const pentecost = addDays(easter, 49)
+
+  // 4º domingo do Advento = domingo mais próximo (igual ou antes) de 24/12
+  const advent4 = mostRecentSunday(new Date(year, 11, 24))
+  const adventStart = addDays(advent4, -21)
+
+  const christmasStart = new Date(year, 11, 25)
+  // fim aproximado do Tempo do Natal (Batismo do Senhor),
+  // contando o rabicho de janeiro que pertence ao Natal do
+  // ano anterior
+  const christmasEndPrevYear = new Date(year, 0, 12)
+
+  const time = date.getTime()
+
+  if(time >= adventStart.getTime() && time < christmasStart.getTime()){
+    return "roxo"
+  }
+
+  if(
+    time >= christmasStart.getTime() ||
+    time <= christmasEndPrevYear.getTime()
+  ){
+    return "branco"
+  }
+
+  if(time >= ashWednesday.getTime() && time < easter.getTime()){
+    return "roxo"
+  }
+
+  if(time >= easter.getTime() && time <= pentecost.getTime()){
+    return "branco"
+  }
+
+  return "verde"
+
+}

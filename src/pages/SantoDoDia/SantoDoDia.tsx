@@ -103,6 +103,14 @@ export default function SantoDoDia(){
               </p>
             )}
 
+            {info.opcional && (
+              <p className={styles.opcionalNote}>
+                Memória facultativa: a Igreja permite não celebrá-la
+                nesse dia — por isso a cor mostrada acima é a da
+                estação litúrgica em curso, não a do santo.
+              </p>
+            )}
+
             {info.bio ? (
 
               <div className={styles.bio}>
