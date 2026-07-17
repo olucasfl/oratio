@@ -114,7 +114,7 @@ export default function Tratado() {
       <div className={styles.header}>
 
         <div className={styles.headerTop}>
-          <button className={styles.backButton} onClick={() => navigate(-1)}>←</button>
+          <button className={styles.backButton} onClick={() => navigate(-1)}><ChevronLeft size={20} /></button>
           <span className={styles.title}>Tratado da Verdadeira Devoção</span>
           <div style={{ width: 38 }} />
         </div>

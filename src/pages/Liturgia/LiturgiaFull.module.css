@@ -27,6 +27,10 @@
 .backButton{
   align-self:flex-start;
 
+  display:flex;
+  align-items:center;
+  gap:6px;
+
   padding:8px 14px;
 
   background:transparent;

@@ -15,6 +15,7 @@ from "../../components/BottomNavbar/BottomNavbar"
 import {
  Search,
  ChevronRight,
+ ChevronLeft,
  BookOpen,
  Cross
 } from "lucide-react"
@@ -115,7 +116,8 @@ export default function BibliaHome(){
     className={styles.backButton}
     onClick={()=>navigate(-1)}
    >
-    ← Voltar
+    <ChevronLeft size={18}/>
+    Voltar
    </button>
 
    {/* HERO */}

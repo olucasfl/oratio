@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { Crown, FileText, CheckCircle } from "lucide-react"
+import { Crown, FileText, CheckCircle, ChevronLeft } from "lucide-react"
 
 import styles from "./ConsecrationFinal.module.css"
 
@@ -66,7 +66,7 @@ export default function ConsecrationFinal() {
   if (loading) {
     return (
       <div className={`${styles.container} page-enter`}>
-        <button className={styles.back} onClick={() => navigate(-1)}>← Voltar</button>
+        <button className={styles.back} onClick={() => navigate(-1)}><ChevronLeft size={18}/>Voltar</button>
         <div className={styles.skHero}>
           <div className={`skeleton ${styles.skIcon}`} />
           <div className={`skeleton ${styles.skTitle}`} />
@@ -95,7 +95,7 @@ export default function ConsecrationFinal() {
         danger
       />
 
-      <button className={styles.back} onClick={() => navigate(-1)}>← Voltar</button>
+      <button className={styles.back} onClick={() => navigate(-1)}><ChevronLeft size={18}/>Voltar</button>
 
       {/* HERO */}
       <div className={styles.hero}>

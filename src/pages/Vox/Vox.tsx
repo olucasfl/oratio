@@ -9,6 +9,7 @@ import styles from "./Vox.module.css"
 import { Plus } from "lucide-react"
 import { Menu } from "lucide-react"
 import { Trash2, Pencil } from "lucide-react"
+import { ChevronLeft } from "lucide-react"
 import { deleteConversation, renameConversation } from "../../services/voxService"
 
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
@@ -540,7 +541,7 @@ useEffect(()=>{
      onClick={()=>navigate("/oratio/home")}
      aria-label="Voltar para início"
     >
-     ←
+     <ChevronLeft size={20}/>
     </button>
 
     <h1>VoxAI</h1>

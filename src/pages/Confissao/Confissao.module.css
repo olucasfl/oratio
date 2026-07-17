@@ -31,11 +31,15 @@
 
 .backBtn {
   align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   background: none;
   border: none;
   color: var(--oratio-primary);
   font-family: var(--oratio-font-text);
   font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
   padding: 4px 0 16px;
   transition: var(--oratio-transition);

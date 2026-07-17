@@ -10,7 +10,7 @@ import { clearSession } from "../../services/api"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
 import {
- ArrowLeft,
+ ChevronLeft,
  Flame,
  Crown,
  Sparkles,
@@ -268,7 +268,7 @@ export default function Profile(){
      onClick={()=>navigate(-1)}
     >
 
-     <ArrowLeft size={22}/>
+     <ChevronLeft size={22}/>
 
     </button>
 

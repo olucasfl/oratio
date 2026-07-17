@@ -69,6 +69,10 @@
   top:22px;
   left:18px;
 
+  display:flex;
+  align-items:center;
+  gap:6px;
+
   border:none;
   background:none;
 

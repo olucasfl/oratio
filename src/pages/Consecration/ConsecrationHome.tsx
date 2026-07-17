@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import styles from "./ConsecrationHome.module.css"
 import { useNavigate } from "react-router-dom"
-import { Crown, BookOpen, Flag, Check } from "lucide-react"
+import { Crown, BookOpen, Flag, Check, ChevronLeft } from "lucide-react"
 
 import {
   getProgress,
@@ -197,7 +197,8 @@ export default function ConsecrationHome() {
       <div className={`${styles.container} page-enter`}>
 
         <button className={styles.back} onClick={() => navigate("/oratio/home")}>
-          ← Voltar
+          <ChevronLeft size={18}/>
+          Voltar
         </button>
 
         <div className={styles.skeletonHero}>
@@ -234,7 +235,8 @@ export default function ConsecrationHome() {
       />
 
       <button className={styles.back} onClick={() => navigate("/oratio/home")}>
-        ← Voltar
+        <ChevronLeft size={18}/>
+          Voltar
       </button>
 
       {/* HERO */}

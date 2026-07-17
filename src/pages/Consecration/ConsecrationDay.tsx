@@ -1,5 +1,6 @@
 import { useParams,useNavigate } from "react-router-dom"
 import { useEffect,useState } from "react"
+import { ChevronLeft } from "lucide-react"
 
 import styles from "./ConsecrationDay.module.css"
 
@@ -106,7 +107,8 @@ export default function ConsecrationDay(){
    <div className={`${styles.container} page-enter`}>
 
     <button className={styles.back} onClick={()=>navigate(-1)}>
-     ← Voltar
+     <ChevronLeft size={18}/>
+     Voltar
     </button>
 
     <div className={styles.skeletonWrap}>
@@ -150,7 +152,8 @@ export default function ConsecrationDay(){
      className={styles.back}
      onClick={()=>navigate(-1)}
     >
-     ← Voltar
+     <ChevronLeft size={18}/>
+     Voltar
     </button>
 
    </div>
@@ -265,7 +268,8 @@ export default function ConsecrationDay(){
      className={styles.back}
      onClick={()=>navigate(-1)}
     >
-     ← Voltar
+     <ChevronLeft size={18}/>
+     Voltar
     </button>
 
     {isOffline && (

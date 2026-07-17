@@ -1,6 +1,6 @@
 import { useState, Fragment } from "react"
 import { useNavigate } from "react-router-dom"
-import { ChevronDown, ChevronUp, Cross, BookOpen, Heart } from "lucide-react"
+import { ChevronDown, ChevronUp, ChevronLeft, Cross, BookOpen, Heart } from "lucide-react"
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
@@ -45,7 +45,8 @@ export default function Confissao() {
       {/* VOLTAR */}
 
       <button className={styles.backBtn} onClick={() => navigate(-1)}>
-        ← Voltar
+        <ChevronLeft size={18}/>
+        Voltar
       </button>
 
       {/* HERO */}

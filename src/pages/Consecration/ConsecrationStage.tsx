@@ -1,6 +1,6 @@
 import { useParams,useNavigate } from "react-router-dom"
 import { useEffect,useState } from "react"
-import { Check } from "lucide-react"
+import { Check, ChevronLeft } from "lucide-react"
 
 import styles from "./ConsecrationStage.module.css"
 
@@ -84,7 +84,7 @@ export default function ConsecrationStage(){
  if(loading){
   return(
    <div className={`${styles.container} page-enter`}>
-    <button className={styles.back} onClick={()=>navigate("/oratio/consecration")}>← Voltar</button>
+    <button className={styles.back} onClick={()=>navigate("/oratio/consecration")}><ChevronLeft size={18}/>Voltar</button>
     <div className={styles.skeletonWrap}>
      <div className={`skeleton ${styles.skTitle}`}/>
      <div className={`skeleton ${styles.skSub}`}/>
@@ -101,7 +101,7 @@ export default function ConsecrationStage(){
  if(!progress){
   return(
    <div className={`${styles.container} page-enter`}>
-    <button className={styles.back} onClick={()=>navigate("/oratio/consecration")}>← Voltar</button>
+    <button className={styles.back} onClick={()=>navigate("/oratio/consecration")}><ChevronLeft size={18}/>Voltar</button>
     <p className={styles.emptyMsg}>
      {isOffline
       ? "Você está offline e este estágio ainda não foi carregado."
@@ -123,7 +123,8 @@ export default function ConsecrationStage(){
     className={styles.back}
     onClick={()=>navigate("/oratio/consecration")}
    >
-    ← Voltar
+    <ChevronLeft size={18}/>
+    Voltar
    </button>
 
    {isOffline && (

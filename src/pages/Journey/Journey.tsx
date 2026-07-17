@@ -11,7 +11,7 @@ import {
   Plus,
   Pin,
   Heart,
-  ArrowLeft
+  ChevronLeft
 } from "lucide-react"
 
 import {
@@ -215,7 +215,7 @@ export default function Journey(){
       <main className={`${styles.container} page-enter`}>
 
         <button className={styles.backButton} onClick={()=>navigate(-1)}>
-          <ArrowLeft size={18}/>
+          <ChevronLeft size={18}/>
           Voltar
         </button>
 
@@ -251,7 +251,7 @@ export default function Journey(){
         }
       >
 
-        <ArrowLeft size={18}/>
+        <ChevronLeft size={18}/>
 
         Voltar
 

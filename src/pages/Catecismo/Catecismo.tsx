@@ -143,7 +143,7 @@ export default function Catecismo() {
       <div className={styles.header}>
 
         <div className={styles.headerTop}>
-          <button className={styles.backButton} onClick={() => navigate("/oratio/home")}>←</button>
+          <button className={styles.backButton} onClick={() => navigate("/oratio/home")}><ChevronLeft size={20} /></button>
           <span className={styles.title}>Catecismo da Igreja</span>
           <div style={{ width: 38 }} />
         </div>

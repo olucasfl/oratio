@@ -110,7 +110,8 @@ export default function LiturgiaFull(){
             className={styles.backButton}
             onClick={()=>navigate(-1)}
           >
-            ← Voltar
+            <ChevronLeft size={18}/>
+            Voltar
           </button>
 
         </div>
@@ -130,7 +131,8 @@ export default function LiturgiaFull(){
 
       {/* BOTÃO VOLTAR */}
       <button className={styles.backButton} onClick={()=>navigate(-1)}>
-        ← Voltar
+        <ChevronLeft size={18}/>
+        Voltar
       </button>
 
       {isOffline && (

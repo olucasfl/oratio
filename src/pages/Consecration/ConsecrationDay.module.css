@@ -30,12 +30,17 @@
  top:20px;
  left:20px;
 
+ display:flex;
+ align-items:center;
+ gap:6px;
+
  background:none;
  border:none;
 
  color:var(--oratio-primary);
 
  font-size:16px;
+ font-weight:600;
 
  cursor:pointer;
 

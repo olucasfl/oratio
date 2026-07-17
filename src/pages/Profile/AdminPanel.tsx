@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 
 import {
   Users, Trash2, Eye, Crown, Search, Activity,
-  RefreshCcw, ArrowLeft, Flame, X, BadgeCheck, BadgeX,
+  RefreshCcw, ChevronLeft, Flame, X, BadgeCheck, BadgeX,
   BookHeart, ChevronDown, ChevronUp, ArrowUpDown, CalendarDays,
   SortAsc, Bot, LogIn, Gem, Heart, Pin, Check, AlertCircle,
   Loader2, Cross, RotateCcw
@@ -238,7 +238,7 @@ export default function AdminPanel() {
     <div className={`${styles.page} page-enter`}>
       <div className={styles.backgroundGlow}/>
       <header className={styles.header}>
-        <button className={styles.backButton} onClick={() => navigate(-1)}><ArrowLeft size={20}/></button>
+        <button className={styles.backButton} onClick={() => navigate(-1)}><ChevronLeft size={20}/></button>
         <Skeleton height={22} width={160} radius={8}/>
       </header>
       <div style={{ padding: "0 18px", display: "flex", flexDirection: "column", gap: 16 }}>
@@ -264,7 +264,7 @@ export default function AdminPanel() {
       {/* HEADER */}
       <header className={styles.header}>
         <button className={styles.backButton} onClick={() => navigate(-1)}>
-          <ArrowLeft size={20}/>
+          <ChevronLeft size={20}/>
         </button>
         <div>
           <h1>Painel Admin</h1>

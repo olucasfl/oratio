@@ -590,10 +590,11 @@ export default function RosaryPage(){
 
         <div style={{padding:"20px 20px 0"}}>
           <button
-            style={{background:"none",border:"none",color:"var(--oratio-primary)",fontSize:15,cursor:"pointer",fontFamily:"var(--oratio-font-text)"}}
+            style={{background:"none",border:"none",display:"flex",alignItems:"center",gap:6,color:"var(--oratio-primary)",fontSize:15,cursor:"pointer",fontFamily:"var(--oratio-font-text)"}}
             onClick={()=>navigate(-1)}
           >
-            ← Voltar
+            <ChevronLeft size={18}/>
+            Voltar
           </button>
         </div>
 
