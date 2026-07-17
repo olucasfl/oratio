@@ -259,7 +259,7 @@ export const SAINTS_OF_THE_DAY: SaintOfDayEntry[] = [
   { dia:14, mes:7, nome:"São Camilo de Lellis, presbítero", match:["camilo de lellis"] },
   { dia:15, mes:7, nome:"São Boaventura, bispo e doutor da Igreja", match:["boaventura"] },
   { dia:16, mes:7, nome:"Nossa Senhora do Carmo", match:["nossa senhora do carmo","monte carmelo","carmelo"] },
-  { dia:17, mes:7, nome:"Santo Inácio de Azevedo e companheiros, mártires", match:["inacio de azevedo"] },
+  { dia:17, mes:7, nome:"Beato Inácio de Azevedo e companheiros, mártires", match:["inacio de azevedo"] },
   { dia:18, mes:7, nome:"São Francisco Solano, frade e missionário", match:["francisco solano"] },
   { dia:19, mes:7, nome:"Santa Justa e Santa Rufina, mártires", match:["justa e rufina"] },
   { dia:20, mes:7, nome:"Santa Margarida de Antioquia, virgem e mártir", match:["margarida de antioquia"] },
