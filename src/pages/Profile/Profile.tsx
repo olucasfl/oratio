@@ -11,11 +11,16 @@ import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
 import {
  ChevronLeft,
- Flame,
  Crown,
  Sparkles,
  ShieldCheck,
- User
+ User,
+ Footprints,
+ HeartHandshake,
+ Hand,
+ Compass,
+ Gem,
+ Award
 } from "lucide-react"
 
 export default function Profile(){
@@ -161,13 +166,24 @@ export default function Profile(){
     )
   : null
 
+ /*
+ Faixas de sequência de oração.
+ Cada faixa tem rótulo, cor e ícone
+ próprios (sem repetição), numa
+ progressão de tom que lembra
+ metais e pedras — do neutro ao
+ dourado — para dar sensação real
+ de patente conforme o usuário
+ avança.
+ */
+
  function getStreakInfo(streak:number){
 
   if(streak === 0){
 
    return {
-    emoji:"❄️",
-    color:"#999",
+    Icon:Sparkles,
+    color:"#9a8f80",
     label:"Comece hoje"
    }
 
@@ -176,8 +192,8 @@ export default function Profile(){
   if(streak <= 3){
 
    return {
-    emoji:"🔥",
-    color:"#ff6b6b",
+    Icon:Footprints,
+    color:"#c17a4f",
     label:"Discípulo"
    }
 
@@ -186,8 +202,8 @@ export default function Profile(){
   if(streak <= 7){
 
    return {
-    emoji:"🔥",
-    color:"#ff922b",
+    Icon:HeartHandshake,
+    color:"#b8860b",
     label:"Servo de Deus"
    }
 
@@ -196,8 +212,8 @@ export default function Profile(){
   if(streak <= 15){
 
    return {
-    emoji:"🔥",
-    color:"#fcc419",
+    Icon:ShieldCheck,
+    color:"#7c828d",
     label:"Fiel Perseverante"
    }
 
@@ -206,8 +222,8 @@ export default function Profile(){
   if(streak <= 30){
 
    return {
-    emoji:"🔥",
-    color:"#51cf66",
+    Icon:Hand,
+    color:"#4c8577",
     label:"Intercessor"
    }
 
@@ -216,8 +232,8 @@ export default function Profile(){
   if(streak <= 90){
 
    return {
-    emoji:"🔥🔥",
-    color:"#339af0",
+    Icon:Crown,
+    color:"#3a6ea5",
     label:"Consagrado"
    }
 
@@ -226,9 +242,9 @@ export default function Profile(){
   if(streak <= 180){
 
    return {
-    emoji:"🔥🔥🔥",
-    color:"#845ef7",
-    label:"Consagrado"
+    Icon:Compass,
+    color:"#6a4c93",
+    label:"Peregrino Fiel"
    }
 
   }
@@ -236,17 +252,17 @@ export default function Profile(){
   if(streak <= 365){
 
    return {
-    emoji:"🔥🔥🔥🔥",
-    color:"#f783ac",
-    label:"Lendário"
+    Icon:Gem,
+    color:"#9a2846",
+    label:"Coluna de Fé"
    }
 
   }
 
   return {
 
-   emoji:"🔥🔥🔥🔥",
-   color:"#ff0000",
+   Icon:Award,
+   color:"#b8952f",
    label:"Testemunha de Cristo"
 
   }
@@ -366,13 +382,24 @@ export default function Profile(){
 
      {/* STREAK */}
 
-     <div className={styles.streakCard}>
+     <div
+      className={styles.streakCard}
+      style={{ borderColor: `${streakInfo.color}40` }}
+     >
 
       <div className={styles.streakLeft}>
 
-       <div className={styles.streakIcon}>
+       <div
+        className={styles.streakIcon}
+        style={{
+         background:
+          `linear-gradient(135deg, ${streakInfo.color}, ${streakInfo.color}cc)`,
+         boxShadow:
+          `0 8px 20px ${streakInfo.color}48`
+        }}
+       >
 
-        <Flame size={22}/>
+        <streakInfo.Icon size={22}/>
 
        </div>
 
