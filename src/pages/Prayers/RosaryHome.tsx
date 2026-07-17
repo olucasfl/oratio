@@ -10,7 +10,8 @@ import {
   Shield,
   Heart,
   Flame,
-  Stars
+  Stars,
+  Cross
 } from "lucide-react"
 
 import BottomNavbar
@@ -96,6 +97,11 @@ const ROSARIES:Rosary[] = [
     slug:"espirito-santo"
   },
 
+  {
+    name:"Via Sacra",
+    slug:"via-sacra"
+  },
+
 ]
 
 export default function RosaryHome(){
@@ -140,6 +146,10 @@ export default function RosaryHome(){
       slug.includes("espirito")
     ){
       return <Flame size={22}/>
+    }
+
+    if(slug === "via-sacra"){
+      return <Cross size={22}/>
     }
 
     return <Church size={22}/>
