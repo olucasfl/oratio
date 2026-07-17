@@ -25,6 +25,8 @@ import { FraseDiaria } from "../../components/FraseDiaria/FraseDiaria"
 
 import LiturgyCard from "../../components/LiturgyCard/LiturgyCard"
 
+import SaintOfDayCard from "../../components/SaintOfDayCard/SaintOfDayCard"
+
 import { useLiturgy } from "../../hooks/useLiturgy"
 
 /* =========================
@@ -247,6 +249,13 @@ export default function Home(){
     dateOffset={dateOffset}
     setDateOffset={setDateOffset}
     displayDateLabel={displayDateLabel}
+   />
+
+   {/* SANTO DO DIA */}
+
+   <SaintOfDayCard
+    liturgy={liturgy}
+    dateOffset={dateOffset}
    />
 
    {/* JORNADA */}

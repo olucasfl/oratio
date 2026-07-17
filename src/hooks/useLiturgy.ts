@@ -9,6 +9,9 @@ export type LiturgyReading = {
 }
 
 export type LiturgyData = {
+ data?: string
+ liturgia?: string
+ cor?: string
  leituras?: {
   primeiraLeitura?: LiturgyReading[]
   segundaLeitura?: LiturgyReading[]
