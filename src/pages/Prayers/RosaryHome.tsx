@@ -1,3 +1,6 @@
+import { useState }
+from "react"
+
 import styles from "./RosaryHome.module.css"
 
 import { useNavigate }
@@ -11,7 +14,8 @@ import {
   Heart,
   Flame,
   Stars,
-  Cross
+  Cross,
+  Search
 } from "lucide-react"
 
 import BottomNavbar
@@ -19,6 +23,24 @@ from "../../components/BottomNavbar/BottomNavbar"
 
 import { ROSARY_DAYS }
 from "../../utils/rosaryDays"
+
+/* =========================
+NORMALIZAR TEXTO
+========================= */
+
+function normalizeText(
+  text:string
+){
+
+  return text
+    .normalize("NFD")
+    .replace(
+      /\p{Diacritic}/gu,
+      ""
+    )
+    .toLowerCase()
+
+}
 
 /* =========================
 TIPAGEM
@@ -108,6 +130,9 @@ export default function RosaryHome(){
 
   const navigate = useNavigate()
 
+  const [search,setSearch] =
+    useState("")
+
   function goToRosary(
     slug:string
   ){
@@ -155,6 +180,25 @@ export default function RosaryHome(){
     return <Church size={22}/>
 
   }
+
+  /*
+  =========================
+  FILTRO
+  =========================
+  */
+
+  const searchText =
+    normalizeText(search.trim())
+
+  const filteredRosaries =
+    !searchText
+      ? ROSARIES
+      : ROSARIES.filter((r)=>
+
+          normalizeText(r.name)
+            .includes(searchText)
+
+        )
 
   return(
 
@@ -205,12 +249,52 @@ export default function RosaryHome(){
         </div>
 
         {/* =========================
+        BUSCA
+        ========================= */}
+
+        <div className={styles.searchWrapper}>
+
+          <div className={styles.searchBox}>
+
+            <Search size={18}/>
+
+            <input
+              type="text"
+              placeholder="Pesquisar terço..."
+              value={search}
+              onChange={(e)=>
+                setSearch(
+                  e.target.value
+                )
+              }
+            />
+
+          </div>
+
+        </div>
+
+        {/* =========================
         LIST
         ========================= */}
 
         <div className={styles.list}>
 
-          {ROSARIES.map((r)=>(
+          {filteredRosaries.length === 0 && (
+
+            <div className={styles.empty}>
+
+              <Church size={34}/>
+
+              <p>
+                Nenhum terço
+                encontrado.
+              </p>
+
+            </div>
+
+          )}
+
+          {filteredRosaries.map((r)=>(
 
             <button
               key={r.slug}
