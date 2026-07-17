@@ -305,7 +305,7 @@ export default function RosaryHome(){
                       <RotateCcw size={12}/>
 
                       Continuar · {" "}
-                      {progressMap[r.slug].currentStep}
+                      {progressMap[r.slug].currentStep + 1}
                       /
                       {progressMap[r.slug].totalSteps}
 

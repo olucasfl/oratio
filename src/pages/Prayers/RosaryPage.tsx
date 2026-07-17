@@ -655,7 +655,7 @@ export default function RosaryPage(){
         title="Retomar terço?"
         message={
           resumePrompt
-          ? `Você parou no passo ${resumePrompt.step} de ${resumePrompt.total}. Deseja continuar de onde parou ou começar do início?`
+          ? `Você parou no passo ${resumePrompt.step + 1} de ${resumePrompt.total}. Deseja continuar de onde parou ou começar do início?`
           : ""
         }
         confirmLabel="Continuar de onde parei"
