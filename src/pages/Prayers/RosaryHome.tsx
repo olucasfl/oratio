@@ -290,7 +290,15 @@ export default function RosaryHome(){
                     {r.name}
                   </strong>
 
-                  {progressMap[r.slug] ? (
+                  {ROSARY_DAYS[r.slug] && (
+
+                    <span>
+                      {ROSARY_DAYS[r.slug]}
+                    </span>
+
+                  )}
+
+                  {progressMap[r.slug] && (
 
                     <span className={styles.resumeBadge}>
 
@@ -301,12 +309,6 @@ export default function RosaryHome(){
                       /
                       {progressMap[r.slug].totalSteps}
 
-                    </span>
-
-                  ) : ROSARY_DAYS[r.slug] && (
-
-                    <span>
-                      {ROSARY_DAYS[r.slug]}
                     </span>
 
                   )}
