@@ -38,10 +38,32 @@ function processQueue(error: any, token: string | null = null) {
   failedQueue = [];
 }
 
-function logout() {
-  localStorage.removeItem("access_token");
-  localStorage.removeItem("refresh_token");
+/*
+================================
+LOGOUT (limpa toda a sessão)
+================================
+Remove tudo do localStorage, exceto chaves globais
+que não são dados de usuário (versão do app, throttle
+de ping) — assim qualquer cache novo adicionado no
+futuro (perfil, consagração, liturgia etc.) já fica
+coberto automaticamente, sem precisar lembrar de somar
+mais um removeItem aqui.
+*/
+
+const KEEP_ON_LOGOUT = new Set(["app_version", "last_ping"]);
+
+export function clearSession() {
+  for (let i = localStorage.length - 1; i >= 0; i--) {
+    const key = localStorage.key(i);
+    if (key && !KEEP_ON_LOGOUT.has(key)) {
+      localStorage.removeItem(key);
+    }
+  }
   window.location.href = "/login";
+}
+
+function logout() {
+  clearSession();
 }
 
 /*

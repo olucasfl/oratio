@@ -5,6 +5,7 @@ import { useOffline } from "../../hooks/useOffline"
 import styles from "./Profile.module.css"
 
 import { getProfile } from "../../services/profileService"
+import { clearSession } from "../../services/api"
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
@@ -98,11 +99,7 @@ export default function Profile(){
 
  function logout(){
 
-  localStorage.removeItem("access_token")
-  localStorage.removeItem("refresh_token")
-  localStorage.removeItem("oratio-profile")
-
-  navigate("/login")
+  clearSession()
 
  }
 

@@ -1,4 +1,4 @@
-import api from "./api";
+import api, { clearSession } from "./api";
 
 type AuthResponse = {
   access_token: string;
@@ -44,10 +44,7 @@ export async function register(
 
 export function logout(){
 
- localStorage.removeItem("access_token")
- localStorage.removeItem("refresh_token")
-
- window.location.href = "/login"
+ clearSession()
 
 }
 

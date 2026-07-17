@@ -12,6 +12,8 @@ import {
 
 import { isPWA } from "../../utils/isPwa"
 
+import { clearSession } from "../../services/api"
+
 import {
  preloadConsecration
 } from "../../services/consecrationService"
@@ -168,11 +170,9 @@ export default function Home(){
 
  const handleLogout = useCallback(()=>{
 
-  localStorage.removeItem("access_token")
-  localStorage.removeItem("refresh_token")
-  navigate("/login")
+  clearSession()
 
- },[navigate])
+ },[])
 
  /* =========================
  JSX
