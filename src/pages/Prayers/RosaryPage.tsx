@@ -203,6 +203,9 @@ export default function RosaryPage(){
 
     if(!resumePrompt) return
 
+    currentRef.current =
+      resumePrompt.step
+
     setCurrent(resumePrompt.step)
     setResumePrompt(null)
 
@@ -225,6 +228,9 @@ export default function RosaryPage(){
       )
 
     }
+
+    currentRef.current = 0
+    elapsedRef.current = 0
 
     setCurrent(0)
     setElapsed(0)
@@ -260,30 +266,71 @@ export default function RosaryPage(){
   /*
   =========================
   SYNC STEP / TEMPO
+
+  Só existe 1 requisição de
+  sincronização em voo por vez.
+  Se chegar um pedido novo
+  enquanto uma está em andamento,
+  ele só é reenviado (com os
+  valores mais recentes) depois
+  que a anterior terminar — isso
+  evita que respostas fora de
+  ordem sobrescrevam um passo
+  mais avançado com um mais antigo.
   =========================
   */
 
-  function syncStep(step:number){
+  const syncInFlight =
+    useRef(false)
 
-    if(!type) return
-
-    updateRosaryStep(
-      type,
-      step,
-      elapsedRef.current
-    ).catch(()=>{})
-
-  }
+  const syncPending =
+    useRef(false)
 
   function syncProgress(){
 
     if(!type) return
 
-    updateRosaryStep(
-      type,
-      currentRef.current,
-      elapsedRef.current
-    ).catch(()=>{})
+    if(syncInFlight.current){
+      syncPending.current = true
+      return
+    }
+
+    runSync(type)
+
+  }
+
+  async function runSync(
+    rosaryType:string
+  ){
+
+    syncInFlight.current = true
+
+    try{
+
+      await updateRosaryStep(
+        rosaryType,
+        currentRef.current,
+        elapsedRef.current
+      )
+
+    }catch{
+
+      // ignora, tenta de novo
+      // no próximo sync
+
+    }finally{
+
+      syncInFlight.current = false
+
+      if(syncPending.current){
+
+        syncPending.current = false
+
+        runSync(rosaryType)
+
+      }
+
+    }
 
   }
 
@@ -448,7 +495,9 @@ export default function RosaryPage(){
 
       const newStep = prev + 1
 
-      syncStep(newStep)
+      currentRef.current = newStep
+
+      syncProgress()
 
       return newStep
 
@@ -468,7 +517,9 @@ export default function RosaryPage(){
 
       const newStep = prev - 1
 
-      syncStep(newStep)
+      currentRef.current = newStep
+
+      syncProgress()
 
       return newStep
 
