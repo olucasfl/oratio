@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom"
+import { createPortal } from "react-dom"
 import type { ComponentType } from "react"
 
 import {
@@ -59,7 +60,7 @@ export default function BottomNavbar(){
   )
  }
 
- return(
+ return createPortal(
   <nav className={styles.navbar} aria-label="Navegação inferior">
     <div className={styles.side}>
       {leftItems.map(renderItem)}
@@ -77,7 +78,9 @@ export default function BottomNavbar(){
       {rightItems.map(renderItem)}
     </div>
 
-   </nav>
+   </nav>,
+
+  document.body
 
  )
 }

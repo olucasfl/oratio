@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../../services/api";
+import AlertModal from "../AlertModal/AlertModal";
 
 import styles from "./ResetPasswordModal.module.css";
 
@@ -8,16 +9,18 @@ export default function ResetPasswordModal({ token }:{ token:string }){
  const [password,setPassword] = useState("");
  const [confirm,setConfirm] = useState("");
  const [loading,setLoading] = useState(false);
+ const [alertMessage,setAlertMessage] = useState<string | null>(null);
+ const [redirectOnClose,setRedirectOnClose] = useState(false);
 
  async function reset(){
 
   if(!password || !confirm){
-   alert("Preencha todos os campos");
+   setAlertMessage("Preencha todos os campos");
    return;
   }
 
   if(password !== confirm){
-   alert("Senhas não coincidem");
+   setAlertMessage("Senhas não coincidem");
    return;
   }
 
@@ -30,18 +33,27 @@ export default function ResetPasswordModal({ token }:{ token:string }){
     password
    });
 
-   alert("Senha alterada com sucesso!");
-
-   window.location.href="/login";
+   setRedirectOnClose(true);
+   setAlertMessage("Senha alterada com sucesso!");
 
   }catch(err:any){
 
-   alert(err?.response?.data?.message || "Erro ao redefinir senha");
+   setAlertMessage(err?.response?.data?.message || "Erro ao redefinir senha");
 
   }finally{
 
    setLoading(false);
 
+  }
+
+ }
+
+ function handleAlertClose(){
+
+  setAlertMessage(null);
+
+  if(redirectOnClose){
+   window.location.href="/login";
   }
 
  }
@@ -81,6 +93,12 @@ export default function ResetPasswordModal({ token }:{ token:string }){
     </button>
 
    </div>
+
+   <AlertModal
+    open={!!alertMessage}
+    message={alertMessage ?? ""}
+    onClose={handleAlertClose}
+   />
 
   </div>
 

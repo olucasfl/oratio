@@ -24,6 +24,10 @@ import {
 import { useNavigate }
 from "react-router-dom"
 
+import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
+import AlertModal from "../../components/AlertModal/AlertModal"
+import Skeleton from "../../components/Skeleton/Skeleton"
+
 export default function Journey(){
 
   const [journey,setJourney] =
@@ -42,6 +46,12 @@ export default function Journey(){
 
     const [deletingId,setDeletingId] =
       useState<string | null>(null)
+
+    const [alertMessage,setAlertMessage] =
+      useState<string | null>(null)
+
+    const [confirmAction,setConfirmAction] =
+      useState<{ message:string; onConfirm:()=>void } | null>(null)
   /*
   ========================
   LOAD
@@ -77,21 +87,21 @@ export default function Journey(){
   ========================
   */
 
-  async function handleDelete(){
+  function handleDelete(){
 
-    const confirmDelete =
-      window.confirm(
-        "Deseja encerrar a jornada?"
-      )
+    setConfirmAction({
+      message:"Deseja encerrar a jornada?",
+      onConfirm: async ()=>{
 
-    if(!confirmDelete){
-      return
-    }
+        setConfirmAction(null)
 
-    await deleteJourney()
+        await deleteJourney()
 
-    window.location.href =
-      "/oratio/home"
+        window.location.href =
+          "/oratio/home"
+
+      }
+    })
 
   }
 
@@ -142,7 +152,7 @@ export default function Journey(){
 
       console.log(error)
 
-      alert(
+      setAlertMessage(
         "Erro ao criar intenção"
       )
 
@@ -211,12 +221,12 @@ export default function Journey(){
 
         <section className={styles.card}>
           <div style={{display:"flex",flexDirection:"column",gap:14}}>
-            <div className="skeleton" style={{height:24,width:"55%",borderRadius:8}}/>
-            <div className="skeleton" style={{height:16,width:"40%",borderRadius:6}}/>
-            <div className="skeleton" style={{height:12,width:"100%",borderRadius:99}}/>
-            <div className="skeleton" style={{height:72,width:"100%",borderRadius:14}}/>
-            <div className="skeleton" style={{height:72,width:"100%",borderRadius:14}}/>
-            <div className="skeleton" style={{height:44,width:"100%",borderRadius:10}}/>
+            <Skeleton height={24} width="55%" radius={8}/>
+            <Skeleton height={16} width="40%" radius={6}/>
+            <Skeleton height={12} width="100%" radius={99}/>
+            <Skeleton height={72} width="100%" radius={14}/>
+            <Skeleton height={72} width="100%" radius={14}/>
+            <Skeleton height={44} width="100%" radius={10}/>
           </div>
         </section>
 
@@ -504,16 +514,13 @@ export default function Journey(){
 
                           onClick={()=>{
 
-                            const confirmDelete =
-                              window.confirm(
-                                "Deseja remover esta intenção?"
-                              )
-
-                            if(confirmDelete){
-
-                              removeIntent(intent.id)
-
-                            }
+                            setConfirmAction({
+                              message:"Deseja remover esta intenção?",
+                              onConfirm: ()=>{
+                                setConfirmAction(null)
+                                removeIntent(intent.id)
+                              }
+                            })
 
                           }}
                         >
@@ -555,6 +562,20 @@ export default function Journey(){
         </button>
 
       </section>
+
+      <ConfirmModal
+        open={!!confirmAction}
+        message={confirmAction?.message ?? ""}
+        onConfirm={()=>confirmAction?.onConfirm()}
+        onCancel={()=>setConfirmAction(null)}
+        danger
+      />
+
+      <AlertModal
+        open={!!alertMessage}
+        message={alertMessage ?? ""}
+        onClose={()=>setAlertMessage(null)}
+      />
 
     </main>
 

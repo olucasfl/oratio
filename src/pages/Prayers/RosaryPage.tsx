@@ -29,6 +29,8 @@ import {
   rosaryPrayers
 } from "../../utils/rosaryPrayers"
 
+import Skeleton from "../../components/Skeleton/Skeleton"
+
 export default function RosaryPage(){
 
   const { type } =
@@ -328,11 +330,11 @@ export default function RosaryPage(){
         </div>
 
         <div style={{display:"flex",flexDirection:"column",gap:16,padding:"24px 20px"}}>
-          <div className="skeleton" style={{height:26,width:"65%",borderRadius:8}}/>
-          <div className="skeleton" style={{height:18,width:"45%",borderRadius:6}}/>
-          <div className="skeleton" style={{height:200,width:"100%",borderRadius:20}}/>
-          <div className="skeleton" style={{height:56,width:"100%",borderRadius:12}}/>
-          <div className="skeleton" style={{height:56,width:"100%",borderRadius:12}}/>
+          <Skeleton height={26} width="65%" radius={8}/>
+          <Skeleton height={18} width="45%" radius={6}/>
+          <Skeleton height={200} width="100%" radius={20}/>
+          <Skeleton height={56} width="100%" radius={12}/>
+          <Skeleton height={56} width="100%" radius={12}/>
         </div>
 
       </main>

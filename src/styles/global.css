@@ -95,6 +95,15 @@ text-decoration:none;
 color:inherit;
 }
 
+/* iOS/WebKit auto-detecta números (ex: referências bíblicas "10,34-11,1")
+como telefone/data e injeta <a x-apple-data-detectors> com estilo próprio
+que ignora o reset acima. Força a sobrescrita. */
+a[x-apple-data-detectors],
+.x-apple-data-detectors{
+text-decoration:none !important;
+color:inherit !important;
+}
+
 
 /* =========================
 SPLASH SCREEN

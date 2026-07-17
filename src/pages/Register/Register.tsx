@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { register } from "../../services/authService";
 import VerifyEmailModal from "../../components/VerifyEmailModal/VerifyEmailModal";
+import AlertModal from "../../components/AlertModal/AlertModal";
 import styles from "./Register.module.css";
 
 export default function Register(){
@@ -16,6 +17,7 @@ const [confirmPassword,setConfirmPassword] = useState("");
 const [loading,setLoading] = useState(false);
 const [verifyOpen,setVerifyOpen] = useState(false);
 const [registeredEmail,setRegisteredEmail] = useState("");
+const [alertMessage,setAlertMessage] = useState<string | null>(null);
 
 async function handleSubmit(e:React.FormEvent){
 
@@ -31,7 +33,7 @@ setVerifyOpen(true);
 
 }catch(err:any){
 
-alert(err.response?.data?.message || "Erro ao registrar");
+setAlertMessage(err.response?.data?.message || "Erro ao registrar");
 
 }finally{
 
@@ -106,6 +108,13 @@ Entrar
 email={registeredEmail}
 open={verifyOpen}
 onVerified={()=>navigate("/login")}
+onClose={()=>setVerifyOpen(false)}
+/>
+
+<AlertModal
+open={!!alertMessage}
+message={alertMessage ?? ""}
+onClose={()=>setAlertMessage(null)}
 />
 
 </div>
