@@ -236,9 +236,16 @@ export default function Home(){
      Aplicativo de espiritualidade católica
     </p>
 
+    <FraseDiaria />
+
    </section>
 
-   <FraseDiaria />
+   {/* SANTO DO DIA */}
+
+   <SaintOfDayCard
+    liturgy={liturgy}
+    dateOffset={dateOffset}
+   />
 
    {/* LITURGIA */}
 
@@ -249,13 +256,6 @@ export default function Home(){
     dateOffset={dateOffset}
     setDateOffset={setDateOffset}
     displayDateLabel={displayDateLabel}
-   />
-
-   {/* SANTO DO DIA */}
-
-   <SaintOfDayCard
-    liturgy={liturgy}
-    dateOffset={dateOffset}
    />
 
    {/* JORNADA */}

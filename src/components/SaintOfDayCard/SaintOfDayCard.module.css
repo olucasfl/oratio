@@ -1,28 +1,37 @@
 .card{
 
-  position:relative;
-
   width:100%;
+  max-width:var(--home-content-max, 1180px);
 
   display:flex;
+  flex-direction:column;
   align-items:center;
-  gap:16px;
 
-  border:1.5px solid #eadfce;
-  border-radius:22px;
+  gap:8px;
 
-  padding:18px 20px 18px 24px;
+  background:
+    rgba(255,255,255,.82);
 
-  overflow:hidden;
+  backdrop-filter:blur(16px);
+
+  border:
+    1px solid rgba(255,255,255,.6);
+
+  border-radius:
+    var(--home-card-radius, 28px);
+
+  box-shadow:
+    0 12px 40px rgba(0,0,0,.08);
+
+  padding:28px 30px 24px;
+
+  text-align:center;
 
   cursor:pointer;
 
-  text-align:left;
+  font-family:inherit;
 
   transition:.22s ease;
-
-  box-shadow:
-    0 10px 26px rgba(0,0,0,.05);
 
 }
 
@@ -31,7 +40,7 @@
   transform:translateY(-2px);
 
   box-shadow:
-    0 14px 32px rgba(0,0,0,.08);
+    0 16px 46px rgba(0,0,0,.11);
 
 }
 
@@ -41,44 +50,54 @@
 
 }
 
-.stripe{
+.icon{
 
-  position:absolute;
+  width:52px;
+  height:52px;
 
-  top:0;
-  left:0;
-
-  width:6px;
-  height:100%;
-
-}
-
-.content{
-
-  flex:1;
+  border-radius:18px;
 
   display:flex;
-  flex-direction:column;
-  gap:3px;
+  align-items:center;
+  justify-content:center;
 
-  min-width:0;
+  color:white;
+
+  margin-bottom:4px;
+
+  box-shadow:
+    0 8px 20px rgba(0,0,0,.12);
 
 }
 
-.grau{
+.badge{
+
+  display:inline-flex;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:6px 14px;
+
+  border-radius:999px;
 
   font-size:11.5px;
+
   font-weight:700;
 
-  letter-spacing:.04em;
+  letter-spacing:.06em;
+
   text-transform:uppercase;
 
 }
 
 .intro{
 
-  font-size:13.5px;
-  color:#7d7468;
+  margin-top:6px;
+
+  color:var(--oratio-text-soft);
+
+  font-size:14.5px;
 
 }
 
@@ -86,24 +105,25 @@
 
   font-family:var(--oratio-font-title);
 
-  font-size:21px;
-  line-height:1.2;
+  font-size:26px;
+
+  line-height:1.22;
 
   color:#3d342d;
 
-  overflow:hidden;
-  text-overflow:ellipsis;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
+  max-width:46ch;
 
 }
 
-.arrow{
+.hint{
 
-  flex-shrink:0;
+  margin-top:10px;
 
-  color:#b0181a;
+  color:#b0a494;
+
+  font-size:12px;
+
+  letter-spacing:.02em;
 
 }
 
@@ -111,15 +131,22 @@
 
   .card{
 
-    padding:16px 16px 16px 20px;
+    padding:22px 20px 20px;
 
-    border-radius:18px;
+  }
+
+  .icon{
+
+    width:46px;
+    height:46px;
+
+    border-radius:16px;
 
   }
 
   .nome{
 
-    font-size:18px;
+    font-size:22px;
 
   }
 

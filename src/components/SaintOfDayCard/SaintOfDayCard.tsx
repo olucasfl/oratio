@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import { ChevronRight } from "lucide-react"
+import { Church } from "lucide-react"
 
 import styles from "./SaintOfDayCard.module.css"
 
@@ -29,41 +29,42 @@ export default function SaintOfDayCard({ liturgy, dateOffset }: Props){
 
     <button
       className={styles.card}
-      style={{
-        background:
-          `linear-gradient(135deg, ${info.corHexSoft}, ${info.corHexSoft}00)`,
-        borderColor: `${info.corHex}40`
-      }}
       onClick={()=>
         navigate("/oratio/santo-do-dia", { state:{ liturgy, dateOffset } })
       }
     >
 
       <div
-        className={styles.stripe}
-        style={{ background:info.corHex }}
-      />
-
-      <div className={styles.content}>
-
-        <span
-          className={styles.grau}
-          style={{ color:info.corHex }}
-        >
-          {info.grau}{info.cor ? ` · ${info.cor}` : ""}
-        </span>
-
-        <span className={styles.intro}>
-          {intro}
-        </span>
-
-        <strong className={styles.nome}>
-          {info.nome}
-        </strong>
-
+        className={styles.icon}
+        style={{
+          background:
+            `linear-gradient(135deg, ${info.corHex}, ${info.corHex}cc)`
+        }}
+      >
+        <Church size={26}/>
       </div>
 
-      <ChevronRight size={20} className={styles.arrow}/>
+      <span
+        className={styles.badge}
+        style={{
+          background:`${info.corHex}1a`,
+          color:info.corHex
+        }}
+      >
+        {info.grau}{info.cor ? ` · ${info.cor}` : ""}
+      </span>
+
+      <span className={styles.intro}>
+        {intro}
+      </span>
+
+      <strong className={styles.nome}>
+        {info.nome}
+      </strong>
+
+      <span className={styles.hint}>
+        Toque para saber mais
+      </span>
 
     </button>
 
