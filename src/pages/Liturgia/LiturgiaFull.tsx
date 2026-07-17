@@ -1,16 +1,29 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import styles from "./LiturgiaFull.module.css"
-import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
+import { ChevronLeft, ChevronRight, Calendar, RotateCcw } from "lucide-react"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
+import { getLiturgiaFull } from "../../services/liturgiaService"
+import { useOffline } from "../../hooks/useOffline"
+
+function cacheKey(date:Date){
+
+  const dia = String(date.getDate()).padStart(2,"0")
+  const mes = String(date.getMonth()+1).padStart(2,"0")
+  const ano = date.getFullYear()
+
+  return `oratio-liturgia-${ano}-${mes}-${dia}`
+
+}
 
 export default function LiturgiaFull(){
 
   const [missa, setMissa] = useState<any>(null)
   const [dataSelecionada, setDataSelecionada] = useState(new Date())
   const [showAviso, setShowAviso] = useState(true)
+  const [erro, setErro] = useState(false)
 
-  const API = import.meta.env.VITE_API_URL
+  const isOffline = useOffline()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -18,16 +31,51 @@ export default function LiturgiaFull(){
   }, [dataSelecionada])
 
   async function loadMissa(date: Date){
+
+    setErro(false)
+
+    const key = cacheKey(date)
+
+    const cached = localStorage.getItem(key)
+
+    if(cached){
+      setMissa(JSON.parse(cached))
+    }else{
+      setMissa(null)
+    }
+
+    if(isOffline || !navigator.onLine){
+
+      if(!cached){
+        setErro(true)
+      }
+
+      return
+
+    }
+
     const dia = String(date.getDate()).padStart(2,"0")
     const mes = String(date.getMonth()+1).padStart(2,"0")
     const ano = date.getFullYear()
 
-    const res = await fetch(
-      `${API}/liturgia/full?dia=${dia}&mes=${mes}&ano=${ano}`
-    )
+    try{
 
-    const data = await res.json()
-    setMissa(data)
+      const data = await getLiturgiaFull(dia, mes, ano)
+
+      setMissa(data)
+
+      localStorage.setItem(key, JSON.stringify(data))
+
+    }catch(err){
+
+      console.log("Erro ao carregar liturgia", err)
+
+      if(!cached){
+        setErro(true)
+      }
+
+    }
+
   }
 
   function changeDay(offset:number){
@@ -39,6 +87,36 @@ export default function LiturgiaFull(){
   function fecharAviso(){
     setShowAviso(false)
     }
+
+  if(erro){
+    return(
+      <div className={styles.loading}>
+        <div className={styles.errorState}>
+
+          <p>
+            Não foi possível carregar a liturgia
+            {isOffline ? " — você está offline." : "."}
+          </p>
+
+          <button
+            className={styles.retryButton}
+            onClick={()=>loadMissa(dataSelecionada)}
+          >
+            <RotateCcw size={16}/>
+            Tentar novamente
+          </button>
+
+          <button
+            className={styles.backButton}
+            onClick={()=>navigate(-1)}
+          >
+            ← Voltar
+          </button>
+
+        </div>
+      </div>
+    )
+  }
 
   if(!missa) return (
     <div className={styles.loading}>
@@ -54,6 +132,12 @@ export default function LiturgiaFull(){
       <button className={styles.backButton} onClick={()=>navigate(-1)}>
         ← Voltar
       </button>
+
+      {isOffline && (
+        <div className={styles.offlineBanner}>
+          Você está offline. Mostrando a última liturgia salva.
+        </div>
+      )}
 
       {/* HEADER */}
       <div className={styles.header}>
