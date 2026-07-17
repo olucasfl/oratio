@@ -343,7 +343,7 @@ export default function RosaryPage(){
     const interval =
       setInterval(
         syncProgress,
-        20000
+        8000
       )
 
     function handleVisibility(){
@@ -367,6 +367,14 @@ export default function RosaryPage(){
         "visibilitychange",
         handleVisibility
       )
+
+      // salva o progresso ao sair
+      // da tela (troca de rota
+      // dentro do app, botão
+      // "Sair do Terço" etc.),
+      // caso contrário isso não é
+      // pego pelo visibilitychange
+      syncProgress()
 
     }
 
@@ -766,9 +774,10 @@ export default function RosaryPage(){
 
           <button
             className={styles.back}
-            onClick={()=>
+            onClick={()=>{
+              syncProgress()
               navigate(-1)
-            }
+            }}
           >
 
             <ChevronLeft size={18}/>
