@@ -30,6 +30,7 @@ const CategoryPrayers  = lazy(() => import("./pages/Prayers/CategoryPrayers"))
 const Prayers          = lazy(() => import("./pages/Prayers/Prayers"))
 const RosaryHome       = lazy(() => import("./pages/Prayers/RosaryHome"))
 const RosaryPage       = lazy(() => import("./pages/Prayers/RosaryPage"))
+const RosaryHistory    = lazy(() => import("./pages/Prayers/RosaryHistory"))
 const Catecismo        = lazy(() => import("./pages/Catecismo/Catecismo"))
 const LiturgiaFull     = lazy(() => import("./pages/Liturgia/LiturgiaFull"))
 const Journey          = lazy(() => import("./pages/Journey/Journey"))
@@ -265,6 +266,11 @@ element={
 <Route
  path="/oratio/rosary"
  element={<RosaryHome/>}
+/>
+
+<Route
+ path="/oratio/rosary/history"
+ element={<RosaryHistory/>}
 />
 
 <Route

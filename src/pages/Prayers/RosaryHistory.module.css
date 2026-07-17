@@ -104,7 +104,7 @@ HEADER
 
 .header{
 
-  margin-bottom:34px;
+  margin-bottom:30px;
 
 }
 
@@ -165,87 +165,6 @@ HEADER
 
 /*
 =========================
-SEARCH
-=========================
-*/
-
-.searchWrapper{
-
-  margin-bottom:28px;
-
-}
-
-.searchBox{
-
-  width:100%;
-
-  height:64px;
-
-  background:white;
-
-  border:2px solid #eadfce;
-
-  border-radius:22px;
-
-  display:flex;
-
-  align-items:center;
-
-  gap:14px;
-
-  padding:0 20px;
-
-  box-shadow:
-    0 6px 18px rgba(0,0,0,.04);
-
-  transition:.25s;
-
-}
-
-.searchBox:focus-within{
-
-  border-color:#bb1d1f;
-
-  box-shadow:
-    0 0 0 5px rgba(176,24,26,.08),
-    0 10px 28px rgba(176,24,26,.10);
-
-}
-
-.searchBox svg{
-
-  color:#9f9487;
-
-  flex-shrink:0;
-
-}
-
-.searchBox input{
-
-  flex:1;
-
-  height:100%;
-
-  border:none;
-
-  background:transparent;
-
-  outline:none;
-
-  font-size:16px;
-
-  color:#3d342d;
-
-}
-
-.searchBox input::placeholder{
-
-  color:#b3a695;
-
-}
-
-/*
-=========================
 LIST
 =========================
 */
@@ -256,7 +175,63 @@ LIST
 
   flex-direction:column;
 
-  gap:18px;
+  gap:14px;
+
+}
+
+/*
+=========================
+CARD
+=========================
+*/
+
+.card{
+
+  width:100%;
+
+  background:
+    linear-gradient(
+      180deg,
+      #faf7f2,
+      #f6f1e9
+    );
+
+  border:1px solid #eadfce;
+
+  border-radius:22px;
+
+  padding:20px 22px;
+
+}
+
+.cardInfo{
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:6px;
+
+}
+
+.cardInfo strong{
+
+  font-family:
+    var(--oratio-font-title);
+
+  font-size:21px;
+
+  color:#3d342d;
+
+}
+
+.cardInfo span{
+
+  color:#8b7c6b;
+
+  font-size:13.5px;
+
+  font-variant-numeric:tabular-nums;
 
 }
 
@@ -292,184 +267,17 @@ EMPTY
 
 /*
 =========================
-CARD
+SKELETON
 =========================
 */
 
-.card{
+.skeletonItem{
 
   width:100%;
 
-  border:none;
+  height:74px;
 
-  background:
-    linear-gradient(
-      180deg,
-      #faf7f2,
-      #f6f1e9
-    );
-
-  border:1px solid #eadfce;
-
-  border-radius:24px;
-
-  padding:22px;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:space-between;
-
-  cursor:pointer;
-
-  transition:.25s;
-
-  text-align:left;
-
-}
-
-.card:hover{
-
-  transform:translateY(-3px);
-
-  border-color:#d9c8b2;
-
-  box-shadow:
-    0 12px 26px rgba(0,0,0,.06);
-
-}
-
-.cardLeft{
-
-  display:flex;
-
-  align-items:center;
-
-  gap:18px;
-
-}
-
-.iconBox{
-
-  width:58px;
-
-  height:58px;
-
-  border-radius:18px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #b0181a,
-      #8e1315
-    );
-
-  color:white;
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:center;
-
-  flex-shrink:0;
-
-  box-shadow:
-    0 10px 22px rgba(176,24,26,.18);
-
-}
-
-.cardInfo{
-
-  display:flex;
-
-  flex-direction:column;
-
-  gap:5px;
-
-}
-
-.cardInfo strong{
-
-  font-family:
-    var(--oratio-font-title);
-
-  font-size:24px;
-
-  color:#3d342d;
-
-  line-height:1.3;
-
-}
-
-.cardInfo span{
-
-  color:#8b7c6b;
-
-  font-size:14px;
-
-  position:relative;
-
-  padding-top:8px;
-
-}
-
-.cardInfo span::before{
-
-  content:"";
-
-  position:absolute;
-
-  top:0;
-  left:0;
-
-  width:42px;
-  height:1px;
-
-  background:#c9b8a4;
-
-}
-
-.cardInfo .resumeBadge{
-
-  display:flex;
-
-  align-items:center;
-
-  gap:5px;
-
-  width:max-content;
-
-  padding:5px 10px 5px 8px;
-
-  border-radius:999px;
-
-  background:#f9f0f0;
-
-  color:#a11c1c;
-
-  font-size:12.5px;
-
-  font-weight:700;
-
-  font-variant-numeric:tabular-nums;
-
-}
-
-.cardInfo .resumeBadge::before{
-
-  content:none;
-
-}
-
-.arrow{
-
-  color:#b0181a;
-
-  font-size:24px;
-
-  font-weight:700;
+  border-radius:22px;
 
 }
 
@@ -526,35 +334,17 @@ TABLET
 
   }
 
-  .searchBox{
+  .card{
 
-    height:60px;
+    padding:18px;
 
     border-radius:20px;
 
   }
 
-  .card{
-
-    padding:18px;
-
-    border-radius:22px;
-
-  }
-
-  .iconBox{
-
-    width:52px;
-
-    height:52px;
-
-    border-radius:16px;
-
-  }
-
   .cardInfo strong{
 
-    font-size:20px;
+    font-size:19px;
 
   }
 
@@ -578,7 +368,7 @@ MOBILE
 
   .header{
 
-    margin-bottom:28px;
+    margin-bottom:26px;
 
   }
 
@@ -602,43 +392,11 @@ MOBILE
 
   }
 
-  .searchBox{
-
-    height:58px;
-
-    border-radius:18px;
-
-    padding:0 16px;
-
-  }
-
-  .searchBox input{
-
-    font-size:15px;
-
-  }
-
   .card{
 
     padding:16px;
 
-    border-radius:20px;
-
-  }
-
-  .cardLeft{
-
-    gap:14px;
-
-  }
-
-  .iconBox{
-
-    width:48px;
-
-    height:48px;
-
-    border-radius:15px;
+    border-radius:18px;
 
   }
 
@@ -646,19 +404,11 @@ MOBILE
 
     font-size:17px;
 
-    line-height:1.3;
-
   }
 
   .cardInfo span{
 
-    font-size:12px;
-
-  }
-
-  .arrow{
-
-    font-size:20px;
+    font-size:12.5px;
 
   }
 
@@ -680,7 +430,7 @@ VERY SMALL DEVICES
 
   .cardInfo strong{
 
-    font-size:15px;
+    font-size:16px;
 
   }
 

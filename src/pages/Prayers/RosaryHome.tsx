@@ -1,5 +1,7 @@
-import { useState }
-from "react"
+import {
+  useState,
+  useEffect
+} from "react"
 
 import styles from "./RosaryHome.module.css"
 
@@ -15,7 +17,8 @@ import {
   Flame,
   Stars,
   Cross,
-  Search
+  Search,
+  RotateCcw
 } from "lucide-react"
 
 import BottomNavbar
@@ -23,6 +26,12 @@ from "../../components/BottomNavbar/BottomNavbar"
 
 import { ROSARY_DAYS }
 from "../../utils/rosaryDays"
+
+import { getRosaryProgress }
+from "../../services/rosaryService"
+
+import { ROSARIES }
+from "../../utils/rosaryList"
 
 /* =========================
 NORMALIZAR TEXTO
@@ -42,96 +51,55 @@ function normalizeText(
 
 }
 
-/* =========================
-TIPAGEM
-========================= */
-
-type Rosary = {
-
-  name:string
-  slug:string
-
-}
-
-/* =========================
-DADOS
-========================= */
-
-const ROSARIES:Rosary[] = [
-
-  {
-    name:"Mistérios Gozosos",
-    slug:"gozosos"
-  },
-
-  {
-    name:"Mistérios Dolorosos",
-    slug:"dolorosos"
-  },
-
-  {
-    name:"Mistérios Gloriosos",
-    slug:"gloriosos"
-  },
-
-  {
-    name:"Mistérios Luminosos",
-    slug:"luminosos"
-  },
-
-  {
-    name:"Terço das 7 Dores de Maria",
-    slug:"sete-dores"
-  },
-
-  {
-    name:"Coroa de Nossa Senhora das Lágrimas",
-    slug:"coroa-lagrimas"
-  },
-
-  {
-    name:"Terço de São Bento",
-    slug:"sao-bento"
-  },
-
-  {
-    name:"Terço da Divina Misericórdia",
-    slug:"misericordia"
-  },
-
-  {
-    name:"Terço do Sagrado Coração de Jesus",
-    slug:"sagrado-coracao"
-  },
-
-  {
-    name:"Terço de São José",
-    slug:"sao-jose"
-  },
-
-  {
-    name:"Terço de São Miguel Arcanjo",
-    slug:"sao-miguel"
-  },
-
-  {
-    name:"Terço do Espírito Santo",
-    slug:"espirito-santo"
-  },
-
-  {
-    name:"Via Sacra",
-    slug:"via-sacra"
-  },
-
-]
-
 export default function RosaryHome(){
 
   const navigate = useNavigate()
 
   const [search,setSearch] =
     useState("")
+
+  const [progressMap,setProgressMap] =
+    useState<Record<string,{
+      currentStep:number
+      totalSteps:number
+    }>>({})
+
+  useEffect(()=>{
+
+    loadProgress()
+
+  },[])
+
+  async function loadProgress(){
+
+    try{
+
+      const data =
+        await getRosaryProgress()
+
+      const map:Record<string,{
+        currentStep:number
+        totalSteps:number
+      }> = {}
+
+      for(const p of data || []){
+        map[p.type] = {
+          currentStep:p.currentStep,
+          totalSteps:p.totalSteps
+        }
+      }
+
+      setProgressMap(map)
+
+    }catch{
+
+      console.log(
+        "Erro ao carregar progresso dos terços"
+      )
+
+    }
+
+  }
 
   function goToRosary(
     slug:string
@@ -322,7 +290,20 @@ export default function RosaryHome(){
                     {r.name}
                   </strong>
 
-                  {ROSARY_DAYS[r.slug] && (
+                  {progressMap[r.slug] ? (
+
+                    <span className={styles.resumeBadge}>
+
+                      <RotateCcw size={12}/>
+
+                      Continuar · {" "}
+                      {progressMap[r.slug].currentStep}
+                      /
+                      {progressMap[r.slug].totalSteps}
+
+                    </span>
+
+                  ) : ROSARY_DAYS[r.slug] && (
 
                     <span>
                       {ROSARY_DAYS[r.slug]}

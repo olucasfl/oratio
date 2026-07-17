@@ -468,7 +468,12 @@ export default function Profile(){
 
       </div>
 
-      <div className={styles.statCard}>
+      <button
+       className={`${styles.statCard} ${styles.statCardButton}`}
+       onClick={()=>
+        navigate("/oratio/rosary/history")
+       }
+      >
 
        <span className={styles.statLabel}>
         Terços
@@ -478,7 +483,7 @@ export default function Profile(){
         {rosaries}
        </strong>
 
-      </div>
+      </button>
 
       {lastPrayerFormatted && (
 

@@ -15,14 +15,16 @@ import {
   ChevronLeft,
   ChevronRight,
   Check,
-  Sparkles
+  Sparkles,
+  Clock
 } from "lucide-react"
 
 import {
   getRosary,
   finishRosary,
   startRosary,
-  getRosarySession
+  getRosarySession,
+  updateRosaryStep
 } from "../../services/rosaryService"
 
 import {
@@ -30,6 +32,27 @@ import {
 } from "../../utils/rosaryPrayers"
 
 import Skeleton from "../../components/Skeleton/Skeleton"
+import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
+
+/* =========================
+FORMATAR TEMPO
+========================= */
+
+function formatElapsed(totalSeconds:number){
+
+  const minutes =
+    Math.floor(totalSeconds / 60)
+
+  const seconds =
+    totalSeconds % 60
+
+  return (
+    String(minutes).padStart(2,"0") +
+    ":" +
+    String(seconds).padStart(2,"0")
+  )
+
+}
 
 export default function RosaryPage(){
 
@@ -60,6 +83,17 @@ export default function RosaryPage(){
     "next"
   )
 
+  const [
+    resumePrompt,
+    setResumePrompt
+  ] = useState<{
+    step:number
+    total:number
+  } | null>(null)
+
+  const [elapsed,setElapsed] =
+    useState(0)
+
   const touchStart =
     useRef<number | null>(null)
 
@@ -83,12 +117,14 @@ export default function RosaryPage(){
 
     try{
 
-      let session = null
+      let session:any = null
 
       try{
 
         session =
-          await getRosarySession()
+          await getRosarySession(
+            rosaryType
+          )
 
       }catch{
 
@@ -98,7 +134,10 @@ export default function RosaryPage(){
 
       if(!session){
 
-        await startRosary()
+        session =
+          await startRosary(
+            rosaryType
+          )
 
       }
 
@@ -108,6 +147,18 @@ export default function RosaryPage(){
         )
 
       setSteps(data)
+
+      if(
+        session?.currentStep > 0 &&
+        session.currentStep < data.length
+      ){
+
+        setResumePrompt({
+          step:session.currentStep,
+          total:data.length
+        })
+
+      }
 
     }catch(err){
 
@@ -121,6 +172,86 @@ export default function RosaryPage(){
       setLoading(false)
 
     }
+
+  }
+
+  /*
+  =========================
+  RETOMAR / REINICIAR
+  =========================
+  */
+
+  function handleContinue(){
+
+    if(!resumePrompt) return
+
+    setCurrent(resumePrompt.step)
+    setResumePrompt(null)
+
+  }
+
+  async function handleRestart(){
+
+    if(!type) return
+
+    setResumePrompt(null)
+
+    try{
+
+      await startRosary(type,true)
+
+    }catch{
+
+      console.log(
+        "Erro ao reiniciar terço"
+      )
+
+    }
+
+    setCurrent(0)
+
+  }
+
+  /*
+  =========================
+  TIMER (visual)
+  =========================
+  */
+
+  useEffect(()=>{
+
+    if(loading || resumePrompt){
+      return
+    }
+
+    const interval =
+      setInterval(()=>{
+
+        setElapsed((prev)=>
+          prev + 1
+        )
+
+      },1000)
+
+    return ()=>
+      clearInterval(interval)
+
+  },[loading,resumePrompt])
+
+  /*
+  =========================
+  SYNC STEP
+  =========================
+  */
+
+  function syncStep(step:number){
+
+    if(!type) return
+
+    updateRosaryStep(
+      type,
+      step
+    ).catch(()=>{})
 
   }
 
@@ -245,7 +376,11 @@ export default function RosaryPage(){
 
       setDirection("next")
 
-      return prev + 1
+      const newStep = prev + 1
+
+      syncStep(newStep)
+
+      return newStep
 
     })
 
@@ -261,7 +396,11 @@ export default function RosaryPage(){
 
       setDirection("prev")
 
-      return prev - 1
+      const newStep = prev - 1
+
+      syncStep(newStep)
+
+      return newStep
 
     })
 
@@ -379,7 +518,7 @@ export default function RosaryPage(){
 
   async function handleFinish(){
 
-    if(finishing){
+    if(finishing || !type){
       return
     }
 
@@ -387,7 +526,7 @@ export default function RosaryPage(){
 
       setFinishing(true)
 
-      await finishRosary()
+      await finishRosary(type)
 
       setFinished(true)
 
@@ -441,6 +580,20 @@ export default function RosaryPage(){
       }
     >
 
+      <ConfirmModal
+        open={resumePrompt !== null}
+        title="Retomar terço?"
+        message={
+          resumePrompt
+          ? `Você parou no passo ${resumePrompt.step} de ${resumePrompt.total}. Deseja continuar de onde parou ou começar do início?`
+          : ""
+        }
+        confirmLabel="Continuar de onde parei"
+        cancelLabel="Começar do zero"
+        onConfirm={handleContinue}
+        onCancel={handleRestart}
+      />
+
       {finished && (
 
         <div
@@ -488,20 +641,34 @@ export default function RosaryPage(){
         HEADER
         ========================= */}
 
-        <button
-          className={styles.back}
-          onClick={()=>
-            navigate(-1)
-          }
-        >
+        <div className={styles.headerRow}>
 
-          <ChevronLeft size={18}/>
+          <button
+            className={styles.back}
+            onClick={()=>
+              navigate(-1)
+            }
+          >
 
-          <span>
-            Sair do Terço
-          </span>
+            <ChevronLeft size={18}/>
 
-        </button>
+            <span>
+              Sair do Terço
+            </span>
+
+          </button>
+
+          <div className={styles.timer}>
+
+            <Clock size={13}/>
+
+            <span>
+              {formatElapsed(elapsed)}
+            </span>
+
+          </div>
+
+        </div>
 
         {/* =========================
         PROGRESS BAR

@@ -7,23 +7,44 @@ export async function getRosary(type:string){
 
 }
 
-export async function startRosary(){
+export async function startRosary(type:string, restart?:boolean){
 
- const res = await api.post("/oratio/rosary/start")
+ const res = await api.post("/oratio/rosary/start", { type, restart })
  return res.data
 
 }
 
-export async function finishRosary(){
+export async function updateRosaryStep(type:string, step:number){
 
- const res = await api.post("/oratio/rosary/finish")
+ const res = await api.post("/oratio/rosary/step", { type, step })
  return res.data
 
 }
 
-export async function getRosarySession(){
+export async function finishRosary(type:string){
 
- const res = await api.get("/oratio/rosary/session")
+ const res = await api.post("/oratio/rosary/finish", { type })
+ return res.data
+
+}
+
+export async function getRosarySession(type:string){
+
+ const res = await api.get("/oratio/rosary/session", { params:{ type } })
+ return res.data
+
+}
+
+export async function getRosaryProgress(){
+
+ const res = await api.get("/oratio/rosary/progress")
+ return res.data
+
+}
+
+export async function getRosaryHistory(){
+
+ const res = await api.get("/oratio/rosary/history")
  return res.data
 
 }
