@@ -39,53 +39,65 @@ export function resolveSaintOfDay(
   liturgy: LiturgyData | null | undefined
 ): SaintOfDayInfo | null {
 
-  if(!liturgy?.liturgia) return null
-
-  const celebration = parseCelebration(liturgy.liturgia)
-
-  // dia comum (feria), sem celebração com nome próprio
-  if(!celebration) return null
-
-  const normalizedApiNome = normalizeCelebrationName(celebration.nome)
-
-  let nome = celebration.nome
-  let bio: SaintBio | null = null
-  let opcional = false
-
-  const [diaStr, mesStr] = (liturgy.data || "").split("/")
+  const [diaStr, mesStr] = (liturgy?.data || "").split("/")
   const dia = Number(diaStr)
   const mes = Number(mesStr)
+
+  const fixedEntry = dia && mes
+    ? findSaintOfDay(dia, mes)
+    : null
+
+  const celebration = liturgy?.liturgia
+    ? parseCelebration(liturgy.liturgia)
+    : null
+
+  let nome: string
+  let grau: string
+  let bio: SaintBio | null = null
+  let opcional = false
+  let normalizedApiNome: string | null = null
+
+  if(fixedEntry){
+    nome = fixedEntry.nome
+    opcional = !!fixedEntry.opcional
+
+    if(fixedEntry.bioId){
+      bio = SAINT_BIOS[fixedEntry.bioId] || null
+    }
+  }
+
+  if(celebration){
+    normalizedApiNome = normalizeCelebrationName(celebration.nome)
+    grau = celebration.grau
+
+    if(fixedEntry){
+      const bateData = fixedEntry.match.some((m)=>
+        normalizedApiNome.includes(m)
+      )
+
+      if(bateData){
+        nome = fixedEntry.nome
+      }
+    }
+
+    if(!fixedEntry){
+      nome = celebration.nome
+    }
+
+  } else if(fixedEntry){
+    grau = fixedEntry.opcional ? "Memória Facultativa" : "Dia Comum"
+  } else {
+    return null
+  }
 
   let referenceDate: Date | null = null
 
   if(dia && mes){
-
     const anoAtual = new Date().getFullYear()
-
     referenceDate = new Date(anoAtual, mes - 1, dia)
-
-    const fixedEntry = findSaintOfDay(dia, mes)
-
-    const bateData =
-      fixedEntry?.match.some((m)=>
-        normalizedApiNome.includes(m)
-      )
-
-    if(fixedEntry && bateData){
-
-      nome = fixedEntry.nome
-      opcional = !!fixedEntry.opcional
-
-      if(fixedEntry.bioId){
-        bio = SAINT_BIOS[fixedEntry.bioId] || null
-      }
-
-    }
-
   }
 
-  if(!bio){
-
+  if(!bio && normalizedApiNome){
     const movable = findMovableFeast(normalizedApiNome)
 
     if(movable){
@@ -96,7 +108,6 @@ export function resolveSaintOfDay(
         texto: movable.texto
       }
     }
-
   }
 
   /*
@@ -116,7 +127,7 @@ export function resolveSaintOfDay(
 
   return {
     nome,
-    grau: celebration.grau,
+    grau,
     cor: corParaExibir || null,
     corHex: color.hex,
     corHexSoft: color.hexSoft,
