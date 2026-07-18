@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import { Church } from "lucide-react"
+import { Church, ChevronRight } from "lucide-react"
 
 import styles from "./SaintOfDayCard.module.css"
 
@@ -68,8 +68,15 @@ export default function SaintOfDayCard({ liturgy, dateOffset }: Props){
         </span>
       )}
 
-      <span className={styles.hint}>
-        Toque para saber mais
+      <span
+        className={styles.hint}
+        style={{
+          background:`${info.corHex}14`,
+          color:info.corHex
+        }}
+      >
+        Ver detalhes
+        <ChevronRight size={15}/>
       </span>
 
     </button>
