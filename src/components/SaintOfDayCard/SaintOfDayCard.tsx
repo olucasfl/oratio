@@ -75,6 +75,10 @@ export default function SaintOfDayCard({ liturgy, dateOffset }: Props){
 
       <span className={styles.eyebrow}>{intro}</span>
 
+      <strong className={styles.nome}>
+        {info.nome}
+      </strong>
+
       {/* MEDALHÃO */}
 
       <div className={styles.medallionWrap}>
@@ -134,12 +138,6 @@ export default function SaintOfDayCard({ liturgy, dateOffset }: Props){
       >
         {grauLabel}
       </div>
-
-      {/* NOME */}
-
-      <strong className={styles.nome}>
-        {info.nome}
-      </strong>
 
       {corLabel && (
         <div className={styles.colorLine}>
