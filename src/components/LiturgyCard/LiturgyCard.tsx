@@ -2,9 +2,31 @@ import type { Dispatch, SetStateAction } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import LiturgyReadingButtons from "../LiturgyReadingButtons/LiturgyReadingButtons"
+import SaintOfDayCard from "../SaintOfDayCard/SaintOfDayCard"
 import type { LiturgyData } from "../../hooks/useLiturgy"
 
 import styles from "../../pages/Home/Home.module.css"
+
+const MESES_LONGOS = [
+ "janeiro","fevereiro","março","abril","maio","junho",
+ "julho","agosto","setembro","outubro","novembro","dezembro"
+]
+
+function fullDateLabel(data?: string, dateOffset?: number){
+
+ if(data){
+  const [diaStr, mesStr] = data.split("/")
+  const dia = Number(diaStr)
+  const mes = Number(mesStr)
+  if(dia && mes) return `${dia} de ${MESES_LONGOS[mes - 1]}`
+ }
+
+ const d = new Date()
+ d.setDate(d.getDate() + (dateOffset ?? 0))
+
+ return `${d.getDate()} de ${MESES_LONGOS[d.getMonth()]}`
+
+}
 
 interface Props {
  liturgy: LiturgyData | null
@@ -57,6 +79,10 @@ export default function LiturgyCard({
 
     </div>
 
+    <span className={styles.liturgyFullDate}>
+     {fullDateLabel(liturgy?.data, dateOffset)}
+    </span>
+
     {dateOffset !== 0 && (
      <button
       className={styles.liturgyTodayBtn}
@@ -67,6 +93,8 @@ export default function LiturgyCard({
     )}
 
    </div>
+
+   <SaintOfDayCard liturgy={liturgy} dateOffset={dateOffset}/>
 
    {loadingLiturgy && !liturgy && (
 

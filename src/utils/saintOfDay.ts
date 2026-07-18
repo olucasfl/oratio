@@ -29,10 +29,22 @@ export type SaintOfDayInfo = {
 }
 
 /*
-Junta tudo: o texto AO VIVO da API (única fonte confiável
-sobre o que está sendo celebrado hoje) com o índice local
-de títulos/biografias (só usado quando bate com o que a
-API está dizendo — nunca no lugar dela).
+Junta duas fontes:
+  1. O texto AO VIVO da API — a fonte confiável sobre o que
+     está sendo celebrado na Missa de hoje (grau, cor).
+  2. O índice local de títulos/biografias — usado para dar
+     nome bonito e biografia quando bate com o que a API diz,
+     e como conteúdo COMPLEMENTAR (não litúrgico, informativo)
+     nos dias em que a API não confirma nenhuma celebração com
+     nome próprio, já que o Martirológio Romano tem alguma
+     comemoração para todo dia do ano — mesmo quando ela não é
+     promovida ao calendário da Missa daquele dia específico.
+
+Por isso "opcional" tem dois significados possíveis, tratados
+da mesma forma na exibição (cor da estação, não a cor "de
+festa"): ou é uma Memória Facultativa confirmada pela API (a
+Igreja permite não celebrá-la), ou é conteúdo só do índice
+local, sem confirmação alguma da API naquele dia.
 */
 
 export function resolveSaintOfDay(
@@ -56,34 +68,37 @@ export function resolveSaintOfDay(
   if(!fixedEntry && !celebration) return null
 
   let nome = fixedEntry?.nome ?? celebration?.nome ?? ""
-  let grau = fixedEntry
-    ? fixedEntry.opcional ? "Memória Facultativa" : "Dia Comum"
-    : celebration?.grau ?? ""
+  let grau = celebration?.grau ?? "Dia Comum"
   let bio: SaintBio | null = null
-  let opcional = !!fixedEntry
   let normalizedApiNome: string | null = null
+
+  // sem confirmação da API = conteúdo complementar do índice local
+  let opcional = !celebration
 
   if(fixedEntry?.bioId){
     bio = SAINT_BIOS[fixedEntry.bioId] || null
   }
 
   if(celebration){
+
     normalizedApiNome = normalizeCelebrationName(celebration.nome)
-    grau = celebration.grau
 
     if(fixedEntry){
+
       const bateData = fixedEntry.match.some((m)=>
         normalizedApiNome!.includes(m)
       )
 
       if(bateData){
         nome = fixedEntry.nome
+        opcional = !!fixedEntry.opcional
+        grau = opcional ? "Memória Facultativa" : celebration.grau
       }
-    }
 
-    if(!fixedEntry){
+    }else{
       nome = celebration.nome
     }
+
   }
 
   let referenceDate: Date | null = null
@@ -94,6 +109,7 @@ export function resolveSaintOfDay(
   }
 
   if(!bio && normalizedApiNome){
+
     const movable = findMovableFeast(normalizedApiNome)
 
     if(movable){
@@ -104,6 +120,7 @@ export function resolveSaintOfDay(
         texto: movable.texto
       }
     }
+
   }
 
   const corParaExibir =

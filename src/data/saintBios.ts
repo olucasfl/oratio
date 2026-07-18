@@ -314,7 +314,7 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
       "Seus nomes não aparecem na Bíblia: a tradição os conhece por meio de escritos antigos como o Protoevangelho de Tiago, que a Igreja acolhe como testemunho válido da memória cristã, mesmo sem fazer parte das Escrituras canônicas.",
       "Segundo essa tradição, eram um casal já idoso e sem filhos quando receberam de Deus a graça inesperada de uma filha: Maria, que criaram na fé e na oração.",
       "São venerados como avós de Jesus. Desde 2021, a Igreja celebra também, no domingo mais próximo desta memória, o Dia Mundial dos Avós e dos Idosos, instituído pelo Papa Francisco.",
-      "Só em 1913 a Igreja determinou que fossem celebrados juntos, no mesmo dia, unindo pai e mãe da Virgem Maria numa só memória."
+      "Antigamente, cada um tinha sua própria data: em 1913, o Papa Pio X havia fixado a memória de São Joaquim em 16 de agosto, separada da de Santa Ana, celebrada em 26 de julho desde muito antes. Só na reforma litúrgica de 1969 é que os dois passaram a ser celebrados juntos, no mesmo dia, unindo pai e mãe da Virgem Maria numa só memória."
     ]
   },
 
@@ -379,7 +379,7 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
     texto: [
       "Nasceu em Nápoles, na Itália, em 1696, numa família nobre. Formou-se em Direito ainda jovem e exerceu a advocacia com destaque, até que a perda de uma causa por interferência política o levou a abandonar a carreira e seguir a vida religiosa.",
       "Ordenado sacerdote aos 30 anos, dedicou-se sobretudo à evangelização dos mais pobres e abandonados, nas regiões rurais ao redor de Nápoles.",
-      "Em 1732 fundou a Congregação do Santíssimo Redentor (os Redentoristas), voltada às missões populares. Anos depois, já idoso, foi nomeado bispo, renunciando ao cargo por motivos de saúde após quinze anos.",
+      "Em 1732 fundou a Congregação do Santíssimo Redentor (os Redentoristas), voltada às missões populares. Em 1762, já idoso, foi nomeado bispo de Sant'Agata dei Goti, renunciando ao cargo por motivos de saúde treze anos depois, em 1775.",
       "Deixou mais de cem obras escritas, entre elas o influente tratado de Teologia Moral. Morreu em 1787, foi canonizado em 1839 e proclamado Doutor da Igreja em 1871."
     ]
   },
@@ -391,7 +391,7 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
       "Nasceu em La Mure, na França, em 1811. Ordenado sacerdote em 1834, integrou-se anos depois à Congregação Marista, onde se destacou por sua profunda devoção à Eucaristia.",
       "Em 1856, fundou a Congregação do Santíssimo Sacramento, dedicada especialmente à adoração eucarística; pouco depois, fundou também as Servas do Santíssimo Sacramento, ramo feminino da mesma espiritualidade.",
       "Empenhou-se em tornar a adoração ao Santíssimo Sacramento acessível a leigos, sacerdotes e crianças, sendo um dos grandes responsáveis por reavivar essa devoção na Igreja do século XIX.",
-      "Morreu em 1868. Foi canonizado em 1962 pelo Papa João XXIII, que o chamou de \"apóstolo da Eucaristia\"."
+      "Morreu em 1868 e foi canonizado em 1962 pelo Papa João XXIII. Em 1995, o Papa João Paulo II inscreveu sua festa no calendário universal da Igreja, reconhecendo nele um \"apóstolo da Eucaristia\"."
     ]
   },
 
@@ -486,7 +486,7 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
     titulo: "Santa Joana Francisca de Chantal",
     resumo: "Nobre francesa, viúva e mãe, fundadora da Ordem da Visitação junto com São Francisco de Sales.",
     texto: [
-      "Nasceu em Dijon, na França, em 1572. Casou-se com o barão de Chantal e teve quatro filhos, mas ficou viúva ainda jovem, quando o marido morreu num acidente de caça.",
+      "Nasceu em Dijon, na França, em 1572. Casou-se com o barão de Chantal e teve seis filhos, dos quais quatro sobreviveram à infância, mas ficou viúva ainda jovem, quando o marido morreu num acidente de caça.",
       "Em 1604, tornou-se dirigida espiritualmente por São Francisco de Sales, bispo de Genebra — encontro que deu origem a uma das amizades espirituais mais conhecidas da história da Igreja.",
       "Juntos, fundaram em 1610 a Congregação da Visitação de Santa Maria, ordem voltada à humildade e à mansidão, inspirada no encontro de Maria com sua prima Isabel.",
       "Morreu em 1641. Foi canonizada em 1767 pelo Papa Clemente XIII, e é hoje considerada padroeira das viúvas e das mães de família."
@@ -509,7 +509,7 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
     resumo: "Primeiro rei cristão da Hungria, unificou o país e consagrou a nação a Nossa Senhora.",
     texto: [
       "Nasceu por volta de 969, filho do duque Gesa. Foi batizado ainda criança, junto com o pai, que também se converteu ao cristianismo.",
-      "Tornou-se rei em 997 e dedicou o reinado a unificar as diversas tribos húngaras, até então rivais entre si, fundando as bases do futuro Estado húngaro — e promovendo ativamente a evangelização do povo.",
+      "Tornou-se grão-príncipe dos húngaros em 997, sucedendo o pai, e dedicou-se a unificar as diversas tribos húngaras, até então rivais entre si — promovendo ativamente a evangelização do povo. Foi coroado o primeiro rei da Hungria no ano 1000 (ou 1001, conforme a fonte).",
       "Consagrou o reino da Hungria a Nossa Senhora, tornando-se, por isso, um símbolo da fé e da identidade nacional húngara até hoje.",
       "Morreu em 15 de agosto de 1038 — dia da Assunção de Maria —, por isso sua memória é celebrada no dia seguinte. Foi canonizado em 1083 pelo Papa Gregório VII."
     ]

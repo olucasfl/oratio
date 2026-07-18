@@ -1197,6 +1197,16 @@ ANIMATIONS
  gap:10px;
 }
 
+.liturgyFullDate{
+ display:block;
+ margin-top:2px;
+ color:var(--oratio-text-soft);
+ font-size:13px;
+ font-weight:600;
+ letter-spacing:.04em;
+ text-transform:uppercase;
+}
+
 .liturgyNavBtn{
  display:flex;
  align-items:center;

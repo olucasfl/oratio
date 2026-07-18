@@ -25,8 +25,6 @@ import { FraseDiaria } from "../../components/FraseDiaria/FraseDiaria"
 
 import LiturgyCard from "../../components/LiturgyCard/LiturgyCard"
 
-import SaintOfDayCard from "../../components/SaintOfDayCard/SaintOfDayCard"
-
 import { useLiturgy } from "../../hooks/useLiturgy"
 
 /* =========================
@@ -240,14 +238,7 @@ export default function Home(){
 
    </section>
 
-   {/* SANTO DO DIA */}
-
-   <SaintOfDayCard
-    liturgy={liturgy}
-    dateOffset={dateOffset}
-   />
-
-   {/* LITURGIA */}
+   {/* LITURGIA (inclui Santo do Dia) */}
 
    <LiturgyCard
     liturgy={liturgy}

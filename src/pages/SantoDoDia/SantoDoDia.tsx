@@ -105,8 +105,9 @@ export default function SantoDoDia(){
 
             {info.opcional && (
               <p className={styles.opcionalNote}>
-                É uma celebração opcional: nem toda paróquia a celebra,
-                por isso a cor mostrada acima é a do dia comum, não a do santo.
+                {info.grau === "Dia Comum"
+                  ? "Não há confirmação de celebração oficial para esse dia no calendário litúrgico atual — o nome acima é uma referência devocional/tradicional, e a cor mostrada é a do dia comum."
+                  : "É uma memória facultativa: a Igreja permite não celebrá-la, por isso a cor mostrada acima é a do dia comum, não a do santo."}
               </p>
             )}
 
