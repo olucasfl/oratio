@@ -39,7 +39,9 @@ export function resolveSaintOfDay(
   liturgy: LiturgyData | null | undefined
 ): SaintOfDayInfo | null {
 
-  const [diaStr, mesStr] = (liturgy?.data || "").split("/")
+  if(!liturgy) return null
+
+  const [diaStr, mesStr] = (liturgy.data || "").split("/")
   const dia = Number(diaStr)
   const mes = Number(mesStr)
 
@@ -47,23 +49,22 @@ export function resolveSaintOfDay(
     ? findSaintOfDay(dia, mes)
     : null
 
-  const celebration = liturgy?.liturgia
+  const celebration = liturgy.liturgia
     ? parseCelebration(liturgy.liturgia)
     : null
 
-  let nome: string
-  let grau: string
+  if(!fixedEntry && !celebration) return null
+
+  let nome = fixedEntry?.nome ?? celebration?.nome ?? ""
+  let grau = fixedEntry
+    ? fixedEntry.opcional ? "Memória Facultativa" : "Dia Comum"
+    : celebration?.grau ?? ""
   let bio: SaintBio | null = null
-  let opcional = false
+  let opcional = !!fixedEntry
   let normalizedApiNome: string | null = null
 
-  if(fixedEntry){
-    nome = fixedEntry.nome
-    opcional = !!fixedEntry.opcional
-
-    if(fixedEntry.bioId){
-      bio = SAINT_BIOS[fixedEntry.bioId] || null
-    }
+  if(fixedEntry?.bioId){
+    bio = SAINT_BIOS[fixedEntry.bioId] || null
   }
 
   if(celebration){
@@ -72,7 +73,7 @@ export function resolveSaintOfDay(
 
     if(fixedEntry){
       const bateData = fixedEntry.match.some((m)=>
-        normalizedApiNome.includes(m)
+        normalizedApiNome!.includes(m)
       )
 
       if(bateData){
@@ -83,11 +84,6 @@ export function resolveSaintOfDay(
     if(!fixedEntry){
       nome = celebration.nome
     }
-
-  } else if(fixedEntry){
-    grau = fixedEntry.opcional ? "Memória Facultativa" : "Dia Comum"
-  } else {
-    return null
   }
 
   let referenceDate: Date | null = null
@@ -109,14 +105,6 @@ export function resolveSaintOfDay(
       }
     }
   }
-
-  /*
-  Memória Facultativa confirmada: a Igreja permite não
-  celebrá-la, então a cor "correta" a exibir é a da
-  estação litúrgica em curso (normalmente verde), não a
-  do santo — o nome continua aparecendo, só como
-  informação extra.
-  */
 
   const corParaExibir =
     opcional && referenceDate
