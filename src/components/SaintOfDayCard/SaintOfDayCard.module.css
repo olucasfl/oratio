@@ -7,29 +7,28 @@
   flex-direction:column;
   align-items:center;
 
-  gap:8px;
-
   background:
-    rgba(255,255,255,.82);
-
-  backdrop-filter:blur(16px);
+    linear-gradient(180deg, #fffdf9 0%, #fbf3e4 100%);
 
   border:
-    1px solid rgba(255,255,255,.6);
+    1px solid rgba(61,52,45,.1);
 
   border-radius:
-    var(--home-card-radius, 28px);
+    22px;
 
   box-shadow:
-    0 12px 40px rgba(0,0,0,.08);
+    0 12px 40px rgba(0,0,0,.08),
+    inset 0 0 0 4px rgba(255,255,255,.5);
 
-  padding:28px 30px 24px;
+  overflow:hidden;
 
   text-align:center;
 
   cursor:pointer;
 
   font-family:inherit;
+
+  padding:22px 26px 20px;
 
   transition:.22s ease;
 
@@ -40,7 +39,8 @@
   transform:translateY(-2px);
 
   box-shadow:
-    0 16px 46px rgba(0,0,0,.11);
+    0 16px 46px rgba(0,0,0,.11),
+    inset 0 0 0 4px rgba(255,255,255,.5);
 
 }
 
@@ -50,80 +50,186 @@
 
 }
 
-.icon{
+.eyebrow{
 
-  width:52px;
-  height:52px;
+  color:var(--oratio-text-soft);
 
-  border-radius:18px;
+  font-size:12px;
+  font-style:italic;
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  color:white;
-
-  margin-bottom:4px;
-
-  box-shadow:
-    0 8px 20px rgba(0,0,0,.12);
+  letter-spacing:.02em;
 
 }
 
-.badge{
+/* =========================
+MEDALHÃO
+========================= */
 
-  display:inline-flex;
+.medallionWrap{
+
+  position:relative;
+
+  width:96px;
+  height:96px;
+
+  display:flex;
 
   align-items:center;
   justify-content:center;
 
-  padding:6px 14px;
+  margin:10px auto 6px;
 
-  border-radius:999px;
+}
 
-  font-size:11.5px;
+.medallionRing{
 
+  position:absolute;
+  inset:0;
+
+  border-radius:50%;
+
+  border:1.5px solid;
+
+  opacity:.32;
+
+}
+
+.medallion{
+
+  width:78px;
+  height:78px;
+
+  border-radius:50%;
+
+  display:flex;
+  flex-direction:column;
+
+  align-items:center;
+  justify-content:center;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(0,0,0,.05);
+
+}
+
+.medDia{
+
+  font-family:var(--oratio-font-title);
+
+  font-size:30px;
+  line-height:1;
+
+}
+
+.medMes{
+
+  margin-top:3px;
+
+  font-size:10px;
   font-weight:700;
 
-  letter-spacing:.06em;
+  letter-spacing:.12em;
 
+}
+
+.medCross{
+
+  font-size:30px;
+  line-height:1;
+
+}
+
+.diaSemana{
+
+  color:var(--oratio-text-soft);
+
+  font-size:12px;
+  font-weight:600;
+
+  letter-spacing:.08em;
   text-transform:uppercase;
 
 }
 
-.intro{
+/* =========================
+FITA (GRAU · COR)
+========================= */
 
-  margin-top:6px;
+.ribbon{
 
-  color:var(--oratio-text-soft);
+  position:relative;
 
-  font-size:14.5px;
+  display:inline-block;
+
+  margin:16px 0 14px;
+
+  padding:7px 24px;
+
+  color:#fff;
+
+  font-size:11px;
+  font-weight:700;
+
+  letter-spacing:.09em;
+  text-transform:uppercase;
+
+  clip-path:
+    polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%);
 
 }
+
+/* =========================
+NOME
+========================= */
 
 .nome{
 
   font-family:var(--oratio-font-title);
 
-  font-size:26px;
-
-  line-height:1.22;
+  font-size:23px;
+  line-height:1.28;
 
   color:#3d342d;
 
-  max-width:46ch;
+  max-width:38ch;
 
 }
 
-.opcionalNote{
+.colorLine{
 
-  margin-top:2px;
+  display:flex;
 
-  color:#a89a89;
+  align-items:center;
+  justify-content:center;
 
-  font-size:11.5px;
+  gap:6px;
 
-  font-style:italic;
+  margin-top:10px;
+
+  color:var(--oratio-text-soft);
+
+  font-size:12.5px;
+
+}
+
+.colorDot{
+
+  width:9px;
+  height:9px;
+
+  border-radius:50%;
+
+  flex-shrink:0;
+
+}
+
+.ornament{
+
+  margin-top:16px;
+
+  color:#c9a25e;
+
+  font-size:13px;
 
 }
 
@@ -132,17 +238,11 @@
   display:inline-flex;
 
   align-items:center;
+  gap:3px;
 
-  gap:2px;
-
-  margin-top:14px;
-
-  padding:9px 10px 9px 16px;
-
-  border-radius:999px;
+  margin-top:12px;
 
   font-size:13px;
-
   font-weight:700;
 
   letter-spacing:.02em;
@@ -153,32 +253,21 @@
 
 .card:hover .hint{
 
-  gap:5px;
-
-  padding-right:8px;
+  gap:6px;
 
 }
 
 @media(max-width:480px){
 
-  .card{
+  .medDia{
 
-    padding:22px 20px 20px;
-
-  }
-
-  .icon{
-
-    width:46px;
-    height:46px;
-
-    border-radius:16px;
+    font-size:26px;
 
   }
 
   .nome{
 
-    font-size:22px;
+    font-size:19px;
 
   }
 
