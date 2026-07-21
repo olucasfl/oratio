@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom"
 import { Loader2, CheckCircle2, XCircle } from "lucide-react"
 
 import { verifyEmail } from "../../services/authService"
+import { getAuthErrorMessage } from "../../utils/authErrors"
 
 import styles from "./VerifyEmail.module.css"
 
@@ -41,11 +42,7 @@ export default function VerifyEmail(){
    })
    .catch((err:any)=>{
     setStatus("error")
-    setErrorMessage(
-     err?.response?.data?.message === "Verification token expired"
-      ? "Esse link expirou. Peça um novo email de verificação."
-      : "Esse link não é mais válido. Peça um novo email de verificação."
-    )
+    setErrorMessage(getAuthErrorMessage(err, "Esse link não é mais válido. Peça um novo email de verificação."))
    })
 
  },[token])

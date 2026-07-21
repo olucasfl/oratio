@@ -40,6 +40,34 @@ function processQueue(error: any, token: string | null = null) {
 
 /*
 ================================
+ROTAS PÚBLICAS DE AUTH
+================================
+Um 401 nessas rotas é uma resposta de negócio normal (senha errada,
+token inválido/expirado, etc.), não uma sessão vencida. Elas nunca
+devem disparar o fluxo de refresh automático — isso fazia o login com
+senha errada, por exemplo, tentar renovar um token que não tem nada a
+ver, falhar, e cair num logout() que recarrega a página inteira antes
+da mensagem de erro real (ex: "Invalid credentials") sequer aparecer
+na tela.
+*/
+
+const PUBLIC_AUTH_PATHS = [
+  "/auth/login",
+  "/auth/refresh",
+  "/auth/forgot-password",
+  "/auth/reset-password",
+  "/auth/resend-verification",
+  "/auth/verify-email",
+  "/auth/check-verification",
+];
+
+function isPublicAuthRequest(url?: string) {
+  if (!url) return false;
+  return PUBLIC_AUTH_PATHS.some((p) => url.includes(p));
+}
+
+/*
+================================
 LOGOUT (limpa toda a sessão)
 ================================
 Remove tudo do localStorage, exceto chaves globais
@@ -110,7 +138,7 @@ api.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      !originalRequest.url?.includes("/auth/refresh")
+      !isPublicAuthRequest(originalRequest.url)
     ) {
 
       /*

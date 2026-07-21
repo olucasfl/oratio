@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { login, forgotPassword } from "../../services/authService";
+import { getAuthErrorMessage } from "../../utils/authErrors";
 
 import ForgotPasswordModal from "../../components/ForgotPasswordModal/ForgotPasswordModal";
 import ResetPasswordModal from "../../components/ResetPasswordModal/ResetPasswordModal";
@@ -59,7 +60,7 @@ export default function Login() {
 
     } catch (err: any) {
 
-      setError(err?.response?.data?.message || "Erro ao fazer login");
+      setError(getAuthErrorMessage(err, "Não foi possível entrar. Tente novamente."));
 
     } finally {
 
@@ -86,7 +87,7 @@ export default function Login() {
 
     }catch(err:any){
 
-      setError(err?.response?.data?.message || "Erro ao enviar email");
+      setError(getAuthErrorMessage(err, "Não foi possível enviar o email. Tente novamente."));
 
     }
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { register } from "../../services/authService";
+import { getAuthErrorMessage } from "../../utils/authErrors";
 import VerifyEmailModal from "../../components/VerifyEmailModal/VerifyEmailModal";
 import AlertModal from "../../components/AlertModal/AlertModal";
 import styles from "./Register.module.css";
@@ -33,7 +34,7 @@ setVerifyOpen(true);
 
 }catch(err:any){
 
-setAlertMessage(err.response?.data?.message || "Erro ao registrar");
+setAlertMessage(getAuthErrorMessage(err, "Não foi possível criar sua conta. Tente novamente."));
 
 }finally{
 

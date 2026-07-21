@@ -70,14 +70,6 @@ useEffect(()=>{
   }
 
   /* ============================= */
-  /* DETECTAR PWA */
-  /* ============================= */
-
-  const isStandalone =
-    window.matchMedia("(display-mode: standalone)").matches ||
-    (window.navigator as any).standalone === true
-
-  /* ============================= */
   /* APP BOOT LOADER */
   /* ============================= */
 
@@ -144,22 +136,11 @@ useEffect(()=>{
   }
 
   /* ============================= */
-  /* SPLASH */
+  /* INICIAR (sem atraso artificial — o splash some assim que o boot
+     de verdade termina, não depois de um tempo mínimo fixo) */
   /* ============================= */
 
-  if(isStandalone){
-
-    const timer = setTimeout(()=>{
-      startApp()
-    },2500)
-
-    return () => clearTimeout(timer)
-
-  }else{
-
-    startApp()
-
-  }
+  startApp()
 
 },[])
 

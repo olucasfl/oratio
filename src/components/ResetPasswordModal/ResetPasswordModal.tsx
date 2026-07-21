@@ -1,6 +1,7 @@
 import { useState } from "react";
 import api from "../../services/api";
 import AlertModal from "../AlertModal/AlertModal";
+import { getAuthErrorMessage } from "../../utils/authErrors";
 
 import styles from "./ResetPasswordModal.module.css";
 
@@ -38,7 +39,7 @@ export default function ResetPasswordModal({ token }:{ token:string }){
 
   }catch(err:any){
 
-   setAlertMessage(err?.response?.data?.message || "Erro ao redefinir senha");
+   setAlertMessage(getAuthErrorMessage(err, "Não foi possível redefinir sua senha. Tente novamente."));
 
   }finally{
 
