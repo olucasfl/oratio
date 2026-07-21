@@ -5,7 +5,7 @@ import { useOffline } from "../../hooks/useOffline"
 import styles from "./Profile.module.css"
 
 import { getProfile, cancelEmailChange } from "../../services/profileService"
-import { clearSession } from "../../services/api"
+import { logout as authLogout } from "../../services/authService"
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 import ChangePasswordModal from "../../components/ChangePasswordModal/ChangePasswordModal"
@@ -113,7 +113,7 @@ export default function Profile(){
 
  function logout(){
 
-  clearSession()
+  authLogout()
 
  }
 

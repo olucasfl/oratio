@@ -19,6 +19,7 @@ const [loading,setLoading] = useState(false);
 const [verifyOpen,setVerifyOpen] = useState(false);
 const [registeredEmail,setRegisteredEmail] = useState("");
 const [alertMessage,setAlertMessage] = useState<string | null>(null);
+const [openVerifyAfterAlert,setOpenVerifyAfterAlert] = useState(false);
 
 async function handleSubmit(e:React.FormEvent){
 
@@ -27,10 +28,16 @@ setLoading(true);
 
 try{
 
-await register(name,email,password,confirmPassword);
+const data = await register(name,email,password,confirmPassword);
 
 setRegisteredEmail(email);
-setVerifyOpen(true);
+
+if(data?.emailSent === false){
+ setOpenVerifyAfterAlert(true)
+ setAlertMessage("Sua conta foi criada, mas não conseguimos enviar o email de verificação agora. Use o botão \"Reenviar email\" na próxima tela.")
+}else{
+ setVerifyOpen(true);
+}
 
 }catch(err:any){
 
@@ -115,7 +122,13 @@ onClose={()=>setVerifyOpen(false)}
 <AlertModal
 open={!!alertMessage}
 message={alertMessage ?? ""}
-onClose={()=>setAlertMessage(null)}
+onClose={()=>{
+ setAlertMessage(null)
+ if(openVerifyAfterAlert){
+  setOpenVerifyAfterAlert(false)
+  setVerifyOpen(true)
+ }
+}}
 />
 
 </div>

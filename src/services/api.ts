@@ -54,10 +54,12 @@ na tela.
 const PUBLIC_AUTH_PATHS = [
   "/auth/login",
   "/auth/refresh",
+  "/auth/logout",
   "/auth/forgot-password",
   "/auth/reset-password",
   "/auth/resend-verification",
   "/auth/verify-email",
+  "/auth/verify-email-change",
   "/auth/check-verification",
 ];
 

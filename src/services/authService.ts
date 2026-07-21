@@ -42,7 +42,22 @@ export async function register(
   return response.data;
 }
 
-export function logout(){
+export async function logout(){
+
+ /*
+ Revoga a sessão desse dispositivo no servidor antes de limpar o
+ storage local — best-effort: se a chamada falhar (rede, token já
+ vencido etc.), o logout local acontece de qualquer jeito.
+ */
+ const refreshToken = localStorage.getItem("refresh_token")
+
+ if(refreshToken){
+  try{
+   await api.post("/auth/logout", { refresh_token: refreshToken })
+  }catch{
+   // ignora — sessão local é limpa de qualquer forma
+  }
+ }
 
  clearSession()
 
