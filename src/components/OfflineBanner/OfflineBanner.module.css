@@ -1,0 +1,53 @@
+.banner{
+
+position:fixed;
+
+top:0;
+left:0;
+right:0;
+
+padding:
+ calc(10px + env(safe-area-inset-top))
+ 16px
+ 10px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+gap:8px;
+
+font-size:13px;
+font-weight:600;
+
+color:white;
+
+z-index:10000;
+
+animation:slideDown .3s ease;
+
+}
+
+.offline{
+
+background:#b0181a;
+
+}
+
+.online{
+
+background:#1a6b3a;
+
+}
+
+@keyframes slideDown{
+
+from{
+ transform:translateY(-100%);
+}
+
+to{
+ transform:translateY(0);
+}
+
+}

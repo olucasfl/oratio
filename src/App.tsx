@@ -6,6 +6,7 @@ import ScrollToTop from "./components/ScrollToTop"
 import Splash from "./components/Splash/Splash"
 import ProtectedRoute from "./components/ProtectedRoute"
 import AdminRoute from "./components/AdminRoute"
+import OfflineBanner from "./components/OfflineBanner/OfflineBanner"
 import { preloadConsecration, getProgress } from "./services/consecrationService"
 import { sendActivityPing } from "./services/activityService"
 
@@ -184,6 +185,8 @@ ROTAS
 return(
 
 <Suspense fallback={<div className="oratio-loading" />}>
+
+<OfflineBanner />
 
 <ScrollToTop />
 

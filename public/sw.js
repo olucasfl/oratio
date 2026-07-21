@@ -1,4 +1,4 @@
-const CACHE_NAME = "oratio-cache-v15"
+const CACHE_NAME = "oratio-cache-v16"
 
 /* ============================= */
 /* APP SHELL */
@@ -96,11 +96,15 @@ self.addEventListener("fetch", (event) => {
  /* NÃO CACHEAR API */
  /* ============================= */
 
- if (
-    url.origin.includes("render.com") ||
-    url.pathname.startsWith("/auth") ||
-    url.pathname.startsWith("/oratio")
-    ) {
+ /*
+ Só exclui o domínio da API (render.com) — chamadas pra /auth e
+ /oratio já caem aqui por serem desse domínio. Excluir esses mesmos
+ prefixos também no domínio do PRÓPRIO app (como era antes) apagava
+ o fallback de navegação offline pra quase todas as rotas do SPA
+ (praticamente tudo é /oratio/...), fazendo o app abrir com a tela de
+ erro nativa do navegador em vez do app quando reaberto sem internet.
+ */
+ if (url.origin.includes("render.com")) {
     return
     }
 
