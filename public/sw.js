@@ -1,4 +1,4 @@
-const CACHE_NAME = "oratio-cache-v16"
+const CACHE_NAME = "oratio-cache-v17"
 
 /* ============================= */
 /* APP SHELL */
@@ -19,9 +19,42 @@ self.addEventListener("install", (event) => {
  console.log("Service Worker instalado")
 
  event.waitUntil(
-  caches.open(CACHE_NAME).then((cache) => {
-   return cache.addAll(APP_SHELL)
-  })
+
+  (async () => {
+
+   const cache = await caches.open(CACHE_NAME)
+
+   await cache.addAll(APP_SHELL)
+
+   /*
+   Cacheia também os JS/CSS de verdade que o index.html atual
+   referencia (com o hash do build). Sem isso, o index.html cacheado
+   podia apontar pra um chunk que só seria cacheado depois, em
+   runtime, se e quando alguém de fato o carregasse — se a pessoa
+   fechasse o app antes disso e reabrisse offline, dava tela branca
+   (index.html carregava, mas o script principal não existia no
+   cache e não tinha rede pra buscar). Fazendo isso aqui, no install,
+   o essencial pra abrir o app já fica garantido de primeira.
+   */
+   try {
+
+    const res = await fetch("/index.html")
+    const html = await res.text()
+
+    const urls = Array.from(
+     html.matchAll(/(?:src|href)="(\/assets\/[^"]+)"/g)
+    ).map((m) => m[1])
+
+    if (urls.length) {
+     await cache.addAll(urls)
+    }
+
+   } catch {
+    // se falhar aqui, o cache em runtime dos assets ainda cobre depois
+   }
+
+  })()
+
  )
 
  self.skipWaiting()
@@ -155,11 +188,18 @@ self.addEventListener("fetch", (event) => {
  /* CACHE ASSETS */
 /* ============================= */
 
+ /*
+ Além do destination clássico, cobre qualquer coisa servida de
+ /assets/ — module preload e outros tipos de carregamento de JS nem
+ sempre batem com destination "script" em todo navegador, e isso
+ fazia alguns chunks nunca serem cacheados mesmo depois de usados.
+ */
  const isAsset =
   request.destination === "style" ||
   request.destination === "script" ||
   request.destination === "image" ||
-  request.destination === "font"
+  request.destination === "font" ||
+  url.pathname.startsWith("/assets/")
 
  if (!isAsset) return
 
