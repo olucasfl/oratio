@@ -57,3 +57,11 @@ export async function forgotPassword(email: string){
  return response.data
 
 }
+
+export async function verifyEmail(token: string): Promise<{ alreadyVerified: boolean }> {
+
+ const response = await api.post("/auth/verify-email", { token })
+
+ return response.data
+
+}

@@ -1,0 +1,179 @@
+.wrapper{
+
+min-height:100vh;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+padding:20px;
+
+background:
+radial-gradient(circle at top,#ffffff40,transparent 60%),
+var(--oratio-background);
+
+font-family:var(--oratio-font-text);
+
+animation:fadeIn 0.6s ease;
+
+}
+
+/* CARD */
+
+.card{
+
+background:var(--oratio-card-bg);
+
+padding:44px 36px;
+
+border-radius:var(--oratio-radius-lg);
+
+width:100%;
+max-width:380px;
+
+box-shadow:var(--oratio-shadow-medium);
+
+text-align:center;
+
+border:1px solid var(--oratio-card-border);
+
+display:flex;
+flex-direction:column;
+align-items:center;
+
+animation:cardEntrance .6s ease;
+
+backdrop-filter:blur(4px);
+
+}
+
+/* LOGO */
+
+.logo{
+
+color:var(--oratio-primary);
+
+font-size:40px;
+
+font-family:var(--oratio-font-title);
+
+letter-spacing:4px;
+
+margin-bottom:22px;
+
+}
+
+/* SUBTITLE */
+
+.subtitle{
+
+font-size:14px;
+
+color:var(--oratio-text-soft);
+
+margin:14px 0 26px;
+
+line-height:1.5;
+
+}
+
+/* ÍCONES */
+
+.spinner{
+
+color:var(--oratio-primary);
+
+animation:spin 1s linear infinite;
+
+}
+
+.iconSuccess{
+
+color:#1a6b3a;
+
+}
+
+.iconError{
+
+color:#b0181a;
+
+}
+
+/* BUTTON */
+
+.button{
+
+width:100%;
+
+background:var(--oratio-primary);
+
+color:var(--oratio-text-light);
+
+padding:13px;
+
+border-radius:var(--oratio-radius-sm);
+
+font-weight:600;
+
+cursor:pointer;
+
+border:none;
+
+transition:var(--oratio-transition);
+
+}
+
+.button:hover{
+
+background:var(--oratio-primary-dark);
+
+transform:translateY(-2px);
+
+box-shadow:0 8px 18px rgba(0,0,0,0.18);
+
+}
+
+.button:active{
+
+transform:scale(.98);
+
+}
+
+/* ===================== */
+/* ANIMAÇÕES */
+/* ===================== */
+
+@keyframes fadeIn{
+from{ opacity:0; }
+to{ opacity:1; }
+}
+
+@keyframes cardEntrance{
+from{ opacity:0; transform:translateY(25px); }
+to{ opacity:1; transform:translateY(0); }
+}
+
+@keyframes spin{
+from{ transform:rotate(0deg); }
+to{ transform:rotate(360deg); }
+}
+
+/* ===================== */
+/* MOBILE */
+/* ===================== */
+
+@media (max-width:768px){
+
+.card{
+padding:36px 26px;
+}
+
+.logo{
+font-size:34px;
+}
+
+.subtitle{
+font-size:13px;
+}
+
+}

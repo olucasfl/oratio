@@ -12,6 +12,7 @@ import { sendActivityPing } from "./services/activityService"
 /* Páginas carregadas sob demanda */
 const Login            = lazy(() => import("./pages/Login/Login"))
 const Register         = lazy(() => import("./pages/Register/Register"))
+const VerifyEmail      = lazy(() => import("./pages/VerifyEmail/VerifyEmail"))
 const Home             = lazy(() => import("./pages/Home/Home"))
 const ConsecrationHome = lazy(() => import("./pages/Consecration/ConsecrationHome"))
 const ConsecrationDay  = lazy(() => import("./pages/Consecration/ConsecrationDay"))
@@ -122,12 +123,19 @@ useEffect(()=>{
     const token = localStorage.getItem("access_token")
     const path  = window.location.pathname
 
+    // Páginas públicas que não devem ser trocadas por /login, mesmo sem token
+    const publicPaths = ["/login", "/register", "/verificar-email"]
+
+    // Se veio de um link de reset de senha, não pode perder o ?resetToken=
+    // mesmo que exista um access_token antigo/expirado salvo no aparelho
+    const hasResetToken = new URLSearchParams(window.location.search).has("resetToken")
+
     if (!token) {
-      if (path !== "/login" && path !== "/register") {
+      if (!publicPaths.includes(path)) {
         window.history.replaceState(null, "", "/login")
       }
     } else {
-      if (path === "/" || path === "/login") {
+      if ((path === "/" || path === "/login") && !hasResetToken) {
         window.history.replaceState(null, "", "/oratio/home")
       }
     }
@@ -204,6 +212,8 @@ return(
 <Route path="/login" element={<Login />} />
 
 <Route path="/register" element={<Register />} />
+
+<Route path="/verificar-email" element={<VerifyEmail />} />
 
 <Route
 path="/oratio/home"
