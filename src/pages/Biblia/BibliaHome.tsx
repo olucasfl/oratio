@@ -6,8 +6,14 @@ import {
  getOldTestament,
  getNewTestament,
  searchVerses,
+ searchVersesByKeywords,
+ getRecentSearches,
+ addRecentSearch,
+ clearRecentSearches,
  type VerseResult
 } from "../../services/bibliaService"
+
+import { BIBLE_TOPICS, type BibleTopic } from "../../data/bibleTopics"
 
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
@@ -17,10 +23,16 @@ import {
  ChevronRight,
  ChevronLeft,
  BookOpen,
- Cross
+ Cross,
+ Clock,
+ X,
+ Sparkles
 } from "lucide-react"
 
 type SearchMode = "livros" | "versiculos"
+
+const FETCH_LIMIT = 200
+const PAGE_SIZE = 24
 
 export default function BibliaHome(){
 
@@ -32,11 +44,15 @@ export default function BibliaHome(){
  const [search,setSearch] = useState("")
  const [searchMode,setSearchMode] = useState<SearchMode>("livros")
  const [verseQuery,setVerseQuery] = useState("")
+ const [activeTopic,setActiveTopic] = useState<BibleTopic | null>(null)
  const [verseResults,setVerseResults] = useState<VerseResult[]>([])
+ const [visibleCount,setVisibleCount] = useState(PAGE_SIZE)
  const [searching,setSearching] = useState(false)
+ const [recentSearches,setRecentSearches] = useState<string[]>([])
 
  useEffect(()=>{
   window.scrollTo({ top:0, behavior:"instant" })
+  setRecentSearches(getRecentSearches())
  },[])
 
  /* ==============================
@@ -46,22 +62,65 @@ export default function BibliaHome(){
  useEffect(()=>{
 
   if(verseQuery.length < 3){
-   setVerseResults([])
+   if(!activeTopic) setVerseResults([])
    setSearching(false)
    return
   }
 
+  setActiveTopic(null)
   setSearching(true)
 
   const timer = setTimeout(()=>{
-   const results = searchVerses(verseQuery)
+   const results = searchVerses(verseQuery, FETCH_LIMIT)
    setVerseResults(results)
+   setVisibleCount(PAGE_SIZE)
    setSearching(false)
+   addRecentSearch(verseQuery)
+   setRecentSearches(getRecentSearches())
   }, 450)
 
   return ()=>clearTimeout(timer)
 
  },[verseQuery])
+
+ /* ==============================
+  BUSCA POR TEMA
+ ============================== */
+
+ function handleTopicClick(topic:BibleTopic){
+  setActiveTopic(topic)
+  setVerseQuery("")
+  setSearching(true)
+  const results = searchVersesByKeywords(topic.keywords, FETCH_LIMIT)
+  setVerseResults(results)
+  setVisibleCount(PAGE_SIZE)
+  setSearching(false)
+ }
+
+ function clearTopic(){
+  setActiveTopic(null)
+  setVerseResults([])
+  setVisibleCount(PAGE_SIZE)
+ }
+
+ function handleQueryChange(v:string){
+  setVerseQuery(v)
+  if(activeTopic) setActiveTopic(null)
+ }
+
+ function handleRecentClick(q:string){
+  setActiveTopic(null)
+  setVerseQuery(q)
+ }
+
+ function handleClearRecent(){
+  clearRecentSearches()
+  setRecentSearches([])
+ }
+
+ function loadMoreResults(){
+  setVisibleCount((c)=>c + PAGE_SIZE)
+ }
 
  /* ==============================
   FILTRO DE LIVROS
@@ -84,19 +143,31 @@ export default function BibliaHome(){
   HIGHLIGHT
  ============================== */
 
- function highlight(text:string, query:string){
+ function highlight(text:string, terms:string | string[]){
 
-  if(!query) return text
+  const list = (Array.isArray(terms) ? terms : [terms]).filter(Boolean)
+  if(list.length === 0) return text
 
-  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")
-  const regex = new RegExp(`(${escaped})`, "gi")
+  const escaped = list.map((t)=>t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"))
+  const regex = new RegExp(`(${escaped.join("|")})`, "gi")
   const parts = text.split(regex)
 
-  return parts.map((part)=>
-   regex.test(part)
+  return parts.map((part,i)=>
+   i % 2 === 1
     ? `<mark>${part}</mark>`
     : part
   ).join("")
+
+ }
+
+ function truncate(text:string, max = 180){
+
+  if(text.length <= max) return text
+
+  const cut = text.slice(0,max)
+  const lastSpace = cut.lastIndexOf(" ")
+
+  return (lastSpace > 40 ? cut.slice(0,lastSpace) : cut) + "…"
 
  }
 
@@ -163,7 +234,7 @@ export default function BibliaHome(){
      className={`${styles.searchTab} ${searchMode==="versiculos" ? styles.searchTabActive : ""}`}
      onClick={()=>setSearchMode("versiculos")}
     >
-     <Search size={14}/> Versículos
+     <Search size={14}/> Pesquisar
     </button>
 
    </div>
@@ -188,22 +259,79 @@ export default function BibliaHome(){
    {searchMode === "versiculos" && (
     <>
     <p className={styles.verseSearchDesc}>
-     Pesquise por palavras ou frases em todos os livros da Bíblia.
-     <br/>
-     <span>Ex: "não temas", "luz do mundo", "amor"</span>
+     Digite uma palavra ou frase e encontre tudo sobre ela na Bíblia,
+     ou escolha um tema abaixo.
     </p>
     <div className={styles.searchWrapper}>
      <Search size={18} className={styles.searchIcon}/>
      <input
       type="search"
-      placeholder="Buscar na Bíblia..."
+      placeholder='Buscar palavra ou frase, ex: "amor", "não temas"...'
       value={verseQuery}
-      onChange={(e)=>setVerseQuery(e.target.value)}
+      onChange={(e)=>handleQueryChange(e.target.value)}
       className={styles.searchInput}
       autoFocus
      />
     </div>
     </>
+   )}
+
+   {/* DESCOBRIR — TEMAS E PESQUISAS RECENTES */}
+
+   {searchMode === "versiculos" && !activeTopic && verseQuery.trim().length < 3 && (
+
+    <div className={styles.discoverPanel}>
+
+     <div>
+      <h3 className={styles.discoverTitle}>
+       <Sparkles size={14}/> Pesquisar por tema
+      </h3>
+      <p className={styles.discoverHint}>
+       Toque em um tema para ver os versículos relacionados
+      </p>
+      <div className={styles.topicsGrid}>
+       {BIBLE_TOPICS.map((topic)=>{
+        const TopicIcon = topic.icon
+        return (
+         <button
+          key={topic.id}
+          className={styles.topicChip}
+          onClick={()=>handleTopicClick(topic)}
+         >
+          <TopicIcon size={15} className={styles.topicIcon}/>
+          {topic.label}
+         </button>
+        )
+       })}
+      </div>
+     </div>
+
+     {recentSearches.length > 0 && (
+      <div>
+       <div className={styles.discoverTitleRow}>
+        <h3 className={styles.discoverTitle}>
+         <Clock size={14}/> Pesquisas recentes
+        </h3>
+        <button className={styles.clearRecentBtn} onClick={handleClearRecent}>
+         Limpar
+        </button>
+       </div>
+       <div className={styles.topicsGrid}>
+        {recentSearches.map((q)=>(
+         <button
+          key={q}
+          className={styles.recentChip}
+          onClick={()=>handleRecentClick(q)}
+         >
+          {q}
+         </button>
+        ))}
+       </div>
+      </div>
+     )}
+
+    </div>
+
    )}
 
    {/* RESULTADOS DE VERSÍCULOS */}
@@ -212,7 +340,18 @@ export default function BibliaHome(){
 
     <div className={styles.verseResultsSection}>
 
-     {verseQuery.length > 0 && verseQuery.length < 3 && (
+     {activeTopic && (
+      <div className={styles.topicHeader}>
+       <span className={styles.topicHeaderLabel}>
+        <activeTopic.icon size={17}/> {activeTopic.label}
+       </span>
+       <button className={styles.topicClearBtn} onClick={clearTopic}>
+        <X size={14}/> Limpar
+       </button>
+      </div>
+     )}
+
+     {!activeTopic && verseQuery.length > 0 && verseQuery.length < 3 && (
       <p className={styles.verseHint}>
        Digite ao menos 3 caracteres para buscar.
       </p>
@@ -222,25 +361,24 @@ export default function BibliaHome(){
       <p className={styles.verseHint}>Buscando...</p>
      )}
 
-     {!searching && verseQuery.length >= 3 && verseResults.length === 0 && (
+     {!searching && (activeTopic || verseQuery.length >= 3) && verseResults.length === 0 && (
       <div className={styles.empty}>
        <BookOpen size={36}/>
        <h3>Nenhum versículo encontrado</h3>
-       <p>Tente outras palavras.</p>
+       <p>Tente outras palavras ou outro tema.</p>
       </div>
      )}
 
      {!searching && verseResults.length > 0 && (
       <>
        <p className={styles.verseCount}>
-        {verseResults.length === 50
-         ? "Primeiros 50 resultados"
-         : `${verseResults.length} resultado${verseResults.length > 1 ? "s" : ""}`}
+        {Math.min(visibleCount,verseResults.length)} de {verseResults.length}
+        {verseResults.length === FETCH_LIMIT ? "+" : ""} resultado{verseResults.length > 1 ? "s" : ""}
        </p>
 
        <div className={styles.verseResultsList}>
 
-        {verseResults.map((r,i)=>(
+        {verseResults.slice(0,visibleCount).map((r,i)=>(
 
          <button
           key={i}
@@ -257,10 +395,8 @@ export default function BibliaHome(){
            className={styles.verseCardText}
            dangerouslySetInnerHTML={{
             __html: highlight(
-             r.text.length > 120
-              ? r.text.slice(0,120) + "…"
-              : r.text,
-             verseQuery
+             truncate(r.text),
+             activeTopic ? activeTopic.keywords : verseQuery
             )
            }}
           />
@@ -270,6 +406,12 @@ export default function BibliaHome(){
         ))}
 
        </div>
+
+       {visibleCount < verseResults.length && (
+        <button className={styles.loadMoreBtn} onClick={loadMoreResults}>
+         Carregar mais resultados
+        </button>
+       )}
       </>
      )}
 

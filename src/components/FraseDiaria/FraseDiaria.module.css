@@ -8,34 +8,50 @@
   padding: 0 16px;
 }
 
-/* Estado 1 — convite discreto (nunca clicou hoje) */
+/* Estado 1 — convite chamativo (nunca clicou hoje) */
 .btnChamativo {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   justify-content: center;
-  padding: 6px 14px;
-  background: rgba(176, 24, 26, 0.07);
-  color: var(--oratio-primary, #b0181a);
+  padding: 9px 18px;
+  background: linear-gradient(135deg, #b0181a, #7f1415);
+  color: #fff;
   font-family: inherit;
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 700;
   letter-spacing: 0.02em;
   border: none;
   border-radius: 999px;
   cursor: pointer;
-  transition: background 0.15s ease;
+  box-shadow: 0 6px 18px rgba(176, 24, 26, 0.3);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  animation: fraseGlow 2.4s ease-in-out infinite;
 }
 
 .btnChamativo:hover {
-  background: rgba(176, 24, 26, 0.13);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(176, 24, 26, 0.4);
+}
+
+.btnChamativo:active {
+  transform: scale(0.96);
+}
+
+@keyframes fraseGlow {
+  0%, 100% {
+    box-shadow: 0 6px 18px rgba(176, 24, 26, 0.3);
+  }
+  50% {
+    box-shadow: 0 6px 22px rgba(176, 24, 26, 0.48);
+  }
 }
 
 .icone {
   font-family: Georgia, serif;
   font-size: 0.95rem;
   line-height: 1;
-  opacity: 0.75;
+  opacity: 0.85;
 }
 
 /* Estado 2 — frase aberta */
@@ -105,8 +121,8 @@
   gap: 6px;
   justify-content: center;
   padding: 6px 14px;
-  background: transparent;
-  border: none;
+  background: rgba(176, 24, 26, 0.05);
+  border: 1px solid rgba(176, 24, 26, 0.14);
   color: #9f191b;
   font-family: inherit;
   font-size: 0.8rem;
@@ -114,11 +130,16 @@
   letter-spacing: 0.02em;
   border-radius: 999px;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
 }
 
 .btnVer:hover {
-  background: rgba(176, 24, 26, 0.07);
+  background: rgba(176, 24, 26, 0.11);
+  border-color: rgba(176, 24, 26, 0.24);
+}
+
+.btnVer:active {
+  transform: scale(0.96);
 }
 
 .iconeVer {
