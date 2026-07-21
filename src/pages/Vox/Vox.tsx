@@ -19,7 +19,7 @@ import {
  createConversation,
  getConversations,
  getMessages,
- getActiveConversation
+ getBootstrap
 } from "../../services/voxService"
 
 interface Message{
@@ -123,53 +123,17 @@ useEffect(()=>{
       setError(null)
       setLoadingConversation(true)
 
-      const list = await getConversations()
+      const bootstrap = await getBootstrap()
 
-      if(Array.isArray(list)){
-        setConversations(list)
+      if(bootstrap?.error || !bootstrap?.active?.id){
+        throw new Error()
       }
 
-      const active = await getActiveConversation()
-
-      if(active?.error){
-
-        if(list?.[0]?.id){
-          await openConversation(list[0].id)
-          return
-        }
-
-        const conv = await createConversation()
-        if(!conv?.id){
-          throw new Error()
-        }
-
-        await openConversation(conv.id)
-        return
+      if(Array.isArray(bootstrap.conversations)){
+        setConversations(bootstrap.conversations)
       }
 
-      if(!active?.id){
-
-        if(list?.[0]?.id){
-          await openConversation(list[0].id)
-          return
-        }
-
-        const conv = await createConversation()
-        if(!conv?.id){
-          throw new Error()
-        }
-
-        await openConversation(conv.id)
-        return
-      }
-
-      await openConversation(active.id)
-
-      const finalList = await getConversations()
-
-      if(Array.isArray(finalList)){
-        setConversations(finalList)
-      }
+      await openConversation(bootstrap.active.id)
 
     }catch{
       setError("Não foi possível carregar suas conversas.")

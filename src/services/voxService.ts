@@ -3,6 +3,22 @@ import api from "./api"
 const BASE_URL = "/oratio/voxai"
 
 /* =========================
+   BOOTSTRAP (lista + conversa ativa numa só chamada)
+========================= */
+
+export async function getBootstrap(){
+  try {
+    const res = await api.get(`${BASE_URL}/bootstrap`)
+    return res.data
+  } catch {
+    return {
+      error: "FETCH_ERROR",
+      message: "Não foi possível carregar suas conversas."
+    }
+  }
+}
+
+/* =========================
    GET ACTIVE CONVERSATION
 ========================= */
 
