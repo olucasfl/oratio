@@ -4,10 +4,13 @@ import { useOffline } from "../../hooks/useOffline"
 
 import styles from "./Profile.module.css"
 
-import { getProfile } from "../../services/profileService"
+import { getProfile, cancelEmailChange } from "../../services/profileService"
 import { clearSession } from "../../services/api"
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
+import ChangePasswordModal from "../../components/ChangePasswordModal/ChangePasswordModal"
+import ChangeEmailModal from "../../components/ChangeEmailModal/ChangeEmailModal"
+import DeleteAccountModal from "../../components/DeleteAccountModal/DeleteAccountModal"
 
 import {
  ChevronLeft,
@@ -20,7 +23,9 @@ import {
  Hand,
  Compass,
  Gem,
- Award
+ Award,
+ KeyRound,
+ Mail
 } from "lucide-react"
 
 export default function Profile(){
@@ -29,6 +34,10 @@ export default function Profile(){
 
  const [profile,setProfile] = useState<any>(null)
  const [loading,setLoading] = useState(true)
+
+ const [changePasswordOpen,setChangePasswordOpen] = useState(false)
+ const [changeEmailOpen,setChangeEmailOpen] = useState(false)
+ const [deleteAccountOpen,setDeleteAccountOpen] = useState(false)
 
  const isOffline = useOffline()
 
@@ -105,6 +114,28 @@ export default function Profile(){
  function logout(){
 
   clearSession()
+
+ }
+
+ function handleEmailChangeRequested(pendingEmail:string){
+
+  setChangeEmailOpen(false)
+  setProfile((prev:any)=> prev ? { ...prev, pendingEmail } : prev)
+
+ }
+
+ async function handleCancelEmailChange(){
+
+  try{
+
+   await cancelEmailChange()
+   setProfile((prev:any)=> prev ? { ...prev, pendingEmail:null } : prev)
+
+  }catch{
+
+   console.log("Erro ao cancelar troca de email")
+
+  }
 
  }
 
@@ -551,6 +582,55 @@ export default function Profile(){
 
      </p>
 
+     {profile.pendingEmail && (
+
+      <div className={styles.pendingEmailBanner}>
+
+       <span>
+        Confirmação pendente para <strong>{profile.pendingEmail}</strong>.
+        Verifique a caixa de entrada desse email.
+       </span>
+
+       <button
+        className={styles.pendingEmailCancel}
+        onClick={handleCancelEmailChange}
+       >
+        Cancelar
+       </button>
+
+      </div>
+
+     )}
+
+     <div className={styles.accountActions}>
+
+      <button
+       className={styles.accountButton}
+       onClick={()=>setChangePasswordOpen(true)}
+      >
+       <KeyRound size={16}/> Trocar senha
+      </button>
+
+      <button
+       className={styles.accountButton}
+       onClick={()=>setChangeEmailOpen(true)}
+      >
+       <Mail size={16}/> Trocar email
+      </button>
+
+     </div>
+
+     <div className={styles.dangerZone}>
+
+      <button
+       className={styles.dangerButton}
+       onClick={()=>setDeleteAccountOpen(true)}
+      >
+       Excluir minha conta
+      </button>
+
+     </div>
+
     </div>
 
     {/* LOGOUT */}
@@ -567,6 +647,23 @@ export default function Profile(){
    </div>
 
    <BottomNavbar/>
+
+   <ChangePasswordModal
+    open={changePasswordOpen}
+    onClose={()=>setChangePasswordOpen(false)}
+   />
+
+   <ChangeEmailModal
+    open={changeEmailOpen}
+    onClose={()=>setChangeEmailOpen(false)}
+    onRequested={handleEmailChangeRequested}
+   />
+
+   <DeleteAccountModal
+    open={deleteAccountOpen}
+    userEmail={profile.email}
+    onClose={()=>setDeleteAccountOpen(false)}
+   />
 
   </div>
 

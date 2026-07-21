@@ -909,3 +909,154 @@ SMALL MOBILE
 }
 
 
+/* =========================
+CONTA — TROCA DE EMAIL PENDENTE
+========================= */
+
+.pendingEmailBanner{
+
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+
+ gap:12px;
+
+ background:#fff8e1;
+
+ border:1px solid #f3d98b;
+
+ border-radius:var(--oratio-radius-sm);
+
+ padding:12px 14px;
+
+ margin-top:12px;
+
+ font-size:13px;
+
+ color:#7a5c00;
+
+ line-height:1.5;
+
+}
+
+.pendingEmailCancel{
+
+ background:none;
+
+ border:none;
+
+ color:#7a5c00;
+
+ font-size:12px;
+
+ font-weight:700;
+
+ text-decoration:underline;
+
+ cursor:pointer;
+
+ white-space:nowrap;
+
+}
+
+/* =========================
+CONTA — AÇÕES
+========================= */
+
+.accountActions{
+
+ display:flex;
+ flex-direction:column;
+
+ gap:10px;
+
+ margin-top:16px;
+
+}
+
+.accountButton{
+
+ width:100%;
+
+ display:flex;
+ align-items:center;
+
+ gap:10px;
+
+ padding:13px 16px;
+
+ border-radius:var(--oratio-radius-sm);
+
+ border:1px solid var(--oratio-card-border);
+
+ background:var(--oratio-card-bg);
+
+ color:var(--oratio-text-dark);
+
+ font-size:14px;
+ font-weight:600;
+
+ text-align:left;
+
+ cursor:pointer;
+
+ transition:var(--oratio-transition);
+
+}
+
+.accountButton svg{
+
+ color:var(--oratio-primary);
+
+ flex-shrink:0;
+
+}
+
+.accountButton:hover{
+
+ border-color:var(--oratio-primary);
+
+ background:var(--oratio-secondary);
+
+}
+
+/* =========================
+ZONA DE PERIGO
+========================= */
+
+.dangerZone{
+
+ margin-top:10px;
+
+}
+
+.dangerButton{
+
+ width:100%;
+
+ padding:13px 16px;
+
+ border-radius:var(--oratio-radius-sm);
+
+ border:1px solid rgba(176,24,26,.25);
+
+ background:transparent;
+
+ color:#b0181a;
+
+ font-size:13px;
+ font-weight:600;
+
+ cursor:pointer;
+
+ transition:var(--oratio-transition);
+
+}
+
+.dangerButton:hover{
+
+ background:rgba(176,24,26,.06);
+
+}
+
+

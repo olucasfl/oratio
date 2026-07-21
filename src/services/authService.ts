@@ -65,3 +65,11 @@ export async function verifyEmail(token: string): Promise<{ alreadyVerified: boo
  return response.data
 
 }
+
+export async function confirmEmailChange(token: string): Promise<{ alreadyConfirmed: boolean, email: string }> {
+
+ const response = await api.post("/auth/verify-email-change", { token })
+
+ return response.data
+
+}

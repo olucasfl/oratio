@@ -13,6 +13,7 @@ import { sendActivityPing } from "./services/activityService"
 const Login            = lazy(() => import("./pages/Login/Login"))
 const Register         = lazy(() => import("./pages/Register/Register"))
 const VerifyEmail      = lazy(() => import("./pages/VerifyEmail/VerifyEmail"))
+const ConfirmEmailChange = lazy(() => import("./pages/ConfirmEmailChange/ConfirmEmailChange"))
 const Home             = lazy(() => import("./pages/Home/Home"))
 const ConsecrationHome = lazy(() => import("./pages/Consecration/ConsecrationHome"))
 const ConsecrationDay  = lazy(() => import("./pages/Consecration/ConsecrationDay"))
@@ -116,7 +117,7 @@ useEffect(()=>{
     const path  = window.location.pathname
 
     // Páginas públicas que não devem ser trocadas por /login, mesmo sem token
-    const publicPaths = ["/login", "/register", "/verificar-email"]
+    const publicPaths = ["/login", "/register", "/verificar-email", "/confirmar-troca-email"]
 
     // Se veio de um link de reset de senha, não pode perder o ?resetToken=
     // mesmo que exista um access_token antigo/expirado salvo no aparelho
@@ -195,6 +196,8 @@ return(
 <Route path="/register" element={<Register />} />
 
 <Route path="/verificar-email" element={<VerifyEmail />} />
+
+<Route path="/confirmar-troca-email" element={<ConfirmEmailChange />} />
 
 <Route
 path="/oratio/home"

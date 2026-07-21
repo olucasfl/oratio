@@ -7,6 +7,18 @@ VerifyEmail mostrarem sempre a mesma mensagem pro mesmo erro.
 const KNOWN_MESSAGES: Record<string,string> = {
  "Invalid credentials":
   "Email ou senha incorretos.",
+ "Current password is incorrect":
+  "Senha atual incorreta.",
+ "This is already your current email":
+  "Esse já é o seu email atual.",
+ "Email already in use":
+  "Esse email já está em uso por outra conta.",
+ "This email is no longer available":
+  "Esse email não está mais disponível.",
+ "Confirmation link expired":
+  "Esse link expirou. Peça uma nova troca de email.",
+ "Invalid confirmation token":
+  "Esse link não é mais válido.",
  "Please verify your email before logging in":
   "Confirme seu email antes de entrar. Verifique sua caixa de entrada.",
  "Email already registered":
