@@ -1,4 +1,4 @@
-const CACHE_NAME = "oratio-cache-v17"
+const CACHE_NAME = "oratio-cache-v18"
 
 /* ============================= */
 /* APP SHELL */
@@ -27,30 +27,44 @@ self.addEventListener("install", (event) => {
    await cache.addAll(APP_SHELL)
 
    /*
-   Cacheia também os JS/CSS de verdade que o index.html atual
-   referencia (com o hash do build). Sem isso, o index.html cacheado
-   podia apontar pra um chunk que só seria cacheado depois, em
-   runtime, se e quando alguém de fato o carregasse — se a pessoa
-   fechasse o app antes disso e reabrisse offline, dava tela branca
-   (index.html carregava, mas o script principal não existia no
-   cache e não tinha rede pra buscar). Fazendo isso aqui, no install,
-   o essencial pra abrir o app já fica garantido de primeira.
+   Pré-cacheia TODOS os chunks JS/CSS do build atual, não só os poucos
+   referenciados direto no index.html. A lista vem de
+   /asset-manifest.json (gerado pelo Vite no build). Sem isso, abrir o
+   app offline numa rota cujo chunk nunca foi carregado em runtime
+   antes (ex: visitou o app uma vez mas nunca entrou no Terço) quebra
+   com "Algo deu errado" — o import() daquele chunk falha sem rede e
+   sem cache, e isso escapa como erro não tratado pro ErrorBoundary.
+   Usa Promise.allSettled (não addAll) pra um chunk individual falhar
+   não derrubar o precache inteiro dos outros 70+.
    */
    try {
 
-    const res = await fetch("/index.html")
-    const html = await res.text()
+    const res = await fetch("/asset-manifest.json")
+    const manifest = await res.json()
 
-    const urls = Array.from(
-     html.matchAll(/(?:src|href)="(\/assets\/[^"]+)"/g)
-    ).map((m) => m[1])
+    const urls = new Set()
 
-    if (urls.length) {
-     await cache.addAll(urls)
+    for (const entry of Object.values(manifest)) {
+     if (entry.file) urls.add("/" + entry.file)
+     if (Array.isArray(entry.css)) {
+      entry.css.forEach((f) => urls.add("/" + f))
+     }
     }
 
+    await Promise.allSettled(
+     Array.from(urls).map(async (url) => {
+      try {
+       const assetRes = await fetch(url)
+       if (assetRes.ok) await cache.put(url, assetRes)
+      } catch {
+       // ignora individualmente — o cache em runtime ainda cobre depois
+      }
+     })
+    )
+
    } catch {
-    // se falhar aqui, o cache em runtime dos assets ainda cobre depois
+    // se o manifest não existir/falhar, o cache em runtime dos assets
+    // ainda cobre as rotas conforme forem visitadas
    }
 
   })()
