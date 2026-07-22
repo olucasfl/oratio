@@ -73,6 +73,14 @@ export async function askVox(message:string, conversationId:string){
       }
     }
 
+    if (!error.response) {
+      return {
+        success:false,
+        error:"NETWORK_ERROR",
+        message:"Sem conexão com a internet."
+      }
+    }
+
     return {
       success:false,
       error:"AI_PROVIDER_ERROR",

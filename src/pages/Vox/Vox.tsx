@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 
 import ReactMarkdown from "react-markdown"
@@ -6,15 +6,56 @@ import remarkGfm from "remark-gfm"
 
 import styles from "./Vox.module.css"
 
-import { Plus } from "lucide-react"
-import { Menu } from "lucide-react"
-import { Trash2, Pencil } from "lucide-react"
-import { ChevronLeft } from "lucide-react"
-import { deleteConversation, renameConversation } from "../../services/voxService"
-
-import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
+import type { LucideIcon } from "lucide-react"
 
 import {
+ Plus,
+ Menu,
+ Trash2,
+ Pencil,
+ ChevronLeft,
+ ChevronRight,
+ Sparkles,
+ Search,
+ X,
+ ArrowUp,
+ Loader2,
+ RotateCcw,
+ CircleAlert,
+ ShieldAlert,
+ TimerOff,
+ WifiOff,
+ ServerCrash,
+ AlertTriangle,
+ BookOpen,
+ ScrollText,
+ HandHeart,
+ Moon,
+ Compass,
+ HeartHandshake,
+ Feather,
+ Church,
+ Sunrise,
+ MessageCircleQuestion,
+ Star,
+ BookMarked,
+ Anchor,
+ Flame,
+ Users,
+ ShieldCheck,
+ Landmark,
+ Gift,
+ Waves,
+ Hourglass,
+ CloudRain,
+ Infinity as InfinityIcon,
+ BookOpenCheck,
+ HeartCrack
+} from "lucide-react"
+
+import {
+ deleteConversation,
+ renameConversation,
  askVox,
  createConversation,
  getConversations,
@@ -22,17 +63,23 @@ import {
  getBootstrap
 } from "../../services/voxService"
 
+import { useLiturgy } from "../../hooks/useLiturgy"
+
+import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
+
 interface Message{
  id:string
  role:"user" | "assistant"
  content:string
  createdAt?:string
+ status?:"sending" | "sent" | "failed"
 }
 
 interface Conversation{
  id:string
  title:string
  hasMessages?: boolean
+ updatedAt?: string
 }
 
 interface VoxAskResponse{
@@ -42,9 +89,177 @@ interface VoxAskResponse{
  message?:string
 }
 
+interface Suggestion{
+ icon: LucideIcon
+ text: string
+}
+
+/* =========================
+   SUGESTÕES DE PERGUNTA
+========================= */
+
+const SUGGESTION_POOL: Suggestion[] = [
+ { icon: BookOpen, text: "Qual a diferença entre pecado mortal e venial?" },
+ { icon: ScrollText, text: "Me explica o que é a Santíssima Trindade." },
+ { icon: HandHeart, text: "Como eu começo a rezar todos os dias?" },
+ { icon: Moon, text: "Por que a Igreja recomenda a Adoração ao Santíssimo?" },
+ { icon: Compass, text: "Estou com dúvidas sobre o que Deus quer para minha vida." },
+ { icon: HeartHandshake, text: "Como perdoar alguém que me machucou muito?" },
+ { icon: Feather, text: "O que é viver em estado de graça?" },
+ { icon: Church, text: "Qual a importância da Missa dominical?" },
+ { icon: Sunrise, text: "Me dá um jeito simples de rezar de manhã." },
+ { icon: MessageCircleQuestion, text: "Por que confessar meus pecados a um padre, e não direto a Deus?" },
+ { icon: Star, text: "O que a Igreja ensina sobre Nossa Senhora?" },
+ { icon: BookMarked, text: "Explica o sentido do Pai Nosso, frase por frase." },
+ { icon: Anchor, text: "O que significa ter esperança cristã mesmo diante do sofrimento?" },
+ { icon: Flame, text: "O que são os dons do Espírito Santo?" },
+ { icon: Users, text: "Por que a Igreja fala tanto sobre comunidade e não só sobre 'eu e Deus'?" },
+ { icon: ShieldCheck, text: "Como resistir a uma tentação que sempre volta?" },
+ { icon: Landmark, text: "O que é o Magistério da Igreja?" },
+ { icon: Gift, text: "O que é a graça santificante?" },
+ { icon: Waves, text: "O que acontece de verdade no Batismo?" },
+ { icon: Hourglass, text: "Estou desanimado com meu próprio crescimento espiritual, o que fazer?" },
+ { icon: CloudRain, text: "Como lidar com a sensação de que Deus está em silêncio?" },
+ { icon: InfinityIcon, text: "O que a Igreja ensina sobre a vida eterna?" },
+ { icon: BookOpenCheck, text: "Como eu leio a Bíblia sem me perder?" },
+ { icon: HeartCrack, text: "Estou vivendo um luto, como a fé pode me ajudar?" }
+]
+
+function pickRandom(pool: Suggestion[], count: number): Suggestion[] {
+ const copy = [...pool]
+ const picked: Suggestion[] = []
+
+ while(picked.length < count && copy.length > 0){
+  const index = Math.floor(Math.random() * copy.length)
+  picked.push(copy[index])
+  copy.splice(index, 1)
+ }
+
+ return picked
+}
+
+/* =========================
+   MENSAGENS DE ERRO
+========================= */
+
+interface ErrorCopy{
+ message: string
+ icon: LucideIcon
+}
+
+const ERROR_ICONS: Record<string, LucideIcon> = {
+ RATE_LIMIT: TimerOff,
+ RATE_LIMIT_GEMINI: TimerOff,
+ MESSAGE_TOO_LONG: CircleAlert,
+ INVALID_CONVERSATION: ShieldAlert,
+ EMPTY_MESSAGE: CircleAlert,
+ TIMEOUT: TimerOff,
+ LIMIT_EXCEEDED: ShieldAlert,
+ NETWORK_ERROR: WifiOff,
+ AI_PROVIDER_ERROR: ServerCrash
+}
+
+// RATE_LIMIT/RATE_LIMIT_GEMINI de propósito não têm texto fixo aqui: o
+// backend já manda a contagem regressiva real (quantos segundos faltam),
+// mais específica do que qualquer texto genérico conseguiria ser.
+const ERROR_MESSAGES: Record<string, string> = {
+ MESSAGE_TOO_LONG: "Essa mensagem passou de 1000 caracteres. Reduza o texto para poder enviar.",
+ INVALID_CONVERSATION: "Essa conversa não existe mais. Recarregue a página para abrir uma nova.",
+ EMPTY_MESSAGE: "Digite algo antes de enviar.",
+ TIMEOUT: "O Vox demorou demais para responder dessa vez. Tente enviar de novo.",
+ LIMIT_EXCEEDED: "O Vox atingiu o limite de uso por agora. Tente novamente em alguns minutos.",
+ NETWORK_ERROR: "Sem conexão com a internet. Verifique sua rede e tente de novo.",
+ AI_PROVIDER_ERROR: "O Vox não conseguiu se conectar à IA agora. Tente novamente em instantes."
+}
+
+function resolveErrorCopy(code: string | null, fallbackMessage?: string): ErrorCopy{
+ return {
+  message: (code && ERROR_MESSAGES[code]) || fallbackMessage || "Algo deu errado ao enviar sua mensagem. Tente novamente.",
+  icon: (code && ERROR_ICONS[code]) || AlertTriangle
+ }
+}
+
+/* =========================
+   AGRUPAMENTO DA SIDEBAR
+========================= */
+
+function startOfDay(date: Date){
+ return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+}
+
+function groupConversationsByPeriod(list: Conversation[]): { label:string, items:Conversation[] }[]{
+
+ const todayStart = startOfDay(new Date())
+ const oneDay = 24 * 60 * 60 * 1000
+
+ const today:Conversation[] = []
+ const yesterday:Conversation[] = []
+ const lastWeek:Conversation[] = []
+ const older:Conversation[] = []
+
+ for(const conv of list){
+  const reference = conv.updatedAt ? new Date(conv.updatedAt) : null
+  const dayStart = reference ? startOfDay(reference) : todayStart
+  const diff = Math.round((todayStart - dayStart) / oneDay)
+
+  if(diff <= 0) today.push(conv)
+  else if(diff === 1) yesterday.push(conv)
+  else if(diff <= 7) lastWeek.push(conv)
+  else older.push(conv)
+ }
+
+ return [
+  { label:"Hoje", items:today },
+  { label:"Ontem", items:yesterday },
+  { label:"Últimos 7 dias", items:lastWeek },
+  { label:"Mais antigas", items:older }
+ ].filter(group => group.items.length > 0)
+}
+
+function formatTime(iso?: string){
+ return new Date(iso || "").toLocaleTimeString([],{
+  hour:"2-digit",
+  minute:"2-digit"
+ })
+}
+
+function growTextarea(el: HTMLTextAreaElement | null){
+ if(!el) return
+ el.style.height = "auto"
+ el.style.height = el.scrollHeight + "px"
+}
+
+/* =========================
+   BLOCOS AUXILIARES
+========================= */
+
+function SidebarSkeleton(){
+ return (
+  <div className={styles.sidebarSkeleton} aria-hidden="true">
+   {Array.from({ length:5 }).map((_,i)=>(
+    <div key={i} className={styles.skRow}>
+     <div className={`skeleton ${styles.skRowLine}`} style={{ width: i % 2 === 0 ? "88%" : "64%" }} />
+    </div>
+   ))}
+  </div>
+ )
+}
+
+function ChatSkeleton(){
+ return (
+  <div className={styles.chatSkeleton} aria-hidden="true">
+   <div className={`skeleton ${styles.skBubble} ${styles.skBubbleUser}`} style={{ width:"38%" }} />
+   <div className={`skeleton ${styles.skBubble} ${styles.skBubbleAi}`} style={{ width:"72%", height:64 }} />
+   <div className={`skeleton ${styles.skBubble} ${styles.skBubbleAi}`} style={{ width:"52%" }} />
+   <div className={`skeleton ${styles.skBubble} ${styles.skBubbleUser}`} style={{ width:"30%" }} />
+  </div>
+ )
+}
+
 export default function Vox(){
 
  const navigate = useNavigate()
+ const { liturgy } = useLiturgy()
 
  const [messages,setMessages] = useState<Message[]>([])
  const [input,setInput] = useState("")
@@ -54,6 +269,8 @@ export default function Vox(){
  const [conversationId,setConversationId] = useState<string | null>(null)
  const [conversations,setConversations] = useState<Conversation[]>([])
  const [menuOpen,setMenuOpen] = useState(false)
+
+ const [searchQuery,setSearchQuery] = useState("")
 
  const [renameOpen,setRenameOpen] = useState(false)
  const [renameValue,setRenameValue] = useState("")
@@ -65,16 +282,55 @@ export default function Vox(){
  const [error,setError] = useState<string | null>(null)
  const [errorCode,setErrorCode] = useState<string | null>(null)
 
- const [lastMessage,setLastMessage] = useState("")
-
  const [copiedId,setCopiedId] = useState<string | null>(null)
+
+ const [editingMessageId,setEditingMessageId] = useState<string | null>(null)
+ const [editingValue,setEditingValue] = useState("")
+
+ const [randomSuggestions,setRandomSuggestions] = useState<Suggestion[]>(()=>pickRandom(SUGGESTION_POOL, 3))
 
  const bottomRef = useRef<HTMLDivElement | null>(null)
  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+ const editTextareaRef = useRef<HTMLTextAreaElement | null>(null)
 
  const initialized = useRef(false)
  const openConversationRequest = useRef(0)
  const sendingRef = useRef(false)
+ const typewriterTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+ const errorCopy = useMemo(()=>resolveErrorCopy(errorCode, error || undefined),[errorCode, error])
+
+ const liturgySuggestion: Suggestion = useMemo(()=>{
+  const nome = liturgy?.liturgia?.trim()
+  return {
+   icon: Church,
+   text: nome
+    ? `O que é "${nome}", que a Igreja celebra hoje?`
+    : "O que a Igreja celebra hoje?"
+  }
+ },[liturgy?.liturgia])
+
+ const suggestions = useMemo(
+  ()=>[liturgySuggestion, ...randomSuggestions],
+  [liturgySuggestion, randomSuggestions]
+ )
+
+ const filteredConversations = useMemo(()=>{
+  const query = searchQuery.trim().toLowerCase()
+  if(!query) return conversations
+  return conversations.filter(conv =>
+   (conv.title || "Nova conversa").toLowerCase().includes(query)
+  )
+ },[conversations, searchQuery])
+
+ const conversationGroups = useMemo(()=>{
+  if(searchQuery.trim()){
+   return filteredConversations.length
+    ? [{ label:"Resultados", items:filteredConversations }]
+    : []
+  }
+  return groupConversationsByPeriod(filteredConversations)
+ },[filteredConversations, searchQuery])
 
  /* =========================
     SCROLL
@@ -116,6 +372,17 @@ useEffect(()=>{
   textareaRef.current?.focus()
  },[])
 
+ useEffect(()=>{
+  if(!conversationId) return
+  setRandomSuggestions(pickRandom(SUGGESTION_POOL, 3))
+ },[conversationId])
+
+ useEffect(()=>{
+  return ()=>{
+   if(typewriterTimer.current) clearTimeout(typewriterTimer.current)
+  }
+ },[])
+
  async function init(){
 
     try{
@@ -155,6 +422,7 @@ useEffect(()=>{
     setConversationId(id)
     setMenuOpen(false)
     setLoadingConversation(true)
+    cancelEdit()
 
     const msgs = await getMessages(id)
 
@@ -172,7 +440,7 @@ useEffect(()=>{
  }
 
  /* =========================
-    NOVA CONVERSA (🔥 LIMPO)
+    NOVA CONVERSA
  ========================= */
 
  async function handleNewConversation(){
@@ -198,78 +466,36 @@ useEffect(()=>{
  }
 
  /* =========================
-    ENVIAR
+    ENVIO / ENTREGA DA MENSAGEM
  ========================= */
 
- async function sendMessage(){
+ function updateMessageStatus(id:string, status: Message["status"]){
+  setMessages(prev => prev.map(m => m.id === id ? { ...m, status } : m))
+ }
 
-  const text = input.replace(/\r/g,"")
+ async function deliverMessage(target: Pick<Message,"id" | "content">){
 
-  if(!text.trim() || loading || loadingConversation || !conversationId){
-    return
-  }
-
-  if(sendingRef.current) return
-  sendingRef.current = true
-
-  setLastMessage(text)
-
-  if(text.length > 1000){
-    setError("A mensagem deve ter no máximo 1000 caracteres.")
-    return
-  }
-
-  const userMessage:Message={
-  id:crypto.randomUUID(),
-  role:"user",
-  content:text,
-  createdAt:new Date().toISOString()
-  }
-
-  setMessages(prev => [...prev,userMessage])
-  setInput("")
-
-  if(textareaRef.current){
-    textareaRef.current.style.height = "auto"
-  }
+  if(!conversationId) return
 
   setLoading(true)
   setError(null)
   setErrorCode(null)
 
   try{
-    const res = await askVox(text, conversationId) as VoxAskResponse
+    const res = await askVox(target.content, conversationId) as VoxAskResponse
 
     if(!res?.success || !res?.response){
 
-      setMessages(prev => prev.filter(m => m.id !== userMessage.id))
-      setInput(text)
+      updateMessageStatus(target.id, "failed")
 
       const code = res?.error || "UNKNOWN_ERROR"
       setErrorCode(code)
-
-      if(code === "RATE_LIMIT" || code === "RATE_LIMIT_GEMINI"){
-        setError("Você está enviando mensagens muito rápido. Aguarde alguns segundos.")
-      }else if(code === "MESSAGE_TOO_LONG"){
-        setError("A mensagem deve ter no máximo 1000 caracteres.")
-      }else if(code === "INVALID_CONVERSATION"){
-        setError("Conversa inválida. Recarregue a página.")
-      }else if(code === "EMPTY_MESSAGE"){
-        setError("Digite uma mensagem antes de enviar.")
-      }else if(code === "TIMEOUT"){
-        setError("O Vox demorou para responder. Tente novamente.")
-      }else if(code === "LIMIT_EXCEEDED"){
-        setError("Limite diário atingido. Tente novamente mais tarde.")
-      }else if(code === "NETWORK_ERROR"){
-        setError("Erro de conexão. Verifique sua internet.")
-      }else if(code === "AI_PROVIDER_ERROR"){
-        setError("Erro na comunicação com a IA.")
-      }else{
-        setError(res?.message || "Erro inesperado no envio da mensagem.")
-      }
+      setError(resolveErrorCopy(code, res?.message).message)
 
       return
     }
+
+    updateMessageStatus(target.id, "sent")
 
     const aiMessage:Message={
     id:crypto.randomUUID(),
@@ -285,17 +511,108 @@ useEffect(()=>{
       setConversations(list)
     }
 
-  }catch(error:any){
-    setMessages(prev => prev.filter(m => m.id !== userMessage.id))
-    setInput(text)
+  }catch{
+    updateMessageStatus(target.id, "failed")
     setErrorCode("UNKNOWN_ERROR")
-    setError("Erro ao processar sua mensagem.")
-
+    setError("Não foi possível enviar sua mensagem. Verifique sua internet e tente novamente.")
   }finally{
     setLoading(false)
     sendingRef.current = false
     textareaRef.current?.focus()
   }
+ }
+
+ async function sendMessage(){
+
+  const text = input.replace(/\r/g,"")
+
+  if(!text.trim() || loading || loadingConversation || !conversationId){
+    return
+  }
+
+  if(sendingRef.current) return
+  sendingRef.current = true
+
+  if(text.length > 1000){
+    setErrorCode("MESSAGE_TOO_LONG")
+    setError(resolveErrorCopy("MESSAGE_TOO_LONG").message)
+    sendingRef.current = false
+    return
+  }
+
+  const userMessage:Message={
+  id:crypto.randomUUID(),
+  role:"user",
+  content:text,
+  createdAt:new Date().toISOString(),
+  status:"sending"
+  }
+
+  setMessages(prev => [...prev,userMessage])
+  setInput("")
+  growTextarea(textareaRef.current)
+
+  await deliverMessage(userMessage)
+ }
+
+ async function retryMessage(id:string){
+
+  if(loading || sendingRef.current) return
+
+  const target = messages.find(m => m.id === id)
+  if(!target) return
+
+  sendingRef.current = true
+  updateMessageStatus(id, "sending")
+
+  await deliverMessage(target)
+ }
+
+ /* =========================
+    EDITAR MENSAGEM
+ ========================= */
+
+ function startEdit(msg:Message){
+  if(loading) return
+  setEditingMessageId(msg.id)
+  setEditingValue(msg.content)
+  setTimeout(()=>{
+   editTextareaRef.current?.focus()
+   growTextarea(editTextareaRef.current)
+  }, 0)
+ }
+
+ function cancelEdit(){
+  setEditingMessageId(null)
+  setEditingValue("")
+ }
+
+ async function saveEdit(){
+
+  const trimmed = editingValue.trim()
+
+  if(!editingMessageId || !trimmed) return
+
+  if(trimmed.length > 1000){
+   setErrorCode("MESSAGE_TOO_LONG")
+   setError(resolveErrorCopy("MESSAGE_TOO_LONG").message)
+   return
+  }
+
+  if(loading || sendingRef.current) return
+
+  const id = editingMessageId
+
+  setMessages(prev => prev.map(m =>
+   m.id === id ? { ...m, content:trimmed, status:"sending" } : m
+  ))
+
+  setEditingMessageId(null)
+  setEditingValue("")
+
+  sendingRef.current = true
+
+  await deliverMessage({ id, content:trimmed })
  }
 
  /* =========================
@@ -306,6 +623,16 @@ useEffect(()=>{
   if(e.key==="Enter" && !e.shiftKey && !loading){
    e.preventDefault()
    sendMessage()
+  }
+ }
+
+ function handleEditKey(e:React.KeyboardEvent<HTMLTextAreaElement>){
+  if(e.key==="Enter" && !e.shiftKey){
+   e.preventDefault()
+   saveEdit()
+  }
+  if(e.key==="Escape"){
+   cancelEdit()
   }
  }
 
@@ -391,11 +718,64 @@ useEffect(()=>{
   setErrorCode(null)
   setInput(e.target.value)
 
-  const el = textareaRef.current
-  if(!el) return
+  growTextarea(e.target)
+ }
 
-  el.style.height = "auto"
-  el.style.height = el.scrollHeight+"px"
+ /* =========================
+    SUGESTÕES → PREENCHER
+ ========================= */
+
+ function handleSuggestionClick(text:string){
+
+  if(loading || loadingConversation) return
+
+  if(typewriterTimer.current){
+   clearTimeout(typewriterTimer.current)
+   typewriterTimer.current = null
+  }
+
+  setError(null)
+  setErrorCode(null)
+
+  const reduceMotion =
+   typeof window !== "undefined" &&
+   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+
+  if(reduceMotion){
+   setInput(text)
+   const el = textareaRef.current
+   if(el){
+    el.value = text
+    growTextarea(el)
+   }
+   textareaRef.current?.focus()
+   return
+  }
+
+  let i = 0
+  const chunk = Math.max(1, Math.round(text.length / 32))
+
+  const step = ()=>{
+   i = Math.min(text.length, i + chunk)
+   const next = text.slice(0, i)
+
+   setInput(next)
+
+   const el = textareaRef.current
+   if(el){
+    el.value = next
+    growTextarea(el)
+   }
+
+   if(i < text.length){
+    typewriterTimer.current = setTimeout(step, 12)
+   }else{
+    typewriterTimer.current = null
+    textareaRef.current?.focus()
+   }
+  }
+
+  step()
  }
 
  return(
@@ -419,7 +799,7 @@ useEffect(()=>{
         disabled={loadingConversation}
       >
         {loadingConversation ? (
-          <div className={styles.spinner}></div>
+          <Loader2 size={18} className={styles.spinIcon} />
         ) : (
           <>
             <Plus size={18} />
@@ -431,60 +811,101 @@ useEffect(()=>{
     </div>
 
     <p className={styles.sidebarTitle}>Suas conversas</p>
-    <p className={styles.sidebarSubtitle}>
-     Retome suas perguntas com o Vox
-    </p>
+
+    <div className={styles.searchBox}>
+     <Search size={15} className={styles.searchIcon} />
+     <input
+      value={searchQuery}
+      onChange={(e)=>setSearchQuery(e.target.value)}
+      placeholder="Buscar conversa..."
+      aria-label="Buscar conversa por título"
+     />
+     {searchQuery && (
+      <button
+       type="button"
+       className={styles.searchClear}
+       onClick={()=>setSearchQuery("")}
+       aria-label="Limpar busca"
+      >
+       <X size={13} />
+      </button>
+     )}
+    </div>
 
     <div className={styles.conversationList}>
 
-     {conversations.map(conv => (
+     {loadingConversation && conversations.length === 0 ? (
 
-      <div
-       key={conv.id}
-       className={`${styles.conversationItem} ${
-        conv.id === conversationId ? styles.active : ""
-       }`}
-       onClick={()=>openConversation(conv.id)}
-      >
-       <div className={styles.conversationContent}>
+      <SidebarSkeleton />
 
-          <span className={styles.conversationTitle}>
-            {conv.title || "Nova conversa"}
-          </span>
+     ) : conversationGroups.length === 0 ? (
 
-        {conv.hasMessages && (
-          <div className={styles.conversationActions}>
+      <p className={styles.noResults}>
+       {searchQuery ? "Nenhuma conversa encontrada." : "Nenhuma conversa ainda."}
+      </p>
 
-            <button
-              className={styles.iconActionButton}
-              disabled={renaming || deletingConversationId === conv.id}
-              aria-label={`Renomear conversa ${conv.title || "Nova conversa"}`}
-              onClick={(e)=>{
-                e.stopPropagation()
-                openRename(conv.id, conv.title || "")
-              }}
-            >
-              <Pencil size={16}/>
-            </button>
+     ) : (
 
-            <button
-              className={styles.iconActionButton}
-              disabled={renaming || deletingConversationId === conv.id}
-              aria-label={`Apagar conversa ${conv.title || "Nova conversa"}`}
-              onClick={(e)=>{
-                e.stopPropagation()
-                handleDeleteConversation(conv.id)
-              }}
-            >
-              <Trash2 size={16}/>
-            </button>
+      conversationGroups.map(group => (
 
-          </div>
-        )}
-        </div>
-      </div>
+       <div key={group.label} className={styles.conversationGroup}>
 
-     ))}
+        <span className={styles.groupLabel}>{group.label}</span>
+
+        {group.items.map(conv => (
+
+         <div
+          key={conv.id}
+          className={`${styles.conversationItem} ${
+           conv.id === conversationId ? styles.active : ""
+          }`}
+          onClick={()=>openConversation(conv.id)}
+         >
+          <div className={styles.conversationContent}>
+
+             <span className={styles.conversationTitle}>
+               {conv.title || "Nova conversa"}
+             </span>
+
+           {conv.hasMessages && (
+             <div className={styles.conversationActions}>
+
+               <button
+                 className={styles.iconActionButton}
+                 disabled={renaming || deletingConversationId === conv.id}
+                 aria-label={`Renomear conversa ${conv.title || "Nova conversa"}`}
+                 onClick={(e)=>{
+                   e.stopPropagation()
+                   openRename(conv.id, conv.title || "")
+                 }}
+               >
+                 <Pencil size={16}/>
+               </button>
+
+               <button
+                 className={styles.iconActionButton}
+                 disabled={renaming || deletingConversationId === conv.id}
+                 aria-label={`Apagar conversa ${conv.title || "Nova conversa"}`}
+                 onClick={(e)=>{
+                   e.stopPropagation()
+                   handleDeleteConversation(conv.id)
+                 }}
+               >
+                 <Trash2 size={16}/>
+               </button>
+
+             </div>
+           )}
+           </div>
+         </div>
+
+        ))}
+
+       </div>
+
+      ))
+
+     )}
 
     </div>
 
@@ -508,23 +929,28 @@ useEffect(()=>{
      <ChevronLeft size={20}/>
     </button>
 
-    <h1>VoxAI</h1>
+    <h1>
+     <span className={styles.titleBadge}>
+      <Sparkles size={14} className={styles.titleIcon} />
+     </span>
+     VoxAI
+    </h1>
 
    </header>
 
    {error && (
     <div className={styles.errorBox} role="status" aria-live="polite">
+     <errorCopy.icon size={16} className={styles.errorIcon} />
      <span>{error}</span>
-     {lastMessage && !loading && errorCode !== "LIMIT_EXCEEDED" && errorCode !== "INVALID_CONVERSATION" && (
+     {errorCode !== "LIMIT_EXCEEDED" && errorCode !== "INVALID_CONVERSATION" && errorCode !== "MESSAGE_TOO_LONG" && errorCode !== "EMPTY_MESSAGE" && (
       <button
        className={styles.retryButton}
        onClick={()=>{
         setError(null)
         setErrorCode(null)
-        sendMessage()
        }}
       >
-       Tentar novamente
+       Entendi
       </button>
      )}
     </div>
@@ -532,30 +958,59 @@ useEffect(()=>{
 
    <main className={styles.chatArea}>
 
-      {loadingConversation && (
-        <div className={styles.statusInfo}>
-          ⏳ Carregando conversa...
-        </div>
-      )}
+    {loadingConversation ? (
 
-      {messages.length === 0 && !loading && !loadingConversation && (
+      <ChatSkeleton />
+
+    ) : (
+
+     <>
+
+      {messages.length === 0 && !loading && (
         <div className={styles.emptyState}>
-          Pergunte algo ao Vox ✨<br/><br/>
-          
-          <span className={styles.emptyStateHint}>
-            Você pode pedir explicações, tirar dúvidas ou conversar sobre:<br/><br/>
 
-            📖 Doutrina Católica<br/>
-            🙏 Espiritualidade e vida de oração<br/>
-            ❤️ Sentimentos, dúvidas e desafios pessoais<br/>
-            ❓ Qualquer tema espiritual ou questão da vida
-          </span>
+          <div className={styles.emptyIconWrap}>
+           <div className={styles.emptyGlow} />
+           <Sparkles size={26} strokeWidth={1.75} />
+          </div>
+
+          <h2 className={styles.emptyTitle}>Em que posso te ajudar hoje?</h2>
+          <p className={styles.emptySubtitle}>
+           Pergunte sobre fé, oração ou o que estiver no seu coração.
+          </p>
+
+          <div className={styles.suggestionsGrid}>
+           {suggestions.map((s, i)=>{
+            const Icon = s.icon
+            const isLiturgy = i === 0
+
+            return (
+             <button
+              key={`${s.text}-${i}`}
+              type="button"
+              className={styles.suggestionCard}
+              style={{ animationDelay:`${i * 60}ms` }}
+              onClick={()=>handleSuggestionClick(s.text)}
+             >
+              <span className={styles.suggestionIconWrap}>
+               <Icon size={16} strokeWidth={1.9} />
+              </span>
+              <span className={styles.suggestionText}>{s.text}</span>
+              <ChevronRight size={15} className={styles.suggestionChevron} />
+              {isLiturgy && <span className={styles.suggestionBadge}>Hoje</span>}
+             </button>
+            )
+           })}
+          </div>
+
         </div>
       )}
 
-    {messages.map(msg => {
+    {messages.map((msg, idx) => {
 
      const isUser = msg.role === "user"
+     const isLastUserMessage = isUser && idx === messages.length - 1
+     const isEditing = editingMessageId === msg.id
 
      return(
 
@@ -563,25 +1018,95 @@ useEffect(()=>{
        key={msg.id}
        className={`${styles.message} ${
         isUser ? styles.userMessage : styles.aiMessage
-       }`}
+       } ${msg.status === "failed" ? styles.messageFailed : ""}`}
       >
 
        {isUser ? (
 
-        <>
+        isEditing ? (
 
-          <div className={styles.userMessageContent}>
-            {msg.content}
+         <div className={styles.editBox}>
+          <textarea
+           ref={editTextareaRef}
+           value={editingValue}
+           onChange={(e)=>{
+            setEditingValue(e.target.value)
+            growTextarea(e.target)
+           }}
+           onKeyDown={handleEditKey}
+           maxLength={1000}
+           rows={1}
+           aria-label="Editar mensagem"
+          />
+          <div className={styles.editActions}>
+           <button type="button" className={styles.editCancel} onClick={cancelEdit}>
+            Cancelar
+           </button>
+           <button
+            type="button"
+            className={styles.editSave}
+            onClick={saveEdit}
+            disabled={!editingValue.trim()}
+           >
+            <ArrowUp size={13} />
+            Reenviar
+           </button>
           </div>
+         </div>
 
-          <small className={styles.messageTime}>
-            {new Date(msg.createdAt || "").toLocaleTimeString([],{
-              hour:"2-digit",
-              minute:"2-digit"
-            })}
-          </small>
+        ) : (
 
-        </>
+         <>
+
+           <div className={styles.userMessageContent}>
+             {msg.content}
+           </div>
+
+           <div className={styles.messageFooter}>
+
+            <small className={styles.messageTime}>
+              {formatTime(msg.createdAt)}
+            </small>
+
+            {msg.status === "sending" && (
+             <span className={styles.statusRow}>
+              <Loader2 size={11} className={styles.spinIcon} />
+              Enviando
+             </span>
+            )}
+
+            {msg.status === "failed" && (
+             <span className={`${styles.statusRow} ${styles.statusFailed}`}>
+              <AlertTriangle size={11} />
+              Falha ao enviar
+              <button
+               type="button"
+               className={styles.inlineRetry}
+               onClick={()=>retryMessage(msg.id)}
+              >
+               <RotateCcw size={11} />
+               Tentar de novo
+              </button>
+             </span>
+            )}
+
+            {isLastUserMessage && msg.status !== "sending" && !loading && (
+             <button
+              type="button"
+              className={styles.editTrigger}
+              onClick={()=>startEdit(msg)}
+              aria-label="Editar mensagem"
+             >
+              <Pencil size={11} />
+              Editar
+             </button>
+            )}
+
+           </div>
+
+         </>
+
+        )
 
       ) : (
 
@@ -644,10 +1169,7 @@ useEffect(()=>{
           </div>
 
           <small className={styles.messageTime}>
-            {new Date(msg.createdAt || "").toLocaleTimeString([],{
-              hour:"2-digit",
-              minute:"2-digit"
-            })}
+            {formatTime(msg.createdAt)}
           </small>
 
         </>
@@ -660,7 +1182,7 @@ useEffect(()=>{
 
     })}
 
-    {loading && !loadingConversation && messages.length > 0 && (
+    {loading && messages.length > 0 && (
 
      <div className={`${styles.message} ${styles.aiMessage}`}>
       <div className={styles.typing}>
@@ -668,8 +1190,12 @@ useEffect(()=>{
         <span></span>
         <span></span>
       </div>
-      <small className={styles.typingLabel}>Vox está escrevendo...</small>
+      <small className={styles.typingLabel}>Vox está refletindo...</small>
      </div>
+
+    )}
+
+     </>
 
     )}
 
@@ -678,6 +1204,17 @@ useEffect(()=>{
    </main>
 
    <div className={styles.inputWrapper}>
+
+    {input.length > 800 && (
+     <div className={styles.charCountRow}>
+      <span className={`${styles.charCount} ${
+       input.length >= 1000 ? styles.charCountMax :
+       input.length >= 950 ? styles.charCountWarn : ""
+      }`}>
+       {input.length}/1000
+      </span>
+     </div>
+    )}
 
     <div className={styles.inputBox}>
 
@@ -702,9 +1239,9 @@ useEffect(()=>{
         aria-label="Enviar mensagem"
       >
       {loading ? (
-        <div className={styles.spinner}></div>
+        <Loader2 size={18} className={styles.spinIcon} />
       ) : (
-        "↑"
+        <ArrowUp size={20} strokeWidth={2.5} />
       )}
      </button>
 
