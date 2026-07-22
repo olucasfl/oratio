@@ -54,4 +54,16 @@ export async function getUserActivity(userId: string) {
   return res.data
 }
 
+export type AdminTimeseriesMetric =
+  "users" | "prayers" | "rosaries" | "consecrations" | "logins"
+
+export async function getAdminTimeseries(
+  metric: AdminTimeseriesMetric,
+  months = 6
+) {
+  const res = await api.get(
+    `/users/admin/stats/timeseries?metric=${metric}&months=${months}`
+  )
+  return res.data
+}
 

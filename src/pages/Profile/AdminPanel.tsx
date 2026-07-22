@@ -7,25 +7,38 @@ import {
   RefreshCcw, ChevronLeft, Flame, X, BadgeCheck, BadgeX,
   BookHeart, ChevronDown, ChevronUp, ArrowUpDown, CalendarDays,
   SortAsc, Bot, LogIn, Gem, Heart, Pin, Check, AlertCircle,
-  Loader2, Cross, RotateCcw
+  Loader2, Cross, RotateCcw, LayoutGrid, List, SlidersHorizontal,
+  BarChart3
 } from "lucide-react"
 
-import type { AdminFilters } from "../../services/adminService"
+import type { AdminFilters, AdminTimeseriesMetric } from "../../services/adminService"
 import {
   getAdminStats, getAllUsers, setAdminStatus,
-  getUserDetail, deleteUser, getUserActivity
+  getUserDetail, deleteUser, getUserActivity, getAdminTimeseries
 } from "../../services/adminService"
 import { getProfile } from "../../services/profileService"
 import { usePullToRefresh } from "../../hooks/usePullToRefresh"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 import Skeleton from "../../components/Skeleton/Skeleton"
+import AdminChart from "../../components/AdminChart/AdminChart"
+import AdminFilterSheet from "../../components/AdminFilterSheet/AdminFilterSheet"
 import styles from "./AdminPanel.module.css"
 
+type Tab          = "overview" | "users" | "charts"
+type ViewMode      = "cards" | "compact"
 type SortKey      = "createdAt" | "name" | "streak" | "prayers" | "rosaries"
 type SortDir      = "desc" | "asc"
 type FilterRole   = "all" | "admin" | "normal"
 type FilterVerif  = "all" | "verified" | "unverified"
 type FilterActivity = "all" | "7d" | "30d"
+
+const METRIC_OPTIONS: { key: AdminTimeseriesMetric; label: string; icon: React.ReactNode }[] = [
+  { key: "users",         label: "Usuários",     icon: <Users size={14}/> },
+  { key: "prayers",       label: "Orações",      icon: <Heart size={14}/> },
+  { key: "rosaries",      label: "Terços",       icon: <BookHeart size={14}/> },
+  { key: "consecrations", label: "Consagrações", icon: <Crown size={14}/> },
+  { key: "logins",        label: "Logins",       icon: <LogIn size={14}/> },
+]
 
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString("pt-BR", {
@@ -61,8 +74,19 @@ function getActivityIcon(type: string) {
   return map[type] ?? <Pin size={16} />
 }
 
+// 0 = sem sequência, 1-6 = comum, 7-29 = constante, 30+ = excepcional
+function streakClass(streak: number) {
+  if (streak <= 0) return styles.streakNone
+  if (streak < 7)  return styles.streakLow
+  if (streak < 30) return styles.streakMid
+  return styles.streakHigh
+}
+
 export default function AdminPanel() {
   const navigate = useNavigate()
+
+  const [activeTab, setActiveTab] = useState<Tab>("overview")
+  const [viewMode,  setViewMode]  = useState<ViewMode>("cards")
 
   const [initialLoading, setInitialLoading] = useState(true)
   const [usersLoading,   setUsersLoading]   = useState(false)
@@ -77,9 +101,14 @@ export default function AdminPanel() {
   const [filterRole,   setFilterRole]   = useState<FilterRole>("all")
   const [filterVerif,  setFilterVerif]  = useState<FilterVerif>("all")
   const [filterActive, setFilterActive] = useState<FilterActivity>("all")
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false)
 
   const [sortBy,  setSortBy]  = useState<SortKey>("createdAt")
   const [sortDir, setSortDir] = useState<SortDir>("desc")
+
+  const [chartMetric, setChartMetric] = useState<AdminTimeseriesMetric>("users")
+  const [chartData,    setChartData]    = useState<any>(null)
+  const [chartLoading, setChartLoading] = useState(false)
 
   const [detailModal,     setDetailModal]     = useState<{ show: boolean; user: any }>({ show: false, user: null })
   const [detailLoading,   setDetailLoading]   = useState(false)
@@ -105,6 +134,11 @@ export default function AdminPanel() {
     const t = setTimeout(() => loadUsers(), 350)
     return () => clearTimeout(t)
   }, [searchTerm, filterRole, filterVerif, filterActive])
+
+  useEffect(() => {
+    if (activeTab !== "charts") return
+    loadChart(chartMetric)
+  }, [activeTab, chartMetric])
 
   async function getCurrentUser() {
     try { setCurrentUserId((await getProfile()).id) } catch {}
@@ -132,11 +166,45 @@ export default function AdminPanel() {
     }
   }
 
+  async function loadChart(metric: AdminTimeseriesMetric) {
+    try {
+      setChartLoading(true)
+      setChartData(await getAdminTimeseries(metric, 6))
+    } catch {
+      setChartData(null)
+    } finally {
+      setChartLoading(false)
+    }
+  }
+
   async function refreshAll() {
-    await Promise.all([loadStats(), loadUsers()])
+    const tasks = [loadStats(), loadUsers()]
+    if (activeTab === "charts") tasks.push(loadChart(chartMetric))
+    await Promise.all(tasks)
   }
 
   usePullToRefresh(refreshAll)
+
+  function goToChart(metric: AdminTimeseriesMetric) {
+    setChartMetric(metric)
+    setActiveTab("charts")
+  }
+
+  function clearAllFilters() {
+    setSearchTerm("")
+    setFilterRole("all")
+    setFilterVerif("all")
+    setFilterActive("all")
+  }
+
+  const activeFilterCount = [filterRole, filterVerif, filterActive]
+    .filter(v => v !== "all").length
+
+  const filterSummary = [
+    filterRole   !== "all" ? (filterRole === "admin" ? "Admin" : "Normal") : null,
+    filterVerif  !== "all" ? (filterVerif === "verified" ? "Verificados" : "Não verif.") : null,
+    filterActive !== "all" ? (filterActive === "7d" ? "7 dias" : "30 dias") : null,
+  ].filter(Boolean).join(" · ")
 
   const sortedUsers = useMemo(() => {
     return [...users].sort((a, b) => {
@@ -234,7 +302,9 @@ export default function AdminPanel() {
     return sorted.slice(start, start + ITEMS_PER_PAGE)
   }, [activityData, activityPage])
 
-  const totalUnverified = stats ? (stats.totalUsers ?? 0) - (stats.totalVerified ?? 0) : null
+  const verifiedPct = stats && stats.totalUsers > 0
+    ? Math.round((stats.totalVerified / stats.totalUsers) * 100)
+    : null
 
   function Delta({ value }: { value?: number }) {
     if (typeof value !== "number") return null
@@ -242,6 +312,117 @@ export default function AdminPanel() {
       <em className={`${styles.statDelta} ${value > 0 ? styles.statDeltaUp : ""}`}>
         {value > 0 ? `+${value}` : value} essa semana
       </em>
+    )
+  }
+
+  function renderActions(user: any, isLoadingThis: boolean, isUpdatingAdmin: boolean, size = 15) {
+    return (
+      <div className={styles.userActions}>
+        <button
+          className={`${styles.btnView} ${isLoadingThis ? styles.btnLoading : ""}`}
+          onClick={() => !isLoadingThis && openDetail(user)}
+          disabled={isLoadingThis}
+          title="Ver detalhes"
+        >
+          {isLoadingThis ? <Loader2 size={size} className={styles.spinIcon}/> : <Eye size={size}/>}
+        </button>
+        <button
+          className={`${user.isAdmin ? styles.btnAdminOn : styles.btnAdminOff} ${isUpdatingAdmin ? styles.btnLoading : ""}`}
+          disabled={isUpdatingAdmin}
+          onClick={() => !isUpdatingAdmin && toggleAdmin(user.id, user.isAdmin)}
+          title={user.isAdmin ? "Remover admin" : "Tornar admin"}
+        >
+          {isUpdatingAdmin ? <Loader2 size={size} className={styles.spinIcon}/> : <Crown size={size}/>}
+        </button>
+        {user.id !== currentUserId && (
+          <button
+            className={styles.btnDelete}
+            onClick={() => setDeleteModal({ show: true, userId: user.id })}
+            title="Deletar"
+          >
+            <Trash2 size={size}/>
+          </button>
+        )}
+      </div>
+    )
+  }
+
+  function renderCard(user: any) {
+    const isLoadingThis = loadingDetailId === user.id
+    const isUpdatingAdmin = adminLoading && updateId === user.id
+    const streak = user.spiritualStats?.prayerStreak || 0
+    return (
+      <div
+        key={user.id}
+        className={`${styles.userCard} ${isLoadingThis ? styles.userCardLoading : ""} ${user.isAdmin ? styles.userCardAdmin : ""}`}
+      >
+        <div className={styles.userLeft}>
+          <div className={styles.userAvatar}>{user.name?.charAt(0)}</div>
+          <div className={styles.userInfo}>
+            <div className={styles.userNameRow}>
+              <strong>{user.name}</strong>
+              {user.isAdmin && <span className={styles.adminBadge}>Admin</span>}
+              {user.emailVerified
+                ? <span className={styles.verifiedDot} title="Verificado"><Check size={10}/></span>
+                : <span className={styles.unverifiedDot} title="Não verificado"><AlertCircle size={10}/></span>
+              }
+            </div>
+            <p className={styles.userEmail}>{user.email}</p>
+            {user.createdAt && (
+              <p className={styles.userDate}>
+                <CalendarDays size={11}/>
+                {fmtDate(user.createdAt)}
+              </p>
+            )}
+            <div className={styles.userChips}>
+              <span className={styles.chipRosary}>
+                {user.spiritualStats?.rosariesPrayed || 0} Terços
+              </span>
+              <span className={styles.chipPrayer}>
+                {user.spiritualStats?.prayersPrayed || 0} Orações
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.userRight}>
+          <div className={styles.userStats}>
+            <span className={streakClass(streak)} title="Streak">
+              <Flame size={12}/>
+              {streak}
+            </span>
+          </div>
+          {renderActions(user, isLoadingThis, isUpdatingAdmin)}
+        </div>
+      </div>
+    )
+  }
+
+  function renderCompactRow(user: any) {
+    const isLoadingThis = loadingDetailId === user.id
+    const isUpdatingAdmin = adminLoading && updateId === user.id
+    const streak = user.spiritualStats?.prayerStreak || 0
+    return (
+      <div
+        key={user.id}
+        className={`${styles.compactRow} ${isLoadingThis ? styles.userCardLoading : ""}`}
+      >
+        <div className={styles.compactAvatar}>{user.name?.charAt(0)}</div>
+        <div className={styles.compactInfo}>
+          <div className={styles.compactNameRow}>
+            <strong>{user.name}</strong>
+            {user.isAdmin && <span className={styles.adminBadge}>Admin</span>}
+            {!user.emailVerified && (
+              <span className={styles.unverifiedDot} title="Não verificado"><AlertCircle size={9}/></span>
+            )}
+          </div>
+          <span className={styles.compactEmail}>{user.email}</span>
+        </div>
+        <span className={`${styles.compactStreak} ${streakClass(streak)}`}>
+          <Flame size={12}/> {streak}
+        </span>
+        {renderActions(user, isLoadingThis, isUpdatingAdmin, 14)}
+      </div>
     )
   }
 
@@ -275,16 +456,39 @@ export default function AdminPanel() {
 
       {/* HEADER */}
       <header className={styles.header}>
-        <button className={styles.backButton} onClick={() => navigate(-1)}>
-          <ChevronLeft size={20}/>
-        </button>
-        <div>
-          <h1>Painel Admin</h1>
-          <p>Gerencie usuários e estatísticas</p>
+        <div className={styles.headerTop}>
+          <button className={styles.backButton} onClick={() => navigate(-1)}>
+            <ChevronLeft size={20}/>
+          </button>
+          <div>
+            <h1>Painel Admin</h1>
+            <p>Gerencie usuários e estatísticas</p>
+          </div>
+          <button className={styles.refreshBtn} onClick={refreshAll} title="Atualizar">
+            <RefreshCcw size={16}/>
+          </button>
         </div>
-        <button className={styles.refreshBtn} onClick={refreshAll} title="Atualizar">
-          <RefreshCcw size={16}/>
-        </button>
+
+        <div className={styles.tabBar}>
+          <button
+            className={`${styles.tabBtn} ${activeTab === "overview" ? styles.tabBtnActive : ""}`}
+            onClick={() => setActiveTab("overview")}
+          >
+            <Activity size={15}/> Visão Geral
+          </button>
+          <button
+            className={`${styles.tabBtn} ${activeTab === "users" ? styles.tabBtnActive : ""}`}
+            onClick={() => setActiveTab("users")}
+          >
+            <Users size={15}/> Usuários
+          </button>
+          <button
+            className={`${styles.tabBtn} ${activeTab === "charts" ? styles.tabBtnActive : ""}`}
+            onClick={() => setActiveTab("charts")}
+          >
+            <BarChart3 size={15}/> Gráficos
+          </button>
+        </div>
       </header>
 
       <main className={styles.container}>
@@ -300,245 +504,218 @@ export default function AdminPanel() {
           </div>
         )}
 
-        {/* ── STATS ── */}
-        <section className={styles.section}>
-          <div className={styles.sectionTitle}>
-            <Activity size={17}/>
-            <h2>Visão Geral</h2>
-          </div>
-
-          <div className={styles.statsGrid}>
-            <div className={`${styles.statCard} ${styles.statBlue}`}>
-              <Users size={20}/>
-              <span>Total</span>
-              <strong>{stats?.totalUsers ?? "–"}</strong>
-              <Delta value={stats?.last7Days?.newUsers}/>
-            </div>
-            <div className={`${styles.statCard} ${styles.statGreen}`}>
-              <BadgeCheck size={20}/>
-              <span>Verificados</span>
-              <strong>{stats?.totalVerified ?? "–"}</strong>
-            </div>
-            <div className={`${styles.statCard} ${styles.statOrange}`}>
-              <BadgeX size={20}/>
-              <span>Não verif.</span>
-              <strong>{totalUnverified ?? "–"}</strong>
-            </div>
-            <div className={`${styles.statCard} ${styles.statRed}`}>
-              <Flame size={20}/>
-              <span>Orações</span>
-              <strong>{stats?.prayersPrayed ?? "–"}</strong>
-              <Delta value={stats?.last7Days?.prayers}/>
-            </div>
-            <div className={`${styles.statCard} ${styles.statPurple}`}>
-              <BookHeart size={20}/>
-              <span>Terços</span>
-              <strong>{stats?.rosariesPrayed ?? "–"}</strong>
-              <Delta value={stats?.last7Days?.rosaries}/>
-            </div>
-            <div className={`${styles.statCard} ${styles.statAmber}`}>
-              <Crown size={20}/>
-              <span>Consagrações</span>
-              <strong>{stats?.consecrationStarted ?? "–"}</strong>
-              <Delta value={stats?.last7Days?.consecrations}/>
-            </div>
-          </div>
-        </section>
-
-        {/* ── USERS ── */}
-        <section className={styles.section}>
-
-          <div className={styles.usersHeader}>
+        {/* ── VISÃO GERAL ── */}
+        {activeTab === "overview" && (
+          <section className={styles.section}>
             <div className={styles.sectionTitle}>
-              <Users size={17}/>
-              <h2>Usuários</h2>
+              <Activity size={17}/>
+              <h2>Visão Geral</h2>
             </div>
-            <span className={styles.resultCount}>
-              {usersLoading
-                ? <Loader2 size={13} className={styles.spinIcon}/>
-                : `${sortedUsers.length} encontrados`
-              }
-            </span>
-          </div>
+            <p className={styles.sectionHint}>Toque num indicador pra ver a evolução dele nos Gráficos.</p>
 
-          {/* SEARCH */}
-          <div className={styles.searchWrapper}>
-            <Search size={17}/>
-            <input
-              type="text"
-              placeholder="Buscar por nome ou e-mail…"
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-            />
-            {searchTerm && (
-              <button className={styles.clearSearch} onClick={() => setSearchTerm("")}>
-                <X size={15}/>
+            <div className={styles.statsGrid}>
+              <button className={styles.statCard} onClick={() => goToChart("users")}>
+                <div className={styles.statIcon}><Users size={17}/></div>
+                <span className={styles.statLabel}>Usuários</span>
+                <strong className={styles.statValue}>{stats?.totalUsers ?? "–"}</strong>
+                <Delta value={stats?.last7Days?.newUsers}/>
               </button>
-            )}
-          </div>
 
-          {/* FILTER GROUPS */}
-          <div className={styles.filterGroups}>
-
-            <div className={styles.filterGroup}>
-              <label>Cargo</label>
-              <div className={styles.filterRow}>
-                {(["all","admin","normal"] as FilterRole[]).map(v => (
-                  <button
-                    key={v}
-                    className={`${styles.filterChip} ${filterRole === v ? styles.filterChipOn : ""}`}
-                    onClick={() => setFilterRole(v)}
-                  >
-                    {usersLoading && filterRole === v && <Loader2 size={11} className={styles.chipSpinner}/>}
-                    {v === "all" ? "Todos" : v === "admin" ? "Admin" : "Normal"}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className={styles.filterGroup}>
-              <label>Verificação</label>
-              <div className={styles.filterRow}>
-                {(["all","verified","unverified"] as FilterVerif[]).map(v => (
-                  <button
-                    key={v}
-                    className={`${styles.filterChip} ${filterVerif === v ? styles.filterChipOn : ""}`}
-                    onClick={() => setFilterVerif(v)}
-                  >
-                    {usersLoading && filterVerif === v && <Loader2 size={11} className={styles.chipSpinner}/>}
-                    {v === "all" ? "Todos" : v === "verified" ? "Verificados" : "Não verif."}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className={styles.filterGroup}>
-              <label>Atividade</label>
-              <div className={styles.filterRow}>
-                {(["all","7d","30d"] as FilterActivity[]).map(v => (
-                  <button
-                    key={v}
-                    className={`${styles.filterChip} ${filterActive === v ? styles.filterChipOn : ""}`}
-                    onClick={() => setFilterActive(v)}
-                  >
-                    {usersLoading && filterActive === v && <Loader2 size={11} className={styles.chipSpinner}/>}
-                    {v === "all" ? "Todos" : v === "7d" ? "7 dias" : "30 dias"}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-          </div>
-
-          {/* SORT */}
-          <div className={styles.sortBar}>
-            <SortAsc size={14} className={styles.sortIcon}/>
-            <SortBtn k="createdAt" label="Data"/>
-            <SortBtn k="name"      label="Nome"/>
-            <SortBtn k="streak"    label="Streak"/>
-            <SortBtn k="prayers"   label="Orações"/>
-            <SortBtn k="rosaries"  label="Terços"/>
-            {(sortBy !== "createdAt" || sortDir !== "desc") && (
-              <button
-                className={styles.sortClearBtn}
-                onClick={() => { setSortBy("createdAt"); setSortDir("desc") }}
-                title="Limpar ordenação"
-              >
-                <RotateCcw size={12}/>
-                Limpar
+              <button className={styles.statCard} onClick={() => goToChart("users")}>
+                <div className={styles.statIcon}><BadgeCheck size={17}/></div>
+                <span className={styles.statLabel}>Verificados</span>
+                <strong className={styles.statValue}>{stats?.totalVerified ?? "–"}</strong>
+                <em className={styles.statDelta}>
+                  {stats ? `de ${stats.totalUsers} · ${verifiedPct}%` : ""}
+                </em>
               </button>
-            )}
-          </div>
 
-          {/* LIST */}
-          <div className={`${styles.userList} ${usersLoading ? styles.userListFading : ""}`}>
-            {sortedUsers.length === 0 && !usersLoading ? (
-              <div className={styles.empty}>Nenhum usuário encontrado</div>
-            ) : sortedUsers.map(user => {
-              const isLoadingThis = loadingDetailId === user.id
-              const isUpdatingAdmin = adminLoading && updateId === user.id
-              return (
-                <div
-                  key={user.id}
-                  className={`${styles.userCard} ${isLoadingThis ? styles.userCardLoading : ""} ${user.isAdmin ? styles.userCardAdmin : ""}`}
+              <button className={styles.statCard} onClick={() => goToChart("prayers")}>
+                <div className={styles.statIcon}><Heart size={17}/></div>
+                <span className={styles.statLabel}>Orações</span>
+                <strong className={styles.statValue}>{stats?.prayersPrayed ?? "–"}</strong>
+                <Delta value={stats?.last7Days?.prayers}/>
+              </button>
+
+              <button className={styles.statCard} onClick={() => goToChart("rosaries")}>
+                <div className={styles.statIcon}><BookHeart size={17}/></div>
+                <span className={styles.statLabel}>Terços</span>
+                <strong className={styles.statValue}>{stats?.rosariesPrayed ?? "–"}</strong>
+                <Delta value={stats?.last7Days?.rosaries}/>
+              </button>
+
+              <button className={styles.statCard} onClick={() => goToChart("consecrations")}>
+                <div className={styles.statIcon}><Crown size={17}/></div>
+                <span className={styles.statLabel}>Consagrações</span>
+                <strong className={styles.statValue}>{stats?.consecrationStarted ?? "–"}</strong>
+                <Delta value={stats?.last7Days?.consecrations}/>
+              </button>
+
+              <button className={styles.statCard} onClick={() => goToChart("logins")}>
+                <div className={styles.statIcon}><LogIn size={17}/></div>
+                <span className={styles.statLabel}>Logins</span>
+                <strong className={styles.statValue}>{stats?.last7Days?.logins ?? "–"}</strong>
+                <em className={styles.statDelta}>últimos 7 dias</em>
+              </button>
+            </div>
+          </section>
+        )}
+
+        {/* ── USUÁRIOS ── */}
+        {activeTab === "users" && (
+          <section className={styles.section}>
+
+            <div className={styles.usersHeader}>
+              <div className={styles.sectionTitle}>
+                <Users size={17}/>
+                <h2>Usuários</h2>
+              </div>
+              <div className={styles.viewToggle}>
+                <button
+                  className={`${styles.viewBtn} ${viewMode === "cards" ? styles.viewBtnActive : ""}`}
+                  onClick={() => setViewMode("cards")}
+                  title="Ver como cards"
+                  aria-label="Ver como cards"
                 >
-                  <div className={styles.userLeft}>
-                    <div className={styles.userAvatar}>{user.name?.charAt(0)}</div>
-                    <div className={styles.userInfo}>
-                      <div className={styles.userNameRow}>
-                        <strong>{user.name}</strong>
-                        {user.isAdmin && <span className={styles.adminBadge}>Admin</span>}
-                        {user.emailVerified
-                          ? <span className={styles.verifiedDot} title="Verificado"><Check size={10}/></span>
-                          : <span className={styles.unverifiedDot} title="Não verificado"><AlertCircle size={10}/></span>
-                        }
-                      </div>
-                      <p className={styles.userEmail}>{user.email}</p>
-                      {user.createdAt && (
-                        <p className={styles.userDate}>
-                          <CalendarDays size={11}/>
-                          {fmtDate(user.createdAt)}
-                        </p>
-                      )}
-                      <div className={styles.userChips}>
-                        <span className={styles.chipRosary}>
-                          {user.spiritualStats?.rosariesPrayed || 0} Terços
-                        </span>
-                        <span className={styles.chipPrayer}>
-                          {user.spiritualStats?.prayersPrayed || 0} Orações
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                  <LayoutGrid size={15}/>
+                </button>
+                <button
+                  className={`${styles.viewBtn} ${viewMode === "compact" ? styles.viewBtnActive : ""}`}
+                  onClick={() => setViewMode("compact")}
+                  title="Ver como lista compacta"
+                  aria-label="Ver como lista compacta"
+                >
+                  <List size={15}/>
+                </button>
+              </div>
+            </div>
 
-                  <div className={styles.userRight}>
-                    <div className={styles.userStats}>
-                      <span title="Streak">
-                        <Flame size={12} className={user.isAdmin ? styles.flameAdmin : styles.flameDefault}/>
-                        {user.spiritualStats?.prayerStreak || 0}
-                      </span>
-                    </div>
-                    <div className={styles.userActions}>
-                      <button
-                        className={`${styles.btnView} ${isLoadingThis ? styles.btnLoading : ""}`}
-                        onClick={() => !isLoadingThis && openDetail(user)}
-                        disabled={isLoadingThis}
-                        title="Ver detalhes"
-                      >
-                        {isLoadingThis
-                          ? <Loader2 size={15} className={styles.spinIcon}/>
-                          : <Eye size={15}/>
-                        }
-                      </button>
-                      <button
-                        className={`${user.isAdmin ? styles.btnAdminOn : styles.btnAdminOff} ${isUpdatingAdmin ? styles.btnLoading : ""}`}
-                        disabled={isUpdatingAdmin}
-                        onClick={() => !isUpdatingAdmin && toggleAdmin(user.id, user.isAdmin)}
-                        title={user.isAdmin ? "Remover admin" : "Tornar admin"}
-                      >
-                        {isUpdatingAdmin
-                          ? <Loader2 size={14} className={styles.spinIcon}/>
-                          : <Crown size={14}/>
-                        }
-                      </button>
-                      {user.id !== currentUserId && (
-                        <button
-                          className={styles.btnDelete}
-                          onClick={() => setDeleteModal({ show: true, userId: user.id })}
-                          title="Deletar"
-                        >
-                          <Trash2 size={14}/>
-                        </button>
-                      )}
-                    </div>
-                  </div>
+            {/* SEARCH + FILTROS */}
+            <div className={styles.searchRow}>
+              <div className={styles.searchWrapper}>
+                <Search size={17}/>
+                <input
+                  type="text"
+                  placeholder="Buscar por nome ou e-mail…"
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                />
+                {searchTerm && (
+                  <button className={styles.clearSearch} onClick={() => setSearchTerm("")}>
+                    <X size={15}/>
+                  </button>
+                )}
+              </div>
+              <button
+                className={`${styles.filterBtn} ${activeFilterCount > 0 ? styles.filterBtnOn : ""}`}
+                onClick={() => setFilterSheetOpen(true)}
+              >
+                <SlidersHorizontal size={15}/>
+                Filtros{activeFilterCount > 0 ? ` · ${activeFilterCount}` : ""}
+              </button>
+            </div>
+
+            {/* SORT */}
+            <div className={styles.sortBar}>
+              <SortAsc size={14} className={styles.sortIcon}/>
+              <SortBtn k="createdAt" label="Data"/>
+              <SortBtn k="name"      label="Nome"/>
+              <SortBtn k="streak"    label="Streak"/>
+              <SortBtn k="prayers"   label="Orações"/>
+              <SortBtn k="rosaries"  label="Terços"/>
+              {(sortBy !== "createdAt" || sortDir !== "desc") && (
+                <button
+                  className={styles.sortClearBtn}
+                  onClick={() => { setSortBy("createdAt"); setSortDir("desc") }}
+                  title="Limpar ordenação"
+                >
+                  <RotateCcw size={12}/>
+                  Limpar
+                </button>
+              )}
+            </div>
+
+            {/* SUB-CABEÇALHO FIXO */}
+            <div className={styles.subHeader}>
+              <span>
+                {usersLoading
+                  ? <Loader2 size={13} className={styles.spinIcon}/>
+                  : `${sortedUsers.length} encontrados`
+                }
+              </span>
+              {activeFilterCount > 0 && (
+                <span className={styles.subHeaderFilter}>{filterSummary}</span>
+              )}
+            </div>
+
+            {/* LIST */}
+            <div className={`${styles.userList} ${usersLoading ? styles.userListFading : ""} ${viewMode === "compact" ? styles.userListCompact : ""}`}>
+              {sortedUsers.length === 0 && !usersLoading ? (
+                <div className={styles.emptyState}>
+                  <Search size={26}/>
+                  <p>Nenhum resultado com esses filtros.</p>
+                  <button className={styles.emptyClearBtn} onClick={clearAllFilters}>
+                    <RotateCcw size={13}/>
+                    Limpar filtros
+                  </button>
                 </div>
-              )
-            })}
-          </div>
+              ) : sortedUsers.map(user =>
+                viewMode === "compact" ? renderCompactRow(user) : renderCard(user)
+              )}
+            </div>
 
-        </section>
+          </section>
+        )}
+
+        {/* ── GRÁFICOS ── */}
+        {activeTab === "charts" && (
+          <section className={styles.section}>
+            <div className={styles.sectionTitle}>
+              <BarChart3 size={17}/>
+              <h2>Gráficos</h2>
+            </div>
+            <p className={styles.sectionHint}>Evolução mês a mês — toque numa barra pra ver o valor exato.</p>
+
+            <div className={styles.metricChips}>
+              {METRIC_OPTIONS.map(m => (
+                <button
+                  key={m.key}
+                  className={`${styles.metricChip} ${chartMetric === m.key ? styles.metricChipOn : ""}`}
+                  onClick={() => setChartMetric(m.key)}
+                >
+                  {m.icon}
+                  {m.label}
+                </button>
+              ))}
+            </div>
+
+            <div className={styles.chartCard}>
+              {chartLoading ? (
+                <Skeleton height={190} radius={14}/>
+              ) : chartData?.data ? (
+                <AdminChart key={chartMetric} data={chartData.data}/>
+              ) : (
+                <div className={styles.empty}>Não foi possível carregar o gráfico.</div>
+              )}
+            </div>
+          </section>
+        )}
       </main>
+
+      {/* ── BOTTOM SHEET DE FILTROS ── */}
+      <AdminFilterSheet
+        open={filterSheetOpen}
+        onClose={() => setFilterSheetOpen(false)}
+        usersLoading={usersLoading}
+        filterRole={filterRole}
+        setFilterRole={setFilterRole}
+        filterVerif={filterVerif}
+        setFilterVerif={setFilterVerif}
+        filterActive={filterActive}
+        setFilterActive={setFilterActive}
+        onClear={clearAllFilters}
+        activeCount={activeFilterCount}
+      />
 
       {/* ── DETAIL MODAL ── */}
       {detailModal.show && detailModal.user && createPortal(
