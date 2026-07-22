@@ -56,7 +56,7 @@ import {
 import {
  deleteConversation,
  renameConversation,
- askVox,
+ askVoxStream,
  createConversation,
  getConversations,
  getMessages,
@@ -80,13 +80,6 @@ interface Conversation{
  title:string
  hasMessages?: boolean
  updatedAt?: string
-}
-
-interface VoxAskResponse{
- success:boolean
- response?:string
- error?:string
- message?:string
 }
 
 interface Suggestion{
@@ -229,6 +222,14 @@ function growTextarea(el: HTMLTextAreaElement | null){
  el.style.height = el.scrollHeight + "px"
 }
 
+// Enter vira "enviar" só em dispositivos com mouse/trackpad — em touch
+// (pointer grosseiro), o teclado do celular não tem Shift de fácil
+// acesso, então Enter precisa continuar quebrando linha; quem manda a
+// mensagem é o botão de enviar mesmo.
+function isTouchPrimaryDevice(): boolean {
+ return typeof window !== "undefined" && !!window.matchMedia?.("(pointer: coarse)").matches
+}
+
 /* =========================
    BLOCOS AUXILIARES
 ========================= */
@@ -265,6 +266,10 @@ export default function Vox(){
  const [input,setInput] = useState("")
  const [loading,setLoading] = useState(false)
  const [loadingConversation,setLoadingConversation] = useState(false)
+ // id da mensagem do assistente que está sendo preenchida aos poucos —
+ // enquanto for null, mostra os "..." de digitando; assim que o primeiro
+ // pedaço da resposta chega, troca pro balão de verdade
+ const [streamingMessageId,setStreamingMessageId] = useState<string | null>(null)
 
  const [conversationId,setConversationId] = useState<string | null>(null)
  const [conversations,setConversations] = useState<Conversation[]>([])
@@ -290,6 +295,7 @@ export default function Vox(){
  const [randomSuggestions,setRandomSuggestions] = useState<Suggestion[]>(()=>pickRandom(SUGGESTION_POOL, 3))
 
  const bottomRef = useRef<HTMLDivElement | null>(null)
+ const chatAreaRef = useRef<HTMLElement | null>(null)
  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
  const editTextareaRef = useRef<HTMLTextAreaElement | null>(null)
 
@@ -299,6 +305,16 @@ export default function Vox(){
  const typewriterTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
  const errorCopy = useMemo(()=>resolveErrorCopy(errorCode, error || undefined),[errorCode, error])
+
+ // a última pergunta do usuário pode ser editada mesmo já respondida —
+ // não só quando falha. Calculado à parte de "isLastUserMessage" no
+ // .map porque precisa olhar a lista toda, não só a posição do item.
+ const lastUserMessageId = useMemo(()=>{
+  for(let i = messages.length - 1; i >= 0; i--){
+   if(messages[i].role === "user") return messages[i].id
+  }
+  return null
+ },[messages])
 
  const liturgySuggestion: Suggestion = useMemo(()=>{
   const nome = liturgy?.liturgia?.trim()
@@ -334,14 +350,37 @@ export default function Vox(){
 
  /* =========================
     SCROLL
+    Acompanha o fim automaticamente só se o usuário já estava perto
+    dele — inclusive quando a resposta do Vox está começando (a
+    mensagem do assistente sendo criada) ou crescendo. Sem essa
+    checagem, a tela puxava de volta pro fim a cada pedacinho da
+    resposta chegando, e não dava pra rolar pra cima e reler nada
+    enquanto ela ainda estava vindo.
+
+    Enviar uma mensagem nova é a única exceção — aí sim sempre desce,
+    ver scrollToBottom() chamado direto em sendMessage().
+
+    behavior "auto" (instantâneo) de propósito, não "smooth": uma
+    rolagem suave é uma animação do navegador que continua rodando por
+    conta própria por um tempo depois de disparada — se o usuário
+    tentasse rolar manualmente enquanto ela ainda estivesse em
+    andamento, a animação nativa podia "vencer" e puxar de volta.
  ========================= */
 
- useEffect(()=>{
+ function scrollToBottom(){
   setTimeout(()=>{
-    bottomRef.current?.scrollIntoView({
-      behavior: messages.length < 3 ? "auto" : "smooth"
-    })
+    bottomRef.current?.scrollIntoView({ behavior:"auto" })
   },50)
+ }
+
+ useEffect(()=>{
+  const el = chatAreaRef.current
+  if(!el) return
+
+  const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight
+  if(distanceFromBottom > 120) return
+
+  scrollToBottom()
  },[messages])
 
  useEffect(() => {
@@ -481,10 +520,42 @@ useEffect(()=>{
   setError(null)
   setErrorCode(null)
 
-  try{
-    const res = await askVox(target.content, conversationId) as VoxAskResponse
+  const assistantId = crypto.randomUUID()
+  let assistantCreated = false
 
-    if(!res?.success || !res?.response){
+  function appendDelta(chunk:string){
+
+    const isFirstChunk = !assistantCreated
+    assistantCreated = true
+
+    setMessages(prev => {
+
+      if(isFirstChunk){
+        return [...prev, {
+          id: assistantId,
+          role:"assistant" as const,
+          content: chunk,
+          createdAt: new Date().toISOString()
+        }]
+      }
+
+      return prev.map(m => m.id === assistantId ? { ...m, content: m.content + chunk } : m)
+    })
+
+    setStreamingMessageId(assistantId)
+  }
+
+  try{
+    const res = await askVoxStream(target.content, conversationId, appendDelta)
+
+    if(!res?.success){
+
+      // se algo já tinha sido escrito na tela e falhou no meio, tira o
+      // pedaço incompleto — melhor mostrar "falhou, tenta de novo" do
+      // que uma resposta cortada sem explicação
+      if(assistantCreated){
+        setMessages(prev => prev.filter(m => m.id !== assistantId))
+      }
 
       updateMessageStatus(target.id, "failed")
 
@@ -497,26 +568,23 @@ useEffect(()=>{
 
     updateMessageStatus(target.id, "sent")
 
-    const aiMessage:Message={
-    id:crypto.randomUUID(),
-    role:"assistant",
-    content: res.response,
-    createdAt:new Date().toISOString()
-    }
-
-    setMessages(prev => [...prev,aiMessage])
-
     const list = await getConversations()
     if(Array.isArray(list)){
       setConversations(list)
     }
 
   }catch{
+
+    if(assistantCreated){
+      setMessages(prev => prev.filter(m => m.id !== assistantId))
+    }
+
     updateMessageStatus(target.id, "failed")
     setErrorCode("UNKNOWN_ERROR")
     setError("Não foi possível enviar sua mensagem. Verifique sua internet e tente novamente.")
   }finally{
     setLoading(false)
+    setStreamingMessageId(null)
     sendingRef.current = false
     textareaRef.current?.focus()
   }
@@ -551,6 +619,7 @@ useEffect(()=>{
   setMessages(prev => [...prev,userMessage])
   setInput("")
   growTextarea(textareaRef.current)
+  scrollToBottom()
 
   await deliverMessage(userMessage)
  }
@@ -603,9 +672,17 @@ useEffect(()=>{
 
   const id = editingMessageId
 
-  setMessages(prev => prev.map(m =>
-   m.id === id ? { ...m, content:trimmed, status:"sending" } : m
-  ))
+  // se essa pergunta já tinha sido respondida, a resposta antiga não
+  // corresponde mais ao texto editado — corta ela (e qualquer coisa
+  // depois) antes de pedir a resposta nova
+  setMessages(prev => {
+   const idx = prev.findIndex(m => m.id === id)
+   if(idx === -1) return prev
+
+   const truncated = prev.slice(0, idx + 1)
+   truncated[idx] = { ...truncated[idx], content:trimmed, status:"sending" }
+   return truncated
+  })
 
   setEditingMessageId(null)
   setEditingValue("")
@@ -620,14 +697,14 @@ useEffect(()=>{
  ========================= */
 
  function handleKey(e:React.KeyboardEvent<HTMLTextAreaElement>){
-  if(e.key==="Enter" && !e.shiftKey && !loading){
+  if(e.key==="Enter" && !e.shiftKey && !loading && !isTouchPrimaryDevice()){
    e.preventDefault()
    sendMessage()
   }
  }
 
  function handleEditKey(e:React.KeyboardEvent<HTMLTextAreaElement>){
-  if(e.key==="Enter" && !e.shiftKey){
+  if(e.key==="Enter" && !e.shiftKey && !isTouchPrimaryDevice()){
    e.preventDefault()
    saveEdit()
   }
@@ -956,7 +1033,7 @@ useEffect(()=>{
     </div>
    )}
 
-   <main className={styles.chatArea}>
+   <main className={styles.chatArea} ref={chatAreaRef}>
 
     {loadingConversation ? (
 
@@ -978,6 +1055,8 @@ useEffect(()=>{
           <p className={styles.emptySubtitle}>
            Pergunte sobre fé, oração ou o que estiver no seu coração.
           </p>
+
+          <span className={styles.suggestionsLabel}>Sugestões — toque para usar</span>
 
           <div className={styles.suggestionsGrid}>
            {suggestions.map((s, i)=>{
@@ -1006,10 +1085,10 @@ useEffect(()=>{
         </div>
       )}
 
-    {messages.map((msg, idx) => {
+    {messages.map((msg) => {
 
      const isUser = msg.role === "user"
-     const isLastUserMessage = isUser && idx === messages.length - 1
+     const isLastUserMessage = isUser && msg.id === lastUserMessageId
      const isEditing = editingMessageId === msg.id
 
      return(
@@ -1071,7 +1150,7 @@ useEffect(()=>{
             {msg.status === "sending" && (
              <span className={styles.statusRow}>
               <Loader2 size={11} className={styles.spinIcon} />
-              Enviando
+              Aguardando resposta
              </span>
             )}
 
@@ -1182,7 +1261,7 @@ useEffect(()=>{
 
     })}
 
-    {loading && messages.length > 0 && (
+    {loading && messages.length > 0 && !streamingMessageId && (
 
      <div className={`${styles.message} ${styles.aiMessage}`}>
       <div className={styles.typing}>

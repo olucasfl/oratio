@@ -504,8 +504,19 @@
 .emptySubtitle{
  font-size:15px;
  color:var(--oratio-text-soft);
- margin:0 0 26px;
+ margin:0 0 22px;
  max-width:38ch;
+}
+
+.suggestionsLabel{
+ display:block;
+ font-family:var(--oratio-font-text);
+ font-size:11px;
+ font-weight:700;
+ letter-spacing:.08em;
+ text-transform:uppercase;
+ color:var(--vox-gold-ink);
+ margin-bottom:10px;
 }
 
 .suggestionsGrid{
