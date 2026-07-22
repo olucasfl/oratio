@@ -647,28 +647,6 @@ STATS
 
 }
 
-.statCardButton{
-
- width:100%;
-
- text-align:left;
-
- font:inherit;
-
- cursor:pointer;
-
- transition:.2s ease;
-
-}
-
-.statCardButton:hover{
-
- transform:translateY(-2px);
-
- border-color:rgba(176,24,26,.18);
-
-}
-
 .full{
 
  grid-column:1/-1;

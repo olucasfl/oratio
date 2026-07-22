@@ -514,12 +514,7 @@ export default function Profile(){
 
      <div className={styles.statsGrid}>
 
-      <button
-       className={`${styles.statCard} ${styles.statCardButton}`}
-       onClick={()=>
-        navigate("/oratio/prayers/history")
-       }
-      >
+      <div className={styles.statCard}>
 
        <span className={styles.statLabel}>
         Orações
@@ -529,14 +524,9 @@ export default function Profile(){
         {prayers}
        </strong>
 
-      </button>
+      </div>
 
-      <button
-       className={`${styles.statCard} ${styles.statCardButton}`}
-       onClick={()=>
-        navigate("/oratio/rosary/history")
-       }
-      >
+      <div className={styles.statCard}>
 
        <span className={styles.statLabel}>
         Terços
@@ -546,7 +536,7 @@ export default function Profile(){
         {rosaries}
        </strong>
 
-      </button>
+      </div>
 
       {lastPrayerFormatted && (
 

@@ -41,10 +41,3 @@ export async function getRosaryProgress(){
  return res.data
 
 }
-
-export async function getRosaryHistory(){
-
- const res = await api.get("/oratio/rosary/history")
- return res.data
-
-}

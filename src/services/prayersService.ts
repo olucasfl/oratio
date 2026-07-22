@@ -31,11 +31,3 @@ export async function completePrayer(title?:string){
   return res.data
 
 }
-
-export async function getPrayerHistory(){
-
-  const res = await api.get("/oratio/prayers/history")
-
-  return res.data
-
-}
