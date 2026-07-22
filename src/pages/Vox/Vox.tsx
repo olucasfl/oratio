@@ -118,6 +118,11 @@ const SUGGESTION_POOL: Suggestion[] = [
  { icon: HeartCrack, text: "Estou vivendo um luto, como a fé pode me ajudar?" }
 ]
 
+// Sugestão fixa da liturgia do dia + essa quantidade sorteada do pool
+// inteiro = 3 cards no total (era 4 sorteados antes). O pool continua
+// com todas as 24 perguntas — só a quantidade exibida de cada vez caiu.
+const RANDOM_SUGGESTIONS_COUNT = 2
+
 function pickRandom(pool: Suggestion[], count: number): Suggestion[] {
  const copy = [...pool]
  const picked: Suggestion[] = []
@@ -292,7 +297,7 @@ export default function Vox(){
  const [editingMessageId,setEditingMessageId] = useState<string | null>(null)
  const [editingValue,setEditingValue] = useState("")
 
- const [randomSuggestions,setRandomSuggestions] = useState<Suggestion[]>(()=>pickRandom(SUGGESTION_POOL, 3))
+ const [randomSuggestions,setRandomSuggestions] = useState<Suggestion[]>(()=>pickRandom(SUGGESTION_POOL, RANDOM_SUGGESTIONS_COUNT))
 
  const bottomRef = useRef<HTMLDivElement | null>(null)
  const chatAreaRef = useRef<HTMLElement | null>(null)
@@ -413,7 +418,7 @@ useEffect(()=>{
 
  useEffect(()=>{
   if(!conversationId) return
-  setRandomSuggestions(pickRandom(SUGGESTION_POOL, 3))
+  setRandomSuggestions(pickRandom(SUGGESTION_POOL, RANDOM_SUGGESTIONS_COUNT))
  },[conversationId])
 
  useEffect(()=>{

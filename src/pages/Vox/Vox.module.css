@@ -527,6 +527,18 @@
  max-width:620px;
 }
 
+/*
+São sempre 3 cards agora (1 fixo da liturgia do dia + 2 sorteados). Em
+telas largas (grid de 2 colunas), o 3º ocupa a largura toda da grade e
+fica centralizado — visualmente vira "2 em cima, 1 embaixo no meio" —
+em vez de cair sozinho colado à esquerda da 2ª linha.
+*/
+.suggestionsGrid > .suggestionCard:nth-child(3){
+ grid-column:1 / -1;
+ justify-self:center;
+ width:calc(50% - 5px);
+}
+
 .suggestionCard{
  position:relative;
  display:flex;
@@ -1154,6 +1166,14 @@
 
  .suggestionsGrid{
   grid-template-columns:1fr;
+ }
+
+ /* No celular a grade já é 1 coluna — os 3 cards ficam empilhados
+ normalmente, sem a centralização especial usada no desktop. */
+ .suggestionsGrid > .suggestionCard:nth-child(3){
+  grid-column:auto;
+  justify-self:stretch;
+  width:auto;
  }
 
  .emptyTitle{
