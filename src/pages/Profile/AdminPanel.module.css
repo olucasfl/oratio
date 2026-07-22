@@ -4,7 +4,7 @@
 
 .page {
   min-height: 100dvh;
-  padding-bottom: calc(130px + env(safe-area-inset-bottom));
+  padding-bottom: calc(28px + env(safe-area-inset-bottom));
   background: linear-gradient(180deg, #faf7f3 0%, #f5ede3 100%);
   position: relative;
   overflow: hidden;
@@ -68,17 +68,19 @@
   background: #f3ede4;
   border-radius: 14px;
   padding: 4px;
+  overflow-x: auto;
 }
 
 .tabBtn {
-  flex: 1;
+  flex: 1 0 auto;
+  min-width: fit-content;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   border: none;
   border-radius: 11px;
-  padding: 9px 6px;
+  padding: 9px 10px;
   font-size: 12.5px;
   font-weight: 700;
   background: transparent;
@@ -123,9 +125,26 @@
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  transition: transform .2s;
+  transition: transform .15s ease, background .25s ease;
 }
-.refreshBtn:hover { transform: rotate(90deg); }
+.refreshBtn:hover:not(:disabled)  { transform: translateY(-2px); }
+.refreshBtn:active:not(:disabled) { transform: scale(.9); }
+.refreshBtn:disabled { cursor: default; }
+
+.refreshBtnDone {
+  background: #16a34a;
+  animation: refreshPop .45s cubic-bezier(.34,1.56,.64,1);
+}
+
+@keyframes refreshPop {
+  0%   { transform: scale(.65) rotate(-15deg); }
+  55%  { transform: scale(1.18) rotate(4deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .refreshBtnDone { animation: none; }
+}
 
 /* ========================
    CONTAINER
@@ -220,6 +239,88 @@
   font-size: 12.5px;
   color: var(--oratio-text-soft);
   opacity: .8;
+}
+
+/* ========================
+   HEALTH PILL
+======================== */
+
+.healthPill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 5px 11px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.healthDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.healthOk {
+  background: #dcfce7;
+  color: #166534;
+}
+.healthOk .healthDot { background: #16a34a; }
+
+.healthDown {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.healthDown .healthDot { background: #dc2626; }
+
+/* ========================
+   DESTAQUES
+======================== */
+
+.highlightsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid var(--oratio-card-border);
+}
+
+.highlightCol { min-width: 0; }
+
+.highlightTitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: var(--oratio-primary);
+}
+
+.highlightEmpty {
+  font-size: 13px;
+  color: var(--oratio-text-soft);
+  opacity: .7;
+  margin: 0;
+}
+
+.highlightRank {
+  width: 16px;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--oratio-text-soft);
+  opacity: .6;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .highlightsGrid { grid-template-columns: 1fr 1fr; }
 }
 
 /* ========================
@@ -907,6 +1008,188 @@
   border-radius: 16px;
   background: var(--oratio-card-bg);
   border: 1px solid var(--oratio-card-border);
+}
+
+/* ========================
+   SISTEMA
+======================== */
+
+.systemGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 26px;
+}
+
+.systemCard {
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--oratio-card-bg);
+  border: 1px solid var(--oratio-card-border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--oratio-text-soft);
+}
+
+.systemCard span {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+
+.systemCard strong {
+  font-size: 16px;
+  font-family: var(--oratio-font-title);
+  color: var(--oratio-text-dark);
+}
+
+.systemSmall {
+  font-size: 12.5px !important;
+  font-family: var(--oratio-font-text) !important;
+}
+
+.systemOk   { color: #15803d !important; }
+.systemDown { color: #b91c1c !important; }
+
+.systemMemoryRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.systemSubDetail {
+  font-size: 10.5px !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  opacity: .7;
+  font-family: var(--oratio-font-text);
+}
+
+.severityDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  cursor: help;
+}
+
+.severity_good     { background: #16a34a; }
+.severity_warn     { background: #d97706; }
+.severity_critical { background: #dc2626; }
+
+.errorLogHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--oratio-primary);
+  margin-bottom: 12px;
+}
+
+.errorLogHeader h3 {
+  margin: 0;
+  font-size: 15px;
+  font-family: var(--oratio-font-title);
+}
+
+.errorLogCount {
+  margin-left: auto;
+  font-size: 11.5px;
+  font-weight: 700;
+  background: rgba(0,0,0,.05);
+  color: var(--oratio-text-soft);
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+
+.errorLogList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.errorLogItem {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 12px 13px;
+  border-radius: 13px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.errorLogTop {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.errorLogStatus {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 800;
+  color: #b91c1c;
+  background: white;
+  padding: 3px 8px;
+  border-radius: 8px;
+}
+
+.errorLogName {
+  flex-shrink: 0;
+  font-size: 10.5px;
+  font-weight: 700;
+  font-family: var(--oratio-font-text, monospace);
+  color: #991b1b;
+  background: rgba(255,255,255,.6);
+  padding: 3px 8px;
+  border-radius: 8px;
+}
+
+.errorLogTime {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 10.5px;
+  color: #b91c1c;
+  opacity: .7;
+  white-space: nowrap;
+}
+
+.errorLogBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.errorLogBody strong {
+  font-size: 13px;
+  color: #7f1d1d;
+  word-break: break-word;
+}
+
+.errorLogBody span {
+  font-size: 11px;
+  color: #b91c1c;
+  opacity: .8;
+  font-family: var(--oratio-font-text);
+}
+
+.errorLogStack {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 9px;
+  background: rgba(0,0,0,.04);
+  color: #7f1d1d;
+  font-size: 10.5px;
+  line-height: 1.5;
+  font-family: ui-monospace, "SF Mono", Consolas, monospace;
+  white-space: pre;
+  overflow-x: auto;
+  max-height: 130px;
+  overflow-y: auto;
 }
 
 /* ========================

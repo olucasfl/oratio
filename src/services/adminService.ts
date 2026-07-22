@@ -54,6 +54,16 @@ export async function getUserActivity(userId: string) {
   return res.data
 }
 
+export async function getSystemHealth() {
+  const res = await api.get("/health")
+  return res.data
+}
+
+export async function getSystemStatus() {
+  const res = await api.get("/admin/system")
+  return res.data
+}
+
 export type AdminTimeseriesMetric =
   "users" | "prayers" | "rosaries" | "consecrations" | "logins"
 

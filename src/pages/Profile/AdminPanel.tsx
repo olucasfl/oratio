@@ -8,23 +8,23 @@ import {
   BookHeart, ChevronDown, ChevronUp, ArrowUpDown, CalendarDays,
   SortAsc, Bot, LogIn, Gem, Heart, Pin, Check, AlertCircle,
   Loader2, Cross, RotateCcw, LayoutGrid, List, SlidersHorizontal,
-  BarChart3
+  BarChart3, Terminal, Cpu, Database, Clock, AlertTriangle
 } from "lucide-react"
 
 import type { AdminFilters, AdminTimeseriesMetric } from "../../services/adminService"
 import {
   getAdminStats, getAllUsers, setAdminStatus,
-  getUserDetail, deleteUser, getUserActivity, getAdminTimeseries
+  getUserDetail, deleteUser, getUserActivity, getAdminTimeseries,
+  getSystemHealth, getSystemStatus
 } from "../../services/adminService"
 import { getProfile } from "../../services/profileService"
 import { usePullToRefresh } from "../../hooks/usePullToRefresh"
-import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 import Skeleton from "../../components/Skeleton/Skeleton"
 import AdminChart from "../../components/AdminChart/AdminChart"
 import AdminFilterSheet from "../../components/AdminFilterSheet/AdminFilterSheet"
 import styles from "./AdminPanel.module.css"
 
-type Tab          = "overview" | "users" | "charts"
+type Tab          = "overview" | "users" | "charts" | "system"
 type ViewMode      = "cards" | "compact"
 type SortKey      = "createdAt" | "name" | "streak" | "prayers" | "rosaries"
 type SortDir      = "desc" | "asc"
@@ -51,6 +51,25 @@ function fmtDateTime(iso: string) {
     day: "2-digit", month: "2-digit", year: "numeric",
     hour: "2-digit", minute: "2-digit"
   })
+}
+
+// Calibrado pra uma API pequena tipo essa — não é % de um plano
+// específico (não temos como saber o limite exato do host daqui).
+// < 150MB é tranquilo, 150-300MB merece acompanhar, acima disso já é
+// sinal de algo estranho acontecendo (vazamento, carga anormal).
+function memorySeverity(rssMB: number): "good" | "warn" | "critical" {
+  if (rssMB < 150) return "good"
+  if (rssMB < 300) return "warn"
+  return "critical"
+}
+
+function fmtUptime(totalSeconds: number) {
+  const d = Math.floor(totalSeconds / 86400)
+  const h = Math.floor((totalSeconds % 86400) / 3600)
+  const m = Math.floor((totalSeconds % 3600) / 60)
+  if (d > 0) return `${d}d ${h}h`
+  if (h > 0) return `${h}h ${m}min`
+  return `${m}min`
 }
 
 function relativeTime(ts: string) {
@@ -110,6 +129,16 @@ export default function AdminPanel() {
   const [chartData,    setChartData]    = useState<any>(null)
   const [chartLoading, setChartLoading] = useState(false)
 
+  const [health, setHealth] = useState<{ status: string; database: string } | null>(null)
+
+  const [systemStatus,  setSystemStatus]  = useState<any>(null)
+  const [systemLoading, setSystemLoading] = useState(false)
+
+  // Snapshot sem filtro pra alimentar os Destaques — não pode usar o
+  // `users` da aba Usuários porque aquele reflete o filtro ativo, e um
+  // "top engajamento" calculado em cima de uma lista filtrada mentiria.
+  const [allUsersSnapshot, setAllUsersSnapshot] = useState<any[]>([])
+
   const [detailModal,     setDetailModal]     = useState<{ show: boolean; user: any }>({ show: false, user: null })
   const [detailLoading,   setDetailLoading]   = useState(false)
   const [activityData,    setActivityData]    = useState<any>(null)
@@ -125,7 +154,8 @@ export default function AdminPanel() {
   const [adminLoading,  setAdminLoading]  = useState(false)
 
   useEffect(() => {
-    Promise.all([loadStats(), loadUsers()]).finally(() => setInitialLoading(false))
+    Promise.all([loadStats(), loadUsers(), loadHighlights(), loadHealth()])
+      .finally(() => setInitialLoading(false))
     getCurrentUser()
   }, [])
 
@@ -139,6 +169,11 @@ export default function AdminPanel() {
     if (activeTab !== "charts") return
     loadChart(chartMetric)
   }, [activeTab, chartMetric])
+
+  useEffect(() => {
+    if (activeTab !== "system") return
+    loadSystemStatus()
+  }, [activeTab])
 
   async function getCurrentUser() {
     try { setCurrentUserId((await getProfile()).id) } catch {}
@@ -177,13 +212,49 @@ export default function AdminPanel() {
     }
   }
 
+  async function loadHighlights() {
+    try { setAllUsersSnapshot(await getAllUsers({})) } catch {}
+  }
+
+  async function loadHealth() {
+    try { setHealth(await getSystemHealth()) }
+    catch { setHealth({ status: "ERROR", database: "down" }) }
+  }
+
+  async function loadSystemStatus() {
+    try {
+      setSystemLoading(true)
+      setSystemStatus(await getSystemStatus())
+    } catch {
+      setSystemStatus(null)
+    } finally {
+      setSystemLoading(false)
+    }
+  }
+
   async function refreshAll() {
-    const tasks = [loadStats(), loadUsers()]
+    const tasks = [loadStats(), loadUsers(), loadHighlights(), loadHealth()]
     if (activeTab === "charts") tasks.push(loadChart(chartMetric))
+    if (activeTab === "system") tasks.push(loadSystemStatus())
     await Promise.all(tasks)
   }
 
   usePullToRefresh(refreshAll)
+
+  const [manualRefreshing, setManualRefreshing] = useState(false)
+  const [manualRefreshDone, setManualRefreshDone] = useState(false)
+
+  async function handleManualRefresh() {
+    if (manualRefreshing) return
+    setManualRefreshing(true)
+    try {
+      await refreshAll()
+      setManualRefreshDone(true)
+      setTimeout(() => setManualRefreshDone(false), 1000)
+    } finally {
+      setManualRefreshing(false)
+    }
+  }
 
   function goToChart(metric: AdminTimeseriesMetric) {
     setChartMetric(metric)
@@ -305,6 +376,24 @@ export default function AdminPanel() {
   const verifiedPct = stats && stats.totalUsers > 0
     ? Math.round((stats.totalVerified / stats.totalUsers) * 100)
     : null
+
+  const topEngaged = useMemo(() => {
+    return [...allUsersSnapshot]
+      .sort((a, b) => {
+        const streakDiff = (b.spiritualStats?.prayerStreak || 0) - (a.spiritualStats?.prayerStreak || 0)
+        if (streakDiff !== 0) return streakDiff
+        const aTotal = (a.spiritualStats?.prayersPrayed || 0) + (a.spiritualStats?.rosariesPrayed || 0)
+        const bTotal = (b.spiritualStats?.prayersPrayed || 0) + (b.spiritualStats?.rosariesPrayed || 0)
+        return bTotal - aTotal
+      })
+      .slice(0, 5)
+  }, [allUsersSnapshot])
+
+  const recentSignups = useMemo(() => {
+    return [...allUsersSnapshot]
+      .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
+      .slice(0, 5)
+  }, [allUsersSnapshot])
 
   function Delta({ value }: { value?: number }) {
     if (typeof value !== "number") return null
@@ -464,8 +553,17 @@ export default function AdminPanel() {
             <h1>Painel Admin</h1>
             <p>Gerencie usuários e estatísticas</p>
           </div>
-          <button className={styles.refreshBtn} onClick={refreshAll} title="Atualizar">
-            <RefreshCcw size={16}/>
+          <button
+            className={`${styles.refreshBtn} ${manualRefreshDone ? styles.refreshBtnDone : ""}`}
+            onClick={handleManualRefresh}
+            disabled={manualRefreshing}
+            title="Atualizar"
+            aria-label="Atualizar"
+          >
+            {manualRefreshDone
+              ? <Check size={16}/>
+              : <RefreshCcw size={16} className={manualRefreshing ? styles.spinIcon : undefined}/>
+            }
           </button>
         </div>
 
@@ -487,6 +585,12 @@ export default function AdminPanel() {
             onClick={() => setActiveTab("charts")}
           >
             <BarChart3 size={15}/> Gráficos
+          </button>
+          <button
+            className={`${styles.tabBtn} ${activeTab === "system" ? styles.tabBtnActive : ""}`}
+            onClick={() => setActiveTab("system")}
+          >
+            <Terminal size={15}/> Sistema
           </button>
         </div>
       </header>
@@ -510,6 +614,12 @@ export default function AdminPanel() {
             <div className={styles.sectionTitle}>
               <Activity size={17}/>
               <h2>Visão Geral</h2>
+              {health && (
+                <span className={`${styles.healthPill} ${health.status === "OK" ? styles.healthOk : styles.healthDown}`}>
+                  <span className={styles.healthDot}/>
+                  {health.status === "OK" ? "Sistema operacional" : "Sistema indisponível"}
+                </span>
+              )}
             </div>
             <p className={styles.sectionHint}>Toque num indicador pra ver a evolução dele nos Gráficos.</p>
 
@@ -557,6 +667,58 @@ export default function AdminPanel() {
                 <strong className={styles.statValue}>{stats?.last7Days?.logins ?? "–"}</strong>
                 <em className={styles.statDelta}>últimos 7 dias</em>
               </button>
+            </div>
+
+            <div className={styles.highlightsGrid}>
+
+              <div className={styles.highlightCol}>
+                <h3 className={styles.highlightTitle}>
+                  <Flame size={14}/> Top engajamento
+                </h3>
+                {topEngaged.length === 0 ? (
+                  <p className={styles.highlightEmpty}>Sem dados ainda.</p>
+                ) : topEngaged.map((u, i) => (
+                  <div key={u.id} className={styles.compactRow}>
+                    <span className={styles.highlightRank}>{i + 1}</span>
+                    <div className={styles.compactAvatar}>{u.name?.charAt(0)}</div>
+                    <div className={styles.compactInfo}>
+                      <div className={styles.compactNameRow}>
+                        <strong>{u.name}</strong>
+                      </div>
+                      <span className={styles.compactEmail}>
+                        {u.spiritualStats?.prayersPrayed || 0} orações · {u.spiritualStats?.rosariesPrayed || 0} terços
+                      </span>
+                    </div>
+                    <span className={`${styles.compactStreak} ${streakClass(u.spiritualStats?.prayerStreak || 0)}`}>
+                      <Flame size={12}/> {u.spiritualStats?.prayerStreak || 0}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className={styles.highlightCol}>
+                <h3 className={styles.highlightTitle}>
+                  <CalendarDays size={14}/> Últimos cadastros
+                </h3>
+                {recentSignups.length === 0 ? (
+                  <p className={styles.highlightEmpty}>Sem dados ainda.</p>
+                ) : recentSignups.map(u => (
+                  <div key={u.id} className={styles.compactRow}>
+                    <div className={styles.compactAvatar}>{u.name?.charAt(0)}</div>
+                    <div className={styles.compactInfo}>
+                      <div className={styles.compactNameRow}>
+                        <strong>{u.name}</strong>
+                        {u.emailVerified
+                          ? <span className={styles.verifiedDot} title="Verificado"><Check size={9}/></span>
+                          : <span className={styles.unverifiedDot} title="Não verificado"><AlertCircle size={9}/></span>
+                        }
+                      </div>
+                      <span className={styles.compactEmail}>{fmtDate(u.createdAt)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
             </div>
           </section>
         )}
@@ -698,6 +860,109 @@ export default function AdminPanel() {
                 <div className={styles.empty}>Não foi possível carregar o gráfico.</div>
               )}
             </div>
+          </section>
+        )}
+
+        {/* ── SISTEMA ── */}
+        {activeTab === "system" && (
+          <section className={styles.section}>
+            <div className={styles.sectionTitle}>
+              <Terminal size={17}/>
+              <h2>Sistema</h2>
+            </div>
+            <p className={styles.sectionHint}>
+              Informações técnicas do backend — só pra quem for mexer no código.
+            </p>
+
+            {systemLoading && !systemStatus ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <Skeleton height={90} radius={16}/>
+                <Skeleton height={140} radius={16}/>
+              </div>
+            ) : systemStatus ? (
+              <>
+                <div className={styles.systemGrid}>
+                  <div className={styles.systemCard}>
+                    <Database size={16}/>
+                    <span>Banco de dados</span>
+                    <strong className={systemStatus.database === "up" ? styles.systemOk : styles.systemDown}>
+                      {systemStatus.database === "up" ? "Conectado" : "Indisponível"}
+                    </strong>
+                  </div>
+                  <div className={styles.systemCard}>
+                    <Clock size={16}/>
+                    <span>No ar há</span>
+                    <strong>{fmtUptime(systemStatus.uptimeSeconds)}</strong>
+                  </div>
+                  <div className={styles.systemCard}>
+                    <Cpu size={16}/>
+                    <span>Memória (RSS)</span>
+                    <div className={styles.systemMemoryRow}>
+                      <strong>{systemStatus.memory?.rssMB} MB</strong>
+                      {(() => {
+                        const sev = memorySeverity(systemStatus.memory?.rssMB || 0)
+                        const title = sev === "good" ? "Tranquilo" : sev === "warn" ? "Acompanhar" : "Alto"
+                        return (
+                          <span
+                            className={`${styles.severityDot} ${styles["severity_" + sev]}`}
+                            title={title}
+                            aria-label={title}
+                          />
+                        )
+                      })()}
+                    </div>
+                    <span className={styles.systemSubDetail}>
+                      heap {systemStatus.memory?.heapUsedMB} / {systemStatus.memory?.heapTotalMB} MB
+                    </span>
+                  </div>
+                  <div className={styles.systemCard}>
+                    <Terminal size={16}/>
+                    <span>Node / ambiente</span>
+                    <strong className={styles.systemSmall}>
+                      {systemStatus.nodeVersion} · {systemStatus.environment}
+                    </strong>
+                  </div>
+                </div>
+
+                <div className={styles.errorLogHeader}>
+                  <AlertTriangle size={15}/>
+                  <h3>Erros recentes</h3>
+                  <span className={styles.errorLogCount}>
+                    {systemStatus.recentErrors?.length || 0}
+                  </span>
+                </div>
+
+                {!systemStatus.recentErrors || systemStatus.recentErrors.length === 0 ? (
+                  <div className={styles.emptyState}>
+                    <AlertTriangle size={26}/>
+                    <p>Nenhum erro registrado desde o último deploy.</p>
+                  </div>
+                ) : (
+                  <div className={styles.errorLogList}>
+                    {systemStatus.recentErrors.map((e: any, i: number) => (
+                      <div key={i} className={styles.errorLogItem}>
+                        <div className={styles.errorLogTop}>
+                          <span className={styles.errorLogStatus}>{e.statusCode}</span>
+                          {e.errorName && <span className={styles.errorLogName}>{e.errorName}</span>}
+                          <span className={styles.errorLogTime}>
+                            {fmtDateTime(e.timestamp)} · {relativeTime(e.timestamp)}
+                          </span>
+                        </div>
+                        <div className={styles.errorLogBody}>
+                          <strong>{e.message}</strong>
+                          <span>{e.method} {e.path}</span>
+                        </div>
+                        {e.stack && (
+                          <pre className={styles.errorLogStack}>{e.stack}</pre>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className={styles.empty}>Não foi possível carregar o status do sistema.</div>
+            )}
           </section>
         )}
       </main>
@@ -886,8 +1151,6 @@ export default function AdminPanel() {
         </div>,
         document.body
       )}
-
-      <BottomNavbar/>
     </div>
   )
 }
