@@ -11,16 +11,17 @@ import {
   BarChart3, Terminal, Cpu, Database, Clock, AlertTriangle
 } from "lucide-react"
 
-import type { AdminFilters, AdminTimeseriesMetric } from "../../services/adminService"
+import type { AdminFilters, AdminTimeseriesMetric, AdminTimeseriesRange } from "../../services/adminService"
 import {
   getAdminStats, getAllUsers, setAdminStatus,
   getUserDetail, deleteUser, getUserActivity, getAdminTimeseries,
-  getSystemHealth, getSystemStatus
+  getSystemHealth, getSystemStatus, getActivityHeatmap
 } from "../../services/adminService"
 import { getProfile } from "../../services/profileService"
 import { usePullToRefresh } from "../../hooks/usePullToRefresh"
 import Skeleton from "../../components/Skeleton/Skeleton"
 import AdminChart from "../../components/AdminChart/AdminChart"
+import AdminHeatmap from "../../components/AdminHeatmap/AdminHeatmap"
 import AdminFilterSheet from "../../components/AdminFilterSheet/AdminFilterSheet"
 import styles from "./AdminPanel.module.css"
 
@@ -36,8 +37,13 @@ const METRIC_OPTIONS: { key: AdminTimeseriesMetric; label: string; icon: React.R
   { key: "users",         label: "Usuários",     icon: <Users size={14}/> },
   { key: "prayers",       label: "Orações",      icon: <Heart size={14}/> },
   { key: "rosaries",      label: "Terços",       icon: <BookHeart size={14}/> },
-  { key: "consecrations", label: "Consagrações", icon: <Crown size={14}/> },
   { key: "logins",        label: "Logins",       icon: <LogIn size={14}/> },
+]
+
+const RANGE_OPTIONS: { key: AdminTimeseriesRange; label: string }[] = [
+  { key: "7d",  label: "7 dias" },
+  { key: "30d", label: "30 dias" },
+  { key: "6m",  label: "6 meses" },
 ]
 
 function fmtDate(iso: string) {
@@ -126,8 +132,13 @@ export default function AdminPanel() {
   const [sortDir, setSortDir] = useState<SortDir>("desc")
 
   const [chartMetric, setChartMetric] = useState<AdminTimeseriesMetric>("users")
+  const [chartRange,  setChartRange]  = useState<AdminTimeseriesRange>("6m")
+  const [chartView,   setChartView]   = useState<"evolution" | "heatmap">("evolution")
   const [chartData,    setChartData]    = useState<any>(null)
   const [chartLoading, setChartLoading] = useState(false)
+
+  const [heatmapData,    setHeatmapData]    = useState<any>(null)
+  const [heatmapLoading, setHeatmapLoading] = useState(false)
 
   const [health, setHealth] = useState<{ status: string; database: string } | null>(null)
 
@@ -167,8 +178,13 @@ export default function AdminPanel() {
 
   useEffect(() => {
     if (activeTab !== "charts") return
-    loadChart(chartMetric)
-  }, [activeTab, chartMetric])
+    loadChart(chartMetric, chartRange)
+  }, [activeTab, chartMetric, chartRange])
+
+  useEffect(() => {
+    if (activeTab !== "charts" || chartView !== "heatmap") return
+    loadHeatmap(chartMetric)
+  }, [activeTab, chartMetric, chartView])
 
   useEffect(() => {
     if (activeTab !== "system") return
@@ -201,14 +217,25 @@ export default function AdminPanel() {
     }
   }
 
-  async function loadChart(metric: AdminTimeseriesMetric) {
+  async function loadChart(metric: AdminTimeseriesMetric, range: AdminTimeseriesRange) {
     try {
       setChartLoading(true)
-      setChartData(await getAdminTimeseries(metric, 6))
+      setChartData(await getAdminTimeseries(metric, range))
     } catch {
       setChartData(null)
     } finally {
       setChartLoading(false)
+    }
+  }
+
+  async function loadHeatmap(metric: AdminTimeseriesMetric) {
+    try {
+      setHeatmapLoading(true)
+      setHeatmapData(await getActivityHeatmap(metric, 90))
+    } catch {
+      setHeatmapData(null)
+    } finally {
+      setHeatmapLoading(false)
     }
   }
 
@@ -234,7 +261,10 @@ export default function AdminPanel() {
 
   async function refreshAll() {
     const tasks = [loadStats(), loadUsers(), loadHighlights(), loadHealth()]
-    if (activeTab === "charts") tasks.push(loadChart(chartMetric))
+    if (activeTab === "charts") {
+      tasks.push(loadChart(chartMetric, chartRange))
+      if (chartView === "heatmap") tasks.push(loadHeatmap(chartMetric))
+    }
     if (activeTab === "system") tasks.push(loadSystemStatus())
     await Promise.all(tasks)
   }
@@ -654,12 +684,12 @@ export default function AdminPanel() {
                 <Delta value={stats?.last7Days?.rosaries}/>
               </button>
 
-              <button className={styles.statCard} onClick={() => goToChart("consecrations")}>
+              <div className={styles.statCard}>
                 <div className={styles.statIcon}><Crown size={17}/></div>
                 <span className={styles.statLabel}>Consagrações</span>
                 <strong className={styles.statValue}>{stats?.consecrationStarted ?? "–"}</strong>
                 <Delta value={stats?.last7Days?.consecrations}/>
-              </button>
+              </div>
 
               <button className={styles.statCard} onClick={() => goToChart("logins")}>
                 <div className={styles.statIcon}><LogIn size={17}/></div>
@@ -836,7 +866,12 @@ export default function AdminPanel() {
               <BarChart3 size={17}/>
               <h2>Gráficos</h2>
             </div>
-            <p className={styles.sectionHint}>Evolução mês a mês — toque numa barra pra ver o valor exato.</p>
+            <p className={styles.sectionHint}>
+              {chartView === "evolution"
+                ? "Evolução no período — toque numa barra pra ver o valor exato."
+                : "Padrão de uso dos últimos 90 dias — toque numa célula pra ver o horário."
+              }
+            </p>
 
             <div className={styles.metricChips}>
               {METRIC_OPTIONS.map(m => (
@@ -851,13 +886,56 @@ export default function AdminPanel() {
               ))}
             </div>
 
+            <div className={styles.chartViewToggle}>
+              <button
+                className={`${styles.chartViewBtn} ${chartView === "evolution" ? styles.chartViewBtnActive : ""}`}
+                onClick={() => setChartView("evolution")}
+              >
+                Evolução
+              </button>
+              <button
+                className={`${styles.chartViewBtn} ${chartView === "heatmap" ? styles.chartViewBtnActive : ""}`}
+                onClick={() => setChartView("heatmap")}
+              >
+                Por horário
+              </button>
+            </div>
+
+            {chartView === "evolution" && (
+              <div className={styles.rangeChips}>
+                {RANGE_OPTIONS.map(r => (
+                  <button
+                    key={r.key}
+                    className={`${styles.rangeChip} ${chartRange === r.key ? styles.rangeChipOn : ""}`}
+                    onClick={() => setChartRange(r.key)}
+                  >
+                    {r.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
             <div className={styles.chartCard}>
-              {chartLoading ? (
-                <Skeleton height={190} radius={14}/>
-              ) : chartData?.data ? (
-                <AdminChart key={chartMetric} data={chartData.data}/>
+              {chartView === "evolution" ? (
+                chartLoading ? (
+                  <Skeleton height={190} radius={14}/>
+                ) : chartData?.data ? (
+                  <AdminChart key={`${chartMetric}-${chartRange}`} data={chartData.data}/>
+                ) : (
+                  <div className={styles.empty}>Não foi possível carregar o gráfico.</div>
+                )
               ) : (
-                <div className={styles.empty}>Não foi possível carregar o gráfico.</div>
+                heatmapLoading ? (
+                  <Skeleton height={190} radius={14}/>
+                ) : heatmapData?.matrix ? (
+                  <AdminHeatmap
+                    key={chartMetric}
+                    matrix={heatmapData.matrix}
+                    maxCount={heatmapData.maxCount}
+                  />
+                ) : (
+                  <div className={styles.empty}>Não foi possível carregar o heatmap.</div>
+                )
               )}
             </div>
           </section>

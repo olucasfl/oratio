@@ -67,12 +67,24 @@ export async function getSystemStatus() {
 export type AdminTimeseriesMetric =
   "users" | "prayers" | "rosaries" | "consecrations" | "logins"
 
+export type AdminTimeseriesRange = "7d" | "30d" | "6m" | "12m"
+
 export async function getAdminTimeseries(
   metric: AdminTimeseriesMetric,
-  months = 6
+  range: AdminTimeseriesRange = "6m"
 ) {
   const res = await api.get(
-    `/users/admin/stats/timeseries?metric=${metric}&months=${months}`
+    `/users/admin/stats/timeseries?metric=${metric}&range=${range}`
+  )
+  return res.data
+}
+
+export async function getActivityHeatmap(
+  metric: AdminTimeseriesMetric,
+  days = 90
+) {
+  const res = await api.get(
+    `/users/admin/stats/heatmap?metric=${metric}&days=${days}`
   )
   return res.data
 }

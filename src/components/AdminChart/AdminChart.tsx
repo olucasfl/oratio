@@ -2,7 +2,7 @@ import { useMemo, useState } from "react"
 import styles from "./AdminChart.module.css"
 
 export interface AdminChartPoint {
-  month: string
+  period: string
   label: string
   count: number
 }
@@ -42,7 +42,7 @@ export default function AdminChart({ data }: Props) {
           const isSelected = i === selected
           return (
             <button
-              key={d.month}
+              key={d.period}
               type="button"
               className={`${styles.barBtn} ${isSelected ? styles.barBtnActive : ""}`}
               onClick={() => setSelected(i)}

@@ -7,13 +7,17 @@
 .bars {
   display: flex;
   align-items: flex-end;
-  gap: 8px;
+  gap: 6px;
   height: 150px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* dá espaço pro anel de foco do teclado não cortar nas pontas */
+  padding: 0 2px;
 }
 
 .barBtn {
-  flex: 1;
-  min-width: 0;
+  flex: 1 0 auto;
+  min-width: 22px;
   display: flex;
   flex-direction: column;
   align-items: center;
