@@ -236,6 +236,15 @@ export default function AdminPanel() {
 
   const totalUnverified = stats ? (stats.totalUsers ?? 0) - (stats.totalVerified ?? 0) : null
 
+  function Delta({ value }: { value?: number }) {
+    if (typeof value !== "number") return null
+    return (
+      <em className={`${styles.statDelta} ${value > 0 ? styles.statDeltaUp : ""}`}>
+        {value > 0 ? `+${value}` : value} essa semana
+      </em>
+    )
+  }
+
   // ─── SKELETON ───────────────────────────────────────────────────────────────
   if (initialLoading) return (
     <div className={`${styles.page} page-enter`}>
@@ -280,7 +289,16 @@ export default function AdminPanel() {
 
       <main className={styles.container}>
 
-        {error && <div className={styles.error}>{error}</div>}
+        {error && (
+          <div className={styles.errorBox}>
+            <AlertCircle size={18}/>
+            <span>{error}</span>
+            <button className={styles.errorRetry} onClick={refreshAll}>
+              <RefreshCcw size={13}/>
+              Tentar novamente
+            </button>
+          </div>
+        )}
 
         {/* ── STATS ── */}
         <section className={styles.section}>
@@ -294,6 +312,7 @@ export default function AdminPanel() {
               <Users size={20}/>
               <span>Total</span>
               <strong>{stats?.totalUsers ?? "–"}</strong>
+              <Delta value={stats?.last7Days?.newUsers}/>
             </div>
             <div className={`${styles.statCard} ${styles.statGreen}`}>
               <BadgeCheck size={20}/>
@@ -309,16 +328,19 @@ export default function AdminPanel() {
               <Flame size={20}/>
               <span>Orações</span>
               <strong>{stats?.prayersPrayed ?? "–"}</strong>
+              <Delta value={stats?.last7Days?.prayers}/>
             </div>
             <div className={`${styles.statCard} ${styles.statPurple}`}>
               <BookHeart size={20}/>
               <span>Terços</span>
               <strong>{stats?.rosariesPrayed ?? "–"}</strong>
+              <Delta value={stats?.last7Days?.rosaries}/>
             </div>
             <div className={`${styles.statCard} ${styles.statAmber}`}>
               <Crown size={20}/>
               <span>Consagrações</span>
               <strong>{stats?.consecrationStarted ?? "–"}</strong>
+              <Delta value={stats?.last7Days?.consecrations}/>
             </div>
           </div>
         </section>

@@ -109,6 +109,45 @@
   font-size: 14px;
 }
 
+.errorBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+.errorBox svg { flex-shrink: 0; }
+
+.errorBox span {
+  flex: 1;
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+
+.errorRetry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 10px;
+  background: #991b1b;
+  color: white;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform .15s;
+}
+
+.errorRetry:hover { transform: translateY(-1px); }
+.errorRetry:active { transform: translateY(0); }
+
 /* ========================
    SECTION
 ======================== */
@@ -167,6 +206,18 @@
   font-size: 26px;
   font-family: var(--oratio-font-title);
   line-height: 1;
+}
+
+.statDelta {
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 600;
+  opacity: .65;
+}
+
+.statDeltaUp {
+  opacity: 1;
+  color: #15803d;
 }
 
 .statBlue   { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
@@ -994,4 +1045,11 @@
   .statsGrid { grid-template-columns: repeat(2, 1fr); }
 
   .statCard strong { font-size: 20px; }
+}
+
+/* Oratio é mobile-first — isso é só um aproveitamento de espaço extra
+   quando o painel é aberto num navegador largo, não uma reformulação
+   de desktop. O layout abaixo de 720px continua intocado. */
+@media (min-width: 720px) {
+  .statsGrid { grid-template-columns: repeat(6, 1fr); }
 }
