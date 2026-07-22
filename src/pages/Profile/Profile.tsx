@@ -511,7 +511,12 @@ export default function Profile(){
 
      <div className={styles.statsGrid}>
 
-      <div className={styles.statCard}>
+      <button
+       className={`${styles.statCard} ${styles.statCardButton}`}
+       onClick={()=>
+        navigate("/oratio/prayers/history")
+       }
+      >
 
        <span className={styles.statLabel}>
         Orações
@@ -521,7 +526,7 @@ export default function Profile(){
         {prayers}
        </strong>
 
-      </div>
+      </button>
 
       <button
        className={`${styles.statCard} ${styles.statCardButton}`}

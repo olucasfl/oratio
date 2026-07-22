@@ -24,9 +24,17 @@ export async function getPrayer(id:string){
 
 }
 
-export async function completePrayer(){
+export async function completePrayer(title?:string){
 
-  const res = await api.post("/oratio/prayers/complete")
+  const res = await api.post("/oratio/prayers/complete", { title })
+
+  return res.data
+
+}
+
+export async function getPrayerHistory(){
+
+  const res = await api.get("/oratio/prayers/history")
 
   return res.data
 

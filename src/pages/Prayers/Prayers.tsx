@@ -79,7 +79,7 @@ export default function Prayers(){
 
       setCompleting(true)
 
-      await completePrayer()
+      await completePrayer(prayer?.title)
 
       navigate(-1)
 

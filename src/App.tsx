@@ -31,6 +31,7 @@ const AdminPanel       = lazy(() => import("./pages/Profile/AdminPanel"))
 const PrayersCategories= lazy(() => import("./pages/Prayers/PrayersCategories"))
 const CategoryPrayers  = lazy(() => import("./pages/Prayers/CategoryPrayers"))
 const Prayers          = lazy(() => import("./pages/Prayers/Prayers"))
+const PrayerHistory    = lazy(() => import("./pages/Prayers/PrayerHistory"))
 const RosaryHome       = lazy(() => import("./pages/Prayers/RosaryHome"))
 const RosaryPage       = lazy(() => import("./pages/Prayers/RosaryPage"))
 const RosaryHistory    = lazy(() => import("./pages/Prayers/RosaryHistory"))
@@ -257,6 +258,15 @@ element={
  element={
   <ProtectedRoute>
    <Prayers/>
+  </ProtectedRoute>
+ }
+/>
+
+<Route
+ path="/oratio/prayers/history"
+ element={
+  <ProtectedRoute>
+   <PrayerHistory/>
   </ProtectedRoute>
  }
 />

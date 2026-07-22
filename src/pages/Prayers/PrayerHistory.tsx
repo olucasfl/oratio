@@ -11,24 +11,24 @@ import {
 
 import styles from "./RosaryHistory.module.css"
 
-import { getRosaryHistory }
-from "../../services/rosaryService"
+import { getPrayerHistory }
+from "../../services/prayersService"
 
-import { getRosaryName }
-from "../../utils/rosaryList"
+import { usePullToRefresh }
+from "../../hooks/usePullToRefresh"
 
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
 
 /* =========================
-FORMATAR DATA
+FORMATAR DATA/HORA
 ========================= */
 
-function formatDate(iso:string){
+function formatDateTime(iso:string){
 
   const date = new Date(iso)
 
-  return date.toLocaleDateString(
+  const dateLabel = date.toLocaleDateString(
     "pt-BR",
     {
       day:"2-digit",
@@ -37,44 +37,34 @@ function formatDate(iso:string){
     }
   )
 
+  const timeLabel = date.toLocaleTimeString(
+    "pt-BR",
+    {
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  )
+
+  return `${dateLabel} · ${timeLabel}`
+
 }
 
 /*
-Prioriza elapsedSeconds (tempo realmente sincronizado enquanto a tela
-ficava aberta) em vez de finishedAt-startedAt. Uma sessão retomada
-depois de um tempo parada (app fechado, aparelho trocado) tem
-startedAt antigo — usar a diferença de relógio ali gerava durações
-absurdas tipo "182734 min". elapsedSeconds não sofre com isso porque
-só cresce enquanto a pessoa está de fato na tela.
+Ações antigas gravadas antes de guardarmos o nome da oração vêm como
+"Oração rezada" (genérico). As mais novas vêm como "Rezou: <título>" —
+aqui só troca o prefixo por um rótulo mais limpo pro card.
 */
-function formatDuration(
-  startedAt:string,
-  finishedAt:string,
-  elapsedSeconds?:number
-){
+function formatLabel(action:string){
 
-  if(elapsedSeconds && elapsedSeconds > 0){
-    const minutes = Math.max(1,Math.round(elapsedSeconds / 60))
-    return `${minutes} min`
+  if(action.startsWith("Rezou: ")){
+    return action.slice("Rezou: ".length)
   }
 
-  const ms =
-    new Date(finishedAt).getTime() -
-    new Date(startedAt).getTime()
-
-  const minutes =
-    Math.max(1,Math.round(ms / 60000))
-
-  // Sem elapsedSeconds e com uma diferença de relógio grande demais
-  // pra ser uma sessão de terço de verdade, não dá pra confiar nesse
-  // número — melhor não mostrar um valor claramente errado.
-  if(minutes > 180) return null
-
-  return `${minutes} min`
+  return "Oração"
 
 }
 
-export default function RosaryHistory(){
+export default function PrayerHistory(){
 
   const navigate = useNavigate()
 
@@ -90,12 +80,14 @@ export default function RosaryHistory(){
 
   },[])
 
+  usePullToRefresh(load)
+
   async function load(){
 
     try{
 
       const data =
-        await getRosaryHistory()
+        await getPrayerHistory()
 
       setHistory(data || [])
 
@@ -149,8 +141,8 @@ export default function RosaryHistory(){
           </h1>
 
           <p>
-            Os terços que você
-            já concluiu.
+            As orações que você
+            já rezou.
           </p>
 
         </div>
@@ -181,7 +173,7 @@ export default function RosaryHistory(){
 
               <p>
                 Você ainda não
-                concluiu nenhum terço.
+                registrou nenhuma oração.
               </p>
 
             </div>
@@ -199,19 +191,11 @@ export default function RosaryHistory(){
               <div className={styles.cardInfo}>
 
                 <strong>
-                  {getRosaryName(h.type)}
+                  {formatLabel(h.action)}
                 </strong>
 
                 <span>
-                  {formatDate(h.finishedAt)}
-                  {(()=>{
-                    const duration = formatDuration(
-                      h.startedAt,
-                      h.finishedAt,
-                      h.elapsedSeconds
-                    )
-                    return duration ? ` · ${duration}` : ""
-                  })()}
+                  {formatDateTime(h.createdAt)}
                 </span>
 
               </div>
