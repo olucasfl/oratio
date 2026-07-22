@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { createPortal } from "react-dom"
 
 import { requestEmailChange } from "../../services/profileService"
 import { getAuthErrorMessage } from "../../utils/authErrors"
@@ -54,7 +55,7 @@ export default function ChangeEmailModal({ open, onClose, onRequested }:Props){
 
  }
 
- return(
+ return createPortal(
 
   <div className={styles.overlay}>
 
@@ -91,7 +92,9 @@ export default function ChangeEmailModal({ open, onClose, onRequested }:Props){
 
    </div>
 
-  </div>
+  </div>,
+
+  document.body
 
  )
 

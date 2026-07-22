@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { createPortal } from "react-dom"
 
 import { deleteAccount } from "../../services/profileService"
 import { getAuthErrorMessage } from "../../utils/authErrors"
@@ -49,7 +50,7 @@ export default function DeleteAccountModal({ open, userEmail, onClose }:Props){
 
  }
 
- return(
+ return createPortal(
 
   <div className={styles.overlay}>
 
@@ -91,7 +92,9 @@ export default function DeleteAccountModal({ open, userEmail, onClose }:Props){
 
    </div>
 
-  </div>
+  </div>,
+
+  document.body
 
  )
 

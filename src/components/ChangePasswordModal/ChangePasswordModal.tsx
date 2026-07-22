@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { createPortal } from "react-dom"
 
 import { changePassword } from "../../services/profileService"
 import { getAuthErrorMessage } from "../../utils/authErrors"
@@ -72,7 +73,7 @@ export default function ChangePasswordModal({ open, onClose }:Props){
 
  }
 
- return(
+ return createPortal(
 
   <div className={styles.overlay}>
 
@@ -138,7 +139,9 @@ export default function ChangePasswordModal({ open, onClose }:Props){
 
    </div>
 
-  </div>
+  </div>,
+
+  document.body
 
  )
 
