@@ -33,6 +33,9 @@ from "../../services/rosaryService"
 import { ROSARIES }
 from "../../utils/rosaryList"
 
+import { usePullToRefresh }
+from "../../hooks/usePullToRefresh"
+
 /* =========================
 NORMALIZAR TEXTO
 ========================= */
@@ -69,6 +72,8 @@ export default function RosaryHome(){
     loadProgress()
 
   },[])
+
+  usePullToRefresh(loadProgress)
 
   async function loadProgress(){
 

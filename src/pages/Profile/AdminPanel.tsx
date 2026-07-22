@@ -16,6 +16,7 @@ import {
   getUserDetail, deleteUser, getUserActivity
 } from "../../services/adminService"
 import { getProfile } from "../../services/profileService"
+import { usePullToRefresh } from "../../hooks/usePullToRefresh"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 import Skeleton from "../../components/Skeleton/Skeleton"
 import styles from "./AdminPanel.module.css"
@@ -134,6 +135,8 @@ export default function AdminPanel() {
   async function refreshAll() {
     await Promise.all([loadStats(), loadUsers()])
   }
+
+  usePullToRefresh(refreshAll)
 
   const sortedUsers = useMemo(() => {
     return [...users].sort((a, b) => {

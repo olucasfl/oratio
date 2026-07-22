@@ -14,6 +14,9 @@ import styles from "./RosaryHistory.module.css"
 import { getRosaryHistory }
 from "../../services/rosaryService"
 
+import { usePullToRefresh }
+from "../../hooks/usePullToRefresh"
+
 import { getRosaryName }
 from "../../utils/rosaryList"
 
@@ -89,6 +92,8 @@ export default function RosaryHistory(){
     load()
 
   },[])
+
+  usePullToRefresh(load)
 
   async function load(){
 

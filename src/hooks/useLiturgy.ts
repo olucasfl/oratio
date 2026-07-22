@@ -154,7 +154,8 @@ export function useLiturgy(){
   liturgyError,
   dateOffset,
   setDateOffset,
-  displayDateLabel
+  displayDateLabel,
+  reloadLiturgy: loadLiturgy
  }
 
 }

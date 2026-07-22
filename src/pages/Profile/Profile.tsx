@@ -1,6 +1,7 @@
 import { useEffect,useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useOffline } from "../../hooks/useOffline"
+import { usePullToRefresh } from "../../hooks/usePullToRefresh"
 
 import styles from "./Profile.module.css"
 
@@ -52,6 +53,8 @@ export default function Profile(){
   if(!isOffline) loadProfile()
 
  },[isOffline])
+
+ usePullToRefresh(loadProfile, !isOffline)
 
  async function loadProfile(){
 

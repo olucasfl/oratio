@@ -14,6 +14,9 @@ import styles from "./PrayersCategories.module.css"
 import { getPrayerCategories }
 from "../../services/prayersService"
 
+import { usePullToRefresh }
+from "../../hooks/usePullToRefresh"
+
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
 
@@ -40,6 +43,8 @@ export default function PrayersCategories(){
     loadCategories()
 
   },[])
+
+  usePullToRefresh(loadCategories)
 
   async function loadCategories(){
 

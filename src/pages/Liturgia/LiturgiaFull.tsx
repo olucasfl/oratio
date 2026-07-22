@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Calendar, RotateCcw } from "lucide-react"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 import { getLiturgiaFull } from "../../services/liturgiaService"
 import { useOffline } from "../../hooks/useOffline"
+import { usePullToRefresh } from "../../hooks/usePullToRefresh"
 
 function cacheKey(date:Date){
 
@@ -29,6 +30,8 @@ export default function LiturgiaFull(){
   useEffect(() => {
     loadMissa(dataSelecionada)
   }, [dataSelecionada])
+
+  usePullToRefresh(() => loadMissa(dataSelecionada), !isOffline)
 
   async function loadMissa(date: Date){
 

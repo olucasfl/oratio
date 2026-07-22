@@ -12,6 +12,7 @@ import {
 } from "../../services/consecrationService"
 
 import { useOffline } from "../../hooks/useOffline"
+import { usePullToRefresh } from "../../hooks/usePullToRefresh"
 
 export default function ConsecrationDay(){
 
@@ -44,6 +45,8 @@ export default function ConsecrationDay(){
   if(!isOffline) load()
 
  },[isOffline])
+
+ usePullToRefresh(load, !isOffline)
 
   async function load(){
 

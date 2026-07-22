@@ -12,6 +12,7 @@ import {
 } from "../../services/consecrationService"
 
 import { useOffline } from "../../hooks/useOffline"
+import { usePullToRefresh } from "../../hooks/usePullToRefresh"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
 
@@ -40,6 +41,8 @@ export default function ConsecrationHome() {
   useEffect(() => {
     if (!isOffline) load()
   }, [isOffline])
+
+  usePullToRefresh(load, !isOffline)
 
   /* ─── load ─── */
   async function load() {

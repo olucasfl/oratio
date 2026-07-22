@@ -24,6 +24,9 @@ import {
 import { useNavigate }
 from "react-router-dom"
 
+import { usePullToRefresh }
+from "../../hooks/usePullToRefresh"
+
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
 import AlertModal from "../../components/AlertModal/AlertModal"
 import Skeleton from "../../components/Skeleton/Skeleton"
@@ -63,6 +66,8 @@ export default function Journey(){
     loadJourney()
 
   },[])
+
+  usePullToRefresh(loadJourney)
 
   async function loadJourney(){
 

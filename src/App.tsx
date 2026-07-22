@@ -7,6 +7,7 @@ import Splash from "./components/Splash/Splash"
 import ProtectedRoute from "./components/ProtectedRoute"
 import AdminRoute from "./components/AdminRoute"
 import OfflineBanner from "./components/OfflineBanner/OfflineBanner"
+import PullToRefresh from "./components/PullToRefresh/PullToRefresh"
 import { preloadConsecration, getProgress } from "./services/consecrationService"
 import { sendActivityPing } from "./services/activityService"
 
@@ -191,6 +192,8 @@ return(
 
 <ScrollToTop />
 
+<PullToRefresh>
+
 <Routes>
 
 <Route path="/" element={<Navigate to="/login" replace />} />
@@ -348,6 +351,8 @@ element={
 />
 
 </Routes>
+
+</PullToRefresh>
 
 </Suspense>
 

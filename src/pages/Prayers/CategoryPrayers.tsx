@@ -17,6 +17,9 @@ import {
   getPrayersByCategory
 } from "../../services/prayersService"
 
+import { usePullToRefresh }
+from "../../hooks/usePullToRefresh"
+
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
 
@@ -58,6 +61,8 @@ export default function CategoryPrayers(){
     load()
 
   },[slug])
+
+  usePullToRefresh(load)
 
   async function load(){
 

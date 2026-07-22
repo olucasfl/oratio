@@ -11,6 +11,7 @@ import {
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 import { useOffline } from "../../hooks/useOffline"
+import { usePullToRefresh } from "../../hooks/usePullToRefresh"
 
 export default function ConsecrationStage(){
 
@@ -25,6 +26,8 @@ export default function ConsecrationStage(){
 
  useEffect(()=>{ load() },[stageId])
  useEffect(()=>{ if(!isOffline) load() },[isOffline])
+
+ usePullToRefresh(load, !isOffline)
 
  async function load(){
 
