@@ -38,7 +38,6 @@ const RosaryPage       = lazy(() => import("./pages/Prayers/RosaryPage"))
 const Catecismo        = lazy(() => import("./pages/Catecismo/Catecismo"))
 const LiturgiaFull     = lazy(() => import("./pages/Liturgia/LiturgiaFull"))
 const SantoDoDia       = lazy(() => import("./pages/SantoDoDia/SantoDoDia"))
-const Journey          = lazy(() => import("./pages/Journey/Journey"))
 const Confissao        = lazy(() => import("./pages/Confissao/Confissao"))
 
 function App(){
@@ -166,7 +165,6 @@ useEffect(()=>{
   void import("./pages/Vox/Vox")
   void import("./pages/Catecismo/Catecismo")
   void import("./pages/Liturgia/LiturgiaFull")
-  void import("./pages/Journey/Journey")
   void import("./pages/Profile/Profile")
 },[]) // roda 1x na montagem, enquanto o splash ainda está visível
 
@@ -334,15 +332,6 @@ element={
 />
 
 <Route path="*" element={<Navigate to="/login" replace />} />
-
-<Route
- path="/oratio/journey"
- element={
-  <ProtectedRoute>
-   <Journey/>
-  </ProtectedRoute>
- }
-/>
 
 </Routes>
 

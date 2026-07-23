@@ -1,6 +1,6 @@
 import styles from "./Home.module.css"
 import { useNavigate } from "react-router-dom"
-import { useEffect, useMemo, useCallback, useState } from "react"
+import { useEffect, useMemo, useCallback } from "react"
 
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
@@ -17,9 +17,6 @@ import { clearSession } from "../../services/api"
 import {
  preloadConsecration
 } from "../../services/consecrationService"
-
-import JourneyCard
-from "../../components/JourneyCard/JourneyCard"
 
 import { FraseDiaria } from "../../components/FraseDiaria/FraseDiaria"
 
@@ -60,10 +57,6 @@ export default function Home(){
   displayDateLabel,
   reloadLiturgy
  } = useLiturgy()
-
- // Remonta o JourneyCard (ele carrega os próprios dados no mount) —
- // mais simples do que levantar o estado dele só pra puxar-e-atualizar
- const [journeyRefreshKey,setJourneyRefreshKey] = useState(0)
 
  /* =========================
  FEATURES
@@ -176,7 +169,6 @@ export default function Home(){
    reloadLiturgy(),
    preloadConsecration()
   ])
-  setJourneyRefreshKey(k=>k+1)
  },[reloadLiturgy])
 
  usePullToRefresh(handleRefresh)
@@ -265,10 +257,6 @@ export default function Home(){
     setDateOffset={setDateOffset}
     displayDateLabel={displayDateLabel}
    />
-
-   {/* JORNADA */}
-
-   <JourneyCard key={journeyRefreshKey}/>
 
    {/* FEATURES */}
 
