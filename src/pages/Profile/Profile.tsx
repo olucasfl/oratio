@@ -7,10 +7,9 @@ import styles from "./Profile.module.css"
 
 import { getProfile, cancelEmailChange } from "../../services/profileService"
 import { logout as authLogout } from "../../services/authService"
+import { FONT_SCALE_OPTIONS, getStoredFontScale, setFontScale } from "../../utils/fontScale"
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
-import ChangePasswordModal from "../../components/ChangePasswordModal/ChangePasswordModal"
-import ChangeEmailModal from "../../components/ChangeEmailModal/ChangeEmailModal"
 import DeleteAccountModal from "../../components/DeleteAccountModal/DeleteAccountModal"
 
 import {
@@ -25,8 +24,9 @@ import {
  Compass,
  Gem,
  Award,
- KeyRound,
- Mail
+ Settings,
+ Type,
+ Check
 } from "lucide-react"
 
 export default function Profile(){
@@ -36,9 +36,8 @@ export default function Profile(){
  const [profile,setProfile] = useState<any>(null)
  const [loading,setLoading] = useState(true)
 
- const [changePasswordOpen,setChangePasswordOpen] = useState(false)
- const [changeEmailOpen,setChangeEmailOpen] = useState(false)
  const [deleteAccountOpen,setDeleteAccountOpen] = useState(false)
+ const [fontScale,setFontScaleState] = useState(getStoredFontScale())
 
  const isOffline = useOffline()
 
@@ -120,10 +119,10 @@ export default function Profile(){
 
  }
 
- function handleEmailChangeRequested(pendingEmail:string){
+ function handlePickFontScale(value:number){
 
-  setChangeEmailOpen(false)
-  setProfile((prev:any)=> prev ? { ...prev, pendingEmail } : prev)
+  setFontScale(value)
+  setFontScaleState(value)
 
  }
 
@@ -342,6 +341,15 @@ export default function Profile(){
     {/* HERO */}
 
     <div className={styles.profileHero}>
+
+     <button
+      className={styles.settingsGear}
+      onClick={()=>navigate("/oratio/profile/settings")}
+      aria-label="Configurações da conta"
+      title="Configurações da conta"
+     >
+      <Settings size={19}/>
+     </button>
 
      <div className={styles.avatar}>
 
@@ -562,6 +570,58 @@ export default function Profile(){
 
     </div>
 
+    {/* APARÊNCIA */}
+
+    <div className={styles.card}>
+
+     <div className={styles.cardTitle}>
+
+      <Type size={18}/>
+
+      <h3>Aparência</h3>
+
+     </div>
+
+     <p className={styles.cardHint}>
+      Tamanho do texto no aplicativo.
+     </p>
+
+     <div className={styles.fontScaleGrid}>
+
+      {FONT_SCALE_OPTIONS.map(opt=>{
+
+       const active = fontScale === opt.value
+
+       return(
+
+        <button
+         key={opt.value}
+         className={`${styles.fontScaleOption} ${active ? styles.fontScaleOptionActive : ""}`}
+         onClick={()=>handlePickFontScale(opt.value)}
+        >
+
+         <span
+          className={styles.fontScalePreview}
+          style={{ fontSize:`${16 * opt.value}px` }}
+         >
+          Aa
+         </span>
+
+         <span className={styles.fontScaleLabel}>
+          {opt.label}
+          {active && <Check size={12}/>}
+         </span>
+
+        </button>
+
+       )
+
+      })}
+
+     </div>
+
+    </div>
+
     {/* CONTA */}
 
     <div className={styles.card}>
@@ -600,24 +660,6 @@ export default function Profile(){
 
      )}
 
-     <div className={styles.accountActions}>
-
-      <button
-       className={styles.accountButton}
-       onClick={()=>setChangePasswordOpen(true)}
-      >
-       <KeyRound size={16}/> Trocar senha
-      </button>
-
-      <button
-       className={styles.accountButton}
-       onClick={()=>setChangeEmailOpen(true)}
-      >
-       <Mail size={16}/> Trocar email
-      </button>
-
-     </div>
-
      <div className={styles.dangerZone}>
 
       <button
@@ -645,17 +687,6 @@ export default function Profile(){
    </div>
 
    <BottomNavbar/>
-
-   <ChangePasswordModal
-    open={changePasswordOpen}
-    onClose={()=>setChangePasswordOpen(false)}
-   />
-
-   <ChangeEmailModal
-    open={changeEmailOpen}
-    onClose={()=>setChangeEmailOpen(false)}
-    onRequested={handleEmailChangeRequested}
-   />
 
    <DeleteAccountModal
     open={deleteAccountOpen}

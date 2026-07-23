@@ -28,6 +28,7 @@ const BibliaBook       = lazy(() => import("./pages/Biblia/BibliaBook"))
 const BibliaChapter    = lazy(() => import("./pages/Biblia/BibliaChapter"))
 const Vox              = lazy(() => import("./pages/Vox/Vox"))
 const Profile          = lazy(() => import("./pages/Profile/Profile"))
+const AccountSettings  = lazy(() => import("./pages/Profile/AccountSettings"))
 const AdminPanel       = lazy(() => import("./pages/Profile/AdminPanel"))
 const PrayersCategories= lazy(() => import("./pages/Prayers/PrayersCategories"))
 const CategoryPrayers  = lazy(() => import("./pages/Prayers/CategoryPrayers"))
@@ -299,6 +300,15 @@ element={
  element={
   <ProtectedRoute>
    <Profile/>
+  </ProtectedRoute>
+ }
+/>
+
+<Route
+ path="/oratio/profile/settings"
+ element={
+  <ProtectedRoute>
+   <AccountSettings/>
   </ProtectedRoute>
  }
 />

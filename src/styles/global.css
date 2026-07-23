@@ -42,6 +42,19 @@ padding-right:env(safe-area-inset-right);
 
 }
 
+/*
+Tamanho de fonte ajustável pelo usuário (Perfil > Configurações).
+zoom em vez de mexer em font-size direto porque a maior parte do app
+usa px fixo, não rem — um font-size no root não afetaria quase nada.
+zoom escala todo mundo (texto, espaçamento, ícone) proporcionalmente
+de verdade, sem quebrar layout, e sem herdar o resultado de volta pro
+padding de safe-area do body (por isso fica no #root, não no body).
+Sem suporte no Firefox — degrada bem, fica só sem efeito lá.
+*/
+#root{
+zoom:var(--oratio-font-scale, 1);
+}
+
 
 /* =========================
 TITULOS

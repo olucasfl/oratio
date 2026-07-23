@@ -7,6 +7,13 @@ import "./styles/variables.css";
 
 import App from "./App";
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
+import { applyStoredFontScale } from "./utils/fontScale";
+
+/* ============================= */
+/* TAMANHO DE FONTE (antes do 1º paint, evita flash) */
+/* ============================= */
+
+applyStoredFontScale();
 
 /* ============================= */
 /* RENDER APP */
