@@ -658,7 +658,7 @@ export default function AdminPanel() {
                 <div className={styles.statIcon}><Users size={17}/></div>
                 <span className={styles.statLabel}>Usuários</span>
                 <strong className={styles.statValue}>{stats?.totalUsers ?? "–"}</strong>
-                <Delta value={stats?.last7Days?.newUsers}/>
+                <Delta value={stats?.thisWeek?.newUsers}/>
               </button>
 
               <button className={styles.statCard} onClick={() => goToChart("users")}>
@@ -674,28 +674,28 @@ export default function AdminPanel() {
                 <div className={styles.statIcon}><Heart size={17}/></div>
                 <span className={styles.statLabel}>Orações</span>
                 <strong className={styles.statValue}>{stats?.prayersPrayed ?? "–"}</strong>
-                <Delta value={stats?.last7Days?.prayers}/>
+                <Delta value={stats?.thisWeek?.prayers}/>
               </button>
 
               <button className={styles.statCard} onClick={() => goToChart("rosaries")}>
                 <div className={styles.statIcon}><BookHeart size={17}/></div>
                 <span className={styles.statLabel}>Terços</span>
                 <strong className={styles.statValue}>{stats?.rosariesPrayed ?? "–"}</strong>
-                <Delta value={stats?.last7Days?.rosaries}/>
+                <Delta value={stats?.thisWeek?.rosaries}/>
               </button>
 
               <div className={styles.statCard}>
                 <div className={styles.statIcon}><Crown size={17}/></div>
                 <span className={styles.statLabel}>Consagrações</span>
                 <strong className={styles.statValue}>{stats?.consecrationStarted ?? "–"}</strong>
-                <Delta value={stats?.last7Days?.consecrations}/>
+                <Delta value={stats?.thisWeek?.consecrations}/>
               </div>
 
               <button className={styles.statCard} onClick={() => goToChart("logins")}>
                 <div className={styles.statIcon}><LogIn size={17}/></div>
                 <span className={styles.statLabel}>Logins</span>
-                <strong className={styles.statValue}>{stats?.last7Days?.logins ?? "–"}</strong>
-                <em className={styles.statDelta}>últimos 7 dias</em>
+                <strong className={styles.statValue}>{stats?.thisWeek?.logins ?? "–"}</strong>
+                <em className={styles.statDelta}>essa semana</em>
               </button>
             </div>
 
