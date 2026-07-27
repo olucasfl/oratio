@@ -619,7 +619,7 @@ export default function RosaryPage(){
         <div style={{padding:"20px 20px 0"}}>
           <button
             style={{background:"none",border:"none",display:"flex",alignItems:"center",gap:6,color:"var(--oratio-primary)",fontSize:15,cursor:"pointer",fontFamily:"var(--oratio-font-text)"}}
-            onClick={()=>navigate(-1)}
+            onClick={()=>navigate("/oratio/rosary")}
           >
             <ChevronLeft size={18}/>
             Voltar
@@ -810,7 +810,7 @@ export default function RosaryPage(){
             className={styles.back}
             onClick={()=>{
               syncProgress()
-              navigate(-1)
+              navigate("/oratio/rosary")
             }}
           >
 

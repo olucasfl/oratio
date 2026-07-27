@@ -314,7 +314,7 @@ export default function Profile(){
 
     <button
      className={styles.backButton}
-     onClick={()=>navigate(-1)}
+     onClick={()=>navigate("/oratio/home")}
     >
 
      <ChevronLeft size={22}/>

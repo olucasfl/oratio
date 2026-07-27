@@ -99,7 +99,7 @@ export default function Prayers(){
 
       await completePrayer(prayer?.title)
 
-      navigate(-1)
+      navigate("/oratio/prayers")
 
     }catch{
 
@@ -129,7 +129,7 @@ export default function Prayers(){
 
         <section className={styles.container}>
 
-          <button className={styles.backButton} onClick={()=>navigate(-1)}>
+          <button className={styles.backButton} onClick={()=>navigate("/oratio/prayers")}>
             <ChevronLeft size={18}/>
             <span>Voltar</span>
           </button>
@@ -186,7 +186,7 @@ export default function Prayers(){
 
         <button
           className={styles.backButton}
-          onClick={()=>navigate(-1)}
+          onClick={()=>navigate("/oratio/prayers")}
         >
 
           <ChevronLeft size={18}/>

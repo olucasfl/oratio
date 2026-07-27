@@ -44,7 +44,7 @@ export default function Confissao() {
 
       {/* VOLTAR */}
 
-      <button className={styles.backBtn} onClick={() => navigate(-1)}>
+      <button className={styles.backBtn} onClick={() => navigate("/oratio/home")}>
         <ChevronLeft size={18}/>
         Voltar
       </button>

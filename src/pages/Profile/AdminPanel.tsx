@@ -550,7 +550,7 @@ export default function AdminPanel() {
     <div className={`${styles.page} page-enter`}>
       <div className={styles.backgroundGlow}/>
       <header className={styles.header}>
-        <button className={styles.backButton} onClick={() => navigate(-1)}><ChevronLeft size={20}/></button>
+        <button className={styles.backButton} onClick={() => navigate("/oratio/profile")}><ChevronLeft size={20}/></button>
         <Skeleton height={22} width={160} radius={8}/>
       </header>
       <div style={{ padding: "0 18px", display: "flex", flexDirection: "column", gap: 16 }}>
@@ -576,7 +576,7 @@ export default function AdminPanel() {
       {/* HEADER */}
       <header className={styles.header}>
         <div className={styles.headerTop}>
-          <button className={styles.backButton} onClick={() => navigate(-1)}>
+          <button className={styles.backButton} onClick={() => navigate("/oratio/profile")}>
             <ChevronLeft size={20}/>
           </button>
           <div>

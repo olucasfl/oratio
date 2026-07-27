@@ -124,7 +124,7 @@ export default function CategoryPrayers(){
 
         <button
           className={styles.backButton}
-          onClick={()=>navigate(-1)}
+          onClick={()=>navigate("/oratio/prayers")}
         >
 
           <ChevronLeft size={18}/>

@@ -44,7 +44,7 @@ export default function SantoDoDia(){
 
         <button
           className={styles.backButton}
-          onClick={()=>navigate(-1)}
+          onClick={()=>navigate("/oratio/home")}
         >
           <ChevronLeft size={18}/>
           Voltar

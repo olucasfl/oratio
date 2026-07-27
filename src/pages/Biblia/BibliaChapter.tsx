@@ -118,7 +118,7 @@ export default function BibliaChapter(){
 
     <button
       className={styles.backButton}
-      onClick={()=>navigate(-1)}
+      onClick={()=>navigate(`/oratio/biblia/${book}`)}
     >
       <ChevronLeft size={18}/>
       Voltar

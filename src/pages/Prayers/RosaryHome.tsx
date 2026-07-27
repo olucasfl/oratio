@@ -187,7 +187,7 @@ export default function RosaryHome(){
 
         <button
           className={styles.backButton}
-          onClick={()=>navigate(-1)}
+          onClick={()=>navigate("/oratio/home")}
         >
 
           <ChevronLeft size={18}/>

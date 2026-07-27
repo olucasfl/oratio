@@ -111,7 +111,7 @@ export default function LiturgiaFull(){
 
           <button
             className={styles.backButton}
-            onClick={()=>navigate(-1)}
+            onClick={()=>navigate("/oratio/home")}
           >
             <ChevronLeft size={18}/>
             Voltar
@@ -133,7 +133,7 @@ export default function LiturgiaFull(){
     <div className={`${styles.container} page-enter`}>
 
       {/* BOTÃO VOLTAR */}
-      <button className={styles.backButton} onClick={()=>navigate(-1)}>
+      <button className={styles.backButton} onClick={()=>navigate("/oratio/home")}>
         <ChevronLeft size={18}/>
         Voltar
       </button>

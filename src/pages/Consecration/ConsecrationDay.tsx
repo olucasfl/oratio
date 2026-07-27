@@ -109,7 +109,7 @@ export default function ConsecrationDay(){
   return(
    <div className={`${styles.container} page-enter`}>
 
-    <button className={styles.back} onClick={()=>navigate(-1)}>
+    <button className={styles.back} onClick={()=>navigate("/oratio/consecration")}>
      <ChevronLeft size={18}/>
      Voltar
     </button>
@@ -153,7 +153,7 @@ export default function ConsecrationDay(){
 
     <button
      className={styles.back}
-     onClick={()=>navigate(-1)}
+     onClick={()=>navigate("/oratio/consecration")}
     >
      <ChevronLeft size={18}/>
      Voltar
@@ -269,7 +269,7 @@ export default function ConsecrationDay(){
 
     <button
      className={styles.back}
-     onClick={()=>navigate(-1)}
+     onClick={()=>navigate("/oratio/consecration")}
     >
      <ChevronLeft size={18}/>
      Voltar

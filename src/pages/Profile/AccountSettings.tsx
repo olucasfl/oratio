@@ -37,7 +37,7 @@ export default function AccountSettings(){
 
     <button
      className={styles.backButton}
-     onClick={()=>navigate(-1)}
+     onClick={()=>navigate("/oratio/profile")}
     >
 
      <ChevronLeft size={22}/>

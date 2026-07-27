@@ -47,7 +47,7 @@ export default function ConsecrationCarta() {
       <div className={styles.header}>
 
         <div className={styles.headerTop}>
-          <button className={styles.backButton} onClick={() => navigate(-1)}>←</button>
+          <button className={styles.backButton} onClick={() => navigate("/oratio/consecration/finalizacao")}>←</button>
           <span className={styles.title}>Carta de Consagração</span>
           <div style={{ width: 38 }} />
         </div>
