@@ -19,6 +19,8 @@ import {
   completePrayer
 } from "../../services/prayersService"
 
+import { isLoggedIn } from "../../utils/auth"
+
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
 
@@ -74,6 +76,11 @@ export default function Prayers(){
   }
 
   async function handleComplete(){
+
+    if(!isLoggedIn()){
+      navigate("/register")
+      return
+    }
 
     try{
 
@@ -243,7 +250,7 @@ export default function Prayers(){
               </span>
             </>
 
-          ) : (
+          ) : isLoggedIn() ? (
 
             <>
               <Check size={20}/>
@@ -252,6 +259,12 @@ export default function Prayers(){
                 Concluir oração
               </span>
             </>
+
+          ) : (
+
+            <span>
+              Criar conta para concluir
+            </span>
 
           )}
 

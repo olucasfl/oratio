@@ -31,6 +31,8 @@ import {
   rosaryPrayers
 } from "../../utils/rosaryPrayers"
 
+import { isLoggedIn } from "../../utils/auth"
+
 import Skeleton from "../../components/Skeleton/Skeleton"
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
 
@@ -130,6 +132,24 @@ export default function RosaryPage(){
   ){
 
     try{
+
+      /*
+      Visitante sem conta: só busca o conteúdo do terço (público).
+      Sessão/retomar progresso são recursos ligados a uma conta.
+      */
+      if(!isLoggedIn()){
+
+        const data =
+          await getRosary(
+            rosaryType
+          )
+
+        setSteps(data)
+        setElapsed(0)
+
+        return
+
+      }
 
       let session:any = null
 
@@ -289,6 +309,10 @@ export default function RosaryPage(){
   function syncProgress(){
 
     if(!type) return
+
+    // Sincronizar passo/tempo é um recurso de conta — visitante não tem
+    // sessão de terço pra sincronizar.
+    if(!isLoggedIn()) return
 
     if(syncInFlight.current){
       syncPending.current = true
@@ -647,6 +671,11 @@ export default function RosaryPage(){
   */
 
   async function handleFinish(){
+
+    if(!isLoggedIn()){
+      navigate("/register")
+      return
+    }
 
     if(finishing || !type){
       return
@@ -1025,7 +1054,7 @@ export default function RosaryPage(){
                 }
               />
 
-            ) : (
+            ) : isLoggedIn() ? (
 
               <>
 
@@ -1036,6 +1065,12 @@ export default function RosaryPage(){
                 </span>
 
               </>
+
+            ) : (
+
+              <span>
+                Criar conta para concluir
+              </span>
 
             )}
 

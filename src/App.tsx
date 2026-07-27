@@ -81,11 +81,11 @@ useEffect(()=>{
 
       const token = localStorage.getItem("access_token")
 
-      /* PRELOAD CONSAGRAÇÃO */
-      await preloadConsecration().catch(()=>{})
-
       /* SE LOGADO */
       if(token){
+
+        /* PRELOAD CONSAGRAÇÃO (recurso de conta) */
+        await preloadConsecration().catch(()=>{})
 
         await getProgress().catch(()=>{})
 
@@ -120,12 +120,29 @@ useEffect(()=>{
     // Páginas públicas que não devem ser trocadas por /login, mesmo sem token
     const publicPaths = ["/login", "/register", "/verificar-email", "/confirmar-troca-email"]
 
+    // Telas que podem ser exploradas sem conta (modo convidado) — ler,
+    // não salvar. Qualquer outra rota sem token cai no login normal.
+    const guestAllowedPrefixes = [
+      "/oratio/home",
+      "/oratio/liturgia-completa",
+      "/oratio/prayers",
+      "/oratio/prayer/",
+      "/oratio/rosary",
+      "/oratio/biblia"
+    ]
+
+    const isGuestAllowed = guestAllowedPrefixes.some(
+      (prefix) => path === prefix || path.startsWith(prefix)
+    )
+
     // Se veio de um link de reset de senha, não pode perder o ?resetToken=
     // mesmo que exista um access_token antigo/expirado salvo no aparelho
     const hasResetToken = new URLSearchParams(window.location.search).has("resetToken")
 
     if (!token) {
-      if (!publicPaths.includes(path)) {
+      if (path === "/") {
+        window.history.replaceState(null, "", "/oratio/home")
+      } else if (!publicPaths.includes(path) && !isGuestAllowed) {
         window.history.replaceState(null, "", "/login")
       }
     } else {
@@ -205,11 +222,7 @@ return(
 
 <Route
 path="/oratio/home"
-element={
-<ProtectedRoute>
-<Home />
-</ProtectedRoute>
-}
+element={<Home />}
 />
 
 <Route
@@ -255,11 +268,7 @@ element={
 
 <Route
  path="/oratio/prayer/:id"
- element={
-  <ProtectedRoute>
-   <Prayers/>
-  </ProtectedRoute>
- }
+ element={<Prayers/>}
 />
 
 <Route
@@ -276,13 +285,27 @@ element={
 <Route path="/oratio/biblia/:book" element={<BibliaBook/>}/>
 <Route path="/oratio/biblia/:book/:chapter" element={<BibliaChapter/>}/>
 
-<Route path="/oratio/catecismo" element={<Catecismo />} />
+<Route
+ path="/oratio/catecismo"
+ element={
+  <ProtectedRoute>
+   <Catecismo />
+  </ProtectedRoute>
+ }
+/>
 
 <Route path="/oratio/tratado" element={<Tratado />} />
 
 <Route path="/oratio/liturgia-completa" element={<LiturgiaFull />} />
 
-<Route path="/oratio/santo-do-dia" element={<SantoDoDia />} />
+<Route
+ path="/oratio/santo-do-dia"
+ element={
+  <ProtectedRoute>
+   <SantoDoDia />
+  </ProtectedRoute>
+ }
+/>
 
 <Route
  path="/oratio/vox"

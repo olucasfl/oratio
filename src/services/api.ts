@@ -166,7 +166,16 @@ api.interceptors.response.use(
         const refreshToken = localStorage.getItem("refresh_token");
 
         if (!refreshToken) {
-          logout();
+          /*
+          Sem refresh_token E sem access_token = nunca houve sessão
+          (visitante sem conta esbarrando numa rota protegida, ex: tentar
+          concluir uma oração). Não é sessão expirada — não desloga nem
+          redireciona, só deixa o 401 seguir pro catch de quem chamou.
+          */
+          const hadSession = !!localStorage.getItem("access_token");
+          if (hadSession) {
+            logout();
+          }
           return Promise.reject(error);
         }
 

@@ -180,6 +180,35 @@ TOP BUTTONS
 }
 
 
+.guestBanner{
+
+ display:block;
+
+ width:calc(100% - 40px);
+ max-width:var(--home-content-max);
+
+ margin:0 auto 14px;
+
+ padding:11px 16px;
+
+ border:1px solid rgba(176,24,26,.25);
+ border-radius:999px;
+
+ background:rgba(176,24,26,.07);
+
+ color:var(--oratio-primary);
+
+ font-size:13px;
+ font-weight:600;
+ text-align:center;
+
+ cursor:pointer;
+
+ position:relative;
+ z-index:2;
+
+}
+
 /* =========================
 HERO
 ========================= */

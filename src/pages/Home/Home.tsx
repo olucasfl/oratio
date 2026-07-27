@@ -1,16 +1,23 @@
 import styles from "./Home.module.css"
 import { useNavigate } from "react-router-dom"
-import { useEffect, useMemo, useCallback } from "react"
+import { useEffect, useMemo, useCallback, useState } from "react"
 
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
 
+import GuestWelcomeModal
+from "../../components/GuestWelcomeModal/GuestWelcomeModal"
+
 import {
  LogOut,
- User
+ User,
+ LogIn,
+ UserPlus
 } from "lucide-react"
 
 import { isPWA } from "../../utils/isPwa"
+
+import { isLoggedIn } from "../../utils/auth"
 
 import { clearSession } from "../../services/api"
 
@@ -47,6 +54,10 @@ export default function Home(){
  const navigate = useNavigate()
 
  const pwa = isPWA()
+
+ const guest = !isLoggedIn()
+
+ const [showWelcome, setShowWelcome] = useState(false)
 
  const {
   liturgy,
@@ -161,15 +172,28 @@ export default function Home(){
  ========================= */
 
  useEffect(()=>{
-  preloadConsecration()
- },[])
+  if(!guest){
+   preloadConsecration()
+  }
+ },[guest])
+
+ useEffect(()=>{
+
+  if(!guest) return
+
+  if(!localStorage.getItem("guest_welcome_seen")){
+   setShowWelcome(true)
+   localStorage.setItem("guest_welcome_seen", "1")
+  }
+
+ },[guest])
 
  const handleRefresh = useCallback(async ()=>{
   await Promise.all([
    reloadLiturgy(),
-   preloadConsecration()
+   guest ? Promise.resolve() : preloadConsecration()
   ])
- },[reloadLiturgy])
+ },[reloadLiturgy, guest])
 
  usePullToRefresh(handleRefresh)
 
@@ -195,31 +219,83 @@ export default function Home(){
 
     <div className={styles.topButtons}>
 
-     <button
-      className={styles.profileButton}
-      onClick={()=>
-       navigate("/oratio/profile")
-      }
-      aria-label="Abrir perfil"
-     >
+     {guest ? (
 
-      <User size={18}/>
+      <>
 
-     </button>
+       <button
+        className={styles.profileButton}
+        onClick={()=>navigate("/login")}
+        aria-label="Entrar"
+       >
 
-     <button
-      className={styles.logoutButton}
-      onClick={handleLogout}
-      aria-label="Sair da conta"
-     >
+        <LogIn size={18}/>
 
-      <LogOut size={18}/>
+       </button>
 
-     </button>
+       <button
+        className={styles.logoutButton}
+        onClick={()=>navigate("/register")}
+        aria-label="Criar conta"
+       >
+
+        <UserPlus size={18}/>
+
+       </button>
+
+      </>
+
+     ) : (
+
+      <>
+
+       <button
+        className={styles.profileButton}
+        onClick={()=>
+         navigate("/oratio/profile")
+        }
+        aria-label="Abrir perfil"
+       >
+
+        <User size={18}/>
+
+       </button>
+
+       <button
+        className={styles.logoutButton}
+        onClick={handleLogout}
+        aria-label="Sair da conta"
+       >
+
+        <LogOut size={18}/>
+
+       </button>
+
+      </>
+
+     )}
 
     </div>
 
    )}
+
+   {guest && (
+
+    <button
+     className={styles.guestBanner}
+     onClick={()=>navigate("/register")}
+    >
+
+     Crie sua conta para salvar seu progresso
+
+    </button>
+
+   )}
+
+   <GuestWelcomeModal
+    open={showWelcome}
+    onClose={()=>setShowWelcome(false)}
+   />
 
    {/* HERO */}
 
