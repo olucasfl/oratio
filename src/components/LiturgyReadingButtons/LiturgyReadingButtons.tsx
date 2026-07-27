@@ -4,8 +4,18 @@ import { useNavigate } from "react-router-dom"
 
 import { useLockBodyScroll } from "../../hooks/useLockBodyScroll"
 import type { LiturgyData, LiturgyReading } from "../../hooks/useLiturgy"
+import { buildQuickReadingShareText } from "../../utils/liturgyShareText"
+import ShareReadingButton from "../ShareReadingButton/ShareReadingButton"
 
 import styles from "../../pages/Home/Home.module.css"
+
+const TIPO_LABEL: Record<string, string> = {
+ primeira: "1ª Leitura",
+ segunda: "2ª Leitura",
+ salmo: "Salmo",
+ evangelho: "Evangelho",
+ extra: "Leitura"
+}
 
 interface Props {
  liturgy: LiturgyData | null
@@ -455,6 +465,24 @@ export default function LiturgyReadingButtons({ liturgy }: Props){
        )
 
       })()}
+
+      {modal.tipoLeitura &&
+       modal.texto !== "Hoje não há leitura disponível" && (
+
+        <ShareReadingButton
+         label={
+          TIPO_LABEL[modal.tipoLeitura] || "Leitura"
+         }
+         buildText={()=>
+          buildQuickReadingShareText(
+           TIPO_LABEL[modal.tipoLeitura!] || "Leitura",
+           modal,
+           getRespostaFinal(modal.tipoLeitura)
+          )
+         }
+        />
+
+       )}
 
       <button
        className={styles.closeButton}

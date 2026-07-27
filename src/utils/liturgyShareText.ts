@@ -59,6 +59,35 @@ export function buildSalmoShareText(
   return linhas.join("\n")
 }
 
+// Usado pelo modal rápido de leitura (o que abre a partir do card de
+// liturgia da Home) — formato mais simples, onde a resposta final vem
+// calculada pelo próprio componente (não existe um array "final" nos
+// dados dessa origem).
+export function buildQuickReadingShareText(
+  heading: string,
+  reading: { titulo?: string; referencia?: string; texto?: string; refrao?: string },
+  resposta?: { padre: string; assembleia: string } | null
+){
+  const linhas = [heading]
+
+  if(reading.titulo) linhas.push(reading.titulo)
+  if(reading.referencia) linhas.push(reading.referencia)
+
+  linhas.push("")
+
+  if(reading.refrao) linhas.push(`℟. ${reading.refrao}`, "")
+
+  linhas.push(limparTexto(reading.texto))
+
+  if(resposta){
+    linhas.push("", resposta.padre, resposta.assembleia)
+  }
+
+  linhas.push("", ASSINATURA)
+
+  return linhas.join("\n")
+}
+
 export function buildEvangelhoShareText(
   evangelho: {
     abertura?: { padre?: string; assembleia?: string }[]
