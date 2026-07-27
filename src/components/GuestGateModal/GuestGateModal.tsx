@@ -1,7 +1,8 @@
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { createPortal } from "react-dom"
 import { LockKeyhole } from "lucide-react"
 import styles from "./GuestGateModal.module.css"
+import { withRedirect } from "../../utils/authRedirect"
 
 interface Props {
   open: boolean
@@ -12,8 +13,11 @@ interface Props {
 export default function GuestGateModal({ open, message, onClose }: Props) {
 
   const navigate = useNavigate()
+  const location = useLocation()
 
   if (!open) return null
+
+  const currentPath = location.pathname + location.search
 
   return createPortal(
     <div className={styles.overlay} onClick={onClose}>
@@ -32,14 +36,14 @@ export default function GuestGateModal({ open, message, onClose }: Props) {
 
           <button
             className={styles.primaryButton}
-            onClick={() => navigate("/register")}
+            onClick={() => navigate(withRedirect("/register", currentPath))}
           >
             Criar conta
           </button>
 
           <button
             className={styles.secondaryButton}
-            onClick={() => navigate("/login")}
+            onClick={() => navigate(withRedirect("/login", currentPath))}
           >
             Já tenho conta — Entrar
           </button>

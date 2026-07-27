@@ -5,6 +5,7 @@ import { ChevronLeft } from "lucide-react";
 
 import { login, forgotPassword } from "../../services/authService";
 import { getAuthErrorMessage } from "../../utils/authErrors";
+import { withRedirect } from "../../utils/authRedirect";
 
 import ForgotPasswordModal from "../../components/ForgotPasswordModal/ForgotPasswordModal";
 import ResetPasswordModal from "../../components/ResetPasswordModal/ResetPasswordModal";
@@ -17,6 +18,8 @@ export default function Login() {
   const [searchParams] = useSearchParams();
 
   const resetToken = searchParams.get("resetToken");
+  const redirect = searchParams.get("redirect");
+  const destination = redirect || "/oratio/home";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,10 +39,10 @@ export default function Login() {
     const token = localStorage.getItem("access_token");
 
     if (token) {
-      navigate("/oratio/home");
+      navigate(destination);
     }
 
-  }, [navigate]);
+  }, [navigate, destination]);
 
   /*
   ============================
@@ -57,7 +60,7 @@ export default function Login() {
 
       await login(email, password);
 
-      navigate("/oratio/home");
+      navigate(destination);
 
     } catch (err: any) {
 
@@ -164,7 +167,7 @@ export default function Login() {
 
         <p className={styles.switch}>
           Não possui conta?
-          <span onClick={() => navigate("/register")}>
+          <span onClick={() => navigate(redirect ? withRedirect("/register", redirect) : "/register")}>
             Criar conta
           </span>
         </p>

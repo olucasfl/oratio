@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { register } from "../../services/authService";
 import { getAuthErrorMessage } from "../../utils/authErrors";
+import { withRedirect } from "../../utils/authRedirect";
 import VerifyEmailModal from "../../components/VerifyEmailModal/VerifyEmailModal";
 import AlertModal from "../../components/AlertModal/AlertModal";
 import styles from "./Register.module.css";
@@ -10,6 +11,9 @@ import styles from "./Register.module.css";
 export default function Register(){
 
 const navigate = useNavigate();
+const [searchParams] = useSearchParams();
+const redirect = searchParams.get("redirect");
+const loginDestination = redirect ? withRedirect("/login", redirect) : "/login";
 
 const [name,setName] = useState("");
 const [email,setEmail] = useState("");
@@ -115,7 +119,7 @@ required
 
 <p className={styles.switch}>
 Já possui conta?
-<span onClick={()=>navigate("/login")}>
+<span onClick={()=>navigate(loginDestination)}>
 Entrar
 </span>
 </p>
@@ -125,7 +129,7 @@ Entrar
 <VerifyEmailModal
 email={registeredEmail}
 open={verifyOpen}
-onVerified={()=>navigate("/login")}
+onVerified={()=>navigate(loginDestination)}
 onClose={()=>setVerifyOpen(false)}
 />
 

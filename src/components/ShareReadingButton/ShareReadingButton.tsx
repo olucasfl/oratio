@@ -1,10 +1,13 @@
 import { useState } from "react"
+import type { MouseEvent as ReactMouseEvent } from "react"
 import { Share2, Check } from "lucide-react"
 import styles from "./ShareReadingButton.module.css"
 
 interface Props {
   label: string
   buildText: () => string
+  compact?: boolean
+  onStopPropagation?: boolean
 }
 
 /*
@@ -14,11 +17,18 @@ pra "escolher o app" sem passar por ela. Onde não existe (a maioria
 dos navegadores de desktop), cai pra copiar o texto formatado, com
 feedback visual de que copiou.
 */
-export default function ShareReadingButton({ label, buildText }: Props) {
+export default function ShareReadingButton({
+  label,
+  buildText,
+  compact = false,
+  onStopPropagation = false
+}: Props) {
 
   const [copied, setCopied] = useState(false)
 
-  async function handleShare() {
+  async function handleShare(e: ReactMouseEvent) {
+
+    if (onStopPropagation) e.stopPropagation()
 
     const text = buildText()
 
@@ -40,6 +50,19 @@ export default function ShareReadingButton({ label, buildText }: Props) {
       // nem share nem clipboard disponíveis — não há mais nada a oferecer
     }
 
+  }
+
+  if (compact) {
+    return (
+      <button
+        type="button"
+        className={styles.shareBtnCompact}
+        onClick={handleShare}
+        aria-label={`Compartilhar ${label}`}
+      >
+        {copied ? <Check size={15} /> : <Share2 size={15} />}
+      </button>
+    )
   }
 
   return (

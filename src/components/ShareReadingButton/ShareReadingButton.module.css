@@ -46,3 +46,37 @@
  box-shadow:0 6px 14px rgba(163,119,26,.35);
 
 }
+
+.shareBtnCompact{
+
+ flex:none;
+
+ width:34px;
+ height:34px;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ border:none;
+ border-radius:50%;
+
+ background:linear-gradient(135deg,#c9962c,#a3771a);
+
+ color:#fff;
+
+ cursor:pointer;
+
+ box-shadow:0 4px 12px rgba(163,119,26,.35);
+
+ transition:transform .15s;
+
+ -webkit-tap-highlight-color:transparent;
+
+}
+
+.shareBtnCompact:active{
+
+ transform:scale(.92);
+
+}

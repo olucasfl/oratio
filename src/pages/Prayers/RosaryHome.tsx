@@ -36,6 +36,12 @@ from "../../utils/rosaryList"
 import { usePullToRefresh }
 from "../../hooks/usePullToRefresh"
 
+import { buildRosaryShareText }
+from "../../utils/rosaryShareText"
+
+import ShareReadingButton
+from "../../components/ShareReadingButton/ShareReadingButton"
+
 /* =========================
 NORMALIZAR TEXTO
 ========================= */
@@ -269,12 +275,19 @@ export default function RosaryHome(){
 
           {filteredRosaries.map((r)=>(
 
-            <button
+            <div
               key={r.slug}
               className={styles.card}
+              role="button"
+              tabIndex={0}
               onClick={()=>
                 goToRosary(r.slug)
               }
+              onKeyDown={(e)=>{
+                if(e.key === "Enter" || e.key === " "){
+                  goToRosary(r.slug)
+                }
+              }}
             >
 
               <div className={styles.cardLeft}>
@@ -322,11 +335,27 @@ export default function RosaryHome(){
 
               </div>
 
-              <div className={styles.arrow}>
-                →
+              <div className={styles.cardRight}>
+
+                <ShareReadingButton
+                  compact
+                  onStopPropagation
+                  label={r.name}
+                  buildText={()=>
+                    buildRosaryShareText(
+                      r.name,
+                      `${window.location.origin}/oratio/rosary/${r.slug}`
+                    )
+                  }
+                />
+
+                <div className={styles.arrow}>
+                  →
+                </div>
+
               </div>
 
-            </button>
+            </div>
 
           ))}
 

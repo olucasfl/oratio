@@ -463,6 +463,16 @@ CARD
 
 }
 
+.cardRight{
+
+  flex:none;
+
+  display:flex;
+  align-items:center;
+  gap:12px;
+
+}
+
 .arrow{
 
   color:#b0181a;
