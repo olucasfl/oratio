@@ -18,6 +18,12 @@ from "../../hooks/useReadingSize"
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
 
+import ShareReadingButton
+from "../../components/ShareReadingButton/ShareReadingButton"
+
+import { buildBibleChapterShareText }
+from "../../utils/bibleShareText"
+
 import styles
 from "./BibliaChapter.module.css"
 
@@ -175,6 +181,19 @@ export default function BibliaChapter(){
        >A</button>
 
       </div>
+
+      <ShareReadingButton
+       compact
+       label={`${book} ${chapter}`}
+       buildText={()=>
+        buildBibleChapterShareText(
+         book!,
+         chapter!,
+         capitulo.versiculos,
+         `${window.location.origin}/oratio/biblia/${book}/${chapter}`
+        )
+       }
+      />
 
     </div>
 

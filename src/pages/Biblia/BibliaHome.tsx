@@ -18,6 +18,11 @@ import { BIBLE_TOPICS, type BibleTopic } from "../../data/bibleTopics"
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
 
+import GuestGateModal
+from "../../components/GuestGateModal/GuestGateModal"
+
+import { isLoggedIn } from "../../utils/auth"
+
 import {
  Search,
  ChevronRight,
@@ -49,6 +54,7 @@ export default function BibliaHome(){
  const [visibleCount,setVisibleCount] = useState(PAGE_SIZE)
  const [searching,setSearching] = useState(false)
  const [recentSearches,setRecentSearches] = useState<string[]>([])
+ const [gateMessage,setGateMessage] = useState<string | null>(null)
 
  useEffect(()=>{
   window.scrollTo({ top:0, behavior:"instant" })
@@ -106,6 +112,19 @@ export default function BibliaHome(){
  function handleQueryChange(v:string){
   setVerseQuery(v)
   if(activeTopic) setActiveTopic(null)
+ }
+
+ function handleSearchTabClick(){
+
+  if(!isLoggedIn()){
+   setGateMessage(
+    "Crie uma conta para pesquisar qualquer palavra ou tema na Bíblia."
+   )
+   return
+  }
+
+  setSearchMode("versiculos")
+
  }
 
  function handleRecentClick(q:string){
@@ -232,7 +251,7 @@ export default function BibliaHome(){
 
     <button
      className={`${styles.searchTab} ${searchMode==="versiculos" ? styles.searchTabActive : ""}`}
-     onClick={()=>setSearchMode("versiculos")}
+     onClick={handleSearchTabClick}
     >
      <Search size={14}/> Pesquisar
     </button>
@@ -555,6 +574,12 @@ export default function BibliaHome(){
    <div className={styles.pageSpacer}></div>
 
    <BottomNavbar/>
+
+   <GuestGateModal
+    open={gateMessage !== null}
+    message={gateMessage || ""}
+    onClose={()=>setGateMessage(null)}
+   />
 
   </div>
 
