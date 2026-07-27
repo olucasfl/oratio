@@ -3,9 +3,15 @@ import { useNavigate } from "react-router-dom"
 import styles from "./LiturgiaFull.module.css"
 import { ChevronLeft, ChevronRight, Calendar, RotateCcw } from "lucide-react"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
+import ShareReadingButton from "../../components/ShareReadingButton/ShareReadingButton"
 import { getLiturgiaFull } from "../../services/liturgiaService"
 import { useOffline } from "../../hooks/useOffline"
 import { usePullToRefresh } from "../../hooks/usePullToRefresh"
+import {
+  buildLeituraShareText,
+  buildSalmoShareText,
+  buildEvangelhoShareText
+} from "../../utils/liturgyShareText"
 
 function cacheKey(date:Date){
 
@@ -266,6 +272,14 @@ function renderConteudo(conteudo:any, tituloSecao:string){
       key.toLowerCase().includes("leitura") ||
       key === "salmo"
 
+    // Só essas 3 têm botão de compartilhar aqui — o evangelho tem o
+    // dele próprio dentro de renderEvangelho()
+    const shareLabel =
+      key === "primeiraLeitura" ? "1ª Leitura" :
+      key === "segundaLeitura" ? "2ª Leitura" :
+      key === "salmo" ? "Salmo" :
+      null
+
     return(
       <div
         key={i}
@@ -289,6 +303,17 @@ function renderConteudo(conteudo:any, tituloSecao:string){
             )}
 
         {renderValor(value, isLeitura)}
+
+        {shareLabel && (
+          <ShareReadingButton
+            label={shareLabel}
+            buildText={() =>
+              key === "salmo"
+                ? buildSalmoShareText(value)
+                : buildLeituraShareText(formatTitulo(key), value)
+            }
+          />
+        )}
       </div>
     )
   })
@@ -338,6 +363,11 @@ function renderEvangelho(evangelho:any, keyIndex:number){
             />
         </p>
       ))}
+
+      <ShareReadingButton
+        label="Evangelho"
+        buildText={() => buildEvangelhoShareText(evangelho)}
+      />
 
     </div>
   )

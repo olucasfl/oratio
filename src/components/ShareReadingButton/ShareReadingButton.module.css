@@ -1,0 +1,39 @@
+.shareBtn{
+
+ display:inline-flex;
+ align-items:center;
+
+ gap:5px;
+
+ margin-top:10px;
+
+ padding:6px 2px;
+
+ border:none;
+
+ background:none;
+
+ color:var(--oratio-primary);
+
+ font-size:13px;
+ font-weight:600;
+
+ cursor:pointer;
+
+ transition:opacity .15s;
+
+ -webkit-tap-highlight-color:transparent;
+
+}
+
+.shareBtn:hover{
+
+ opacity:.75;
+
+}
+
+.shareBtn:active{
+
+ opacity:.55;
+
+}

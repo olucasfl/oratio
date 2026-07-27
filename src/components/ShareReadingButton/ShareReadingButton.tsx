@@ -1,0 +1,56 @@
+import { useState } from "react"
+import { Share2, Check } from "lucide-react"
+import styles from "./ShareReadingButton.module.css"
+
+interface Props {
+  label: string
+  buildText: () => string
+}
+
+/*
+navigator.share() abre a folha nativa de compartilhamento (WhatsApp,
+Instagram, o que estiver instalado) — é o que existe pra isso, não dá
+pra "escolher o app" sem passar por ela. Onde não existe (a maioria
+dos navegadores de desktop), cai pra copiar o texto formatado, com
+feedback visual de que copiou.
+*/
+export default function ShareReadingButton({ label, buildText }: Props) {
+
+  const [copied, setCopied] = useState(false)
+
+  async function handleShare() {
+
+    const text = buildText()
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ text })
+        return
+      } catch (err: any) {
+        if (err?.name === "AbortError") return // usuário cancelou a folha — não é erro
+        // qualquer outro erro (ex: share não suportado nesse contexto) cai no fallback abaixo
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // nem share nem clipboard disponíveis — não há mais nada a oferecer
+    }
+
+  }
+
+  return (
+    <button
+      type="button"
+      className={styles.shareBtn}
+      onClick={handleShare}
+    >
+      {copied ? <Check size={14} /> : <Share2 size={14} />}
+      {copied ? "Copiado!" : `Compartilhar ${label}`}
+    </button>
+  )
+
+}
