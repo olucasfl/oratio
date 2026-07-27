@@ -35,6 +35,7 @@ import { isLoggedIn } from "../../utils/auth"
 
 import Skeleton from "../../components/Skeleton/Skeleton"
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
+import GuestGateModal from "../../components/GuestGateModal/GuestGateModal"
 
 /* =========================
 FORMATAR TEMPO
@@ -76,6 +77,9 @@ export default function RosaryPage(){
     useState(false)
 
   const [finishing,setFinishing] =
+    useState(false)
+
+  const [showGate,setShowGate] =
     useState(false)
 
   const [
@@ -673,7 +677,7 @@ export default function RosaryPage(){
   async function handleFinish(){
 
     if(!isLoggedIn()){
-      navigate("/register")
+      setShowGate(true)
       return
     }
 
@@ -1054,7 +1058,7 @@ export default function RosaryPage(){
                 }
               />
 
-            ) : isLoggedIn() ? (
+            ) : (
 
               <>
 
@@ -1065,12 +1069,6 @@ export default function RosaryPage(){
                 </span>
 
               </>
-
-            ) : (
-
-              <span>
-                Criar conta para concluir
-              </span>
 
             )}
 
@@ -1096,6 +1094,12 @@ export default function RosaryPage(){
         )}
 
       </div>
+
+      <GuestGateModal
+        open={showGate}
+        message="Crie uma conta para concluir o terço e acompanhar seu progresso espiritual."
+        onClose={()=>setShowGate(false)}
+      />
 
     </main>
 

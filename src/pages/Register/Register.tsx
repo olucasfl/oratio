@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
 import { register } from "../../services/authService";
 import { getAuthErrorMessage } from "../../utils/authErrors";
 import VerifyEmailModal from "../../components/VerifyEmailModal/VerifyEmailModal";
@@ -56,6 +57,15 @@ return(
 <div className={`${styles.wrapper} page-enter`}>
 
 <div className={styles.card}>
+
+<button
+type="button"
+className={styles.backButton}
+onClick={()=>navigate("/oratio/home")}
+>
+<ChevronLeft size={18} />
+Continuar sem conta
+</button>
 
 <h1 className={styles.logo}>ORATIO</h1>
 

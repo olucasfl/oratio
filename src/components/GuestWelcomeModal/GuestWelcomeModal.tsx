@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import { Sparkles } from "lucide-react"
+import { Sparkles, BrainCircuit } from "lucide-react"
 import styles from "./GuestWelcomeModal.module.css"
 
 interface Props {
@@ -11,7 +11,6 @@ const BENEFICIOS = [
   "Salvar seu progresso nas orações e terços",
   "Acompanhar sua sequência de dias em oração",
   "Fazer a Consagração de 33 dias",
-  "Conversar com o VoxAI, assistente espiritual",
   "Acompanhar sua caminhada espiritual"
 ]
 
@@ -36,6 +35,29 @@ export default function GuestWelcomeModal({ open, onClose }: Props) {
           Você pode explorar a liturgia, orações, terços e a Bíblia
           livremente, sem conta. Criando uma conta, você também pode:
         </p>
+
+        <div className={styles.voxHighlight}>
+
+          <span className={styles.voxBadge}>EXCLUSIVO DE QUEM TEM CONTA</span>
+
+          <div className={styles.voxRow}>
+
+            <div className={styles.voxIcon}>
+              <BrainCircuit size={22} />
+            </div>
+
+            <div>
+              <strong>VoxAI</strong>
+              <p>
+                A primeira Inteligência Artificial Católica do Oratio —
+                tire dúvidas sobre fé, moral e liturgia com respostas
+                fundamentadas na doutrina da Igreja.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
 
         <ul className={styles.list}>
           {BENEFICIOS.map((item) => (

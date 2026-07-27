@@ -15,7 +15,9 @@ import {
  LogOut,
  User,
  LogIn,
- UserPlus
+ UserPlus,
+ Sparkles,
+ ChevronRight
 } from "lucide-react"
 
 import { isPWA } from "../../utils/isPwa"
@@ -330,7 +332,16 @@ export default function Home(){
      onClick={()=>navigate("/register")}
     >
 
-     Crie sua conta para salvar seu progresso
+     <span className={styles.guestBannerIcon}>
+      <Sparkles size={16}/>
+     </span>
+
+     <span className={styles.guestBannerText}>
+      <strong>Você está navegando sem conta</strong>
+      <span>Crie a sua para salvar seu progresso</span>
+     </span>
+
+     <ChevronRight size={18}/>
 
     </button>
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
 
 import { login, forgotPassword } from "../../services/authService";
 import { getAuthErrorMessage } from "../../utils/authErrors";
@@ -98,6 +99,15 @@ export default function Login() {
     <div className={`${styles.wrapper} page-enter`}>
 
       <div className={styles.card}>
+
+        <button
+          type="button"
+          className={styles.backButton}
+          onClick={() => navigate("/oratio/home")}
+        >
+          <ChevronLeft size={18} />
+          Continuar sem conta
+        </button>
 
         <h1 className={styles.logo}>ORATIO</h1>
 

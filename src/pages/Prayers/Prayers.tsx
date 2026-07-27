@@ -21,8 +21,16 @@ import {
 
 import { isLoggedIn } from "../../utils/auth"
 
+import { buildPrayerShareText } from "../../utils/prayerShareText"
+
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
+
+import GuestGateModal
+from "../../components/GuestGateModal/GuestGateModal"
+
+import ShareReadingButton
+from "../../components/ShareReadingButton/ShareReadingButton"
 
 export default function Prayers(){
 
@@ -38,6 +46,9 @@ export default function Prayers(){
     useState(true)
 
   const [completing,setCompleting] =
+    useState(false)
+
+  const [showGate,setShowGate] =
     useState(false)
 
   useEffect(()=>{
@@ -78,7 +89,7 @@ export default function Prayers(){
   async function handleComplete(){
 
     if(!isLoggedIn()){
-      navigate("/register")
+      setShowGate(true)
       return
     }
 
@@ -213,6 +224,16 @@ export default function Prayers(){
 
         </div>
 
+        <ShareReadingButton
+          label="oração"
+          buildText={()=>
+            buildPrayerShareText(
+              prayer.title,
+              `${window.location.origin}/oratio/prayer/${id}`
+            )
+          }
+        />
+
         {/* =========================
         PRAYER
         ========================= */}
@@ -250,7 +271,7 @@ export default function Prayers(){
               </span>
             </>
 
-          ) : isLoggedIn() ? (
+          ) : (
 
             <>
               <Check size={20}/>
@@ -259,12 +280,6 @@ export default function Prayers(){
                 Concluir oração
               </span>
             </>
-
-          ) : (
-
-            <span>
-              Criar conta para concluir
-            </span>
 
           )}
 
@@ -275,6 +290,12 @@ export default function Prayers(){
       <div className={styles.pageSpacer}/>
 
       <BottomNavbar/>
+
+      <GuestGateModal
+        open={showGate}
+        message="Crie uma conta para concluir suas orações e acompanhar seu progresso espiritual."
+        onClose={()=>setShowGate(false)}
+      />
 
     </main>
 

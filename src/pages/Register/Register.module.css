@@ -41,6 +41,37 @@ animation:cardEntrance .6s ease;
 
 }
 
+/* BACK */
+
+.backButton{
+
+display:flex;
+align-items:center;
+gap:4px;
+
+background:none;
+border:none;
+
+margin:0 0 18px -4px;
+
+padding:6px 4px;
+
+color:var(--oratio-text-soft);
+
+font-size:13.5px;
+
+cursor:pointer;
+
+-webkit-tap-highlight-color:transparent;
+
+}
+
+.backButton:hover{
+
+color:var(--oratio-primary);
+
+}
+
 /* LOGO */
 
 .logo{

@@ -182,30 +182,84 @@ TOP BUTTONS
 
 .guestBanner{
 
- display:block;
+ display:flex;
+ align-items:center;
+ gap:12px;
 
  width:calc(100% - 40px);
  max-width:var(--home-content-max);
 
- margin:0 auto 14px;
+ margin:0 auto 18px;
 
- padding:11px 16px;
+ padding:12px 14px;
 
- border:1px solid rgba(176,24,26,.25);
- border-radius:999px;
+ border:none;
+ border-radius:16px;
 
- background:rgba(176,24,26,.07);
+ background:linear-gradient(135deg,#b0181a,#7d1113);
 
- color:var(--oratio-primary);
+ box-shadow:0 10px 26px rgba(123,17,19,.3);
 
- font-size:13px;
- font-weight:600;
- text-align:center;
+ color:#fff;
+
+ text-align:left;
 
  cursor:pointer;
 
- position:relative;
- z-index:2;
+ position:sticky;
+ top:calc(10px + env(safe-area-inset-top));
+ z-index:50;
+
+ transition:transform .15s;
+
+}
+
+.guestBanner:active{
+
+ transform:scale(.98);
+
+}
+
+.guestBannerIcon{
+
+ flex:none;
+
+ width:34px;
+ height:34px;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ border-radius:50%;
+
+ background:rgba(255,255,255,.18);
+
+}
+
+.guestBannerText{
+
+ flex:1;
+
+ display:flex;
+ flex-direction:column;
+ gap:2px;
+
+ text-align:left;
+
+}
+
+.guestBannerText strong{
+
+ font-size:13px;
+ font-weight:700;
+
+}
+
+.guestBannerText span{
+
+ font-size:12px;
+ color:rgba(255,255,255,.85);
 
 }
 

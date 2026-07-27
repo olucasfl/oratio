@@ -69,6 +69,90 @@ line-height:1.5;
 
 }
 
+.voxHighlight{
+
+position:relative;
+
+text-align:left;
+
+margin:0 0 16px;
+padding:16px 14px 14px;
+
+border-radius:var(--oratio-radius-sm);
+
+background:linear-gradient(135deg,#241a42,#3d2a6b);
+
+box-shadow:0 10px 24px rgba(45,20,90,.35);
+
+}
+
+.voxBadge{
+
+display:inline-block;
+
+margin-bottom:10px;
+
+padding:3px 9px;
+
+border-radius:999px;
+
+background:rgba(255,255,255,.15);
+
+color:#e7c96a;
+
+font-size:10px;
+font-weight:700;
+letter-spacing:.6px;
+
+}
+
+.voxRow{
+
+display:flex;
+align-items:flex-start;
+gap:12px;
+
+}
+
+.voxIcon{
+
+flex:none;
+
+width:38px;
+height:38px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+border-radius:50%;
+
+background:rgba(255,255,255,.12);
+color:#c9b6ff;
+
+}
+
+.voxRow strong{
+
+display:block;
+
+color:#fff;
+font-size:14.5px;
+
+margin-bottom:3px;
+
+}
+
+.voxRow p{
+
+margin:0;
+
+color:rgba(255,255,255,.8);
+font-size:12.5px;
+line-height:1.45;
+
+}
+
 .list{
 
 text-align:left;
