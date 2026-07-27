@@ -11,10 +11,10 @@ const STORAGE_SCREENS_SINCE = "install_nudge_screens_since"
 
 // "De vez em quando", não repetitivo: só reconsidera depois de um
 // tempo mínimo E de a pessoa ter navegado por algumas telas — as duas
-// condições juntas, não só o relógio, senão viraria só "todo dia" em
-// vez de "de vez em quando".
-const COOLDOWN_MS = 4 * 24 * 60 * 60 * 1000
-const SCREENS_THRESHOLD = 4
+// condições juntas, não só o relógio. Pode repetir no mesmo dia, mas
+// não a cada tela.
+const COOLDOWN_MS = 3 * 60 * 60 * 1000
+const SCREENS_THRESHOLD = 3
 const SHOW_DELAY_MS = 4000
 
 const SKIP_ROUTES = [
