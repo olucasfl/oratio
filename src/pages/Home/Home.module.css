@@ -179,6 +179,36 @@ TOP BUTTONS
 
 }
 
+.profileButton:active,
+.logoutButton:active{
+
+ transform:scale(.93);
+
+}
+
+.logoutButton:disabled{
+
+ opacity:.8;
+ cursor:default;
+
+ transform:none;
+
+}
+
+.spinIcon{
+
+ animation:spin .7s linear infinite;
+
+}
+
+@keyframes spin{
+
+ to{
+  transform:rotate(360deg);
+ }
+
+}
+
 
 .guestBanner{
 

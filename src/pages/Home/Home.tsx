@@ -14,6 +14,7 @@ from "../../components/GuestGateModal/GuestGateModal"
 
 import {
  LogOut,
+ Loader2,
  User,
  LogIn,
  UserPlus,
@@ -25,7 +26,7 @@ import { isPWA } from "../../utils/isPwa"
 
 import { isLoggedIn } from "../../utils/auth"
 
-import { clearSession } from "../../services/api"
+import { logout as authLogout } from "../../services/authService"
 
 import {
  preloadConsecration
@@ -245,11 +246,19 @@ export default function Home(){
  LOGOUT
  ========================= */
 
- const handleLogout = useCallback(()=>{
+ const [loggingOut,setLoggingOut] = useState(false)
 
-  clearSession("/oratio/home")
+ const handleLogout = useCallback(async ()=>{
 
- },[])
+  if(loggingOut) return
+
+  navigator.vibrate?.(15)
+
+  setLoggingOut(true)
+
+  await authLogout("/oratio/home")
+
+ },[loggingOut])
 
  /* =========================
  JSX
@@ -308,10 +317,15 @@ export default function Home(){
        <button
         className={styles.logoutButton}
         onClick={handleLogout}
+        disabled={loggingOut}
         aria-label="Sair da conta"
        >
 
-        <LogOut size={18}/>
+        {loggingOut ? (
+         <Loader2 size={18} className={styles.spinIcon}/>
+        ) : (
+         <LogOut size={18}/>
+        )}
 
        </button>
 

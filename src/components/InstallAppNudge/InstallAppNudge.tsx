@@ -37,8 +37,21 @@ export default function InstallAppNudge(){
   const [open, setOpen] = useState(false)
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const prevPathRef = useRef<string | null>(null)
+  const freshOpenRef = useRef(true)
 
   useEffect(() => {
+
+    // acabou de sair de /login ou /register (voltou de fazer conta/entrar)
+    const justAuthenticated =
+      prevPathRef.current === "/login" ||
+      prevPathRef.current === "/register"
+
+    prevPathRef.current = location.pathname
+
+    // primeira tela vista nessa carga do app (abriu/reabriu agora)
+    const freshAppOpen = freshOpenRef.current
+    freshOpenRef.current = false
 
     const seen = Number(localStorage.getItem(STORAGE_SCREENS_SINCE) || "0") + 1
     localStorage.setItem(STORAGE_SCREENS_SINCE, String(seen))
@@ -51,7 +64,18 @@ export default function InstallAppNudge(){
 
     const lastShown = Number(localStorage.getItem(STORAGE_LAST_SHOWN) || "0")
     const cooldownOk = Date.now() - lastShown >= COOLDOWN_MS
-    const screensOk = seen >= SCREENS_THRESHOLD
+
+    /*
+    Logo depois de logar/criar conta e logo que a pessoa abre (ou
+    reabre) o app são bons momentos pra sugerir instalar — não faz
+    sentido esperar 3 telas de navegação nesses casos. O cooldown de
+    tempo continua valendo, só a exigência de "navegar bastante" que é
+    dispensada aqui.
+    */
+    const screensOk =
+      seen >= SCREENS_THRESHOLD ||
+      justAuthenticated ||
+      freshAppOpen
 
     if (!cooldownOk || !screensOk) return
 

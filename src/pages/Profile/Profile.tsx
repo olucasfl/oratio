@@ -38,6 +38,7 @@ export default function Profile(){
 
  const [deleteAccountOpen,setDeleteAccountOpen] = useState(false)
  const [fontScale,setFontScaleState] = useState(getStoredFontScale())
+ const [loggingOut,setLoggingOut] = useState(false)
 
  const isOffline = useOffline()
 
@@ -113,9 +114,15 @@ export default function Profile(){
 
  }
 
- function logout(){
+ async function logout(){
 
-  authLogout("/oratio/home")
+  if(loggingOut) return
+
+  navigator.vibrate?.(15)
+
+  setLoggingOut(true)
+
+  await authLogout("/oratio/home")
 
  }
 
@@ -678,9 +685,21 @@ export default function Profile(){
     <button
      className={styles.logout}
      onClick={logout}
+     disabled={loggingOut}
     >
 
-     Sair da conta
+     {loggingOut ? (
+
+      <>
+       <span className={styles.logoutSpinner}/>
+       Saindo...
+      </>
+
+     ) : (
+
+      "Sair da conta"
+
+     )}
 
     </button>
 

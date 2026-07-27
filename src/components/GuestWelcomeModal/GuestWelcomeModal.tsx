@@ -61,7 +61,8 @@ export default function GuestWelcomeModal({ open, onClose }: Props) {
             <div>
               <strong>VoxAI</strong>
               <p>
-                Tire dúvidas de fé com a 1ª IA católica do Oratio.
+                Tire dúvidas de fé com a IA católica mais confiável
+                e embasada.
               </p>
             </div>
 
