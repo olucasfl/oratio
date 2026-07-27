@@ -1,5 +1,5 @@
 import styles from "./Home.module.css"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import { useEffect, useMemo, useCallback, useState } from "react"
 
 import BottomNavbar
@@ -7,6 +7,9 @@ from "../../components/BottomNavbar/BottomNavbar"
 
 import GuestWelcomeModal
 from "../../components/GuestWelcomeModal/GuestWelcomeModal"
+
+import GuestGateModal
+from "../../components/GuestGateModal/GuestGateModal"
 
 import {
  LogOut,
@@ -43,6 +46,8 @@ type FeatureItem = {
  actionLabel:string
  path:string
  badge?:string
+ locked?:boolean
+ gateMessage?:string
 }
 
 /* =========================
@@ -53,11 +58,26 @@ export default function Home(){
 
  const navigate = useNavigate()
 
+ const [searchParams] = useSearchParams()
+
  const pwa = isPWA()
 
  const guest = !isLoggedIn()
 
  const [showWelcome, setShowWelcome] = useState(false)
+
+ const [gateMessage, setGateMessage] = useState<string | null>(null)
+
+ function handleFeatureClick(item:FeatureItem){
+
+  if(item.locked && guest){
+   setGateMessage(item.gateMessage || "Crie uma conta para acessar essa área.")
+   return
+  }
+
+  navigate(item.path)
+
+ }
 
  const {
   liturgy,
@@ -68,6 +88,18 @@ export default function Home(){
   displayDateLabel,
   reloadLiturgy
  } = useLiturgy()
+
+ // Abrindo a partir de um link compartilhado de uma leitura específica
+ // (?leitura=tipo&offset=N) — ajusta o dia da liturgia antes de tudo,
+ // pra LiturgyReadingButtons abrir a leitura certa quando carregar.
+ useEffect(()=>{
+  const offsetParam = searchParams.get("offset")
+  if(offsetParam){
+   const parsed = Number(offsetParam)
+   if(!Number.isNaN(parsed)) setDateOffset(parsed)
+  }
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ },[])
 
  /* =========================
  FEATURES
@@ -104,7 +136,10 @@ export default function Home(){
    path:
    "/oratio/confissao",
 
-   badge:"SACRAMENTO"
+   badge:"SACRAMENTO",
+
+   locked:true,
+   gateMessage:"Crie uma conta para acessar o Guia de Confissão."
   },
 
   {
@@ -120,7 +155,10 @@ export default function Home(){
    path:
    "/oratio/consecration",
 
-   badge:"33 DIAS"
+   badge:"33 DIAS",
+
+   locked:true,
+   gateMessage:"Crie uma conta para iniciar a Consagração de 33 dias e acompanhar seu progresso."
   },
 
   {
@@ -146,7 +184,10 @@ export default function Home(){
    "Abrir Catecismo",
 
    path:
-   "/oratio/catecismo"
+   "/oratio/catecismo",
+
+   locked:true,
+   gateMessage:"Crie uma conta para acessar o Catecismo completo."
   },
 
   {
@@ -162,7 +203,10 @@ export default function Home(){
    path:
    "/oratio/vox",
 
-   badge:"IA"
+   badge:"IA",
+
+   locked:true,
+   gateMessage:"Crie uma conta para conversar com o VoxAI, seu assistente espiritual católico."
   }
 
  ],[])
@@ -203,7 +247,7 @@ export default function Home(){
 
  const handleLogout = useCallback(()=>{
 
-  clearSession()
+  clearSession("/oratio/home")
 
  },[])
 
@@ -297,6 +341,12 @@ export default function Home(){
     onClose={()=>setShowWelcome(false)}
    />
 
+   <GuestGateModal
+    open={gateMessage !== null}
+    message={gateMessage || ""}
+    onClose={()=>setGateMessage(null)}
+   />
+
    {/* HERO */}
 
    <section className={styles.hero}>
@@ -366,7 +416,7 @@ export default function Home(){
       <button
        className={styles.primaryButton}
        onClick={()=>
-        navigate(item.path)
+        handleFeatureClick(item)
        }
       >
 

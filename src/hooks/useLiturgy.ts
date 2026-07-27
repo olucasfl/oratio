@@ -27,7 +27,7 @@ const LITURGY_URL =
 const LITURGY_CACHE_KEY =
 "last_liturgy"
 
-export function useLiturgy(){
+export function useLiturgy(initialOffset = 0){
 
  const today = useMemo(
   ()=>new Date().toLocaleDateString("pt-BR"),
@@ -43,7 +43,7 @@ export function useLiturgy(){
   useState<string | null>(null)
 
  const [dateOffset,setDateOffset] =
-  useState(0)
+  useState(initialOffset)
 
  const displayDateStr = useMemo(()=>{
   const d = new Date()

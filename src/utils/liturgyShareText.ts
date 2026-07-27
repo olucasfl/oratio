@@ -66,7 +66,8 @@ export function buildSalmoShareText(
 export function buildQuickReadingShareText(
   heading: string,
   reading: { titulo?: string; referencia?: string; texto?: string; refrao?: string },
-  resposta?: { padre: string; assembleia: string } | null
+  resposta?: { padre: string; assembleia: string } | null,
+  link?: string
 ){
   const linhas = [heading]
 
@@ -82,6 +83,8 @@ export function buildQuickReadingShareText(
   if(resposta){
     linhas.push("", resposta.padre, resposta.assembleia)
   }
+
+  if(link) linhas.push("", `Leia no app: ${link}`)
 
   linhas.push("", ASSINATURA)
 

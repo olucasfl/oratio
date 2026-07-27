@@ -115,7 +115,7 @@ export default function Profile(){
 
  function logout(){
 
-  authLogout()
+  authLogout("/oratio/home")
 
  }
 

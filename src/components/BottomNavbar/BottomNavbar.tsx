@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom"
 import { createPortal } from "react-dom"
+import { useState } from "react"
 import type { ComponentType } from "react"
 
 import {
@@ -13,17 +14,23 @@ import {
 import styles from "./BottomNavbar.module.css"
 
 import { isPWA } from "../../utils/isPwa"
+import { isLoggedIn } from "../../utils/auth"
+import GuestGateModal from "../GuestGateModal/GuestGateModal"
 
 type NavItem = {
  label:string
  path:string
  icon:ComponentType<{ size?: number }>
+ locked?:boolean
+ gateMessage?:string
 }
 
 export default function BottomNavbar(){
 
  const navigate = useNavigate()
  const location = useLocation()
+
+ const [gateMessage,setGateMessage] = useState<string | null>(null)
 
  if(!isPWA()){
   return null
@@ -35,13 +42,42 @@ export default function BottomNavbar(){
 
  const leftItems:NavItem[] = [
   { label:"Bíblia", path:"/oratio/biblia", icon:BookOpen },
-  { label:"Catecismo", path:"/oratio/catecismo", icon:Book }
+  {
+   label:"Catecismo",
+   path:"/oratio/catecismo",
+   icon:Book,
+   locked:true,
+   gateMessage:"Crie uma conta para acessar o Catecismo completo."
+  }
  ]
 
  const rightItems:NavItem[] = [
-  { label:"VoxAI", path:"/oratio/vox", icon:MessageCircleHeart },
-  { label:"Perfil", path:"/oratio/profile", icon:User }
+  {
+   label:"VoxAI",
+   path:"/oratio/vox",
+   icon:MessageCircleHeart,
+   locked:true,
+   gateMessage:"Crie uma conta para conversar com o VoxAI, seu assistente espiritual católico."
+  },
+  {
+   label:"Perfil",
+   path:"/oratio/profile",
+   icon:User,
+   locked:true,
+   gateMessage:"Crie uma conta para acessar seu perfil, salvar suas configurações e acompanhar seu progresso espiritual."
+  }
  ]
+
+ function handleItemClick(item:NavItem){
+
+  if(item.locked && !isLoggedIn()){
+   setGateMessage(item.gateMessage || "Crie uma conta para acessar essa área.")
+   return
+  }
+
+  navigate(item.path)
+
+ }
 
  function renderItem(item:NavItem){
   const Icon = item.icon
@@ -51,7 +87,7 @@ export default function BottomNavbar(){
    <button
     key={item.path}
     className={`${styles.item} ${active ? styles.active : ""}`}
-    onClick={()=>navigate(item.path)}
+    onClick={()=>handleItemClick(item)}
     aria-label={`Abrir ${item.label}`}
    >
     <Icon size={21}/>
@@ -61,6 +97,8 @@ export default function BottomNavbar(){
  }
 
  return createPortal(
+  <>
+
   <nav className={styles.navbar} aria-label="Navegação inferior">
     <div className={styles.side}>
       {leftItems.map(renderItem)}
@@ -78,7 +116,15 @@ export default function BottomNavbar(){
       {rightItems.map(renderItem)}
     </div>
 
-   </nav>,
+   </nav>
+
+   <GuestGateModal
+    open={gateMessage !== null}
+    message={gateMessage || ""}
+    onClose={()=>setGateMessage(null)}
+   />
+
+  </>,
 
   document.body
 

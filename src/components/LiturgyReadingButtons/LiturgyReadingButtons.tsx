@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 
 import { useLockBodyScroll } from "../../hooks/useLockBodyScroll"
 import type { LiturgyData, LiturgyReading } from "../../hooks/useLiturgy"
@@ -17,8 +17,11 @@ const TIPO_LABEL: Record<string, string> = {
  extra: "Leitura"
 }
 
+const TIPOS_VALIDOS = Object.keys(TIPO_LABEL)
+
 interface Props {
  liturgy: LiturgyData | null
+ dateOffset?: number
 }
 
 type ReadingType =
@@ -28,9 +31,10 @@ type ReadingType =
  | "evangelho"
  | "extra"
 
-export default function LiturgyReadingButtons({ liturgy }: Props){
+export default function LiturgyReadingButtons({ liturgy, dateOffset = 0 }: Props){
 
  const navigate = useNavigate()
+ const [searchParams, setSearchParams] = useSearchParams()
 
  const [modal,setModal] =
  useState<
@@ -144,6 +148,35 @@ export default function LiturgyReadingButtons({ liturgy }: Props){
   setSelector(readings)
 
  }
+
+ /* =========================
+ ABRIR AUTOMATICAMENTE
+ (link compartilhado: ?leitura=tipo)
+ ========================= */
+
+ const autoOpenedRef = useRef(false)
+
+ useEffect(()=>{
+
+  if(autoOpenedRef.current) return
+  if(!liturgy) return
+
+  const tipo = searchParams.get("leitura")
+
+  if(!tipo || !TIPOS_VALIDOS.includes(tipo)) return
+
+  autoOpenedRef.current = true
+
+  openModal(tipo as ReadingType)
+
+  // limpa o parâmetro da URL sem recarregar a página
+  const next = new URLSearchParams(searchParams)
+  next.delete("leitura")
+  next.delete("offset")
+  setSearchParams(next, { replace:true })
+
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ },[liturgy, searchParams])
 
  /* =========================
  FORMATAR TEXTO
@@ -416,7 +449,8 @@ export default function LiturgyReadingButtons({ liturgy }: Props){
           buildQuickReadingShareText(
            TIPO_LABEL[modal.tipoLeitura!] || "Leitura",
            modal,
-           getRespostaFinal(modal.tipoLeitura)
+           getRespostaFinal(modal.tipoLeitura),
+           `${window.location.origin}/oratio/home?leitura=${modal.tipoLeitura}${dateOffset ? `&offset=${dateOffset}` : ""}`
           )
          }
         />

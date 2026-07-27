@@ -42,7 +42,7 @@ export async function register(
   return response.data;
 }
 
-export async function logout(){
+export async function logout(redirectTo?: string){
 
  /*
  Revoga a sessão desse dispositivo no servidor antes de limpar o
@@ -59,7 +59,7 @@ export async function logout(){
   }
  }
 
- clearSession()
+ clearSession(redirectTo)
 
 }
 

@@ -82,14 +82,14 @@ mais um removeItem aqui.
 
 const KEEP_ON_LOGOUT = new Set(["app_version", "last_ping"]);
 
-export function clearSession() {
+export function clearSession(redirectTo: string = "/login") {
   for (let i = localStorage.length - 1; i >= 0; i--) {
     const key = localStorage.key(i);
     if (key && !KEEP_ON_LOGOUT.has(key)) {
       localStorage.removeItem(key);
     }
   }
-  window.location.href = "/login";
+  window.location.href = redirectTo;
 }
 
 function logout() {

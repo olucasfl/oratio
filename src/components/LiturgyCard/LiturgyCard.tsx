@@ -112,7 +112,7 @@ export default function LiturgyCard({
 
    )}
 
-   <LiturgyReadingButtons liturgy={liturgy} />
+   <LiturgyReadingButtons liturgy={liturgy} dateOffset={dateOffset} />
 
   </section>
 
