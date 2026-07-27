@@ -1,10 +1,22 @@
 import { useState, useEffect } from "react";
 import styles from "./FraseDiaria.module.css";
 import { useFraseDiaria } from "../../hooks/useFraseDiaria";
+import { isLoggedIn } from "../../utils/auth";
+import GuestGateModal from "../GuestGateModal/GuestGateModal";
 
 export function FraseDiaria() {
   const { frase, resgatada, resgatar } = useFraseDiaria();
   const [visivel, setVisivel] = useState(false);
+  const [showGate, setShowGate] = useState(false);
+
+  function handlePegarFrase() {
+    if (!isLoggedIn()) {
+      setShowGate(true);
+      return;
+    }
+    resgatar();
+    setVisivel(true);
+  }
 
   // fecha o card automaticamente quando o usuário sai e volta à aba
   useEffect(() => {
@@ -24,11 +36,17 @@ export function FraseDiaria() {
       <div className={styles.wrapper}>
         <button
           className={styles.btnChamativo}
-          onClick={() => { resgatar(); setVisivel(true); }}
+          onClick={handlePegarFrase}
         >
           <span className={styles.icone}>"</span>
           Pegue sua frase do dia
         </button>
+
+        <GuestGateModal
+          open={showGate}
+          message="Crie uma conta para pegar sua frase do dia, todos os dias."
+          onClose={() => setShowGate(false)}
+        />
       </div>
     );
   }

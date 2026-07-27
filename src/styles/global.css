@@ -223,7 +223,16 @@ to{
 }
 
 .page-enter{
-animation:pageEnter 0.28s ease both;
+/*
+"backwards" (não "both"): aplica o estado inicial antes da animação
+começar (evita flash), mas NÃO deixa o transform final grudado depois
+que a animação termina. Se ficasse ("both"), o elemento manteria
+transform:translateY(0) pra sempre — e qualquer valor de transform
+diferente de "none", mesmo um translateY(0) "neutro", vira containing
+block pros descendentes position:fixed, fazendo eles se posicionarem
+relativos à altura da página inteira em vez do viewport real.
+*/
+animation:pageEnter 0.28s ease backwards;
 }
 
 

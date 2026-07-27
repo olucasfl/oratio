@@ -1,6 +1,7 @@
 import styles from "./Home.module.css"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { useEffect, useMemo, useCallback, useState } from "react"
+import { createPortal } from "react-dom"
 
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
@@ -223,14 +224,11 @@ export default function Home(){
   }
  },[guest])
 
+ // Aparece toda vez que a pessoa entra na Home sem conta — não é "só
+ // uma vez", é lembrete recorrente de que dá pra criar conta.
  useEffect(()=>{
 
-  if(!guest) return
-
-  if(!localStorage.getItem("guest_welcome_seen")){
-   setShowWelcome(true)
-   localStorage.setItem("guest_welcome_seen", "1")
-  }
+  if(guest) setShowWelcome(true)
 
  },[guest])
 
@@ -327,23 +325,39 @@ export default function Home(){
 
    {guest && (
 
-    <button
-     className={styles.guestBanner}
-     onClick={()=>navigate("/register")}
-    >
+    <>
 
-     <span className={styles.guestBannerIcon}>
-      <Sparkles size={16}/>
-     </span>
+     {createPortal(
 
-     <span className={styles.guestBannerText}>
-      <strong>Você está navegando sem conta</strong>
-      <span>Crie a sua para salvar seu progresso</span>
-     </span>
+      <button
+       className={styles.guestBanner}
+       style={!pwa ? { top:"calc(72px + env(safe-area-inset-top))" } : undefined}
+       onClick={()=>navigate("/register")}
+      >
 
-     <ChevronRight size={18}/>
+       <span className={styles.guestBannerIcon}>
+        <Sparkles size={16}/>
+       </span>
 
-    </button>
+       <span className={styles.guestBannerText}>
+        <strong>Você está navegando sem conta</strong>
+        <span>Crie a sua para salvar seu progresso</span>
+       </span>
+
+       <ChevronRight size={18}/>
+
+      </button>,
+
+      document.body
+
+     )}
+
+     <div
+      className={styles.guestBannerSpacer}
+      style={!pwa ? { height:"142px" } : undefined}
+     />
+
+    </>
 
    )}
 

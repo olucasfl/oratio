@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom"
+import { createPortal } from "react-dom"
 import { Sparkles, BrainCircuit } from "lucide-react"
 import styles from "./GuestWelcomeModal.module.css"
 
@@ -8,9 +9,11 @@ interface Props {
 }
 
 const BENEFICIOS = [
+  "Pegar sua frase do dia, todos os dias",
   "Salvar seu progresso nas orações e terços",
   "Acompanhar sua sequência de dias em oração",
   "Fazer a Consagração de 33 dias",
+  "Ver os detalhes do Santo do Dia",
   "Acompanhar sua caminhada espiritual"
 ]
 
@@ -20,7 +23,7 @@ export default function GuestWelcomeModal({ open, onClose }: Props) {
 
   if (!open) return null
 
-  return (
+  return createPortal(
     <div className={styles.overlay}>
 
       <div className={styles.modal}>
@@ -82,7 +85,9 @@ export default function GuestWelcomeModal({ open, onClose }: Props) {
 
       </div>
 
-    </div>
+    </div>,
+
+    document.body
   )
 
 }

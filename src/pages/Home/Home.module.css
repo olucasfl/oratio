@@ -186,10 +186,13 @@ TOP BUTTONS
  align-items:center;
  gap:12px;
 
- width:calc(100% - 40px);
- max-width:var(--home-content-max);
+ position:fixed;
+ top:calc(10px + env(safe-area-inset-top));
+ left:20px;
+ right:20px;
 
- margin:0 auto 18px;
+ max-width:var(--home-content-max);
+ margin:0 auto;
 
  padding:12px 14px;
 
@@ -206,11 +209,17 @@ TOP BUTTONS
 
  cursor:pointer;
 
- position:sticky;
- top:calc(10px + env(safe-area-inset-top));
- z-index:50;
+ z-index:150;
 
  transition:transform .15s;
+
+}
+
+.guestBannerSpacer{
+
+ height:82px;
+
+ flex:none;
 
 }
 
