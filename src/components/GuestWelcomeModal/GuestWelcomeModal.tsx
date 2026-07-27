@@ -13,13 +13,10 @@ interface Props {
 const OVERLAY_ID = "guest-welcome"
 
 const BENEFICIOS = [
-  "Pegar sua frase do dia, todos os dias",
-  "Salvar seu progresso nas orações e terços",
+  "Frase do dia e detalhes do Santo do Dia",
+  "Salvar progresso em orações, terços e na Consagração",
   "Acompanhar sua sequência de dias em oração",
-  "Fazer a Consagração de 33 dias",
-  "Ver os detalhes do Santo do Dia",
-  "Pesquisar qualquer palavra ou tema na Bíblia",
-  "Acompanhar sua caminhada espiritual"
+  "Pesquisar qualquer palavra ou tema na Bíblia"
 ]
 
 export default function GuestWelcomeModal({ open, onClose }: Props) {
@@ -41,14 +38,14 @@ export default function GuestWelcomeModal({ open, onClose }: Props) {
       <div className={styles.modal}>
 
         <div className={styles.icon}>
-          <Sparkles size={26} />
+          <Sparkles size={20} />
         </div>
 
         <h2 className={styles.title}>Bem-vindo ao Oratio</h2>
 
         <p className={styles.subtitle}>
-          Você pode explorar a liturgia, orações, terços e a Bíblia
-          livremente, sem conta. Criando uma conta, você também pode:
+          Explore liturgia, orações, terços e Bíblia sem conta.
+          Criando uma, você também pode:
         </p>
 
         <div className={styles.voxHighlight}>
@@ -58,15 +55,13 @@ export default function GuestWelcomeModal({ open, onClose }: Props) {
           <div className={styles.voxRow}>
 
             <div className={styles.voxIcon}>
-              <BrainCircuit size={22} />
+              <BrainCircuit size={16} />
             </div>
 
             <div>
               <strong>VoxAI</strong>
               <p>
-                A primeira Inteligência Artificial Católica do Oratio —
-                tire dúvidas sobre fé, moral e liturgia com respostas
-                fundamentadas na doutrina da Igreja.
+                Tire dúvidas de fé com a 1ª IA católica do Oratio.
               </p>
             </div>
 
