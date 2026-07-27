@@ -1,25 +1,20 @@
 const ASSINATURA = "— Enviado pelo app Oratio"
 
 /*
-Compartilha o capítulo inteiro, com cada versículo numerado igual ao
-que a pessoa vê na tela — formatado pra ficar legível em texto puro
-(WhatsApp, Instagram etc, sem HTML).
+Só o convite + link, igual ao compartilhamento de oração — capítulos
+da Bíblia podem ter dezenas/centenas de versículos, texto longo demais
+pra mandar inteiro numa mensagem.
 */
 export function buildBibleChapterShareText(
   book: string,
   chapter: number | string,
-  versiculos: { versiculo: number; texto: string }[],
-  link?: string
+  link: string
 ){
-  const linhas = [`${book} ${chapter}`, ""]
-
-  for(const v of versiculos){
-    linhas.push(`${v.versiculo} ${v.texto}`)
-  }
-
-  if(link) linhas.push("", `Leia no app: ${link}`)
-
-  linhas.push("", ASSINATURA)
-
-  return linhas.join("\n")
+  return [
+    `${book} ${chapter}`,
+    "",
+    `Leia comigo esse capítulo: ${link}`,
+    "",
+    ASSINATURA
+  ].join("\n")
 }

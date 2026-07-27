@@ -31,41 +31,38 @@ export default function BottomNavbar(){
  const location = useLocation()
 
  const [gateMessage,setGateMessage] = useState<string | null>(null)
- const [bottomOffset,setBottomOffset] = useState(0)
 
  /*
- position:fixed;bottom:0 é relativo ao layout viewport, não ao que
- está realmente visível. Em PWA standalone, depois que a folha nativa
- de compartilhamento (navigator.share) fecha, o Android/iOS às vezes
- restaura o visual viewport com atraso — daí a navbar aparece
- "descolada" do rodapé real assim que a tela rola. Recalcula o offset
- pelo visualViewport e resincroniza ao voltar de background (share
- sheet, troca de app, etc.), em vez de confiar cegamente no fixed.
+ Depois que a folha nativa de compartilhamento (navigator.share) fecha,
+ alguns navegadores (principalmente Android/WebView em PWA standalone)
+ não repintam a navbar position:fixed corretamente até o próximo
+ evento de scroll/resize — ela fica "grudada" numa posição antiga até
+ o usuário rolar a tela. Um nudge inofensivo (rolar pro mesmo lugar que
+ já está) força o navegador a recalcular o fixed contra o viewport
+ real, sem arriscar computar um valor de offset que possa dar errado.
+ Tentativa anterior calculava um "bottom" customizado pelo
+ visualViewport, mas em estados transitórios da sheet fechando isso
+ podia gerar um valor grande e a navbar ficava presa no meio da tela —
+ por isso a troca pra esse nudge simples.
  */
  useEffect(()=>{
 
-  const vv = window.visualViewport
-  if(!vv) return
-
-  function syncOffset(){
-   const offset = window.innerHeight - (vv!.height + vv!.offsetTop)
-   setBottomOffset(Math.max(0, Math.round(offset)))
+  function nudge(){
+   requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+     window.scrollTo(window.scrollX, window.scrollY)
+    })
+   })
   }
 
-  syncOffset()
-
-  vv.addEventListener("resize", syncOffset)
-  vv.addEventListener("scroll", syncOffset)
-  document.addEventListener("visibilitychange", syncOffset)
-  window.addEventListener("pageshow", syncOffset)
-  window.addEventListener("focus", syncOffset)
+  document.addEventListener("visibilitychange", nudge)
+  window.addEventListener("pageshow", nudge)
+  window.addEventListener("focus", nudge)
 
   return ()=>{
-   vv.removeEventListener("resize", syncOffset)
-   vv.removeEventListener("scroll", syncOffset)
-   document.removeEventListener("visibilitychange", syncOffset)
-   window.removeEventListener("pageshow", syncOffset)
-   window.removeEventListener("focus", syncOffset)
+   document.removeEventListener("visibilitychange", nudge)
+   window.removeEventListener("pageshow", nudge)
+   window.removeEventListener("focus", nudge)
   }
 
  },[])
@@ -137,11 +134,7 @@ export default function BottomNavbar(){
  return createPortal(
   <>
 
-  <nav
-   className={styles.navbar}
-   style={bottomOffset ? { bottom:bottomOffset } : undefined}
-   aria-label="Navegação inferior"
-  >
+  <nav className={styles.navbar} aria-label="Navegação inferior">
     <div className={styles.side}>
       {leftItems.map(renderItem)}
     </div>

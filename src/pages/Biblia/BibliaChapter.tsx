@@ -189,7 +189,6 @@ export default function BibliaChapter(){
         buildBibleChapterShareText(
          book!,
          chapter!,
-         capitulo.versiculos,
          `${window.location.origin}/oratio/biblia/${book}/${chapter}`
         )
        }
