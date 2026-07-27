@@ -1,0 +1,26 @@
+# Dependências e artefatos de build
+node_modules/
+dist/
+dist-ssr/
+coverage/
+
+# Lockfiles (grandes, raramente úteis para contexto)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Logs e runtime
+logs/
+*.log
+
+# Segredos e ambiente
+.env
+.env.*
+*.local
+
+# IDE / editor
+.vscode/
+.idea/
+
+# Git
+.git/
