@@ -18,7 +18,7 @@ padding:20px;
 
 background:var(--oratio-card-bg);
 
-padding:32px 28px;
+padding:28px 24px;
 
 border-radius:var(--oratio-radius-lg);
 
@@ -27,16 +27,24 @@ text-align:center;
 width:100%;
 max-width:400px;
 
+/*
+No navegador (fora do PWA instalado) a barra de endereço come parte
+da altura útil — sem isso o modal, com bastante conteúdo, ficava
+maior que a tela e cortava em vez de rolar.
+*/
+max-height:85dvh;
+overflow-y:auto;
+
 box-shadow:var(--oratio-shadow-strong);
 
 }
 
 .icon{
 
-width:52px;
-height:52px;
+width:44px;
+height:44px;
 
-margin:0 auto 14px;
+margin:0 auto 10px;
 
 display:flex;
 align-items:center;
@@ -62,10 +70,10 @@ margin-bottom:10px;
 
 color:var(--oratio-text-soft);
 
-margin-bottom:16px;
+margin-bottom:12px;
 
-font-size:14px;
-line-height:1.5;
+font-size:13.5px;
+line-height:1.45;
 
 }
 
@@ -75,8 +83,8 @@ position:relative;
 
 text-align:left;
 
-margin:0 0 16px;
-padding:16px 14px 14px;
+margin:0 0 12px;
+padding:12px 14px 11px;
 
 border-radius:var(--oratio-radius-sm);
 
@@ -90,7 +98,7 @@ box-shadow:0 10px 24px rgba(45,20,90,.35);
 
 display:inline-block;
 
-margin-bottom:10px;
+margin-bottom:8px;
 
 padding:3px 9px;
 
@@ -118,8 +126,8 @@ gap:12px;
 
 flex:none;
 
-width:38px;
-height:38px;
+width:32px;
+height:32px;
 
 display:flex;
 align-items:center;
@@ -137,9 +145,9 @@ color:#c9b6ff;
 display:block;
 
 color:#fff;
-font-size:14.5px;
+font-size:14px;
 
-margin-bottom:3px;
+margin-bottom:2px;
 
 }
 
@@ -148,8 +156,8 @@ margin-bottom:3px;
 margin:0;
 
 color:rgba(255,255,255,.8);
-font-size:12.5px;
-line-height:1.45;
+font-size:12px;
+line-height:1.4;
 
 }
 
@@ -159,18 +167,19 @@ text-align:left;
 
 list-style:none;
 
-margin:0 0 24px;
+margin:0 0 18px;
 padding:0;
 
 display:flex;
 flex-direction:column;
-gap:9px;
+gap:6px;
 
 }
 
 .list li{
 
-font-size:13.5px;
+font-size:13px;
+line-height:1.3;
 color:var(--oratio-text-dark);
 
 padding-left:20px;
