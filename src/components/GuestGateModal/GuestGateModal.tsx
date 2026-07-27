@@ -1,8 +1,10 @@
 import { useNavigate, useLocation } from "react-router-dom"
 import { createPortal } from "react-dom"
+import { useEffect } from "react"
 import { LockKeyhole } from "lucide-react"
 import styles from "./GuestGateModal.module.css"
 import { withRedirect } from "../../utils/authRedirect"
+import { markOverlayOpen, markOverlayClosed } from "../../utils/overlayCoordinator"
 
 interface Props {
   open: boolean
@@ -10,10 +12,19 @@ interface Props {
   onClose: () => void
 }
 
+const OVERLAY_ID = "guest-gate"
+
 export default function GuestGateModal({ open, message, onClose }: Props) {
 
   const navigate = useNavigate()
   const location = useLocation()
+
+  useEffect(() => {
+    if (open) markOverlayOpen(OVERLAY_ID)
+    else markOverlayClosed(OVERLAY_ID)
+
+    return () => markOverlayClosed(OVERLAY_ID)
+  }, [open])
 
   if (!open) return null
 

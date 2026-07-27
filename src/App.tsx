@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import AdminRoute from "./components/AdminRoute"
 import OfflineBanner from "./components/OfflineBanner/OfflineBanner"
 import PullToRefresh from "./components/PullToRefresh/PullToRefresh"
+import InstallAppNudge from "./components/InstallAppNudge/InstallAppNudge"
 import { preloadConsecration, getProgress } from "./services/consecrationService"
 import { sendActivityPing } from "./services/activityService"
 
@@ -205,6 +206,8 @@ return(
 <OfflineBanner />
 
 <ScrollToTop />
+
+<InstallAppNudge />
 
 <PullToRefresh>
 

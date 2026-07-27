@@ -19,10 +19,18 @@ window.addEventListener("beforeinstallprompt", (e) => {
 
 window.addEventListener("appinstalled", () => {
   deferredPrompt = null
+  localStorage.setItem("oratio_installed", "1")
 })
 
 export function canInstallDirectly(){
   return deferredPrompt !== null
+}
+
+// Uma vez instalado, nunca mais sugere de novo — mesmo que essa aba
+// específica (que já estava aberta antes da instalação) ainda não
+// esteja rodando em modo standalone.
+export function wasInstalled(){
+  return localStorage.getItem("oratio_installed") === "1"
 }
 
 export async function promptInstall(){
