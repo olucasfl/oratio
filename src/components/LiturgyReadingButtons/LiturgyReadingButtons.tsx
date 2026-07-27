@@ -405,6 +405,24 @@ export default function LiturgyReadingButtons({ liturgy }: Props){
        {modal.referencia}
       </p>
 
+      {modal.tipoLeitura &&
+       modal.texto !== "Hoje não há leitura disponível" && (
+
+        <ShareReadingButton
+         label={
+          TIPO_LABEL[modal.tipoLeitura] || "Leitura"
+         }
+         buildText={()=>
+          buildQuickReadingShareText(
+           TIPO_LABEL[modal.tipoLeitura!] || "Leitura",
+           modal,
+           getRespostaFinal(modal.tipoLeitura)
+          )
+         }
+        />
+
+       )}
+
       {modal.refrao && (
 
        <p className={styles.modalRefrao}>
@@ -465,24 +483,6 @@ export default function LiturgyReadingButtons({ liturgy }: Props){
        )
 
       })()}
-
-      {modal.tipoLeitura &&
-       modal.texto !== "Hoje não há leitura disponível" && (
-
-        <ShareReadingButton
-         label={
-          TIPO_LABEL[modal.tipoLeitura] || "Leitura"
-         }
-         buildText={()=>
-          buildQuickReadingShareText(
-           TIPO_LABEL[modal.tipoLeitura!] || "Leitura",
-           modal,
-           getRespostaFinal(modal.tipoLeitura)
-          )
-         }
-        />
-
-       )}
 
       <button
        className={styles.closeButton}

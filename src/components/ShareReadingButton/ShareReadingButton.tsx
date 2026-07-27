@@ -48,7 +48,7 @@ export default function ShareReadingButton({ label, buildText }: Props) {
       className={styles.shareBtn}
       onClick={handleShare}
     >
-      {copied ? <Check size={14} /> : <Share2 size={14} />}
+      {copied ? <Check size={17} /> : <Share2 size={17} />}
       {copied ? "Copiado!" : `Compartilhar ${label}`}
     </button>
   )
