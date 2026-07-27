@@ -189,7 +189,7 @@ export default function BibliaChapter(){
         buildBibleChapterShareText(
          book!,
          chapter!,
-         `${window.location.origin}/oratio/biblia/${book}/${chapter}`
+         `${window.location.origin}/oratio/biblia/${encodeURIComponent(book!)}/${encodeURIComponent(chapter!)}`
         )
        }
       />

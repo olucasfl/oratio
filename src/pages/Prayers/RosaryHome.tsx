@@ -344,7 +344,7 @@ export default function RosaryHome(){
                   buildText={()=>
                     buildRosaryShareText(
                       r.name,
-                      `${window.location.origin}/oratio/rosary/${r.slug}`
+                      `${window.location.origin}/oratio/rosary/${encodeURIComponent(r.slug)}`
                     )
                   }
                 />

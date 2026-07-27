@@ -450,7 +450,7 @@ export default function LiturgyReadingButtons({ liturgy, dateOffset = 0 }: Props
            TIPO_LABEL[modal.tipoLeitura!] || "Leitura",
            modal,
            getRespostaFinal(modal.tipoLeitura),
-           `${window.location.origin}/oratio/home?leitura=${modal.tipoLeitura}${dateOffset ? `&offset=${dateOffset}` : ""}`
+           `${window.location.origin}/oratio/home?leitura=${encodeURIComponent(modal.tipoLeitura!)}${dateOffset ? `&offset=${encodeURIComponent(String(dateOffset))}` : ""}`
           )
          }
         />

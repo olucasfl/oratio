@@ -229,7 +229,7 @@ export default function Prayers(){
           buildText={()=>
             buildPrayerShareText(
               prayer.title,
-              `${window.location.origin}/oratio/prayer/${id}`
+              `${window.location.origin}/oratio/prayer/${encodeURIComponent(id!)}`
             )
           }
         />
