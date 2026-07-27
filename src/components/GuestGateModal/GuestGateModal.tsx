@@ -10,11 +10,15 @@ interface Props {
   open: boolean
   message: string
   onClose: () => void
+  // Sobrescreve o caminho de volta (pathname+search da tela atual, por
+  // padrão) — usado quando a tela guarda progresso que não está na URL
+  // (ex: passo atual de um terço) e precisa embutir isso no redirect.
+  redirectPath?: string
 }
 
 const OVERLAY_ID = "guest-gate"
 
-export default function GuestGateModal({ open, message, onClose }: Props) {
+export default function GuestGateModal({ open, message, onClose, redirectPath }: Props) {
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -28,7 +32,7 @@ export default function GuestGateModal({ open, message, onClose }: Props) {
 
   if (!open) return null
 
-  const currentPath = location.pathname + location.search
+  const currentPath = redirectPath ?? (location.pathname + location.search)
 
   return createPortal(
     <div className={styles.overlay} onClick={onClose}>

@@ -6,7 +6,8 @@ import {
 
 import {
   useParams,
-  useNavigate
+  useNavigate,
+  useSearchParams
 } from "react-router-dom"
 
 import styles from "./RosaryPage.module.css"
@@ -63,6 +64,9 @@ export default function RosaryPage(){
     useParams<{ type:string }>()
 
   const navigate = useNavigate()
+
+  const [searchParams,setSearchParams] =
+    useSearchParams()
 
   const [steps,setSteps] =
     useState<any[]>([])
@@ -189,6 +193,45 @@ export default function RosaryPage(){
       setElapsed(
         session?.elapsedSeconds || 0
       )
+
+      /*
+      Voltando de um login feito no meio do terço (ex: pra concluir) —
+      a sessão nova sempre nasce no passo 0, então o prompt normal de
+      retomar nunca dispararia sozinho. Pula direto pro passo que a
+      pessoa estava antes de sair pra logar, em vez de recomeçar do
+      início.
+      */
+      const resumeStepParam =
+        searchParams.get("resumeStep")
+
+      if(resumeStepParam !== null){
+
+        const resumeStep =
+          Number(resumeStepParam)
+
+        setSearchParams(
+          (prev)=>{
+            const next = new URLSearchParams(prev)
+            next.delete("resumeStep")
+            return next
+          },
+          { replace:true }
+        )
+
+        if(
+          !Number.isNaN(resumeStep) &&
+          resumeStep >= 0 &&
+          resumeStep < data.length
+        ){
+
+          currentRef.current = resumeStep
+          setCurrent(resumeStep)
+
+          return
+
+        }
+
+      }
 
       if(
         session?.currentStep > 0 &&
@@ -1099,6 +1142,7 @@ export default function RosaryPage(){
         open={showGate}
         message="Crie uma conta para concluir o terço e acompanhar seu progresso espiritual."
         onClose={()=>setShowGate(false)}
+        redirectPath={`/oratio/rosary/${type}?resumeStep=${current}`}
       />
 
     </main>
