@@ -11,6 +11,7 @@ import PullToRefresh from "./components/PullToRefresh/PullToRefresh"
 import InstallAppNudge from "./components/InstallAppNudge/InstallAppNudge"
 import { preloadConsecration, getProgress } from "./services/consecrationService"
 import { sendActivityPing } from "./services/activityService"
+import { useViewportRecovery } from "./hooks/useViewportRecovery"
 
 /* Páginas carregadas sob demanda */
 const Login            = lazy(() => import("./pages/Login/Login"))
@@ -44,6 +45,8 @@ const Confissao        = lazy(() => import("./pages/Confissao/Confissao"))
 function App(){
 
 const [loading,setLoading] = useState(true)
+
+useViewportRecovery()
 
 useEffect(()=>{
 
