@@ -33,11 +33,10 @@ export default function BottomNavbar(){
  const [gateMessage,setGateMessage] = useState<string | null>(null)
 
  /*
- O nudge pro bug do viewport preso após o navigator.share() fechar
- agora é global (ver useViewportRecovery em App.tsx) — afeta qualquer
- elemento fixo/dvh da página, não só essa navbar. Ver o comentário lá
- pra entender por que as tentativas anteriores feitas só aqui não
- resolviam.
+ O offset que compensa o bug do viewport preso após o
+ navigator.share() fechar é aplicado globalmente via CSS (ver
+ useVisualViewportOffset em App.tsx e a variável --vv-bottom-offset
+ usada no bottom da .navbar em BottomNavbar.module.css).
  */
 
  if(!isPWA()){

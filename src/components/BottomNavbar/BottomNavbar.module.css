@@ -1,19 +1,17 @@
 .navbar{
   position:fixed;
-  bottom:0;
+  /*
+  --vv-bottom-offset é mantido ao vivo por useVisualViewportOffset
+  (App.tsx) a partir de window.visualViewport — a diferença entre a
+  altura da janela e a altura realmente visível no momento. Em telas
+  normais isso é 0px (bottom:0 de sempre); quando o navegador ainda
+  não voltou a reportar o viewport certo depois de fechar a folha de
+  compartilhamento nativa, esse valor compensa a diferença até o
+  navegador se corrigir sozinho.
+  */
+  bottom:var(--vv-bottom-offset, 0px);
   left:0;
   right:0;
-
-  /*
-  Promove a navbar pra sua própria camada de composição. Sem isso,
-  alguns navegadores mobile (Android Chrome/WebView em PWA standalone)
-  atrasam o repaint de elementos position:fixed depois que um overlay
-  nativo (folha de compartilhamento, teclado) fecha e o viewport visual
-  volta ao tamanho normal — a navbar fica visualmente "presa" numa
-  posição antiga por um instante até algo forçar o recálculo.
-  */
-  transform:translateZ(0);
-  will-change:transform;
 
   height:88px;
 

@@ -11,7 +11,7 @@ import PullToRefresh from "./components/PullToRefresh/PullToRefresh"
 import InstallAppNudge from "./components/InstallAppNudge/InstallAppNudge"
 import { preloadConsecration, getProgress } from "./services/consecrationService"
 import { sendActivityPing } from "./services/activityService"
-import { useViewportRecovery } from "./hooks/useViewportRecovery"
+import { useVisualViewportOffset } from "./hooks/useVisualViewportOffset"
 
 /* Páginas carregadas sob demanda */
 const Login            = lazy(() => import("./pages/Login/Login"))
@@ -46,7 +46,7 @@ function App(){
 
 const [loading,setLoading] = useState(true)
 
-useViewportRecovery()
+useVisualViewportOffset()
 
 useEffect(()=>{
 
