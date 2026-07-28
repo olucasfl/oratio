@@ -4,6 +4,17 @@
   left:0;
   right:0;
 
+  /*
+  Promove a navbar pra sua própria camada de composição. Sem isso,
+  alguns navegadores mobile (Android Chrome/WebView em PWA standalone)
+  atrasam o repaint de elementos position:fixed depois que um overlay
+  nativo (folha de compartilhamento, teclado) fecha e o viewport visual
+  volta ao tamanho normal — a navbar fica visualmente "presa" numa
+  posição antiga por um instante até algo forçar o recálculo.
+  */
+  transform:translateZ(0);
+  will-change:transform;
+
   height:88px;
 
   padding-top:10px;
