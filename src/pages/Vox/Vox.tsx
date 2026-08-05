@@ -623,7 +623,17 @@ useEffect(()=>{
 
   setMessages(prev => [...prev,userMessage])
   setInput("")
-  growTextarea(textareaRef.current)
+
+  // setInput("") é assíncrono — nesse ponto o textarea no DOM ainda tem
+  // o texto grande que acabou de ser enviado, então growTextarea mediria
+  // a altura do texto antigo. Zera o value do DOM direto antes de medir,
+  // senão a caixa fica "gigante" e vazia até a pessoa digitar de novo.
+  const el = textareaRef.current
+  if(el){
+   el.value = ""
+   growTextarea(el)
+  }
+
   scrollToBottom()
 
   await deliverMessage(userMessage)
@@ -995,27 +1005,31 @@ useEffect(()=>{
 
    <header className={styles.header}>
 
-    <button
-     className={styles.menuButton}
-     onClick={()=>setMenuOpen(prev => !prev)}
-     aria-label="Abrir menu de conversas"
-    >
-     <Menu size={32} strokeWidth={3} />
-    </button>
+    <div className={styles.headerActions}>
 
-    <button
-     className={styles.backButton}
-     onClick={()=>navigate("/oratio/home")}
-     aria-label="Voltar para início"
-    >
-     <ChevronLeft size={20}/>
-    </button>
+     <button
+      className={styles.backButton}
+      onClick={()=>navigate("/oratio/home")}
+      aria-label="Voltar para início"
+     >
+      <ChevronLeft size={20}/>
+     </button>
+
+     <button
+      className={styles.menuButton}
+      onClick={()=>setMenuOpen(prev => !prev)}
+      aria-label="Abrir menu de conversas"
+     >
+      <Menu size={32} strokeWidth={3} />
+     </button>
+
+    </div>
 
     <h1>
      <span className={styles.titleBadge}>
       <Sparkles size={14} className={styles.titleIcon} />
      </span>
-     VoxAI
+     <span className={styles.titleText}>VoxAI</span>
     </h1>
 
    </header>

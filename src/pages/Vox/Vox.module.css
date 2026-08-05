@@ -318,6 +318,16 @@
    HEADER
 ========================= */
 
+/*
+Botões e título viviam em position:absolute com left fixo em px,
+centralizando o h1 só por acaso (justify-content:center no header,
+sem reservar espaço pros botões). Em zoom alto (pinch-zoom ou o
+--oratio-font-scale do app) o título cresce/desloca e passa por cima
+dos botões, já que nada nesse layout impedia a sobreposição. Grid de
+2 colunas: a coluna dos botões nunca encolhe (auto) e o título fica
+confinado na coluna que sobra (1fr, com overflow controlado) — as
+duas colunas nunca se sobrepõem, em nenhum zoom.
+*/
 .header{
  position:fixed;
  top:0;
@@ -325,9 +335,12 @@
  right:0;
  height:calc(var(--vox-header-height) + env(safe-area-inset-top));
  padding-top:env(safe-area-inset-top);
- display:flex;
+ padding-left:16px;
+ padding-right:16px;
+ display:grid;
+ grid-template-columns:auto 1fr;
  align-items:center;
- justify-content:center;
+ gap:8px;
  background:var(--vox-frame);
  color:#fff;
  border-bottom:1px solid var(--vox-gold-line);
@@ -335,14 +348,31 @@
  z-index:30;
 }
 
+.headerActions{
+ display:flex;
+ align-items:center;
+ gap:8px;
+ flex-shrink:0;
+}
+
 .header h1{
  display:flex;
  align-items:center;
+ justify-content:center;
  gap:10px;
+ min-width:0;
+ overflow:hidden;
  font-family:var(--oratio-font-title);
  font-size:22px;
  font-weight:500;
  letter-spacing:.6px;
+}
+
+.titleText{
+ overflow:hidden;
+ text-overflow:ellipsis;
+ white-space:nowrap;
+ min-width:0;
 }
 
 .titleBadge{
@@ -365,9 +395,8 @@
 
 .backButton,
 .menuButton{
- position:absolute;
- top:50%;
- transform:translateY(calc(-50% + (env(safe-area-inset-top) / 2)));
+ position:relative;
+ flex-shrink:0;
  display:flex;
  align-items:center;
  justify-content:center;
@@ -378,7 +407,6 @@
 }
 
 .backButton{
- left:16px;
  width:40px;
  height:40px;
  border-radius:999px;
@@ -390,7 +418,6 @@
 }
 
 .menuButton{
- left:66px;
  width:40px;
  height:40px;
  border-radius:999px;
