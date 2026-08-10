@@ -2,9 +2,13 @@ import styles from "./Home.module.css"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { useEffect, useMemo, useCallback, useState } from "react"
 import { createPortal } from "react-dom"
+import type { ComponentType } from "react"
 
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
+
+import MenuDrawer
+from "../../components/MenuDrawer/MenuDrawer"
 
 import GuestWelcomeModal
 from "../../components/GuestWelcomeModal/GuestWelcomeModal"
@@ -19,7 +23,19 @@ import {
  LogIn,
  UserPlus,
  Sparkles,
- ChevronRight
+ ChevronRight,
+ Calendar,
+ Flame,
+ Circle,
+ HandHeart,
+ Bell,
+ Heart,
+ Cross,
+ BookOpen,
+ Book,
+ MessageCircleHeart,
+ Sun,
+ Moon
 } from "lucide-react"
 
 import { isPWA } from "../../utils/isPwa"
@@ -29,8 +45,18 @@ import { isLoggedIn } from "../../utils/auth"
 import { logout as authLogout } from "../../services/authService"
 
 import {
- preloadConsecration
+ preloadConsecration,
+ getProgress
 } from "../../services/consecrationService"
+
+import { getProfile } from "../../services/profileService"
+
+import {
+ getSaudacao,
+ getDataLonga,
+ getMomento,
+ getMomentoConvite
+} from "../../utils/greeting"
 
 import { FraseDiaria } from "../../components/FraseDiaria/FraseDiaria"
 
@@ -44,15 +70,35 @@ import { usePullToRefresh } from "../../hooks/usePullToRefresh"
 TIPAGENS
 ========================= */
 
-type FeatureItem = {
- title:string
- description:string
- actionLabel:string
+type Shortcut = {
+ label:string
  path:string
- badge?:string
+ icon:ComponentType<{ size?: number }>
  locked?:boolean
  gateMessage?:string
 }
+
+/* =========================
+ATALHOS (todos os recursos)
+========================= */
+
+const SHORTCUTS:Shortcut[] = [
+ { label:"Liturgia", path:"/oratio/liturgia-completa", icon:Calendar },
+ { label:"Santo do dia", path:"/oratio/santo-do-dia", icon:Flame, locked:true,
+   gateMessage:"Crie uma conta para ver os detalhes do Santo do Dia." },
+ { label:"Terço", path:"/oratio/rosary", icon:Circle },
+ { label:"Orações", path:"/oratio/prayers", icon:HandHeart },
+ { label:"Angelus", path:"/oratio/prayers", icon:Bell },
+ { label:"Consagração", path:"/oratio/consecration", icon:Heart, locked:true,
+   gateMessage:"Crie uma conta para iniciar a Consagração de 33 dias e acompanhar seu progresso." },
+ { label:"Confissão", path:"/oratio/confissao", icon:Cross, locked:true,
+   gateMessage:"Crie uma conta para acessar o Guia de Confissão." },
+ { label:"Bíblia", path:"/oratio/biblia", icon:BookOpen },
+ { label:"Catecismo", path:"/oratio/catecismo", icon:Book, locked:true,
+   gateMessage:"Crie uma conta para acessar o Catecismo completo." },
+ { label:"VoxAI", path:"/oratio/vox", icon:MessageCircleHeart, locked:true,
+   gateMessage:"Crie uma conta para conversar com o VoxAI, seu assistente espiritual católico." }
+]
 
 /* =========================
 COMPONENTE
@@ -72,7 +118,17 @@ export default function Home(){
 
  const [gateMessage, setGateMessage] = useState<string | null>(null)
 
- function handleFeatureClick(item:FeatureItem){
+ const [userName, setUserName] = useState<string | null>(null)
+
+ const [progress, setProgress] = useState<any>(null)
+
+ /* saudação / momento do dia — recalculada na montagem */
+ const saudacao = useMemo(()=>getSaudacao(userName),[userName])
+ const dataLonga = useMemo(()=>getDataLonga(),[])
+ const momento = useMemo(()=>getMomento(),[])
+ const convite = useMemo(()=>getMomentoConvite(),[])
+
+ function handleShortcut(item:{ path:string; locked?:boolean; gateMessage?:string }){
 
   if(item.locked && guest){
    setGateMessage(item.gateMessage || "Crie uma conta para acessar essa área.")
@@ -94,8 +150,7 @@ export default function Home(){
  } = useLiturgy()
 
  // Abrindo a partir de um link compartilhado de uma leitura específica
- // (?leitura=tipo&offset=N) — ajusta o dia da liturgia antes de tudo,
- // pra LiturgyReadingButtons abrir a leitura certa quando carregar.
+ // (?leitura=tipo&offset=N) — ajusta o dia da liturgia antes de tudo.
  useEffect(()=>{
   const offsetParam = searchParams.get("offset")
   if(offsetParam){
@@ -106,127 +161,26 @@ export default function Home(){
  },[])
 
  /* =========================
- FEATURES
- ========================= */
-
- const features = useMemo<FeatureItem[]>(()=>[
-
-  {
-   title:"Orações",
-
-   description:
-`Reze as principais orações da tradição católica.
--Contém Terços
--Orações de Santos
--Orações tradicionais
--Ladainhas`,
-
-   actionLabel:
-   "Abrir Orações",
-
-   path:
-   "/oratio/prayers"
-  },
-
-  {
-   title:"Guia para a Confissão",
-
-   description:
-   "Exame de consciência completo pelos 10 Mandamentos e Preceitos da Igreja, como se confessar corretamente e Ato de Contrição.",
-
-   actionLabel:
-   "Abrir Guia",
-
-   path:
-   "/oratio/confissao",
-
-   badge:"SACRAMENTO",
-
-   locked:true,
-   gateMessage:"Crie uma conta para acessar o Guia de Confissão."
-  },
-
-  {
-   title:
-   "Consagração à Nossa Senhora",
-
-   description:
-   "Um caminho espiritual de 33 dias segundo o método de São Luís Maria Grignion de Montfort.",
-
-   actionLabel:
-   "Iniciar Consagração",
-
-   path:
-   "/oratio/consecration",
-
-   badge:"33 DIAS",
-
-   locked:true,
-   gateMessage:"Crie uma conta para iniciar a Consagração de 33 dias e acompanhar seu progresso."
-  },
-
-  {
-   title:"Bíblia Sagrada",
-
-   description:
-   "Leia a Palavra de Deus completa na tradução Ave-Maria.",
-
-   actionLabel:
-   "Abrir Bíblia",
-
-   path:
-   "/oratio/biblia"
-  },
-
-  {
-   title:"Catecismo da Igreja",
-
-   description:
-   "Leia o Catecismo oficial com navegação rápida por artigo.",
-
-   actionLabel:
-   "Abrir Catecismo",
-
-   path:
-   "/oratio/catecismo",
-
-   locked:true,
-   gateMessage:"Crie uma conta para acessar o Catecismo completo."
-  },
-
-  {
-   title:
-   "VoxAI - Inteligência Artificial Católica",
-
-   description:
-   "Assistente espiritual católico. Tire dúvidas sobre fé, moral e liturgia.",
-
-   actionLabel:
-   "Perguntar ao VoxAI",
-
-   path:
-   "/oratio/vox",
-
-   badge:"IA",
-
-   locked:true,
-   gateMessage:"Crie uma conta para conversar com o VoxAI, seu assistente espiritual católico."
-  }
-
- ],[])
-
- /* =========================
- INIT
+ INIT (usuário logado)
  ========================= */
 
  useEffect(()=>{
-  if(!guest){
-   preloadConsecration()
-  }
+
+  if(guest) return
+
+  preloadConsecration()
+
+  getProgress()
+   .then((p)=>{ if(p) setProgress(p) })
+   .catch(()=>{})
+
+  getProfile()
+   .then((u)=>{ setUserName(u?.name ?? u?.nome ?? u?.firstName ?? null) })
+   .catch(()=>{})
+
  },[guest])
 
- // Aparece toda vez que a pessoa entra na Home sem conta — não é "só
- // uma vez", é lembrete recorrente de que dá pra criar conta.
+ // Aparece toda vez que a pessoa entra na Home sem conta.
  useEffect(()=>{
 
   if(guest) setShowWelcome(true)
@@ -261,12 +215,33 @@ export default function Home(){
  },[loggingOut])
 
  /* =========================
+ CONTINUAR (consagração em andamento)
+ ========================= */
+
+ const hasConsecration =
+  !guest &&
+  progress &&
+  typeof progress.currentDay === "number" &&
+  progress.currentDay >= 1
+
+ const consecrationDone = Number(progress?.completedDays ?? 0)
+ const consecrationPct = Math.min((consecrationDone / 33) * 100, 100)
+ const ringOffset = 157 - (157 * consecrationPct) / 100
+
+ const MomentoIcon =
+  momento === "manha" ? Sun :
+  momento === "tarde" ? Bell :
+  Moon
+
+ /* =========================
  JSX
  ========================= */
 
  return(
 
   <div className={`${styles.container} page-enter`}>
+
+   <MenuDrawer/>
 
    {!pwa && (
 
@@ -281,9 +256,7 @@ export default function Home(){
         onClick={()=>navigate("/login")}
         aria-label="Entrar"
        >
-
         <LogIn size={18}/>
-
        </button>
 
        <button
@@ -291,9 +264,7 @@ export default function Home(){
         onClick={()=>navigate("/register")}
         aria-label="Criar conta"
        >
-
         <UserPlus size={18}/>
-
        </button>
 
       </>
@@ -304,14 +275,10 @@ export default function Home(){
 
        <button
         className={styles.profileButton}
-        onClick={()=>
-         navigate("/oratio/profile")
-        }
+        onClick={()=>navigate("/oratio/profile")}
         aria-label="Abrir perfil"
        >
-
         <User size={18}/>
-
        </button>
 
        <button
@@ -320,13 +287,11 @@ export default function Home(){
         disabled={loggingOut}
         aria-label="Sair da conta"
        >
-
         {loggingOut ? (
          <Loader2 size={18} className={styles.spinIcon}/>
         ) : (
          <LogOut size={18}/>
         )}
-
        </button>
 
       </>
@@ -386,22 +351,21 @@ export default function Home(){
     onClose={()=>setGateMessage(null)}
    />
 
+   {/* SAUDAÇÃO */}
+
+   <div className={styles.greeting}>
+    <span className={styles.greetingHi}>{saudacao}</span>
+    <span className={styles.greetingDate}>{dataLonga}</span>
+   </div>
+
    {/* HERO */}
 
    <section className={styles.hero}>
 
     <div className={styles.logoWrapper}>
-
-     <span className={styles.logoLeft}>
-      ORA
-     </span>
-
+     <span className={styles.logoLeft}>ORA</span>
      <div className={styles.cross}></div>
-
-     <span className={styles.logoRight}>
-      IO
-     </span>
-
+     <span className={styles.logoRight}>IO</span>
     </div>
 
     <p className={styles.subtitle}>
@@ -423,49 +387,88 @@ export default function Home(){
     displayDateLabel={displayDateLabel}
    />
 
-   {/* FEATURES */}
+   {/* NESTE MOMENTO */}
 
-   <div className={styles.featuresGrid}>
+   <button
+    className={styles.moment}
+    onClick={()=>handleShortcut({ path:convite.path })}
+   >
+    <span className={styles.momentIcon}>
+     <MomentoIcon size={20}/>
+    </span>
+    <span className={styles.momentText}>
+     <strong>{convite.titulo}</strong>
+     <span>{convite.sub}</span>
+    </span>
+    <span className={styles.momentGo}>
+     {convite.acaoLabel}
+     <ChevronRight size={16}/>
+    </span>
+   </button>
 
-    {features.map((item)=>(
+   {/* CONTINUAR DE ONDE PAROU */}
 
-     <section
-      key={item.path}
-      className={styles.featureCard}
-     >
+   {hasConsecration && (
 
-      {item.badge && (
+    <button
+     className={styles.continueCard}
+     onClick={()=>navigate(`/oratio/consecration/day/${progress.currentDay}`)}
+    >
 
-       <span className={styles.cardBadge}>
-        {item.badge}
-       </span>
+     <span className={styles.continueRing}>
+      <svg width="58" height="58" viewBox="0 0 58 58">
+       <circle cx="29" cy="29" r="25" fill="none" stroke="rgba(176,24,26,.15)" strokeWidth="6"/>
+       <circle
+        cx="29" cy="29" r="25" fill="none"
+        stroke="var(--oratio-primary)" strokeWidth="6" strokeLinecap="round"
+        strokeDasharray="157" strokeDashoffset={ringOffset}
+        transform="rotate(-90 29 29)"
+       />
+      </svg>
+      <span className={styles.continueNum}>{progress.currentDay}</span>
+     </span>
 
-      )}
+     <span className={styles.continueInfo}>
+      <span className={styles.continueKicker}>Continue de onde parou</span>
+      <strong>Consagração · Dia {progress.currentDay}</strong>
+      <span className={styles.continueSub}>
+       {consecrationDone} de 33 dias concluídos
+      </span>
+     </span>
 
-      <div>
+     <ChevronRight size={20} className={styles.continueChevron}/>
 
-       <h2>{item.title}</h2>
+    </button>
 
-       <p>
-        {item.description}
-       </p>
+   )}
 
-      </div>
+   {/* ATALHOS (tudo) */}
 
-      <button
-       className={styles.primaryButton}
-       onClick={()=>
-        handleFeatureClick(item)
-       }
-      >
+   <div className={styles.shortcutsWrap}>
 
-       {item.actionLabel}
+    <div className={styles.shortcutsHead}>
+     <h3>Atalhos</h3>
+    </div>
 
-      </button>
+    <div className={styles.shortcutsGrid}>
 
-     </section>
+     {SHORTCUTS.map((item)=>{
+      const Icon = item.icon
+      return(
+       <button
+        key={item.label}
+        className={styles.shortcut}
+        onClick={()=>handleShortcut(item)}
+       >
+        <span className={styles.shortcutIcon}>
+         <Icon size={20}/>
+        </span>
+        <span className={styles.shortcutLabel}>{item.label}</span>
+       </button>
+      )
+     })}
 
-    ))}
+    </div>
 
    </div>
 

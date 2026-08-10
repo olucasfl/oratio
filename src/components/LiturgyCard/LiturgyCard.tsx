@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import LiturgyReadingButtons from "../LiturgyReadingButtons/LiturgyReadingButtons"
 import SaintOfDayCard from "../SaintOfDayCard/SaintOfDayCard"
 import type { LiturgyData } from "../../hooks/useLiturgy"
+import { getLiturgicalColor } from "../../utils/liturgicalCelebration"
 
 import styles from "../../pages/Home/Home.module.css"
 
@@ -46,9 +47,20 @@ export default function LiturgyCard({
  displayDateLabel
 }: Props){
 
+ const lit = getLiturgicalColor(liturgy?.cor)
+
+ const corLabel = liturgy?.cor
+  ? liturgy.cor.charAt(0).toUpperCase() + liturgy.cor.slice(1)
+  : null
+
  return(
 
-  <section className={styles.liturgyCard}>
+  <section
+   className={styles.liturgyCard}
+   style={{ ["--lit" as string]: lit.hex }}
+  >
+
+   <span className={styles.liturgyColorBar} aria-hidden="true"/>
 
    <div className={styles.sectionHeader}>
 
@@ -82,6 +94,13 @@ export default function LiturgyCard({
     <span className={styles.liturgyFullDate}>
      {fullDateLabel(liturgy?.data, dateOffset)}
     </span>
+
+    {corLabel && (
+     <span className={styles.liturgyColorTag}>
+      <span className={styles.liturgyColorDot} aria-hidden="true"/>
+      Cor litúrgica: {corLabel}
+     </span>
+    )}
 
     {dateOffset !== 0 && (
      <button

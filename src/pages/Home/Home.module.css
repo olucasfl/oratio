@@ -1365,3 +1365,293 @@ ANIMATIONS
  font-family:var(--oratio-font-text);
  margin-top:2px;
 }
+
+
+/* =========================
+COR LITÚRGICA (no card de liturgia)
+========================= */
+
+.liturgyColorBar{
+ position:absolute;
+ top:0;
+ left:0;
+ right:0;
+ height:5px;
+ background:var(--lit,#3f7d5c);
+ z-index:3;
+}
+
+.liturgyColorTag{
+ display:inline-flex;
+ align-items:center;
+ gap:7px;
+ margin-top:8px;
+ font-size:12px;
+ font-weight:700;
+ letter-spacing:.03em;
+ color:var(--oratio-text-soft);
+}
+
+.liturgyColorDot{
+ width:22px;
+ height:12px;
+ border-radius:4px;
+ background:var(--lit,#3f7d5c);
+ box-shadow:inset 0 0 0 1px rgba(0,0,0,.12);
+}
+
+
+/* =========================
+SAUDAÇÃO
+========================= */
+
+.greeting{
+ width:100%;
+ max-width:var(--home-content-max);
+ padding-left:58px;
+ display:flex;
+ flex-direction:column;
+ gap:2px;
+ position:relative;
+ z-index:2;
+ animation:fadeUp .6s ease;
+}
+
+.greetingHi{
+ font-family:var(--oratio-font-title);
+ font-size:22px;
+ font-weight:600;
+ color:var(--oratio-primary);
+ line-height:1.15;
+}
+
+.greetingDate{
+ font-size:13px;
+ color:var(--oratio-text-soft);
+ text-transform:capitalize;
+}
+
+
+/* =========================
+NESTE MOMENTO
+========================= */
+
+.moment{
+ width:100%;
+ max-width:var(--home-content-max);
+ display:flex;
+ align-items:center;
+ gap:14px;
+ padding:15px 16px;
+ border:1px solid rgba(176,24,26,.18);
+ border-radius:20px;
+ background:rgba(176,24,26,.06);
+ cursor:pointer;
+ text-align:left;
+ position:relative;
+ z-index:2;
+ transition:transform .2s ease, box-shadow .2s ease;
+}
+
+.moment:hover{
+ transform:translateY(-2px);
+ box-shadow:0 12px 26px rgba(176,24,26,.14);
+}
+
+.momentIcon{
+ flex:none;
+ width:46px;
+ height:46px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border-radius:14px;
+ background:linear-gradient(135deg,#b0181a,#7d1113);
+ color:#fff;
+}
+
+.momentText{
+ flex:1;
+ display:flex;
+ flex-direction:column;
+ gap:2px;
+ min-width:0;
+}
+
+.momentText strong{
+ font-size:15px;
+ color:var(--oratio-text-dark);
+}
+
+.momentText span{
+ font-size:13px;
+ color:var(--oratio-text-soft);
+ line-height:1.4;
+}
+
+.momentGo{
+ flex:none;
+ display:inline-flex;
+ align-items:center;
+ gap:3px;
+ font-size:13px;
+ font-weight:700;
+ color:var(--oratio-primary);
+ white-space:nowrap;
+}
+
+
+/* =========================
+CONTINUAR DE ONDE PAROU
+========================= */
+
+.continueCard{
+ width:100%;
+ max-width:var(--home-content-max);
+ display:flex;
+ align-items:center;
+ gap:16px;
+ padding:16px;
+ border:1px solid var(--oratio-card-border);
+ border-radius:22px;
+ background:rgba(255,255,255,.82);
+ backdrop-filter:blur(16px);
+ box-shadow:0 12px 40px rgba(0,0,0,.08);
+ cursor:pointer;
+ text-align:left;
+ position:relative;
+ z-index:2;
+ transition:transform .2s ease, box-shadow .2s ease;
+}
+
+.continueCard:hover{
+ transform:translateY(-2px);
+ box-shadow:0 18px 42px rgba(0,0,0,.12);
+}
+
+.continueRing{
+ position:relative;
+ flex:none;
+ width:58px;
+ height:58px;
+}
+
+.continueNum{
+ position:absolute;
+ inset:0;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-weight:800;
+ font-size:16px;
+ color:var(--oratio-primary);
+ font-variant-numeric:tabular-nums;
+}
+
+.continueInfo{
+ flex:1;
+ display:flex;
+ flex-direction:column;
+ gap:2px;
+ min-width:0;
+}
+
+.continueKicker{
+ font-size:11px;
+ font-weight:700;
+ letter-spacing:.1em;
+ text-transform:uppercase;
+ color:var(--oratio-primary);
+}
+
+.continueInfo strong{
+ font-size:16px;
+ color:var(--oratio-text-dark);
+}
+
+.continueSub{
+ font-size:13px;
+ color:var(--oratio-text-soft);
+}
+
+.continueChevron{
+ flex:none;
+ color:var(--oratio-text-soft);
+}
+
+
+/* =========================
+ATALHOS
+========================= */
+
+.shortcutsWrap{
+ width:100%;
+ max-width:var(--home-content-max);
+ position:relative;
+ z-index:2;
+}
+
+.shortcutsHead{
+ margin:0 4px 12px;
+}
+
+.shortcutsHead h3{
+ margin:0;
+ font-size:13px;
+ font-weight:700;
+ letter-spacing:.1em;
+ text-transform:uppercase;
+ color:var(--oratio-text-soft);
+}
+
+.shortcutsGrid{
+ display:grid;
+ grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:12px;
+}
+
+.shortcut{
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ gap:9px;
+ padding:15px 6px;
+ border:1px solid var(--oratio-card-border);
+ border-radius:18px;
+ background:rgba(255,255,255,.82);
+ backdrop-filter:blur(12px);
+ cursor:pointer;
+ transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.shortcut:hover{
+ transform:translateY(-3px);
+ background:#fff;
+ box-shadow:0 12px 26px rgba(0,0,0,.1);
+}
+
+.shortcutIcon{
+ width:44px;
+ height:44px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border-radius:14px;
+ background:rgba(176,24,26,.09);
+ color:var(--oratio-primary);
+}
+
+.shortcutLabel{
+ font-size:12px;
+ font-weight:600;
+ color:var(--oratio-text-dark);
+ text-align:center;
+ line-height:1.2;
+}
+
+@media(max-width:420px){
+ .shortcutsGrid{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+ }
+}
