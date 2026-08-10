@@ -7,12 +7,18 @@ import { Document, Page } from "react-pdf"
 import "react-pdf/dist/Page/TextLayer.css"
 import "react-pdf/dist/Page/AnnotationLayer.css"
 import "../../utils/pdfConfig"
+import { usePublishHeightVar } from "../../hooks/usePublishHeightVar"
 
 export default function ConsecrationCarta() {
 
   const navigate      = useNavigate()
   const containerRef  = useRef<HTMLDivElement>(null)
   const wrapRef       = useRef<HTMLDivElement>(null)
+  const headerRef     = useRef<HTMLDivElement>(null)
+
+  // header é position:fixed — o viewer (containerRef) precisa saber a
+  // altura real dele pra reservar espaço e não esconder o PDF por baixo.
+  usePublishHeightVar(headerRef, containerRef, "--pdf-header-height")
 
   /* largura base calculada pelo container — resolve o problema mobile */
   const [baseWidth,   setBaseWidth]   = useState<number | undefined>(undefined)
@@ -35,8 +41,8 @@ export default function ConsecrationCarta() {
   /* largura final aplicada ao Page */
   const pageWidth = baseWidth ? Math.round(baseWidth * zoomLevel) : undefined
 
-  function zoomIn()  { setZoomLevel(z => Math.min(z + 0.25, 3)) }
-  function zoomOut() { setZoomLevel(z => Math.max(z - 0.25, 0.5)) }
+  function zoomIn()  { setZoomLevel(z => Math.min(z + 0.25, 4.0)) }
+  function zoomOut() { setZoomLevel(z => Math.max(z - 0.25, 0.4)) }
   function resetZoom(){ setZoomLevel(1.0) }
 
   return (
@@ -44,7 +50,7 @@ export default function ConsecrationCarta() {
     <div className={`${styles.container} page-enter`}>
 
       {/* HEADER */}
-      <div className={styles.header}>
+      <div className={styles.header} ref={headerRef}>
 
         <div className={styles.headerTop}>
           <button className={styles.backButton} onClick={() => navigate("/oratio/consecration/finalizacao")}>←</button>

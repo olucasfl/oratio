@@ -47,9 +47,19 @@ export function useVisualViewportOffset(){
     Math.round(window.innerHeight - (vv!.height + vv!.offsetTop))
    )
 
+   // window.innerHeight/visualViewport são px reais de tela, mas quem
+   // consome essa variável (.navbar) vive dentro do #root, que tem
+   // zoom:var(--oratio-font-scale) aplicado — nesse contexto qualquer
+   // px vira px*zoom na renderização. Sem dividir aqui, a navbar
+   // assentaria mais alto/baixo do que o necessário quando o usuário
+   // está com uma fonte maior que "Normal".
+   const scaleRaw = getComputedStyle(document.documentElement)
+    .getPropertyValue("--oratio-font-scale")
+   const scale = parseFloat(scaleRaw) || 1
+
    document.documentElement.style.setProperty(
     "--vv-bottom-offset",
-    `${offset}px`
+    `${offset / scale}px`
    )
 
   }

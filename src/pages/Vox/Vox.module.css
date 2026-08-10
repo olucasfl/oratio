@@ -446,7 +446,7 @@ duas colunas nunca se sobrepõem, em nenhum zoom.
  padding:
   calc(var(--vox-header-height) + env(safe-area-inset-top) + 20px)
   20px
-  calc(var(--vox-input-height) + env(safe-area-inset-bottom) + 20px)
+  calc(var(--vox-input-actual-height, calc(var(--vox-input-height) + env(safe-area-inset-bottom))) + 20px)
   20px;
  display:flex;
  flex-direction:column;
@@ -1151,7 +1151,7 @@ em vez de cair sozinho colado à esquerda da 2ª linha.
   padding:
    calc(var(--vox-header-height) + env(safe-area-inset-top) + 24px)
    30px
-   calc(var(--vox-input-height) + env(safe-area-inset-bottom) + 24px)
+   calc(var(--vox-input-actual-height, calc(var(--vox-input-height) + env(safe-area-inset-bottom))) + 24px)
    30px;
  }
 }
@@ -1166,7 +1166,7 @@ em vez de cair sozinho colado à esquerda da 2ª linha.
   padding:
    calc(var(--vox-header-height) + env(safe-area-inset-top) + 16px)
    14px
-   calc(var(--vox-input-height) + env(safe-area-inset-bottom) + 18px)
+   calc(var(--vox-input-actual-height, calc(var(--vox-input-height) + env(safe-area-inset-bottom))) + 18px)
    14px;
   gap:14px;
  }

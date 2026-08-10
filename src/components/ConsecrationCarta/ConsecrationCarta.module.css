@@ -6,10 +6,14 @@
   overflow:hidden;
 }
 
-/* HEADER */
+/* HEADER — fixo de verdade, não sticky preso ao flex, pra continuar
+alcançável mesmo se .container (100dvh) render mais alto que a tela
+real (zoom de fonte alto / paisagem em tela pequena). */
 .header{
-  position:sticky;
+  position:fixed;
   top:0;
+  left:0;
+  right:0;
   z-index:20;
   background:var(--oratio-card-bg);
   padding:calc(10px + env(safe-area-inset-top)) 12px 10px;
@@ -97,8 +101,10 @@
 .viewer{
   flex:1;
   overflow:auto;
-  padding:16px 12px;
-  padding-bottom:calc(16px + env(safe-area-inset-bottom));
+  padding:
+    calc(var(--pdf-header-height, 130px) + 16px)
+    12px
+    calc(16px + env(safe-area-inset-bottom));
   -webkit-overflow-scrolling:touch;
   overscroll-behavior:contain;
   display:flex;

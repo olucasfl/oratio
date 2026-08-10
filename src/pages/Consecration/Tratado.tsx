@@ -7,6 +7,7 @@ import { Document, Page } from "react-pdf"
 import "react-pdf/dist/Page/TextLayer.css"
 import "react-pdf/dist/Page/AnnotationLayer.css"
 import "../../utils/pdfConfig"
+import { usePublishHeightVar } from "../../hooks/usePublishHeightVar"
 
 const PAGE_KEY = "tratado_page"
 const ZOOM_KEY = "tratado_zoom"
@@ -16,6 +17,11 @@ export default function Tratado() {
   const navigate  = useNavigate()
   const wrapRef   = useRef<HTMLDivElement>(null)
   const viewerRef = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const footerRef = useRef<HTMLDivElement>(null)
+
+  usePublishHeightVar(headerRef, viewerRef, "--pdf-header-height")
+  usePublishHeightVar(footerRef, viewerRef, "--pdf-footer-height")
 
   const [page,       setPage]       = useState(1)
   const [numPages,   setNumPages]   = useState(0)
@@ -102,8 +108,8 @@ export default function Tratado() {
 
   function prevPage() { setPage(p => Math.max(p - 1, 1)) }
   function nextPage() { setPage(p => Math.min(p + 1, numPages)) }
-  function zoomOut()  { setZoomLevel(z => Math.max(parseFloat((z - 0.25).toFixed(2)), 0.5)) }
-  function zoomIn()   { setZoomLevel(z => Math.min(parseFloat((z + 0.25).toFixed(2)), 3.0)) }
+  function zoomOut()  { setZoomLevel(z => Math.max(parseFloat((z - 0.25).toFixed(2)), 0.4)) }
+  function zoomIn()   { setZoomLevel(z => Math.min(parseFloat((z + 0.25).toFixed(2)), 4.0)) }
   function resetZoom(){ setZoomLevel(1.0) }
 
   return (
@@ -111,7 +117,7 @@ export default function Tratado() {
     <div className={`${styles.container} page-enter`}>
 
       {/* HEADER */}
-      <div className={styles.header}>
+      <div className={styles.header} ref={headerRef}>
 
         <div className={styles.headerTop}>
           <button className={styles.backButton} onClick={() => navigate("/oratio/consecration")}><ChevronLeft size={20} /></button>
@@ -173,7 +179,7 @@ export default function Tratado() {
       </div>
 
       {/* FOOTER */}
-      <div className={styles.footer}>
+      <div className={styles.footer} ref={footerRef}>
 
         <button
           className={styles.navBtn}

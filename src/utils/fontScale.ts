@@ -4,14 +4,17 @@ export const FONT_SCALE_OPTIONS = [
   { value: 0.9,  label: "Pequena" },
   { value: 1,    label: "Normal" },
   { value: 1.15, label: "Grande" },
-  { value: 1.3,  label: "Muito grande" },
 ] as const
+
+const MAX_FONT_SCALE = FONT_SCALE_OPTIONS[FONT_SCALE_OPTIONS.length - 1].value
 
 export function getStoredFontScale(): number {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     const parsed = raw ? parseFloat(raw) : 1
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : 1
+    if (!Number.isFinite(parsed) || parsed <= 0) return 1
+    // clamp valores antigos salvos antes da opção "Muito grande" ser removida
+    return Math.min(parsed, MAX_FONT_SCALE)
   } catch {
     return 1
   }

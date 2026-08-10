@@ -940,4 +940,15 @@ SMALL MOBILE
 
 }
 
+/* bottomBar empilhado em coluna fica bem mais alto (2 botões de 52px
++ gap + padding ≈134px, +env(safe-area-inset-bottom) em telas com
+home indicator ≈168px) — o spacer de 140px herdado do layout em linha
+não dava conta, e o fim do texto da oração ficava por baixo dos
+botões. */
+.pageSpacer{
+
+ height:220px;
+
+}
+
 }

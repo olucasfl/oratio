@@ -10,11 +10,19 @@
   overflow:hidden;
 }
 
-/* ── HEADER ── */
+/* ── HEADER ──
+posição fixa de verdade (não sticky dentro de uma coluna flex): assim
+os controles de navegação/zoom ficam sempre alcançáveis, mesmo que
+.container (100dvh) acabe renderizando mais alto que a tela real —
+em paisagem num celular pequeno, ou em zoom de fonte alto, a versão
+antiga (sticky preso ao fluxo do flex) empurrava esses controles pra
+fora da área visível e só rolando a página toda dava pra alcançar. */
 
 .header{
-  position:sticky;
+  position:fixed;
   top:0;
+  left:0;
+  right:0;
   z-index:20;
   background:var(--oratio-card-bg);
   padding:calc(10px + env(safe-area-inset-top)) 12px 10px;
@@ -155,7 +163,10 @@
 .viewer{
   flex:1;
   overflow:auto;
-  padding:16px 12px;
+  padding:
+    calc(var(--pdf-header-height, 150px) + 16px)
+    12px
+    calc(var(--pdf-footer-height, 76px) + 16px);
   -webkit-overflow-scrolling:touch;
   overscroll-behavior:contain;
   display:flex;
@@ -173,8 +184,11 @@
 /* ── FOOTER (navegação de páginas) ── */
 
 .footer{
-  position:sticky;
+  position:fixed;
   bottom:0;
+  left:0;
+  right:0;
+  z-index:20;
   background:var(--oratio-card-bg);
   display:flex;
   align-items:center;
@@ -245,7 +259,7 @@
 
 .results{
   position:fixed;
-  top:calc(70px + env(safe-area-inset-top));
+  top:calc(var(--pdf-header-height, 150px) + 8px);
   left:50%;
   transform:translateX(-50%);
   width:92%;

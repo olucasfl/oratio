@@ -303,6 +303,7 @@ export default function Vox(){
  const chatAreaRef = useRef<HTMLElement | null>(null)
  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
  const editTextareaRef = useRef<HTMLTextAreaElement | null>(null)
+ const inputWrapperRef = useRef<HTMLDivElement | null>(null)
 
  const initialized = useRef(false)
  const openConversationRequest = useRef(0)
@@ -387,6 +388,31 @@ export default function Vox(){
 
   scrollToBottom()
  },[messages])
+
+ // O textarea cresce (growTextarea) até 140px em mensagens com várias
+ // linhas, e o contador de caracteres soma outra faixa quando o texto
+ // passa de 800 — o composer fica bem mais alto que o valor fixo
+ // assumido em --vox-input-height, então em telas pequenas ele passava
+ // a cobrir a última mensagem sem nada empurrar o conteúdo pra cima.
+ // Medindo a altura real do composer e publicando em
+ // --vox-input-actual-height (consumida no padding-bottom do
+ // .chatArea) o espaço reservado sempre acompanha o composer de verdade.
+ useEffect(()=>{
+  const wrapper = inputWrapperRef.current
+  const chat = chatAreaRef.current
+  if(!wrapper || !chat) return
+
+  const sync = ()=>{
+   chat.style.setProperty("--vox-input-actual-height", `${wrapper.offsetHeight}px`)
+  }
+
+  sync()
+
+  const observer = new ResizeObserver(sync)
+  observer.observe(wrapper)
+
+  return ()=> observer.disconnect()
+ },[])
 
  useEffect(() => {
   if (menuOpen) {
@@ -1301,7 +1327,7 @@ useEffect(()=>{
 
    </main>
 
-   <div className={styles.inputWrapper}>
+   <div className={styles.inputWrapper} ref={inputWrapperRef}>
 
     {input.length > 800 && (
      <div className={styles.charCountRow}>

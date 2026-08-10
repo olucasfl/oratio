@@ -548,6 +548,445 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
     ]
   },
 
+  "sao-bernardo-claraval": {
+    titulo: "São Bernardo de Claraval, abade e doutor da Igreja",
+    resumo: "Abade cisterciense e místico medieval, uma das maiores influências espirituais e teológicas do século XII.",
+    texto: [
+      "Nasceu por volta de 1090, no castelo de Fontaine-lès-Dijon, na Borgonha (França), em família da pequena nobreza. Aos 22 anos, entrou para o mosteiro cisterciense de Cister, levando consigo cerca de trinta parentes e amigos que se converteram pelo seu exemplo.",
+      "Em 1115, foi enviado para fundar um novo mosteiro, ao qual deu o nome de Claraval (Clairvaux), tornando-se seu primeiro abade. Sob sua direção, a nova casa se tornou centro irradiador da reforma cisterciense, chegando a gerar dezenas de outros mosteiros por toda a Europa.",
+      "Foi um dos maiores teólogos e místicos de seu tempo, com grande devoção à Virgem Maria — seus sermões sobre o Cântico dos Cânticos lhe valeram o título de \"Doutor Melífluo\", de fala doce como o mel. Interveio também em disputas doutrinárias, aconselhou papas e bispos e, a pedido do Papa Eugênio III, seu antigo discípulo, pregou a Segunda Cruzada em 1146.",
+      "Morreu em 20 de agosto de 1153. Foi canonizado em 1174 pelo Papa Alexandre III e, em 1830, proclamado Doutor da Igreja pelo Papa Pio VIII."
+    ]
+  },
+
+  "sao-pio-x": {
+    titulo: "São Pio X, Papa",
+    resumo: "Papa que fez da Eucaristia o centro de seu pontificado, antecipando a Primeira Comunhão das crianças.",
+    texto: [
+      "Giuseppe Melchiorre Sarto nasceu em 2 de junho de 1835, em Riese, no norte da Itália, filho de um carteiro. Ordenado sacerdote em 1858, exerceu o ministério como pároco antes de se tornar bispo de Mântua e, depois, patriarca de Veneza.",
+      "Eleito papa em 1903, adotou o nome de Pio X e colocou a Eucaristia no centro de seu pontificado: incentivou a comunhão frequente, mesmo diária, para todo fiel em estado de graça, e, com o decreto Quam singulari, de 1910, antecipou a Primeira Comunhão das crianças para por volta dos sete anos, a chamada \"idade da razão\".",
+      "Reformou também o canto sagrado, recuperando o canto gregoriano, simplificou o breviário romano e deu início aos trabalhos que resultariam no Código de Direito Canônico. Combateu com firmeza o Modernismo, que via como ameaça à fé católica, sem nunca perder a simplicidade de vida herdada de sua origem humilde.",
+      "Morreu em 20 de agosto de 1914. Foi beatificado em 1951 e canonizado em 3 de setembro de 1954 pelo Papa Pio XII — o primeiro papa canonizado desde São Pio V, no século XVI."
+    ]
+  },
+
+  "santa-maria-rainha": {
+    titulo: "Santa Maria Rainha",
+    resumo: "Festa que celebra Maria como Rainha do Céu e da Terra, por sua união única com Cristo, Rei dos reis.",
+    texto: [
+      "Instituída pelo Papa Pio XII em 1954, na encíclica Ad Caeli Reginam, publicada durante o Ano Mariano que marcava o centenário do dogma da Imaculada Conceição. Na ocasião, o papa coroou solenemente a imagem de Nossa Senhora na Basílica de Santa Maria Maior, em Roma.",
+      "A festa era celebrada originalmente em 31 de maio, encerrando o mês mariano; com a reforma litúrgica posterior ao Concílio Vaticano II, passou para 22 de agosto — exatamente oito dias depois da Assunção, sublinhando o vínculo entre os dois mistérios: a Virgem elevada ao Céu de corpo e alma é ali coroada Rainha, ao lado do Filho.",
+      "O título de Rainha decorre da relação única de Maria com Cristo: o anjo Gabriel já anunciara que o filho de Maria \"reinará para sempre\" (Lc 1,32-33); sendo ela Mãe do Rei dos reis, a tradição cristã via nela, por extensão, uma participação singular nessa realeza.",
+      "A Igreja entende essa realeza não como poder terreno, mas como serviço materno e intercessão: Maria reina junto do Filho para conduzir todos a Ele, sendo por isso invocada, na Ladainha de Nossa Senhora, como Rainha dos Anjos, dos Patriarcas, dos Apóstolos e de todos os Santos."
+    ]
+  },
+
+  "santa-rosa-lima": {
+    titulo: "Santa Rosa de Lima, virgem, padroeira da América Latina",
+    resumo: "Primeira pessoa nascida na América a ser canonizada, terciária dominicana conhecida por sua vida de penitência e caridade.",
+    texto: [
+      "Nasceu em Lima, no Peru, em 20 de abril de 1586, com o nome de Isabel Flores de Oliva; passou a ser chamada Rosa por sua beleza, e mais tarde acrescentou \"de Santa Maria\" ao nome, ao receber o hábito.",
+      "Ainda jovem, consagrou-se a Cristo e ingressou na Ordem Terceira de São Domingos, inspirando-se na vida de Santa Catarina de Sena. Viveu em rigorosa penitência — jejuns severos, cilício e disciplinas —, oferecendo seus sofrimentos pela conversão dos pecadores e pela evangelização das terras recém-descobertas da América.",
+      "Dedicou-se também aos pobres e doentes, cuidando deles em sua própria casa, um gesto pioneiro de assistência social em Lima. Vivia recolhida em oração numa pequena cabana no quintal da família, onde relatava intensas experiências místicas.",
+      "Morreu em 24 de agosto de 1617, aos 31 anos. Foi canonizada em 12 de abril de 1671 pelo Papa Clemente X, tornando-se a primeira pessoa nascida na América proclamada santa. É padroeira do Peru, da América Latina e das Filipinas; sua memória litúrgica é celebrada em 23 de agosto."
+    ]
+  },
+
+  "sao-bartolomeu-apostolo": {
+    titulo: "São Bartolomeu, Apóstolo",
+    resumo: "Um dos Doze Apóstolos, tradicionalmente identificado com Natanael, martirizado na Armênia.",
+    texto: [
+      "Os Evangelhos sinóticos o citam apenas nas listas dos Doze Apóstolos, sempre ao lado de Filipe. A tradição, seguida por boa parte dos estudiosos, o identifica com Natanael, mencionado no Evangelho de João — um homem de Caná da Galileia que Filipe apresentou a Jesus.",
+      "Ao vê-lo se aproximar, Jesus disse: \"Eis um verdadeiro israelita, em quem não há falsidade\" (Jo 1,47). Surpreso por ser conhecido sem nunca terem se encontrado, Natanael o reconhece de imediato como \"Filho de Deus\" e \"Rei de Israel\".",
+      "Segundo a tradição, depois de Pentecostes levou o Evangelho a regiões como Mesopotâmia, Pérsia e Armênia, onde teria convertido o rei Polímio ao cristianismo. Por essa conversão, teria sido preso e martirizado por ordem de Astíages, irmão do rei, incitado pelos sacerdotes pagãos — segundo o relato mais difundido, esfolado vivo e depois decapitado (outras versões falam de crucificação de cabeça para baixo).",
+      "É por causa desse martírio que se tornou padroeiro dos curtidores e dos trabalhadores do couro, sendo tradicionalmente representado segurando uma faca ou a própria pele — como fez Michelangelo, que o pintou segurando sua pele esfolada no afresco do Juízo Final, na Capela Sistina."
+    ]
+  },
+
+  "sao-luis-rei-franca": {
+    titulo: "São Luís, Rei da França",
+    resumo: "Rei da França no século XIII, o único monarca francês canonizado, conhecido pela justiça e pela devoção às cruzadas.",
+    texto: [
+      "Nasceu em 1214 e tornou-se rei da França ainda criança, aos 12 anos, em 1226, sob a regência de sua mãe, Branca de Castela, que cuidou pessoalmente de sua formação religiosa. Casou-se com Margarida da Provença e governou por mais de quatro décadas.",
+      "Ficou conhecido por reformar a justiça do reino — julgava pessoalmente as causas de seus súditos, muitas vezes sentado sob um carvalho em Vincennes — e por cuidar dos pobres e doentes. Mandou construir a Sainte-Chapelle, em Paris, para abrigar relíquias da Paixão de Cristo que adquiriu, entre elas a Coroa de Espinhos.",
+      "Liderou a Sétima Cruzada, em 1248, sendo capturado no Egito e resgatado a alto custo. Em 1270, partiu para a Oitava Cruzada rumo à Tunísia, mas uma epidemia (provavelmente disenteria) se espalhou pelo acampamento assim que desembarcaram perto de Tunes, e Luís morreu poucas semanas depois, em 25 de agosto de 1270.",
+      "Foi canonizado em 1297 pelo Papa Bonifácio VIII, tornando-se o único rei da França elevado à santidade. É padroeiro da Ordem Franciscana Secular, e seu nome batizou cidades como St. Louis, nos Estados Unidos."
+    ]
+  },
+
+  "sao-zeferino-papa": {
+    titulo: "São Zeferino, Papa e mártir",
+    resumo: "Papa do início do século III, guiou a Igreja de Roma em meio a perseguições e às primeiras grandes controvérsias sobre a Trindade.",
+    texto: [
+      "De origem humilde, tornou-se bispo de Roma por volta do ano 199, sucedendo o Papa Vítor I, durante o reinado do imperador Septímio Severo — período em que um edito imperial proibiu novas conversões ao cristianismo.",
+      "Seu pontificado foi marcado pelas primeiras grandes disputas trinitárias da Igreja, como o Monarquianismo, que negava a distinção entre as Pessoas divinas. O sacerdote Hipólito o acusava de falta de rigor teológico por não condenar abertamente os erros, preferindo afirmar com simplicidade a fé em um só Deus e no Filho encarnado.",
+      "Confiou a administração de bens da Igreja, incluindo o cemitério cristão na Via Ápia, a seu diácono de confiança, Calisto, que viria a sucedê-lo como papa.",
+      "Morreu em 20 de dezembro de 217. O Martirológio Romano o venera como mártir, embora não haja registro histórico detalhado de uma execução violenta durante seu pontificado — a tradição do martírio remonta aos primeiros séculos da Igreja, numa época em que ser bispo de Roma já significava viver sob constante ameaça."
+    ]
+  },
+
+  "santa-monica": {
+    titulo: "Santa Mônica",
+    resumo: "Mãe de Santo Agostinho, lembrada por décadas de oração e lágrimas pela conversão do filho.",
+    texto: [
+      "Nasceu por volta do ano 331 em Tagaste, no norte da África (atual Argélia), de família cristã berbere. Casou-se ainda jovem com Patrício, pagão de temperamento difícil e infiel, que ela suportou com paciência e que, nos últimos anos de vida, veio a se converter ao cristianismo por sua influência.",
+      "Sofreu profundamente ao ver seu filho mais velho, Agostinho, levar uma vida dissoluta e aderir à heresia maniqueísta. Durante quase duas décadas, rezou e chorou por sua conversão, chegando a segui-lo de Tagaste a Roma e depois a Milão.",
+      "Em Milão, encontrou apoio no bispo Santo Ambrósio, que a consolou dizendo que \"um filho de tantas lágrimas não pode se perder\". Viveu para ver esse desejo realizado: esteve presente quando Agostinho foi batizado por Ambrósio, na Páscoa de 387.",
+      "Morreu poucos meses depois, em Óstia, porto de Roma, enquanto aguardava embarcar de volta à África com o filho já convertido. É venerada como padroeira das mães, sobretudo das que rezam pela conversão de filhos afastados da fé."
+    ]
+  },
+
+  "santo-agostinho-hipona": {
+    titulo: "Santo Agostinho, Bispo de Hipona e Doutor da Igreja",
+    resumo: "Um dos maiores teólogos da história do cristianismo, autor das Confissões e da Cidade de Deus.",
+    texto: [
+      "Nasceu em 354 em Tagaste, no norte da África, filho de Santa Mônica, cristã, e de Patrício, pagão. Brilhante estudante de retórica, viveu a juventude longe da fé da mãe: aderiu à seita maniqueísta e teve um filho, Adeodato, com uma mulher com quem viveu por anos sem se casar.",
+      "Mudou-se para Milão para ensinar retórica, onde sofreu a influência do bispo Santo Ambrósio e das orações incansáveis de sua mãe. Em 386, viveu sua conversão num jardim, ao ouvir uma voz infantil repetir \"Tolle, lege\" (Toma e lê) — abriu as Escrituras ao acaso e leu uma passagem de Paulo que decidiu sua vida. Foi batizado por Ambrósio na Páscoa de 387.",
+      "Voltou à África, foi ordenado padre em 391 e tornou-se bispo de Hipona poucos anos depois. Escreveu obras que moldaram todo o pensamento cristão ocidental, entre elas as \"Confissões\", relato de sua própria conversão, e \"A Cidade de Deus\", escrita após o saque de Roma em 410 — além de desenvolver reflexões decisivas sobre a graça, o pecado original e a guerra justa.",
+      "Morreu em 28 de agosto de 430, enquanto Hipona era cercada pelos vândalos. É reconhecido como Doutor da Igreja, chamado de \"Doutor da Graça\" pela profundidade de sua teologia."
+    ]
+  },
+
+  "martirio-joao-batista": {
+    titulo: "Martírio de São João Batista",
+    resumo: "A prisão e decapitação do precursor de Jesus, por ordem de Herodes Antipas.",
+    texto: [
+      "João Batista foi preso por ordem de Herodes Antipas, tetrarca da Galileia, depois de denunciar publicamente seu casamento com Herodíades, esposa de seu próprio irmão — união que a Lei judaica proibia.",
+      "Durante um banquete, a filha de Herodíades dançou e agradou tanto Herodes que ele prometeu lhe dar o que pedisse. Instruída pela mãe, ela pediu a cabeça de João Batista numa bandeja (Mc 6,17-29; Mt 14,3-12).",
+      "João estava preso na fortaleza de Maqueronte, a leste do Mar Morto, onde foi decapitado para cumprir o juramento do rei diante de seus convidados.",
+      "É uma das poucas celebrações de martírio no calendário litúrgico com grau de festa. João Batista é, ao lado de Jesus e Maria, o único cuja Igreja celebra tanto o nascimento quanto a morte — reconhecimento único de seu papel como o último profeta do Antigo Testamento e precursor direto de Cristo, como destacou o Papa Bento XVI em 2012."
+    ]
+  },
+
+  "santos-felix-adauto": {
+    titulo: "Santos Félix e Adauto, mártires",
+    resumo: "Sacerdote romano e um cristão anônimo que se somou a seu martírio, venerados desde a Antiguidade apesar de poucos dados históricos confirmados sobre suas vidas.",
+    texto: [
+      "Félix era um sacerdote de Roma martirizado, segundo a tradição, durante a perseguição do imperador Diocleciano, por volta do ano 303, junto com um companheiro cujo nome verdadeiro nunca se soube.",
+      "Levado a sacrificar aos deuses pagãos, Félix teria se recusado e visto os ídolos se espatifarem diante de sua oração. Foi então conduzido à execução — e no caminho um desconhecido na multidão se declarou cristão em solidariedade, sendo preso e morto ao seu lado. Por não se saber seu nome, passou a ser chamado Adauto, do latim \"o que foi acrescentado\".",
+      "Os relatos mais detalhados desse episódio são considerados pelos estudiosos uma elaboração lendária tardia, possivelmente originada da leitura equivocada de uma antiga inscrição no túmulo dos dois mártires — não há registro histórico independente que confirme os detalhes das Atas. O culto aos dois, contudo, é muito antigo, atestado já nos martirológios mais primitivos da Igreja.",
+      "Foram sepultados na catacumba de Comodila, na Via Ostiense, perto da Basílica de São Paulo Fora dos Muros, onde uma basílica foi erguida sobre o túmulo e redescoberta apenas no início do século XX. A Igreja os celebra em 30 de agosto."
+    ]
+  },
+
+  "sao-raimundo-nonato": {
+    titulo: "São Raimundo Nonato",
+    resumo: "Frade mercedário espanhol que se ofereceu como refém para libertar cativos cristãos e teve os lábios lacrados para não pregar o Evangelho.",
+    texto: [
+      "Nasceu por volta de 1204 em Portell, perto de Barcelona, na Catalunha. Segundo a tradição, sua mãe morreu em trabalho de parto e ele foi retirado do corpo dela ainda vivo — daí o sobrenome Nonato, do latim non natus, \"não nascido\".",
+      "Ainda jovem, entrou para a Ordem de Nossa Senhora das Mercês, fundada por São Pedro Nolasco para o resgate de cristãos escravizados pelos mouros no norte da África. Dedicou-se pessoalmente a essa missão, e quando o dinheiro do resgate se esgotou, ofereceu-se como refém no lugar de outros cativos, permanecendo preso para garantir a liberdade deles.",
+      "Mesmo cativo, continuou pregando e convertendo outros prisioneiros. Para calá-lo, seus captores lhe perfuraram os lábios e os fecharam com um cadeado — ficou meses acorrentado num cárcere imundo até ser resgatado pelos próprios irmãos mercedários.",
+      "Em 1239 o Papa Gregório IX o nomeou cardeal e o chamou a Roma, mas Raimundo morreu no caminho, perto de Barcelona, em 31 de agosto de 1240. Foi canonizado em 1657 pelo Papa Alexandre VII. É padroeiro das gestantes e das parteiras e, por causa do cadeado nos lábios, também é invocado por quem não consegue se confessar em voz alta."
+    ]
+  },
+
+  "santa-beatriz-silva": {
+    titulo: "Santa Beatriz da Silva, virgem",
+    resumo: "Nobre portuguesa que fundou a Ordem da Imaculada Conceição depois de escapar, segundo a tradição, de um aprisionamento cruel na corte de Castela.",
+    texto: [
+      "Nasceu por volta de 1424, em família nobre portuguesa. Em 1447 partiu para a corte de Castela como dama de companhia da rainha Isabel de Portugal, esposa do rei João II de Castela.",
+      "A tradição conta que a beleza de Beatriz despertou o ciúme da rainha, que a mandou trancar dentro de um baú, sem comida nem água, por três dias. No cativeiro, Beatriz teria tido uma visão de Nossa Senhora, prometendo-lhe proteção e pedindo que fundasse uma ordem em honra da Imaculada Conceição.",
+      "Livre do episódio, retirou-se para Toledo, onde viveu por décadas junto às religiosas dominicanas do mosteiro de Santo Domingo el Real, sem chegar a professar naquela ordem. Em 1484, já com o apoio da rainha Isabel, a Católica, recebeu o palácio de Galiana para reunir as primeiras companheiras da nova comunidade.",
+      "O Papa Inocêncio VIII aprovou oficialmente a nova ordem em 1489. Beatriz morreu em Toledo por volta de 1492, antes de professar formalmente os votos. Foi beatificada em 1926 pelo Papa Pio XI e canonizada em 1976 pelo Papa Paulo VI."
+    ]
+  },
+
+  "santa-doroteia-cesareia": {
+    titulo: "Santa Doroteia, virgem e mártir de Cesareia",
+    resumo: "Jovem mártir da Capadócia cuja lenda de flores e frutos enviados do paraíso converteu o advogado que zombou dela a caminho da execução.",
+    texto: [
+      "Viveu em Cesareia da Capadócia, no início do século IV, e foi martirizada, segundo a tradição, durante a perseguição do imperador Diocleciano — as fontes variam quanto ao ano exato, entre 300 e 311.",
+      "Conta a lenda que, a caminho do tribunal ou da execução, um advogado pagão chamado Teófilo zombou dela, pedindo que lhe enviasse frutas e rosas do jardim de seu Esposo celeste depois de morta. Doroteia teria respondido com serenidade que atenderia ao pedido.",
+      "Momentos depois de sua morte, uma criança — identificada pela tradição como um anjo — teria aparecido a Teófilo trazendo uma cesta com maçãs e rosas, num milagre notável por ocorrer em pleno inverno. Impressionado, Teófilo se converteu ao cristianismo e, segundo o relato, também viria a ser martirizado.",
+      "A história sobrevive quase inteiramente por meio de relatos hagiográficos tardios — os registros mais antigos preservam pouco além do nome da santa, o local e a data de seu martírio. Por essa razão, seu culto foi retirado do Calendário Romano Geral em 1969, embora continue no Martirológio Romano e em calendários locais, como o brasileiro. É invocada, conforme a devoção regional, como padroeira de jardineiros, floristas e noivas."
+    ]
+  },
+
+  "sao-gregorio-magno": {
+    titulo: "São Gregório Magno, Papa e Doutor da Igreja",
+    resumo: "Do cargo de prefeito de Roma à vida monástica e ao papado, reformou a administração da Igreja e enviou missionários que converteram a Inglaterra.",
+    texto: [
+      "Nasceu em Roma por volta de 540, em família senatorial rica e devota. Chegou a ser prefeito da cidade ainda jovem, mas renunciou à carreira pública, transformou a própria casa da família no monte Célio em mosteiro e tornou-se monge beneditino, sendo depois enviado como representante papal a Constantinopla.",
+      "Foi eleito papa por aclamação popular em 590, e consagrado em 3 de setembro daquele ano, num momento de peste, fome e invasões dos lombardos que assolavam a Itália. Reorganizou a administração da Igreja e usou o patrimônio de São Pedro para sustentar os pobres de Roma.",
+      "Reformou a liturgia romana, e o canto litúrgico que hoje leva seu nome — o canto gregoriano — é tradicionalmente atribuído a ele, embora estudiosos discutam o quanto ele de fato compôs ou organizou pessoalmente essas melodias. Em 596 enviou o monge Agostinho, à frente de cerca de quarenta religiosos, para evangelizar os anglo-saxões na Inglaterra.",
+      "Escreveu obras de grande influência, como a Regra Pastoral, manual para bispos, e os Morais sobre Jó. Cunhou a expressão \"servo dos servos de Deus\" como título papal, ainda usado hoje. Morreu em 12 de março de 604. Ao lado de São Leão Magno, é um dos dois únicos papas tradicionalmente chamados de \"Magno\", e foi proclamado Doutor da Igreja."
+    ]
+  },
+
+  "santa-rosalia": {
+    titulo: "Santa Rosália",
+    resumo: "Eremita siciliana do século XII cujas relíquias, redescobertas durante uma peste em 1624, a tornaram padroeira de Palermo.",
+    texto: [
+      "Nasceu por volta de 1130 em Palermo, na Sicília, filha de Sinibaldo, senhor de Quisquina, família que a tradição liga à nobreza normanda. Ainda jovem, deixou a vida da nobreza para se dedicar à oração em solidão.",
+      "Viveu primeiro numa gruta perto de Bivona e depois se retirou definitivamente para uma caverna no Monte Pellegrino, nos arredores de Palermo, onde passou o restante da vida em penitência e oração, morrendo ali sozinha, por volta de 1166.",
+      "Sua biografia é conhecida quase só por tradição tardia: a mais antiga referência escrita à sua história só aparece por volta de 1590, quase quatro séculos e meio depois de sua morte, o que torna a maior parte dos detalhes de sua vida lenda devota, não registro histórico contemporâneo.",
+      "Em 1624, em meio a uma peste que devastava Palermo, seus ossos foram encontrados na caverna do Monte Pellegrino. Levados em procissão pela cidade, a epidemia cessou pouco depois, e o Papa Urbano VIII a inscreveu no Martirológio Romano. Desde então é venerada como padroeira de Palermo, celebrada anualmente com o Festino, uma das maiores festas populares da Sicília."
+    ]
+  },
+
+  "santa-teresa-calcuta": {
+    titulo: "Santa Teresa de Calcutá",
+    resumo: "Freira albanesa que dedicou a vida aos mais pobres entre os pobres na Índia, fundando as Missionárias da Caridade.",
+    texto: [
+      "Nasceu em 26 de agosto de 1910 em Skopje, então parte do Império Otomano (hoje Macedônia do Norte), filha de uma família católica albanesa, recebendo o nome de Anjezë Gonxhe Bojaxhiu. Aos 18 anos entrou para as Irmãs de Loreto, na Irlanda, e logo foi enviada à Índia, onde lecionou geografia num colégio de Calcutá por quase duas décadas.",
+      "Em 10 de setembro de 1946, numa viagem de trem a Darjeeling, viveu o que descreveu como um \"chamado dentro do chamado\": o pedido de Jesus para deixar o convento e servir os mais pobres entre os pobres, morando e trabalhando em meio a eles. Obteve permissão da Igreja para deixar as Irmãs de Loreto em 1948 e passou a vestir o sári branco de bordas azuis que se tornaria sua marca.",
+      "Em 1950 fundou as Missionárias da Caridade, dedicadas a doentes terminais, leprosos, órfãos e moradores de rua, começando nas ruas de Calcutá e expandindo-se depois para dezenas de países. Recebeu o Prêmio Nobel da Paz em 1979 pelo trabalho junto aos que sofrem.",
+      "Morreu em Calcutá em 5 de setembro de 1997. Cartas pessoais publicadas após sua morte revelaram que viveu, por quase cinco décadas, uma intensa \"noite escura\" espiritual — um longo período de aridez interior e sensação de ausência de Deus — sem que isso a afastasse do serviço aos pobres. Foi beatificada em 2003 e canonizada em 4 de setembro de 2016 pelo Papa Francisco."
+    ]
+  },
+
+  "sao-liberato-loro": {
+    titulo: "São Liberato de Loro",
+    resumo: "Nobre italiano do século XIII que renunciou ao título e às terras da família para se tornar frade franciscano; figura pouco documentada historicamente.",
+    texto: [
+      "Nasceu por volta de 1213 em Loro Piceno, na região das Marcas, na Itália, na nobre família Brunforte. Ao herdar de um tio terras e o título de senhor de Loro, cedeu tudo ao irmão Gualtério para entrar na Ordem dos Frades Menores, em 1234.",
+      "Ordenado sacerdote, retirou-se para o pequeno convento-eremitério de Sofiano, perto do castelo de Brunforte, onde viveu dedicado à penitência e à contemplação. A tradição franciscana, registrada nos Fioretti, atribui-lhe êxtase místico frequente e fama de santidade.",
+      "Morreu em 6 de setembro de 1258. Sua causa nunca passou por um processo formal de canonização: em 1868 o Papa Pio IX apenas autorizou culto litúrgico em sua honra, uma beatificação equipolente — por isso a Igreja o venera oficialmente como beato, ainda que a devoção brasileira o chame popularmente de \"São Liberato\".",
+      "Pouco mais se sabe historicamente sobre ele além do que preservam os Fioretti e a tradição local de Loro Piceno, onde um santuário guarda suas relíquias até hoje."
+    ]
+  },
+
+  "santa-regina": {
+    titulo: "Santa Regina, virgem e mártir",
+    resumo: "Jovem da Gália romana venerada como mártir do século III por recusar um casamento em nome da fé cristã; sua história é preservada sobretudo pela tradição hagiográfica.",
+    texto: [
+      "Segundo a tradição, nasceu na região de Autun, na Borgonha (atual França), filha de um pai pagão. Órfã de mãe ainda recém-nascida, foi criada por uma ama cristã que a batizou e a instruiu na fé.",
+      "Já moça, foi pretendida em casamento pelo prefeito romano Olíbrio, atraído por sua beleza e origem nobre. Regina recusou por ter consagrado a vida a Cristo; diante da recusa, foi presa, torturada e, por fim, decapitada em Alésia, na Borgonha — cidade também identificada por historiadores com o sítio onde Vercingétorix resistiu a Júlio César.",
+      "As fontes antigas divergem sobre a data do martírio: algumas o situam na perseguição do imperador Décio, por volta de 251, outras no governo de Maximiano, já no fim do século III. O relato mais detalhado de sua paixão só foi escrito séculos depois, entre os séculos VIII e IX, o que faz historiadores tratá-lo como tradição hagiográfica — mistura de elementos históricos e embelezamento legendário — e não como registro contemporâneo dos fatos.",
+      "Suas relíquias foram trasladadas em 864 para a abadia de Flavigny, tornando-se destino de peregrinação, e a cidade de Alésia passou a chamar-se Alise-Sainte-Reine em sua honra. É invocada como padroeira de pastoras, dos pobres e das vítimas de tortura."
+    ]
+  },
+
+  "natividade-virgem-maria": {
+    titulo: "Natividade da Virgem Maria",
+    resumo: "Festa mariana que celebra o nascimento de Maria, chamada pela tradição litúrgica de \"aurora da salvação\".",
+    texto: [
+      "Assim como o nascimento de Jesus, o de Maria não é narrado na Bíblia. A tradição da Igreja conhece o episódio por escritos antigos como o Protoevangelho de Tiago (século II), que também dá nome a seus pais, Joaquim e Ana, celebrados juntos em 26 de julho.",
+      "É uma das festas marianas mais antigas: já era celebrada no Oriente por volta dos séculos V-VI, ligada à dedicação de uma igreja erguida em Jerusalém no local tradicionalmente apontado como a casa de Ana e Joaquim.",
+      "A data de 8 de setembro não foi escolhida ao acaso: cai exatamente nove meses depois da festa da Imaculada Conceição, em 8 de dezembro, preservando a coerência entre concepção e nascimento no calendário litúrgico.",
+      "A liturgia chama Maria de \"aurora da salvação\", por anunciar, com seu nascimento, a proximidade do Sol da Justiça — Jesus Cristo. É por isso um dia de alegria especial no calendário da Igreja, celebrado com festa também em muitos santuários marianos pelo mundo."
+    ]
+  },
+
+  "sao-pedro-claver": {
+    titulo: "São Pedro Claver, presbítero",
+    resumo: "Jesuíta espanhol que passou quatro décadas acolhendo e evangelizando os africanos escravizados que chegavam ao porto de Cartagena das Índias.",
+    texto: [
+      "Nasceu em Verdú, na Catalunha (Espanha), por volta de 1580. Entrou para a Companhia de Jesus em 1602 e, ainda em formação, ouviu do irmão Alonso Rodríguez o chamado para ser missionário no Novo Mundo. Embarcou para as Índias em 1610 e foi ordenado sacerdote em Cartagena das Índias, na atual Colômbia, em 1616.",
+      "Cartagena era um dos principais portos do tráfico negreiro na América espanhola. Ao professar os votos definitivos, Claver assinou junto ao próprio nome a fórmula \"Petrus Claver, aethiopum semper servus\" — \"Pedro Claver, escravo dos escravos para sempre\" —, selando o compromisso que marcaria o resto de sua vida.",
+      "Durante cerca de quarenta anos, subia a bordo dos navios negreiros assim que atracavam, levando água, comida, remédios e panos aos escravizados amontoados nos porões, muitos deles doentes após a travessia. Com a ajuda de intérpretes, instruía-os na fé e batizava os que desejavam — a tradição fala em cerca de 300 mil batismos ao longo do ministério, número aproximado repetido por diversas fontes, sem uma contagem histórica precisa.",
+      "Morreu em Cartagena em 8 de setembro de 1654. Foi canonizado em 1888 pelo Papa Leão XIII, que em 1896 o proclamou padroeiro de todas as missões católicas entre os povos negros e afrodescendentes."
+    ]
+  },
+
+  "sao-nicolau-tolentino": {
+    titulo: "São Nicolau de Tolentino",
+    resumo: "Frade agostiniano italiano conhecido pela vida austera, pela dedicação aos doentes e moribundos, e por milagres a ele atribuídos ainda em vida.",
+    texto: [
+      "Nasceu por volta de 1245 em Sant'Angelo in Pontano, na região das Marcas, na Itália. Ainda jovem, ingressou na Ordem de Santo Agostinho, atraído pela pregação de um frade agostiniano de sua cidade natal, e foi ordenado sacerdote em 1269, em Cíngoli.",
+      "Por volta de 1275, foi enviado ao convento de Tolentino, onde permaneceria pelos trinta anos seguintes, dedicado à missa diária, às confissões, à pregação e à visita aos pobres, doentes e moribundos. Levava vida austera, mas era conhecido pela doçura no trato com todos.",
+      "A tradição conta que, gravemente doente, teve uma visão de Nossa Senhora acompanhada de Santo Agostinho e Santa Mônica, que o orientou a comer um pedaço de pão molhado em água e marcado com o sinal da cruz — ao fazê-lo, recuperou a saúde. O episódio deu origem à devoção dos \"pãezinhos de São Nicolau\", ainda hoje abençoados e distribuídos em seu santuário.",
+      "Morreu em Tolentino em 10 de setembro de 1305. Foi canonizado em 1446 pelo Papa Eugênio IV — uma das primeiras canonizações depois de um longo hiato na prática. É invocado como padroeiro das almas do Purgatório."
+    ]
+  },
+
+  "sao-joao-gabriel-perboyre": {
+    titulo: "São João Gabriel Perboyre, presbítero e mártir",
+    resumo: "Padre lazarista francês martirizado na China em 1840, cuja execução testemunhas associaram à Paixão de Cristo.",
+    texto: [
+      "Nasceu em Puech, no sul da França, em 6 de janeiro de 1802. Entrou para a Congregação da Missão (padres lazaristas, também chamados vicentinos) ainda jovem e, depois de completar os estudos, dedicou-se ao ensino em seminários franceses antes de conseguir, finalmente, autorização para partir como missionário.",
+      "Chegou à China em 1835 e, após aprender o idioma, passou a atuar clandestinamente nas províncias de Henan e Hubei, período em que a pregação cristã era proibida e punida com a morte sob a dinastia Qing. Vivia escondido, catequizando, administrando os sacramentos e cuidando dos doentes.",
+      "Em 1839, foi traído por um catecúmeno e preso pelas autoridades chinesas. Passou meses sendo interrogado e torturado sem renunciar à fé. Foi executado por estrangulamento em Wuchang, em 11 de setembro de 1840, amarrado a uma estrutura em forma de cruz — testemunhas da época relataram semelhanças entre seu suplício e a Paixão de Cristo, paralelos que pertencem, em parte, à tradição devocional e não a um registro histórico isento.",
+      "Foi beatificado em 1889 pelo Papa Leão XIII e canonizado em 1996 pelo Papa João Paulo II, entre os Mártires da China."
+    ]
+  },
+
+  "santissimo-nome-maria": {
+    titulo: "Santíssimo Nome de Maria",
+    resumo: "Festa mariana que celebra o nome de Maria, ligada historicamente à ação de graças pela vitória cristã na Batalha de Viena, em 1683.",
+    texto: [
+      "A devoção ao nome de Maria é anterior ao seu reconhecimento como festa universal: já existiam celebrações locais em sua honra, como a autorizada em Cuenca, na Espanha, em 1513, depois estendida a outras dioceses do país.",
+      "A festa ganhou alcance universal após a Batalha de Viena, em 1683, quando um exército cristão liderado pelo rei polonês Jan III Sobieski rompeu o cerco otomano à cidade. Em ação de graças por uma vitória atribuída, em parte, à intercessão de Maria, o Papa Inocêncio XI estendeu a celebração do Santíssimo Nome de Maria a toda a Igreja, fixando-a em 12 de setembro.",
+      "A festa foi retirada do calendário universal após a reforma litúrgica do Concílio Vaticano II e reintroduzida pelo Papa João Paulo II em 2002, como memória facultativa.",
+      "O significado exato do nome \"Maria\" não é consenso entre estudiosos: entre as interpretações mais citadas estão \"senhora\" e \"amada\", além da associação, mais tardia, com \"estrela do mar\". Mais do que uma etimologia precisa, a devoção celebra Maria como intercessora e sinal de esperança para os fiéis."
+    ]
+  },
+
+  "sao-joao-crisostomo": {
+    titulo: "São João Crisóstomo, bispo e doutor da Igreja",
+    resumo: "Bispo de Constantinopla e um dos maiores pregadores da Igreja antiga, exilado por denunciar os excessos da corte imperial.",
+    texto: [
+      "Nasceu em Antioquia, na Síria, por volta de 347. Formou-se em retórica, adotou vida ascética e foi ordenado sacerdote em 386. Destacou-se rapidamente como pregador — o apelido \"Crisóstomo\", do grego \"boca de ouro\", viria da eloquência de suas homilias e dos extensos comentários bíblicos que deixou, muitos dos quais chegaram até hoje.",
+      "Em 398, foi nomeado, contra sua vontade, arcebispo de Constantinopla. Como bispo, combateu a corrupção do clero e denunciou o luxo da corte imperial, o que o colocou em rota de colisão com a imperatriz Eudóxia e com o patriarca Teófilo de Alexandria.",
+      "Em 403, um sínodo convocado por seus opositores — o chamado Sínodo do Carvalho — decretou seu exílio; a pressão popular forçou seu retorno quase imediato, mas em 404 foi banido definitivamente, sendo enviado para regiões cada vez mais remotas do império.",
+      "Morreu em 407, em Comana, no Ponto, exausto pelas marchas forçadas impostas durante o exílio. Foi declarado Doutor da Igreja e é considerado, junto com Basílio Magno e Gregório Nazianzeno, um dos Três Santos Hierarcas da tradição oriental. É padroeiro dos pregadores e oradores."
+    ]
+  },
+
+  "exaltacao-santa-cruz": {
+    titulo: "Exaltação da Santa Cruz",
+    resumo: "Festa que celebra a Cruz de Cristo como sinal de vitória e salvação, lembrando o achado do madeiro em Jerusalém e a dedicação da basílica erguida sobre o Calvário.",
+    texto: [
+      "No início do século IV, Santa Helena, mãe do imperador Constantino, viajou à Terra Santa em peregrinação e, segundo a tradição, encontrou em Jerusalém, por volta de 326, o madeiro da cruz em que Jesus foi crucificado. No local, hoje ocupado pela Basílica do Santo Sepulcro, escavações teriam revelado três cruzes, e um sinal milagroso indicou qual era a verdadeira.",
+      "Constantino mandou construir sobre o Calvário e o túmulo de Cristo a Basílica do Santo Sepulcro, dedicada em 335. No dia seguinte à dedicação, 14 de setembro, a relíquia da cruz foi exposta à veneração dos fiéis pela primeira vez — origem da data em que a Igreja celebra a festa até hoje.",
+      "A celebração ganhou outro capítulo histórico no século VII: em 614, o exército persa invadira Jerusalém e levara a relíquia como despojo de guerra; em 629, o imperador Heráclio a recuperou e, segundo o relato tradicional, insistiu em carregá-la de volta à cidade descalço e sem trajes imperiais, como simples peregrino.",
+      "Mais do que a veneração de uma relíquia, a festa exalta a cruz como instrumento de salvação: o mesmo madeiro que era símbolo de suplício romano tornou-se, na fé cristã, sinal da vitória de Cristo sobre a morte e centro da pregação da Igreja."
+    ]
+  },
+
+  "nossa-senhora-das-dores": {
+    titulo: "Nossa Senhora das Dores",
+    resumo: "Memória que celebra o sofrimento de Maria unida à Paixão do Filho, contemplado tradicionalmente nas chamadas Sete Dores de Nossa Senhora.",
+    texto: [
+      "A devoção à Virgem como \"Mãe das Dores\" remonta à Idade Média, difundida sobretudo a partir dos séculos XII e XIII pelos cistercienses e, mais tarde, pela Ordem dos Servitas — fundada em Florença em 1233 e dedicada, desde suas origens, a contemplar o sofrimento de Maria unido ao de Cristo.",
+      "A tradição reúne sete momentos de dor na vida de Maria: a profecia de Simeão no Templo, a fuga para o Egito, a perda do Menino Jesus em Jerusalém, o encontro com Jesus a caminho do Calvário, a permanência aos pés da cruz, o recebimento do corpo do Filho morto e seu sepultamento.",
+      "Os Servitas obtiveram aprovação para celebrar liturgicamente as Sete Dores em 1668. O Papa Pio VII, em 1814, estendeu a festa a toda a Igreja em ação de graças por sua própria libertação do exílio imposto por Napoleão, e em 1913 o Papa Pio X fixou-a definitivamente em 15 de setembro — um dia depois da Exaltação da Santa Cruz, unindo no calendário a cruz de Cristo e a dor de sua Mãe.",
+      "A memória convida a olhar Maria não apenas como testemunha silenciosa do Calvário, mas como aquela que participou intimamente da Paixão, associada de modo único à obra da redenção."
+    ]
+  },
+
+  "sao-cornelio-cipriano": {
+    titulo: "São Cornélio, Papa, e São Cipriano, bispo, mártires",
+    resumo: "Papa e bispo do século III, amigos que se corresponderam por carta na defesa da unidade da Igreja durante a perseguição romana.",
+    texto: [
+      "Cornélio foi eleito papa em 251, depois de mais de um ano de sé vacante causado pela perseguição do imperador Décio. Cipriano, nascido em Cartago por volta do ano 210, era advogado e retórico pagão antes de se converter ao cristianismo por volta de 246; três anos depois foi escolhido bispo de sua cidade.",
+      "Os dois enfrentaram juntos a mesma crise: o que fazer com os cristãos que haviam renegado a fé (os chamados lapsi) diante da ameaça de perseguição. Cornélio e Cipriano defendiam que eles poderiam ser readmitidos à comunhão da Igreja após penitência, posição que os colocou em oposição ao rigorismo de Novaciano, que negava qualquer perdão a esses cristãos e chegou a se proclamar papa contra Cornélio. Separados pelo Mediterrâneo, os dois nunca chegaram a se encontrar pessoalmente, mas sustentaram-se mutuamente por meio de cartas que se tornaram testemunho importante da vida da Igreja no século III.",
+      "Cornélio foi exilado para Centumcellae (a atual Civitavecchia) em 252 e morreu no ano seguinte. É venerado como mártir desde a Antiguidade, embora as fontes antigas divirjam sobre as circunstâncias exatas de sua morte: algumas indicam que sucumbiu aos rigores do exílio, outras que foi decapitado.",
+      "Cipriano foi decapitado em Cartago em 258, durante a perseguição do imperador Valeriano, depois de se recusar a oferecer sacrifícios aos deuses romanos — sua execução é bem documentada pelos relatos da época. Embora nunca tenham se encontrado, os dois são celebrados juntos desde a Antiguidade, lembrados lado a lado no Cânon Romano, como sinal da unidade entre as Igrejas de Roma e de Cartago."
+    ]
+  },
+
+  "sao-roberto-belarmino": {
+    titulo: "São Roberto Belarmino, bispo e doutor da Igreja",
+    resumo: "Jesuíta italiano, um dos maiores teólogos da Contrarreforma, cardeal e doutor da Igreja, lembrado também por seu papel no episódio inicial do caso Galileu.",
+    texto: [
+      "Nasceu em Montepulciano, na Itália, em 1542, e entrou para a Companhia de Jesus em 1560, sendo ordenado sacerdote em 1570. Como professor no Colégio Romano, tornou-se um dos principais teólogos da Contrarreforma, defendendo a doutrina católica diante das objeções protestantes em sua obra mais influente, as Disputationes de controversiis christianae fidei.",
+      "Em 1599 foi nomeado cardeal pelo Papa Clemente VIII, e passou a atuar como um dos principais conselheiros teológicos da Santa Sé. Apesar do cargo, manteve vida de grande simplicidade e caridade, e dedicou-se também a escrever catecismos usados na formação cristã por gerações.",
+      "Em 1616, a pedido do Santo Ofício, Belarmino comunicou pessoalmente a Galileu Galilei — de quem era próximo e por quem tinha estima — a advertência da Igreja para que não defendesse a teoria heliocêntrica como fato comprovado, podendo apresentá-la apenas como hipótese. Ele próprio chegou a redigir um atestado afirmando que Galileu não havia sido condenado nem declarado herege. Belarmino morreu em 1621, mais de uma década antes do processo que levaria à condenação de Galileu pela Inquisição, em 1633, e não teve qualquer participação nesse julgamento posterior.",
+      "Morreu em Roma em 17 de setembro de 1621. Foi canonizado em 1930 pelo Papa Pio XI, que no ano seguinte, em 1931, o proclamou Doutor da Igreja."
+    ]
+  },
+
+  "sao-jose-cupertino": {
+    titulo: "São José de Cupertino",
+    resumo: "Frade franciscano italiano famoso por êxtases e levitações durante a oração, hoje padroeiro dos estudantes e dos que viajam de avião.",
+    texto: [
+      "Nasceu em 1603 na cidade de Cupertino, na região italiana da Apúlia, em família pobre. Quando menino, era considerado lento e desatento pelos estudos e foi rejeitado pelos franciscanos conventuais por falta de instrução. Depois de uma breve passagem pelos capuchinhos, que o dispensaram, foi finalmente aceito pelos conventuais como irmão leigo em 1625, e ordenado sacerdote em 1628.",
+      "Desde jovem, José começou a ter êxtases acompanhados de levitações durante a oração e a celebração da missa, fenômenos relatados por dezenas de testemunhas ao longo de sua vida — mais de setenta episódios documentados apenas durante seu tempo no santuário de Grotella. Diz a tradição que, levado à presença do Papa Urbano VIII, entrou em êxtase e levitou diante dele.",
+      "A fama atraiu multidões aos conventos onde vivia, o que o obrigou a ser transferido repetidas vezes e, por um período, a viver recluso, longe do público, enquanto a Inquisição investigava os fenômenos — investigação da qual saiu inocentado. Apesar da notoriedade, José manteve-se conhecido por sua humildade.",
+      "Morreu em Osimo, na Itália, em 18 de setembro de 1663, e foi canonizado em 1767 pelo Papa Clemente XIII. É venerado como padroeiro dos estudantes e também dos pilotos, aviadores e passageiros de avião, em razão de suas levitações."
+    ]
+  },
+
+  "sao-januario": {
+    titulo: "São Januário, bispo e mártir",
+    resumo: "Bispo de Benevento martirizado no início do século IV, venerado em Nápoles pelo fenômeno da liquefação de seu sangue.",
+    texto: [
+      "Januário (Gennaro, em italiano) foi bispo de Benevento, no sul da Itália, no fim do século III. Sabe-se pouco com certeza sobre sua vida: os relatos mais detalhados de seu martírio só foram registrados séculos depois dos fatos, e a própria Igreja reconhece que têm valor mais devocional do que histórico.",
+      "Segundo a tradição, foi preso durante a perseguição movida pelo imperador Diocleciano, ao visitar cristãos encarcerados perto de Pozzuoli. Condenado a ser devorado por feras num anfiteatro, teria sido poupado quando os animais não o atacaram; acusado então de feitiçaria, foi decapitado com companheiros por volta do ano 305.",
+      "Seu culto em Nápoles, da qual é padroeiro, está ligado sobretudo ao chamado milagre de São Januário: sangue seco guardado em ampolas na catedral da cidade que, em datas determinadas do ano — entre elas 19 de setembro, dia de sua festa —, costuma se liquefazer diante dos fiéis. O primeiro registro documentado do fenômeno data de 1389. A Igreja nunca declarou oficialmente o fato como milagre no sentido canônico, tratando-o com prudência como um sinal ligado à piedade popular, sem se pronunciar sobre sua causa.",
+      "São Januário é um dos santos mais populares da Itália, e sua festa continua reunindo multidões em Nápoles na expectativa da liquefação do sangue."
+    ]
+  },
+
+  "santo-andre-kim-taegon": {
+    titulo: "Santo André Kim Taegon e companheiros, mártires",
+    resumo: "Primeiro sacerdote nascido na Coreia, martirizado em 1846 e canonizado ao lado de mais de cem cristãos mortos na perseguição religiosa coreana.",
+    texto: [
+      "André Kim Taegon nasceu em 1821 numa família coreana convertida ao catolicismo, numa época em que a fé cristã era proibida e duramente perseguida pela dinastia Joseon. Ainda jovem, deixou o país para estudar num seminário em Macau, preparando-se para o sacerdócio.",
+      "Foi ordenado padre em Xangai em 1845, tornando-se o primeiro sacerdote nascido na Coreia. Voltou clandestinamente à terra natal para atender os católicos que viviam escondidos e para organizar novas rotas de entrada de missionários estrangeiros no país.",
+      "Preso em 1846 quando tentava articular a chegada de missionários franceses pelo mar, foi torturado e, após três meses na prisão, decapitado às margens do rio Han, perto de Seul, aos 25 anos.",
+      "A data de 20 de setembro recorda também Paulo Chong Hasang, catequista leigo que pedira ao papa o envio de missionários à Coreia, e outros cristãos coreanos e franceses mortos entre 1839 e 1867, em sucessivas ondas de perseguição. Em 6 de maio de 1984, durante viagem a Seul, o Papa João Paulo II canonizou de uma só vez André Kim Taegon, Paulo Chong Hasang e mais 101 companheiros — uma das maiores canonizações coletivas da história da Igreja, e a primeira realizada fora de Roma."
+    ]
+  },
+
+  "sao-mateus-apostolo": {
+    titulo: "São Mateus, Apóstolo e Evangelista",
+    resumo: "Cobrador de impostos que abandonou tudo ao ouvir o chamado de Jesus e é tradicionalmente associado à autoria do primeiro Evangelho.",
+    texto: [
+      "Mateus, também chamado Levi, trabalhava como publicano — cobrador de impostos a serviço de Roma — em Cafarnaum, na Galileia. A profissão era vista com desprezo pelos judeus da época, por lidar com dinheiro romano e por associar quem a exercia à opressão estrangeira.",
+      "Jesus o chamou enquanto ele estava sentado na coletoria, com apenas duas palavras: \"Segue-me\" (Mt 9,9). Mateus se levantou imediatamente, deixou para trás sua profissão e passou a integrar o grupo dos doze apóstolos.",
+      "A tradição da Igreja atribui a ele a autoria do Evangelho que leva seu nome, escrito para leitores judeus e voltado a mostrar Jesus como cumprimento das profecias do Antigo Testamento. A exegese moderna, no entanto, discute em que medida o texto tal como chegou até nós saiu diretamente de sua mão ou de uma tradição a ele ligada.",
+      "Segundo relatos antigos, depois da Ressurreição Mateus pregou primeiro entre os judeus e depois partiu para outras terras — as fontes variam entre a Etiópia e a região da Pérsia/Pártia —, onde teria sido martirizado. É padroeiro de contadores, bancários e cobradores de impostos."
+    ]
+  },
+
+  "sao-mauricio-companheiros": {
+    titulo: "São Maurício e companheiros, mártires",
+    resumo: "Comandante de uma legião romana de soldados cristãos que, segundo a tradição, preferiu a morte a obedecer ordens contrárias à fé.",
+    texto: [
+      "Segundo a tradição cristã, Maurício era um oficial de origem egípcia que comandava a chamada Legião Tebana, formada por soldados cristãos a serviço do Império Romano. Por volta do ano 286, a legião foi enviada pelo imperador Maximiano à Gália para ajudar a reprimir um levante.",
+      "Ali, os soldados se recusaram a participar de sacrifícios aos deuses pagãos e a perseguir outros cristãos, retirando-se do restante do exército. Maximiano ordenou então que a unidade fosse dizimada repetidas vezes e, diante da recusa persistente dos sobreviventes, mandou matar todos os que restavam, perto de Agaunum, atual Saint-Maurice, na Suíça.",
+      "O relato mais antigo do episódio foi escrito cerca de 150 anos depois pelo bispo Eucério de Lyon, que dizia basear-se numa tradição oral transmitida havia gerações. Historiadores modernos questionam alguns detalhes da narrativa tradicional — como o número exato de soldados e se de fato se tratava de uma legião inteira de origem tebana —, embora reconheçam como plausível que um grupo de soldados cristãos tenha sido executado naquela região e época por se recusar a cumprir ordens contrárias à sua fé.",
+      "O culto a Maurício e seus companheiros deu origem, ainda no século VI, à Abadia de Saint-Maurice, um dos mosteiros de funcionamento contínuo mais antigos do mundo, erguida junto ao local tradicional do massacre."
+    ]
+  },
+
+  "sao-pio-pietrelcina": {
+    titulo: "São Pio de Pietrelcina (Padre Pio)",
+    resumo: "Frade capuchinho italiano que carregou as chagas de Cristo por cerca de cinquenta anos e se dedicou incansavelmente ao confessionário.",
+    texto: [
+      "Nasceu Francesco Forgione em 1887, em Pietrelcina, no sul da Itália. Entrou para a Ordem dos Frades Menores Capuchinhos ainda adolescente, adotando o nome de Pio, e foi ordenado sacerdote em 1910. Em 1916 passou a viver no convento de San Giovanni Rotondo, onde permaneceria até o fim da vida.",
+      "Já em 1910 teria recebido marcas invisíveis das chagas de Cristo; em 20 de setembro de 1918, durante uma oração de ação de graças após a missa, os ferimentos se tornaram visíveis nas mãos, nos pés e no lado do corpo, causando-lhe dor constante. As chagas permaneceram visíveis por cerca de cinquenta anos, até pouco antes de sua morte, examinadas por diversos médicos ao longo de sua vida sem explicação médica conclusiva.",
+      "Padre Pio dedicava longas horas diárias ao confessionário, atraindo multidões de fiéis; muitos relataram que ele parecia conhecer detalhes de suas vidas antes mesmo de confessá-los. A devoção popular também lhe atribui outros dons extraordinários, como bilocação e profecia, relatados por testemunhas ao longo dos anos. Por iniciativa sua, foi erguido em San Giovanni Rotondo o hospital Casa Sollievo della Sofferenza, inaugurado em 1956.",
+      "Morreu em 23 de setembro de 1968. Foi beatificado em 1999 e canonizado em 16 de junho de 2002, ambos pelo Papa João Paulo II."
+    ]
+  },
+
+  "nossa-senhora-das-merces": {
+    titulo: "Nossa Senhora das Mercês",
+    resumo: "Advocação mariana ligada à fundação, em 1218, da Ordem dedicada a resgatar cristãos mantidos cativos pelos mouros.",
+    texto: [
+      "A devoção remonta ao século XIII, na Espanha da Reconquista, quando cristãos capturados pelos mouros eram levados cativos ao norte da África, correndo o risco de perder a fé. São Pedro Nolasco, mercador de Barcelona, dedicava sua fortuna a comprar a liberdade desses prisioneiros.",
+      "Segundo a tradição, quando os recursos de Nolasco já não bastavam, a Virgem Maria lhe apareceu pedindo que fundasse uma ordem religiosa voltada inteiramente à redenção dos cativos — aparição que, em alguns relatos, teria ocorrido na mesma noite também a São Raimundo de Penhafort e ao rei Jaime I de Aragão.",
+      "Em 10 de agosto de 1218, na Catedral de Barcelona, com o rei presente, Nolasco e seus companheiros se consagraram à Ordem de Nossa Senhora das Mercês. Além dos votos de pobreza, castidade e obediência, faziam um quarto voto: entregar-se como reféns no lugar dos cativos quando não houvesse dinheiro para resgatá-los. Foi a mesma ordem à qual pertenceu, mais tarde, São Raimundo Nonato.",
+      "A festa foi estendida a toda a Igreja e fixada em 24 de setembro pelo Papa Inocêncio XII, em 1696. Também chamada de Nossa Senhora do Resgate, é invocada até hoje em favor de presos e de todos os que vivem algum tipo de cativeiro."
+    ]
+  },
+
+  "sao-cleofas": {
+    titulo: "São Cléofas",
+    resumo: "Um dos dois discípulos que encontraram Jesus ressuscitado no caminho de Emaús, sem o reconhecer até a fração do pão.",
+    texto: [
+      "Quase tudo o que se sabe sobre ele vem de um único episódio do Evangelho de Lucas (24, 13-35): no dia da ressurreição, dois discípulos caminhavam de Jerusalém a Emaús, a cerca de onze quilômetros, conversando sobre os acontecimentos daqueles dias, quando um estranho se juntou a eles pelo caminho e explicou as Escrituras a respeito do Messias — sem que o reconhecessem.",
+      "Apenas um dos dois é chamado pelo nome, Cléofas; o do companheiro o evangelista não registra. Só à mesa, quando o forasteiro partiu o pão, os dois o reconheceram como o Senhor ressuscitado — e ele desapareceu de sua vista. Voltaram na mesma hora a Jerusalém para contar aos demais discípulos o que haviam visto.",
+      "Uma tradição antiga, mas debatida, o identifica com o \"Clopas\" citado em João 19, 25 como marido de uma das mulheres presentes ao pé da cruz. Os nomes, porém, têm origens diferentes, de modo que a ligação entre as duas figuras segue sendo tradição, não certeza histórica.",
+      "É por esse único episódio de Emaús — um dos relatos mais lidos da ressurreição — que a Igreja guarda sua memória, celebrada em 25 de setembro."
+    ]
+  },
+
+  "santos-cosme-damiao": {
+    titulo: "Santos Cosme e Damião, mártires",
+    resumo: "Irmãos gêmeos, médicos que curavam sem cobrar nada, martirizados durante as perseguições do imperador Diocleciano.",
+    texto: [
+      "Segundo a tradição, nasceram na Arábia e exerceram a medicina na cidade portuária de Egeia, na província romana da Cilícia, na Ásia Menor. Atendiam a todos gratuitamente, por caridade cristã, e por isso ficaram conhecidos como anargyroi — do grego, \"os sem prata\" —, atraindo muita gente à fé pelo exemplo.",
+      "Durante a Grande Perseguição movida por Diocleciano, no início do século IV, foram presos em Egeia pelo governador Lísias. A tradição narra que resistiram a várias tentativas de execução antes de serem finalmente decapitados, por volta do ano 287 (algumas fontes indicam 303). Relatos hagiográficos acrescentam que outros três irmãos foram martirizados junto com eles.",
+      "São padroeiros de médicos, cirurgiões, farmacêuticos e gêmeos. No Brasil, sua devoção é particularmente forte: em muitas cidades o dia é marcado por missas e pela tradicional distribuição de doces às crianças, um costume popular associado à data desde há gerações."
+    ]
+  },
+
+  "sao-vicente-paulo": {
+    titulo: "São Vicente de Paulo, presbítero",
+    resumo: "Sacerdote francês que dedicou a vida aos pobres, fundou duas congregações e é considerado padroeiro de todas as obras de caridade.",
+    texto: [
+      "Nasceu em 24 de abril de 1581, em Pouy, na Gasconha francesa, filho de camponeses. Foi ordenado sacerdote em 1600, ainda com dezenove anos.",
+      "Segundo o próprio relato de Vicente, em 1605 o navio em que viajava foi atacado por piratas berberes, e ele foi levado como escravo a Túnis, passando por diferentes senhores até conseguir fugir de volta à França em 1607. Historiadores vicentinos modernos têm questionado alguns detalhes desse episódio, com base em análises de suas cartas da época, mas o relato é parte consolidada de sua biografia tradicional.",
+      "Dedicou-se depois a organizar obras de caridade para os pobres, os condenados às galés e as crianças abandonadas. Fundou a Congregação da Missão (padres vicentinos, também chamados lazaristas) em 1625 e, com Santa Luísa de Marillac, a Companhia das Filhas da Caridade em 1633 — a primeira congregação a levar mulheres consagradas para fora da clausura, a serviço direto dos pobres.",
+      "Morreu em Paris em 27 de setembro de 1660. Foi beatificado em 1729 por Bento XIII e canonizado em 1737 por Clemente XII, que o proclamou padroeiro de todas as obras de caridade. Séculos depois, a Sociedade São Vicente de Paulo, fundada em 1833 por Frederico Ozanam, adotou seu nome em homenagem ao santo."
+    ]
+  },
+
+  "sao-venceslau": {
+    titulo: "São Venceslau, mártir",
+    resumo: "Duque da Boêmia, conhecido pela piedade e pelo bom governo, assassinado pelo próprio irmão em disputa pelo poder.",
+    texto: [
+      "Nasceu por volta de 907, perto de Praga, e foi criado na fé cristã pela avó, Santa Ludmila. Assumiu o governo do ducado da Boêmia ainda jovem, destacando-se pelo apoio à Igreja, pela vida piedosa e por uma política de paz com os reinos vizinhos, num tempo de forte tensão entre facções cristãs e pagãs.",
+      "Essa política, e a popularidade que Venceslau conquistava, alimentaram a rivalidade com seu irmão mais novo, Boleslau. Em 28 de setembro, por volta de 935 (algumas fontes indicam 929), Boleslau e um grupo de cúmplices o atacaram e mataram à entrada de uma igreja em Stará Boleslav.",
+      "Venceslau foi logo venerado como mártir; seus restos foram levados à Catedral de São Vito, em Praga, que se tornou importante centro de peregrinação. Tornou-se padroeiro e símbolo nacional do povo boêmio e, mais tarde, tcheco.",
+      "Sua fama de generosidade com os pobres atravessou os séculos e inspirou o famoso canto natalino \"Good King Wenceslas\", escrito no século XIX — embora, na história, tenha sido duque, e não rei."
+    ]
+  },
+
 }
 
 export type MovableFeast = {

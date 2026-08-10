@@ -7,6 +7,7 @@ import { Document, Page } from "react-pdf"
 import "../../utils/pdfConfig"
 import "react-pdf/dist/Page/TextLayer.css"
 import "react-pdf/dist/Page/AnnotationLayer.css"
+import { usePublishHeightVar } from "../../hooks/usePublishHeightVar"
 
 const PAGE_KEY  = "catecismo_page"
 const ZOOM_KEY  = "catecismo_zoom"
@@ -16,6 +17,14 @@ export default function Catecismo() {
   const navigate     = useNavigate()
   const wrapRef      = useRef<HTMLDivElement>(null)
   const viewerRef    = useRef<HTMLDivElement>(null)
+  const headerRef    = useRef<HTMLDivElement>(null)
+  const footerRef    = useRef<HTMLDivElement>(null)
+
+  // header/footer são position:fixed (controles de navegação/zoom
+  // sempre alcançáveis) — o viewer precisa saber a altura real deles
+  // pra reservar espaço e não esconder o PDF por baixo.
+  usePublishHeightVar(headerRef, viewerRef, "--pdf-header-height")
+  usePublishHeightVar(footerRef, viewerRef, "--pdf-footer-height")
 
   const [page,         setPage]         = useState(1)
   const [numPages,     setNumPages]     = useState(0)
@@ -131,8 +140,8 @@ export default function Catecismo() {
 
   function prevPage() { setPage(p => Math.max(p - 1, 1)) }
   function nextPage() { setPage(p => Math.min(p + 1, numPages)) }
-  function zoomOut()  { setZoomLevel(z => Math.max(parseFloat((z - 0.25).toFixed(2)), 0.5)) }
-  function zoomIn()   { setZoomLevel(z => Math.min(parseFloat((z + 0.25).toFixed(2)), 3.0)) }
+  function zoomOut()  { setZoomLevel(z => Math.max(parseFloat((z - 0.25).toFixed(2)), 0.4)) }
+  function zoomIn()   { setZoomLevel(z => Math.min(parseFloat((z + 0.25).toFixed(2)), 4.0)) }
   function resetZoom(){ setZoomLevel(1.0) }
 
   return (
@@ -140,7 +149,7 @@ export default function Catecismo() {
     <div className={`${styles.container} page-enter`}>
 
       {/* HEADER */}
-      <div className={styles.header}>
+      <div className={styles.header} ref={headerRef}>
 
         <div className={styles.headerTop}>
           <button className={styles.backButton} onClick={() => navigate("/oratio/home")}><ChevronLeft size={20} /></button>
@@ -247,7 +256,7 @@ export default function Catecismo() {
       </div>
 
       {/* FOOTER — navegação de páginas */}
-      <div className={styles.footer}>
+      <div className={styles.footer} ref={footerRef}>
 
         <button
           className={styles.navBtn}

@@ -404,7 +404,7 @@ TAMANHO DE FONTE
 .fontScaleGrid{
 
  display:grid;
- grid-template-columns:repeat(4,1fr);
+ grid-template-columns:repeat(3,1fr);
 
  gap:8px;
 
@@ -478,17 +478,6 @@ TAMANHO DE FONTE
  color:var(--oratio-primary);
 
 }
-
-@media(max-width:360px){
-
- .fontScaleGrid{
-
-  grid-template-columns:repeat(2,1fr);
-
- }
-
-}
-
 
 /* =========================
 ADMIN
