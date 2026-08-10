@@ -987,6 +987,226 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
     ]
   },
 
+  "santos-arcanjos": {
+    titulo: "Santos Arcanjos Miguel, Gabriel e Rafael",
+    resumo: "Festa que reúne num só dia os três arcanjos nomeados nas Escrituras, mensageiros de Deus junto aos homens.",
+    texto: [
+      "A Igreja celebra em 29 de setembro os três arcanjos cujos nomes aparecem na Sagrada Escritura. Cada nome, em hebraico, exprime uma missão diante de Deus: Miguel significa \"Quem como Deus?\", Gabriel, \"Força de Deus\" (ou \"Deus é a minha força\"), e Rafael, \"Deus cura\".",
+      "São Miguel aparece no livro de Daniel como o grande protetor do povo de Deus, na carta de São Judas e no Apocalipse, onde combate o dragão — por isso é venerado como defensor contra o mal e príncipe das milícias celestes. São Gabriel é o mensageiro que anuncia: no livro de Daniel interpreta as visões do profeta e, no Evangelho de Lucas, anuncia a Zacarias o nascimento de João Batista e a Maria o nascimento de Jesus, na Anunciação. São Rafael é o protagonista do livro de Tobias, onde acompanha o jovem Tobias em sua viagem, sob forma humana, e cura a cegueira de seu pai — revelando por fim ser \"um dos sete anjos que estão diante do Senhor\" (Tb 12,15).",
+      "A data tem origem na dedicação, por volta do século V, de uma basílica em honra a São Miguel na via Salária, perto de Roma. Durante séculos, o dia 29 de setembro celebrou sobretudo São Miguel, enquanto Gabriel e Rafael tinham festas próprias em outras datas. Com a reforma do calendário litúrgico, em 1969, as três celebrações foram reunidas numa única festa.",
+      "A palavra \"arcanjo\" indica uma função, não uma natureza superior: aponta para o anjo enviado como mensageiro nas horas decisivas da história da salvação. A Igreja os apresenta como servidores de Deus a serviço dos homens, e não como seres a serem cultuados em si mesmos."
+    ]
+  },
+
+  "sao-jeronimo": {
+    titulo: "São Jerônimo, presbítero e doutor da Igreja",
+    resumo: "Tradutor da Bíblia para o latim (a Vulgata) e um dos maiores estudiosos das Escrituras da Igreja antiga.",
+    texto: [
+      "Nasceu por volta de 347 em Estridão, na Dalmácia (região dos Bálcãs), e estudou em Roma, onde foi batizado. Dominava o latim e o grego e, mais tarde, dedicou-se ao estudo do hebraico — algo raro entre os cristãos de seu tempo —, o que o tornaria capaz de traduzir o Antigo Testamento diretamente da língua original.",
+      "Por volta de 382 tornou-se secretário do Papa Dâmaso I, em Roma, que lhe confiou a tarefa de revisar as traduções latinas da Bíblia então em uso. Desse trabalho nasceria a Vulgata — a versão latina das Escrituras que se tornaria o texto oficial da Igreja no Ocidente por muitos séculos.",
+      "Após a morte de Dâmaso, retirou-se para a Terra Santa e, a partir de 386, fixou-se em Belém, junto à gruta da Natividade, onde viveu como monge e realizou a maior parte de sua obra. Ali traduziu do hebraico grande parte do Antigo Testamento e escreveu numerosos comentários bíblicos. Era conhecido também pelo temperamento forte e polêmico, que transparece em suas cartas.",
+      "Morreu em Belém em 30 de setembro de 420. É venerado como Doutor da Igreja e padroeiro dos tradutores, biblistas e bibliotecários. Dele é a célebre frase: \"Ignorar as Escrituras é ignorar a Cristo.\""
+    ]
+  },
+
+  "santa-teresinha": {
+    titulo: "Santa Teresinha do Menino Jesus, virgem e doutora da Igreja",
+    resumo: "Jovem carmelita francesa que ensinou a \"pequena via\" da confiança e do amor, hoje uma das mais amadas santas da Igreja.",
+    texto: [
+      "Marie-Françoise-Thérèse Martin nasceu em Alençon, na França, em 1873. Perdeu a mãe ainda criança e cresceu numa família profundamente cristã — seus pais, Luís e Zélia Martin, seriam mais tarde canonizados juntos. Desde cedo desejou a vida religiosa e, aos quinze anos, obteve autorização excepcional para entrar no Carmelo de Lisieux, em 1888.",
+      "No convento, viveu de modo escondido e comum, sem feitos extraordinários. Dessa experiência formulou o que chamou de \"pequena via\": o caminho da infância espiritual, feito de confiança total em Deus como Pai e de amor nas pequenas coisas do dia a dia, ao alcance de qualquer pessoa. Por obediência, escreveu suas memórias, reunidas depois no livro \"História de uma Alma\", que se tornaria uma das obras espirituais mais lidas do século XX.",
+      "Adoeceu de tuberculose e morreu em 30 de setembro de 1897, com apenas 24 anos. Embora jamais tenha saído do convento nem partido em missão, foi proclamada padroeira das missões, ao lado de São Francisco Xavier, por ter oferecido toda a sua vida de oração pela conversão do mundo.",
+      "Foi canonizada em 1925 pelo Papa Pio XI e, em 1997, o Papa João Paulo II a declarou Doutora da Igreja — uma das poucas mulheres a receber esse título e a mais jovem de todos. Sua memória litúrgica é celebrada em 1º de outubro, no dia seguinte ao de sua morte, reservado a São Jerônimo."
+    ]
+  },
+
+  "santos-anjos-guarda": {
+    titulo: "Santos Anjos da Guarda",
+    resumo: "Memória que celebra os anjos que Deus confia à guarda de cada pessoa ao longo da vida.",
+    texto: [
+      "A Igreja ensina que Deus confia a cada ser humano um anjo para acompanhá-lo, protegê-lo e conduzi-lo ao bem — o anjo da guarda. Essa convicção se apoia em passagens da Escritura, como o Salmo 91 (\"Ele dará ordens a seus anjos para que te guardem em todos os teus caminhos\") e as palavras de Jesus sobre os pequeninos: \"os seus anjos, nos céus, veem continuamente a face de meu Pai\" (Mt 18,10).",
+      "A devoção aos anjos é muito antiga na tradição cristã, cultivada de modo especial por monges e eremitas. Como celebração litúrgica própria, difundiu-se a partir do fim da Idade Média, primeiro na Espanha, e foi estendida a toda a Igreja no século XVII.",
+      "A data de 2 de outubro foi fixada pelo Papa Clemente X, em 1670, logo depois da festa dos Arcanjos (29 de setembro), com a qual a celebração esteve por muito tempo associada.",
+      "Mais do que uma figura de proteção, o anjo da guarda é apresentado pela Igreja como sinal do cuidado pessoal de Deus por cada um: uma presença silenciosa que acompanha a caminhada de fé, sem substituir a liberdade nem o esforço de quem é acompanhado."
+    ]
+  },
+
+  "protomartires-brasil": {
+    titulo: "Protomártires do Brasil (Mártires de Cunhaú e Uruaçu)",
+    resumo: "Grupo de católicos mortos por ódio à fé no Rio Grande do Norte em 1645, reconhecidos como os primeiros mártires do Brasil.",
+    texto: [
+      "Em 1645, durante a ocupação holandesa do Nordeste, católicos da então Capitania do Rio Grande foram mortos por ódio à fé em dois episódios, por tropas calvinistas e seus aliados. São reconhecidos como os primeiros mártires do Brasil — daí o nome \"protomártires\".",
+      "O primeiro massacre ocorreu em 16 de julho de 1645, na capela de Nossa Senhora das Candeias, no engenho de Cunhaú (atual Canguaretama). Durante a missa celebrada pelo padre André de Soveral, as portas foram fechadas e os fiéis reunidos ali foram mortos. Entre as vítimas, a tradição destaca Mateus Moreira, que, ao ter o coração arrancado, teria exclamado: \"Louvado seja o Santíssimo Sacramento.\"",
+      "O segundo massacre aconteceu em 3 de outubro de 1645, na região de Uruaçu (atual São Gonçalo do Amarante), onde outro grupo de católicos, guiado pelo padre Ambrósio Francisco Ferro, foi torturado e morto. É dessa segunda data que vem a memória litúrgica, celebrada em 3 de outubro.",
+      "Ao todo, trinta mártires dos dois episódios foram beatificados por João Paulo II em 5 de março de 2000 e canonizados pelo Papa Francisco em 15 de outubro de 2017, na Praça de São Pedro, no Vaticano — reconhecidos pela Igreja como os primeiros mártires do Brasil."
+    ]
+  },
+
+  "sao-francisco-assis": {
+    titulo: "São Francisco de Assis",
+    resumo: "Filho de rico mercador que abraçou a pobreza radical do Evangelho, fundou a Ordem Franciscana e foi o primeiro santo de quem se tem registro a receber os estigmas.",
+    texto: [
+      "Nasceu em Assis, na Itália, por volta de 1181, filho de Pietro di Bernardone, próspero comerciante de tecidos. Levou uma juventude despreocupada e sonhava com glórias militares, até que uma série de experiências — uma doença, a prisão numa guerra entre cidades e a voz de Deus que ouviu na igrejinha de São Damião — o conduziram a uma profunda conversão.",
+      "Rompeu publicamente com a riqueza da família: diante do bispo de Assis, devolveu ao pai até as roupas que vestia, declarando querer ter por pai apenas \"o Pai que está nos céus\". Passou a viver de esmolas e a servir os pobres e os leprosos, abraçando o que chamava de \"Senhora Pobreza\". Logo atraiu companheiros e, em 1209, obteve do Papa Inocêncio III a aprovação de sua forma de vida, dando início à Ordem dos Frades Menores (franciscanos). Com Santa Clara nasceria também o ramo feminino, as Clarissas.",
+      "De sua sensibilidade brotaram gestos que marcaram a fé cristã: em 1223, em Greccio, montou o primeiro presépio para celebrar o Natal; e por volta de 1225 compôs o \"Cântico das Criaturas\", em que louva a Deus chamando de irmãos o sol, a lua, a água e até a morte — um dos primeiros textos poéticos em língua italiana. Em 1224, durante uma oração no monte La Verna, recebeu os estigmas, as chagas da paixão de Cristo em seu próprio corpo, tornando-se o primeiro santo de quem se tem registro a recebê-los.",
+      "Morreu em Assis na noite de 3 de outubro de 1226 e foi canonizado menos de dois anos depois, em 1228, pelo Papa Gregório IX. Sua memória litúrgica é celebrada em 4 de outubro. É padroeiro da Itália e, em tempos recentes, foi proclamado também patrono da ecologia, pelo amor com que reconhecia toda a criação como obra e dom de Deus."
+    ]
+  },
+
+  "santa-faustina": {
+    titulo: "Santa Faustina Kowalska, virgem",
+    resumo: "Religiosa polonesa a quem foi confiada a mensagem da Divina Misericórdia, difundida pelo mundo a partir de seu diário.",
+    texto: [
+      "Helena Kowalska nasceu em 1905, numa família pobre de camponeses da Polônia. Com pouca instrução formal, entrou aos vinte anos para a Congregação das Irmãs de Nossa Senhora da Misericórdia, adotando o nome de Maria Faustina, e serviu em conventos como cozinheira, jardineira e porteira.",
+      "A partir de 1931 relatou uma série de aparições e locuções de Jesus, que lhe pedia para difundir a confiança na misericórdia divina. De uma dessas visões nasceu a célebre imagem do Cristo com dois raios saindo do peito — um pálido e um vermelho — e a inscrição \"Jesus, eu confio em Vós\". Por ordem de seus confessores, registrou essas experiências num diário, publicado com o título \"A Divina Misericórdia na minha alma\".",
+      "Ligadas a ela difundiram-se práticas como a coroa (terço) da Divina Misericórdia e o pedido de uma festa própria dedicada à Misericórdia. Faustina morreu de tuberculose em 5 de outubro de 1938, em Cracóvia, com apenas 33 anos.",
+      "Foi canonizada em 30 de abril de 2000 pelo Papa João Paulo II — a primeira canonização do novo milênio —, que, no mesmo dia, instituiu para toda a Igreja o Domingo da Divina Misericórdia, celebrado no segundo domingo da Páscoa."
+    ]
+  },
+
+  "sao-bruno": {
+    titulo: "São Bruno, presbítero",
+    resumo: "Mestre célebre que trocou a fama pela solidão e fundou a Ordem dos Cartuxos, a mais rigorosamente contemplativa da Igreja.",
+    texto: [
+      "Nasceu em Colônia, na atual Alemanha, por volta de 1030. Tornou-se um dos mais renomados mestres de sua época, dirigindo por muitos anos a escola da catedral de Reims, na França, onde formou futuros bispos e até um papa. No auge do prestígio, porém, sentiu o chamado a deixar tudo em busca de uma vida de silêncio e oração.",
+      "Em 1084, com alguns companheiros, retirou-se para um vale isolado nas montanhas perto de Grenoble, com a ajuda do bispo local, Santo Hugo. Ali fundou a comunidade que daria origem à Grande Cartuxa e à Ordem dos Cartuxos, marcada por um estilo de vida que une a solidão do eremita à vida em comunidade, num silêncio quase total dedicado à contemplação.",
+      "Chamado a Roma pelo Papa Urbano II, seu antigo discípulo, para auxiliá-lo como conselheiro, Bruno aceitou por obediência, mas logo pediu para voltar à vida solitária. Recusou a dignidade de bispo e fundou um segundo eremitério na Calábria, no sul da Itália, onde passou seus últimos anos.",
+      "Morreu em 6 de outubro de 1101, em Serra San Bruno, na Calábria. Fiéis ao espírito de discrição da ordem, os cartuxos nunca promoveram um processo solene de canonização; seu culto foi confirmado pela Igreja e, em 1623, estendido a todos os fiéis."
+    ]
+  },
+
+  "nossa-senhora-rosario": {
+    titulo: "Nossa Senhora do Rosário",
+    resumo: "Festa mariana ligada à oração do terço e, historicamente, à vitória cristã na batalha de Lepanto, em 1571.",
+    texto: [
+      "A festa celebra Maria sob o título ligado ao Rosário, a oração que percorre, ave-maria após ave-maria, os principais mistérios da vida de Cristo e de sua Mãe. A tradição associa a difusão dessa devoção à pregação de São Domingos e da Ordem dos Dominicanos ao longo dos séculos.",
+      "A data de 7 de outubro tem origem histórica precisa: nesse dia, em 1571, a frota da chamada Liga Santa enfrentou a poderosa armada otomana no golfo de Lepanto, em combate naval decisivo para a Europa da época. O Papa São Pio V havia convocado os fiéis a rezar o Rosário, pedindo a proteção de Maria.",
+      "Atribuindo a vitória à intercessão de Nossa Senhora, Pio V instituiu uma festa em ação de graças, inicialmente sob o título de \"Nossa Senhora da Vitória\". Pouco depois, o Papa Gregório XIII fixou-a como festa de \"Nossa Senhora do Rosário\", no dia 7 de outubro.",
+      "Mais do que a memória de uma batalha, a celebração é hoje um convite a redescobrir o Rosário como oração simples e contemplativa, ao alcance de todos, que conduz, pela mão de Maria, ao coração do Evangelho."
+    ]
+  },
+
+  "santa-pelagia": {
+    titulo: "Santa Pelágia de Antioquia, virgem e mártir",
+    resumo: "Jovem cristã de Antioquia que, segundo a tradição antiga, preferiu a morte a ter sua fé e sua pureza violadas.",
+    texto: [
+      "O que se conta de Pelágia vem sobretudo de uma homilia de São João Crisóstomo e de menções de Santo Ambrósio, nos séculos IV e V. Segundo esses relatos, era uma jovem cristã de Antioquia, na Síria, de cerca de quinze anos, no tempo da perseguição do imperador Diocleciano, no início do século IV.",
+      "Quando soldados foram buscá-la em casa para forçá-la a renegar a fé, Pelágia pediu licença para se preparar. Sabendo o que a esperava e não querendo ser desonrada, lançou-se do alto da casa, entregando a vida em vez de trair sua fé e sua pureza. A Igreja de Antioquia a venerou desde cedo como virgem e mártir.",
+      "Santo Ambrósio e São João Crisóstomo louvaram sua coragem como exemplo de fidelidade a Deus, o que fez sua memória atravessar os séculos, ainda que sejam escassos os dados históricos seguros sobre sua vida.",
+      "Vale uma observação: a tradição distingue essa Pelágia, virgem e mártir, de outra figura lembrada no mesmo dia em algumas tradições — Pelágia, a Penitente, antiga atriz de Antioquia convertida à fé. Estudiosos discutem há muito se se trata de duas santas distintas ou de desdobramentos de uma mesma história."
+    ]
+  },
+
+  "sao-joao-leonardo": {
+    titulo: "São João Leonardo, presbítero",
+    resumo: "Farmacêutico que se tornou sacerdote e fundou uma congregação dedicada à reforma do clero e à formação cristã, além de ajudar a lançar as bases das missões da Igreja.",
+    texto: [
+      "Nasceu por volta de 1541 em Diecimo, perto de Lucca, na Itália. Trabalhou por anos como auxiliar de farmácia antes de decidir estudar teologia; foi ordenado sacerdote em 1572. Marcado pelo clima de renovação da Igreja após o Concílio de Trento, dedicou-se especialmente à catequese das crianças e à formação de um clero mais santo e preparado.",
+      "Em 1574, reuniu em Lucca um grupo de sacerdotes num novo instituto, que viria a chamar-se Ordem dos Clérigos Regulares da Mãe de Deus. A proposta enfrentou resistências e lhe custou até períodos afastado da própria cidade natal, mas firmou-se como obra voltada à reforma da vida sacerdotal e ao ensino da fé.",
+      "João Leonardo colaborou ainda com iniciativas que ajudariam a estruturar a atividade missionária da Igreja — esforços ligados às origens do que se tornaria a Congregação para a propagação da fé (Propaganda Fide).",
+      "Morreu em Roma em 9 de outubro de 1609, durante uma epidemia que atingia a cidade. Foi canonizado em 1938 pelo Papa Pio XI e é lembrado como padroeiro dos farmacêuticos, em memória de seu antigo ofício."
+    ]
+  },
+
+  "sao-daniel-comboni": {
+    titulo: "São Daniel Comboni, bispo",
+    resumo: "Missionário italiano que dedicou a vida à evangelização da África e ao combate à escravidão, com o lema \"Salvar a África com a África\".",
+    texto: [
+      "Nasceu em 1831 em Limone sul Garda, no norte da Itália, filho de camponeses. Ainda jovem sentiu o chamado às missões e, em 1857, partiu pela primeira vez para a África Central, região então marcada pela escravidão e por condições extremamente duras para os missionários, muitos dos quais morriam pouco depois de chegar.",
+      "Convencido de que a evangelização da África deveria ter os próprios africanos como protagonistas, elaborou um projeto que ficou conhecido como \"Plano para a regeneração da África\", resumido no lema \"Salvar a África com a África\". Fundou dois institutos religiosos — os Missionários e as Missionárias Combonianas — para dar continuidade a essa obra.",
+      "Foi nomeado bispo e vigário apostólico da África Central, com sede em Cartum, no atual Sudão. Denunciou com firmeza o tráfico de escravos e trabalhou para formar comunidades cristãs locais, em meio a enormes dificuldades de clima, doenças e falta de recursos.",
+      "Morreu em Cartum em 10 de outubro de 1881, aos 50 anos, esgotado pelo trabalho. Foi canonizado em 5 de outubro de 2003 pelo Papa João Paulo II."
+    ]
+  },
+
+  "sao-joao-xxiii": {
+    titulo: "São João XXIII, Papa",
+    resumo: "O \"Papa Bom\", que convocou o Concílio Vaticano II e imprimiu à Igreja um espírito de renovação e de diálogo com o mundo moderno.",
+    texto: [
+      "Angelo Giuseppe Roncalli nasceu em 1881 em Sotto il Monte, perto de Bérgamo, na Itália, em família numerosa e humilde de camponeses. Foi ordenado sacerdote e serviu como capelão militar na Primeira Guerra Mundial, depois como diplomata da Santa Sé em vários países e, mais tarde, como patriarca de Veneza.",
+      "Eleito Papa em 1958, já com 76 anos, muitos esperavam um pontificado breve e de transição. Surpreendeu ao convocar, em 1959, o Concílio Vaticano II — a grande assembleia que buscaria renovar a vida da Igreja e seu modo de anunciar o Evangelho ao mundo contemporâneo. O Concílio foi aberto em 11 de outubro de 1962, data escolhida para sua memória litúrgica.",
+      "Ficou conhecido como o \"Papa Bom\" pela simplicidade e proximidade humana. Deixou encíclicas marcantes, como a Mater et Magistra, sobre as questões sociais, e a Pacem in Terris, apelo à paz dirigido a todos os homens de boa vontade em plena Guerra Fria.",
+      "Morreu em 3 de junho de 1963, sem ver o fim do Concílio que iniciara. Foi canonizado em 27 de abril de 2014 pelo Papa Francisco, no mesmo dia em que foi canonizado São João Paulo II."
+    ]
+  },
+
+  "beata-alexandrina-costa": {
+    titulo: "Beata Alexandrina Maria da Costa, virgem",
+    resumo: "Jovem portuguesa que, imobilizada por quase trinta anos, transformou o sofrimento em oferenda e é lembrada por sua intensa vida mística e eucarística.",
+    texto: [
+      "Nasceu em 1904 em Balasar, no norte de Portugal, em família camponesa. Aos catorze anos, para escapar de homens que ameaçavam sua pureza, saltou de uma janela; as lesões daí resultantes agravaram-se com o tempo e a deixaram completamente paralisada, presa a uma cama pelos cerca de trinta anos seguintes de sua vida.",
+      "Vivendo esse longo sofrimento em união com a paixão de Cristo, Alexandrina ofereceu-se como \"vítima\" pela conversão dos pecadores e destacou-se pela devoção à Eucaristia e ao Imaculado Coração de Maria, em sintonia com a mensagem de Fátima.",
+      "A tradição relata que, por cerca de treze anos, alimentou-se unicamente da Eucaristia. O fenômeno chegou a ser submetido a um período de rigorosa observação médica num hospital do Porto, que registrou a ausência de alimentação comum durante o tempo examinado — algo que a Igreja não apresenta como prova científica definitiva, mas como sinal ligado à sua vida de fé.",
+      "Morreu em 13 de outubro de 1955. Foi beatificada em 25 de abril de 2004 pelo Papa João Paulo II, e o santuário de Balasar tornou-se um dos lugares de peregrinação mais visitados de Portugal."
+    ]
+  },
+
+  "sao-calisto-i": {
+    titulo: "São Calisto I, Papa e mártir",
+    resumo: "De escravo a Papa, ficou conhecido pela misericórdia com os pecadores e pelo cuidado com o cemitério cristão que leva seu nome.",
+    texto: [
+      "Segundo os relatos antigos, Calisto nasceu em Roma, de origem humilde, e foi escravo. Encarregado de um negócio que fracassou, acabou condenado a trabalhos forçados nas minas da Sardenha, onde conviveu com cristãos presos por causa da fé — experiência ligada à sua conversão. Recuperada a liberdade, tornou-se diácono.",
+      "O Papa Zeferino confiou-lhe a administração do cemitério cristão da via Ápia, em Roma — as célebres catacumbas que até hoje levam seu nome, um dos mais importantes conjuntos funerários da Igreja antiga.",
+      "Por volta de 217 foi eleito Papa. Seu governo foi marcado por controvérsias sobre a disciplina penitencial: Calisto defendia a possibilidade de readmitir à comunhão os cristãos que haviam caído em pecados graves, depois de sincera penitência — posição de misericórdia que lhe rendeu forte oposição de setores mais rigoristas.",
+      "Morreu por volta de 222, venerado como mártir desde a Antiguidade; a tradição liga sua morte a um tumulto popular contra os cristãos em Roma. É lembrado sobretudo pela clemência pastoral e pelo cuidado com a memória dos fiéis sepultados."
+    ]
+  },
+
+  "santa-teresa-avila": {
+    titulo: "Santa Teresa de Jesus (Teresa d'Ávila), virgem e doutora da Igreja",
+    resumo: "Grande mística e reformadora do Carmelo, foi a primeira mulher proclamada Doutora da Igreja.",
+    texto: [
+      "Teresa de Cepeda y Ahumada nasceu em Ávila, na Espanha, em 1515. Entrou jovem para o Carmelo e, após anos de vida religiosa comum e de saúde frágil, viveu uma profunda experiência de renovação interior, que a lançou num caminho de intensa oração e união com Deus.",
+      "A partir de 1562, empreendeu uma corajosa reforma da Ordem do Carmo, fundando conventos de vida mais austera e recolhida — os Carmelitas Descalços —, obra que realizou ao lado de São João da Cruz, apesar de muitas resistências. Percorreu a Espanha fundando comunidades, unindo à contemplação um espírito prático e cheio de bom humor.",
+      "Deixou obras espirituais que se tornaram clássicos da mística cristã, como o \"Livro da Vida\", o \"Caminho de Perfeição\" e o \"Castelo Interior\", em que descreve a alma como um castelo de muitas moradas em direção a Deus.",
+      "Morreu na noite de 4 de outubro de 1582. Como naqueles dias entrava em vigor a reforma do calendário gregoriano, o dia seguinte foi contado como 15 de outubro — data em que sua memória é celebrada. Foi canonizada em 1622 e, em 1970, o Papa Paulo VI a declarou Doutora da Igreja, a primeira mulher a receber esse título."
+    ]
+  },
+
+  "santa-margarida-alacoque": {
+    titulo: "Santa Margarida Maria Alacoque, virgem",
+    resumo: "Religiosa da Ordem da Visitação a quem se atribui a difusão da devoção ao Sagrado Coração de Jesus.",
+    texto: [
+      "Nasceu em 1647, na região da Borgonha, na França. Desde cedo atraída pela vida religiosa, entrou para o mosteiro das monjas da Visitação em Paray-le-Monial, onde viveu de modo humilde e escondido.",
+      "Entre 1673 e 1675, relatou uma série de aparições de Jesus, que lhe mostrava seu Coração como sinal de um amor imenso e muitas vezes esquecido pelos homens, pedindo-lhe que trabalhasse pela difusão dessa devoção. Dessas revelações nasceram práticas que se espalhariam por toda a Igreja, como a comunhão nas primeiras sextas-feiras do mês e a festa do Sagrado Coração.",
+      "No começo, encontrou desconfiança e resistência, inclusive dentro do próprio convento. Teve, porém, o apoio decisivo de seu diretor espiritual, o jesuíta São Cláudio de la Colombière, que reconheceu a autenticidade de sua experiência e ajudou a difundir a mensagem.",
+      "Morreu em 17 de outubro de 1690, aos 43 anos. Foi canonizada em 1920 pelo Papa Bento XV. A devoção ao Sagrado Coração de Jesus, ligada a seu nome, tornou-se uma das mais populares e difundidas do catolicismo."
+    ]
+  },
+
+  "santo-inacio-antioquia": {
+    titulo: "Santo Inácio de Antioquia, bispo e mártir",
+    resumo: "Bispo dos primeiros tempos do cristianismo, escreveu sete cartas a caminho do martírio e foi o primeiro a chamar a Igreja de \"católica\".",
+    texto: [
+      "Inácio foi bispo de Antioquia, na Síria, uma das principais comunidades cristãs dos primeiros tempos, no fim do século I e início do século II. Recebeu o sobrenome grego Teóforo, que significa \"portador de Deus\". A tradição o liga à geração imediatamente posterior à dos apóstolos.",
+      "Durante a perseguição no tempo do imperador Trajano, foi condenado e levado sob escolta de Antioquia até Roma para ser executado. Ao longo dessa viagem, escreveu sete cartas — dirigidas a diversas comunidades cristãs e a São Policarpo, bispo de Esmirna — que estão entre os mais preciosos testemunhos da fé e da organização da Igreja naquela época.",
+      "Nessas cartas, Inácio exorta os cristãos à unidade em torno dos bispos e manifesta um ardente desejo de dar a vida por Cristo. É nelas, também, que aparece pela primeira vez a expressão \"Igreja católica\", isto é, universal.",
+      "Chegando a Roma, foi morto por volta do ano 107, lançado às feras no anfiteatro. É venerado como um dos Padres Apostólicos — os primeiros escritores cristãos ligados diretamente ao tempo dos apóstolos."
+    ]
+  },
+
+  "sao-lucas": {
+    titulo: "São Lucas, Evangelista",
+    resumo: "Médico e companheiro de São Paulo, autor do terceiro Evangelho e dos Atos dos Apóstolos.",
+    texto: [
+      "Segundo a tradição antiga, Lucas era de Antioquia, na Síria, e de origem grega, não judaica. Exercia a medicina — São Paulo o chama de \"o médico amado\" (Cl 4,14) — e foi companheiro de viagem e colaborador do apóstolo em parte de suas missões.",
+      "É reconhecido como autor de duas obras que, juntas, formam quase um terço do Novo Testamento: o terceiro Evangelho e os Atos dos Apóstolos, que narram, respectivamente, a vida de Jesus e os primeiros passos da Igreja depois de Pentecostes.",
+      "Seu Evangelho é marcado pela ternura: destaca a misericórdia de Deus, a atenção aos pobres e aos pecadores e o lugar das mulheres. É a ele que devemos algumas das páginas mais amadas do Novo Testamento, como as narrativas da infância de Jesus e parábolas como a do filho pródigo e a do bom samaritano. Uma tradição posterior o apresenta também como pintor, o primeiro a retratar a Virgem Maria.",
+      "Entre os símbolos dos quatro evangelistas, o seu é o touro (ou novilho), ligado à ideia de sacrifício. É venerado como padroeiro dos médicos e também dos pintores e artistas. Sua festa é celebrada em 18 de outubro."
+    ]
+  },
+
+  "sao-paulo-cruz": {
+    titulo: "São Paulo da Cruz, presbítero",
+    resumo: "Fundador dos Passionistas, dedicou a vida a manter viva a memória da paixão de Cristo.",
+    texto: [
+      "Nasceu Paolo Francesco Danei em 1694, em Ovada, no norte da Itália, em família cristã e de comerciantes. Desde jovem sentiu-se chamado a uma vida de penitência e oração, centrada na contemplação dos sofrimentos de Cristo, que considerava a maior expressão do amor de Deus pelos homens.",
+      "Reuniu companheiros e fundou a Congregação da Paixão de Jesus Cristo, cujos membros — os passionistas — assumem um voto especial de promover a memória da paixão do Senhor. Dedicou-se intensamente à pregação de missões populares, buscando reavivar a fé do povo simples.",
+      "Homem de intensa vida interior, é lembrado por sua austeridade e, ao mesmo tempo, pela doçura no trato com os pecadores e os aflitos. Já no fim da vida, viu nascer também o ramo contemplativo feminino da congregação, as monjas passionistas.",
+      "Morreu em Roma em 18 de outubro de 1775. Foi canonizado em 1867 pelo Papa Pio IX. Sua memória litúrgica é celebrada em 19 de outubro."
+    ]
+  },
+
 }
 
 export type MovableFeast = {
