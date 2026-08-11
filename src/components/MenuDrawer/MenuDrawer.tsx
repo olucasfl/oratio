@@ -146,9 +146,12 @@ export default function MenuDrawer(){
 
         <div className={styles.head}>
 
-          <span className={styles.logo}>
-            ORA<span className={styles.cross} aria-hidden="true"/>IO
-          </span>
+          <div className={styles.brand}>
+            <span className={styles.logo}>
+              ORA<span className={styles.cross} aria-hidden="true"/>IO
+            </span>
+            <span className={styles.tagline}>Espiritualidade católica</span>
+          </div>
 
           <button
             className={styles.close}

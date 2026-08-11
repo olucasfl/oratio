@@ -1946,8 +1946,17 @@ PARA VOCÊ HOJE (sugestões dinâmicas)
  align-items:center;
  justify-content:center;
  border-radius:13px;
- background:rgba(176,24,26,.08);
+ background:linear-gradient(150deg, rgba(176,24,26,.14), rgba(176,24,26,.05));
+ border:1px solid rgba(176,24,26,.16);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.6);
  color:var(--oratio-primary);
+ transition:background .18s ease, border-color .18s ease, color .18s ease;
+}
+
+.suggestion:hover .suggestionIcon{
+ background:linear-gradient(150deg,#b0181a,#7d1113);
+ border-color:transparent;
+ color:#fff;
 }
 
 .suggestionBody{
@@ -2038,14 +2047,25 @@ ATALHOS
 }
 
 .shortcutIcon{
- width:44px;
- height:44px;
+ width:46px;
+ height:46px;
  display:flex;
  align-items:center;
  justify-content:center;
  border-radius:14px;
- background:rgba(176,24,26,.09);
+ background:linear-gradient(150deg, rgba(176,24,26,.14), rgba(176,24,26,.05));
+ border:1px solid rgba(176,24,26,.16);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.6);
  color:var(--oratio-primary);
+ transition:background .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease;
+}
+
+/* hover no atalho: o tile do ícone vira carmim sólido com ícone branco */
+.shortcut:hover .shortcutIcon{
+ background:linear-gradient(150deg,#b0181a,#7d1113);
+ border-color:transparent;
+ box-shadow:0 6px 14px -6px rgba(176,24,26,.5);
+ color:#fff;
 }
 
 .shortcutLabel{
