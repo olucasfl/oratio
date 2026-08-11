@@ -361,13 +361,13 @@ HERO
 
  position:relative;
 
- width:.12em;
+ width:.13em;
 
- height:1.42em;
+ height:1.62em;
 
- margin:0 .26em;
+ margin:0 .3em;
 
- top:-.05em;
+ top:-.06em;
 
  background:
  linear-gradient(
@@ -393,11 +393,11 @@ HERO
 
  left:50%;
 
- top:.3em;
+ top:.36em;
 
- width:.5em;
+ width:1.25em;
 
- height:.12em;
+ height:.13em;
 
  transform:translateX(-50%);
 
