@@ -13,6 +13,9 @@ from "../../components/MenuDrawer/MenuDrawer"
 import NotificationBell
 from "../../components/NotificationBell/NotificationBell"
 
+import NotificationNudge
+from "../../components/NotificationNudge/NotificationNudge"
+
 import GuestWelcomeModal
 from "../../components/GuestWelcomeModal/GuestWelcomeModal"
 
@@ -300,6 +303,8 @@ export default function Home(){
    <MenuDrawer/>
 
    {!guest && <NotificationBell/>}
+
+   {!guest && <NotificationNudge/>}
 
    {!pwa && (
 

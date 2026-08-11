@@ -1,0 +1,102 @@
+.wrap{
+ position:fixed;
+ left:12px;
+ right:12px;
+ bottom:calc(84px + env(safe-area-inset-bottom));
+ z-index:900;
+ display:flex;
+ justify-content:center;
+ pointer-events:none;
+ animation:rise .32s cubic-bezier(.2,.7,.3,1);
+}
+
+.card{
+ position:relative;
+ pointer-events:auto;
+ width:100%;
+ max-width:430px;
+ display:grid;
+ grid-template-columns:auto 1fr;
+ grid-template-areas:
+  "icon text"
+  "actions actions";
+ gap:12px 13px;
+ padding:16px 16px 14px;
+ border:1px solid var(--oratio-card-border);
+ border-radius:20px;
+ background:#fffdf8;
+ box-shadow:0 20px 50px -16px rgba(60,40,15,.4);
+}
+
+.close{
+ position:absolute;
+ top:10px;
+ right:10px;
+ width:28px;
+ height:28px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border:none;
+ border-radius:8px;
+ background:none;
+ color:var(--oratio-text-soft);
+ cursor:pointer;
+}
+
+.icon{
+ grid-area:icon;
+ width:46px;
+ height:46px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border-radius:14px;
+ background:linear-gradient(135deg,#b0181a,#7d1113);
+ color:#fff;
+}
+
+.text{
+ grid-area:text;
+ display:flex;
+ flex-direction:column;
+ gap:3px;
+ padding-right:24px;
+}
+.text strong{ font-size:15px; color:var(--oratio-text-dark); }
+.text span{ font-size:13px; line-height:1.45; color:var(--oratio-text-soft); }
+
+.actions{
+ grid-area:actions;
+ display:flex;
+ gap:10px;
+ justify-content:flex-end;
+ margin-top:2px;
+}
+
+.later{
+ padding:10px 16px;
+ border:1px solid var(--oratio-card-border);
+ border-radius:12px;
+ background:#fff;
+ color:var(--oratio-text-dark);
+ font-size:13.5px;
+ font-weight:600;
+ cursor:pointer;
+ font-family:inherit;
+}
+
+.primary{
+ padding:10px 20px;
+ border:none;
+ border-radius:12px;
+ background:linear-gradient(135deg,#b0181a,#861214);
+ color:#fff;
+ font-size:13.5px;
+ font-weight:700;
+ cursor:pointer;
+ font-family:inherit;
+}
+
+@keyframes rise{ from{opacity:0; transform:translateY(16px)} to{opacity:1; transform:translateY(0)} }
+@media (prefers-reduced-motion:reduce){ .wrap{ animation:none; } }

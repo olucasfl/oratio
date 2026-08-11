@@ -1,5 +1,5 @@
-import { useEffect,useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useEffect,useState,useRef } from "react"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import { useOffline } from "../../hooks/useOffline"
 import { usePullToRefresh } from "../../hooks/usePullToRefresh"
 
@@ -53,6 +53,22 @@ export default function Profile(){
  const [pushLoading,setPushLoading] = useState(false)
  const [pushConfirm,setPushConfirm] = useState<null | "enable" | "disable">(null)
  const [pushError,setPushError] = useState<string | null>(null)
+
+ const [searchParams] = useSearchParams()
+ const notifCardRef = useRef<HTMLDivElement>(null)
+ const [notifHighlight,setNotifHighlight] = useState(false)
+
+ /* chegou do popup de reengajamento (?notif=1) → destaca a opção */
+ useEffect(()=>{
+  if(searchParams.get("notif") === "1"){
+   setNotifHighlight(true)
+   setTimeout(()=>{
+    notifCardRef.current?.scrollIntoView({ behavior:"smooth", block:"center" })
+   },200)
+   const t = setTimeout(()=>setNotifHighlight(false),2800)
+   return ()=>clearTimeout(t)
+  }
+ },[searchParams])
 
  const isOffline = useOffline()
 
@@ -686,7 +702,10 @@ export default function Profile(){
 
     {/* NOTIFICAÇÕES */}
 
-    <div className={styles.card}>
+    <div
+     ref={notifCardRef}
+     className={`${styles.card} ${notifHighlight ? styles.cardHighlight : ""}`}
+    >
 
      <div className={styles.cardTitle}>
 

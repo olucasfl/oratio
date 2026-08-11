@@ -1295,4 +1295,18 @@ NOTIFICAÇÕES (toggle)
  line-height:1.5;
 }
 
+.cardHighlight{
+ animation:notifPulse 1.3s ease-in-out 2;
+ border-color:var(--oratio-primary)!important;
+}
+
+@keyframes notifPulse{
+ 0%,100%{ box-shadow:0 0 0 0 rgba(176,24,26,0); }
+ 50%{ box-shadow:0 0 0 5px rgba(176,24,26,.22); }
+}
+
+@media (prefers-reduced-motion:reduce){
+ .cardHighlight{ animation:none; }
+}
+
 
