@@ -15,6 +15,7 @@ import {
   BookOpen,
   Book,
   MessageCircleHeart,
+  Sparkles,
   User,
   ChevronRight
 } from "lucide-react"
@@ -83,17 +84,13 @@ const GROUPS: Group[] = [
         icon: Book,
         locked: true,
         gateMessage: "Crie uma conta para acessar o Catecismo completo."
-      },
-      {
-        label: "VoxAI",
-        path: "/oratio/vox",
-        icon: MessageCircleHeart,
-        locked: true,
-        gateMessage: "Crie uma conta para conversar com o VoxAI, seu assistente espiritual católico."
       }
     ]
   }
 ]
+
+const VOX_GATE =
+  "Crie uma conta para conversar com o VoxAI, seu assistente espiritual católico."
 
 export default function MenuDrawer(){
 
@@ -162,6 +159,28 @@ export default function MenuDrawer(){
           </button>
 
         </div>
+
+        {/* VOXAI EM DESTAQUE (recurso premium) */}
+        <button
+          className={styles.voxFeature}
+          onClick={()=>go({ path:"/oratio/vox", locked:true, gateMessage:VOX_GATE })}
+        >
+          <span className={styles.voxIcon}>
+            <MessageCircleHeart size={20}/>
+          </span>
+          <span className={styles.voxText}>
+            <span className={styles.voxTitle}>
+              VoxAI
+              <span className={styles.voxBadge}>
+                <Sparkles size={9}/> IA
+              </span>
+            </span>
+            <span className={styles.voxSub}>
+              Seu assistente espiritual católico
+            </span>
+          </span>
+          <ChevronRight size={18} className={styles.voxChev}/>
+        </button>
 
         <nav className={styles.groups}>
 

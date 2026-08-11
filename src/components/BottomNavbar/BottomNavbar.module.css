@@ -70,6 +70,27 @@
  color:var(--oratio-primary);
 }
 
+/* wrapper do ícone (âncora do ponto de destaque do VoxAI) */
+.iconWrap{
+ position:relative;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ line-height:0;
+}
+
+/* ponto dourado premium do VoxAI */
+.featuredDot{
+ position:absolute;
+ top:-3px;
+ right:-5px;
+ width:7px;
+ height:7px;
+ border-radius:50%;
+ background:#d9a441;
+ box-shadow:0 0 0 2px var(--oratio-card-bg,#fff), 0 0 6px rgba(217,164,65,.75);
+}
+
 
 /* BOTÃO ATIVO */
 

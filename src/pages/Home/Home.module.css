@@ -2068,6 +2068,23 @@ ATALHOS
  color:#fff;
 }
 
+/* VoxAI em destaque entre os atalhos — borda dourada + tile sempre aceso */
+.shortcutFeatured{
+ border-color:rgba(240,209,138,.6);
+ background:linear-gradient(180deg, rgba(240,209,138,.12), rgba(255,255,255,.82));
+}
+
+.shortcutIconVox{
+ background:linear-gradient(150deg,#b0181a,#7d1113);
+ border-color:rgba(240,209,138,.55);
+ box-shadow:0 6px 14px -6px rgba(176,24,26,.5);
+ color:#f2d68a;
+}
+
+.shortcut:hover .shortcutIconVox{
+ color:#fff;
+}
+
 .shortcutLabel{
  font-size:12px;
  font-weight:600;

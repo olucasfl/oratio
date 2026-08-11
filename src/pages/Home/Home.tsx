@@ -80,6 +80,7 @@ type Shortcut = {
  icon:ComponentType<{ size?: number }>
  locked?:boolean
  gateMessage?:string
+ featured?:boolean
 }
 
 /* =========================
@@ -99,7 +100,7 @@ const SHORTCUTS:Shortcut[] = [
  { label:"Bíblia", path:"/oratio/biblia", icon:BookOpen },
  { label:"Catecismo", path:"/oratio/catecismo", icon:Book, locked:true,
    gateMessage:"Crie uma conta para acessar o Catecismo completo." },
- { label:"VoxAI", path:"/oratio/vox", icon:MessageCircleHeart, locked:true,
+ { label:"VoxAI", path:"/oratio/vox", icon:MessageCircleHeart, locked:true, featured:true,
    gateMessage:"Crie uma conta para conversar com o VoxAI, seu assistente espiritual católico." }
 ]
 
@@ -555,10 +556,10 @@ export default function Home(){
       return(
        <button
         key={item.label}
-        className={styles.shortcut}
+        className={`${styles.shortcut} ${item.featured ? styles.shortcutFeatured : ""}`}
         onClick={()=>handleShortcut(item)}
        >
-        <span className={styles.shortcutIcon}>
+        <span className={`${styles.shortcutIcon} ${item.featured ? styles.shortcutIconVox : ""}`}>
          <Icon size={20}/>
         </span>
         <span className={styles.shortcutLabel}>{item.label}</span>

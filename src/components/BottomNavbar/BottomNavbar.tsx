@@ -23,6 +23,7 @@ type NavItem = {
  icon:ComponentType<{ size?: number }>
  locked?:boolean
  gateMessage?:string
+ featured?:boolean
 }
 
 export default function BottomNavbar(){
@@ -64,6 +65,7 @@ export default function BottomNavbar(){
    path:"/oratio/vox",
    icon:MessageCircleHeart,
    locked:true,
+   featured:true,
    gateMessage:"Crie uma conta para conversar com o VoxAI, seu assistente espiritual católico."
   },
   {
@@ -97,7 +99,10 @@ export default function BottomNavbar(){
     onClick={()=>handleItemClick(item)}
     aria-label={`Abrir ${item.label}`}
    >
-    <Icon size={21}/>
+    <span className={styles.iconWrap}>
+     <Icon size={21}/>
+     {item.featured && <span className={styles.featuredDot} aria-hidden="true"/>}
+    </span>
     <span>{item.label}</span>
    </button>
   )
