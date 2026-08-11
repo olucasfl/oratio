@@ -1,4 +1,4 @@
-const CACHE_NAME = "oratio-cache-v18"
+const CACHE_NAME = "oratio-cache-v19"
 
 /* ============================= */
 /* APP SHELL */
@@ -232,6 +232,77 @@ self.addEventListener("fetch", (event) => {
 
   })
 
+ )
+
+})
+
+
+/* ============================= */
+/* PUSH (notificações) */
+/* ============================= */
+
+/*
+Recebe o payload JSON { title, body, url, icon } do backend e mostra
+a notificação do sistema. Fora do app, é o próprio SO que exibe.
+*/
+self.addEventListener("push", (event) => {
+
+ if (!event.data) return
+
+ let title = "Oratio"
+ let body = ""
+ let url = "/oratio/home"
+ let icon = "/icon-192.png"
+
+ try {
+  const data = event.data.json()
+  title = data.title || title
+  body = data.body || body
+  if (data.url) url = data.url
+  if (data.icon) icon = data.icon
+ } catch {
+  body = event.data.text()
+ }
+
+ event.waitUntil(
+  self.registration.showNotification(title, {
+   body,
+   icon,
+   badge: "/icon-192.png",
+   tag: "oratio-notification",
+   renotify: true,
+   data: { url }
+  })
+ )
+
+})
+
+/* Clique na notificação — foca o app aberto ou abre no destino */
+self.addEventListener("notificationclick", (event) => {
+
+ event.notification.close()
+
+ const targetUrl =
+  (event.notification.data && event.notification.data.url) || "/oratio/home"
+
+ event.waitUntil(
+  self.clients
+   .matchAll({ type: "window", includeUncontrolled: true })
+   .then((clientList) => {
+
+    for (const client of clientList) {
+     if ("focus" in client) {
+      client.focus()
+      if ("navigate" in client) {
+       try { client.navigate(targetUrl) } catch (e) { /* noop */ }
+      }
+      return
+     }
+    }
+
+    return self.clients.openWindow(targetUrl)
+
+   })
  )
 
 })

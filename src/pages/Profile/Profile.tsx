@@ -11,6 +11,13 @@ import { FONT_SCALE_OPTIONS, getStoredFontScale, setFontScale } from "../../util
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 import DeleteAccountModal from "../../components/DeleteAccountModal/DeleteAccountModal"
+import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
+import {
+ isPushSupported,
+ getPushStatus,
+ enablePush,
+ disablePush
+} from "../../services/pushService"
 
 import {
  ChevronLeft,
@@ -26,7 +33,8 @@ import {
  Award,
  Settings,
  Type,
- Check
+ Check,
+ Bell
 } from "lucide-react"
 
 export default function Profile(){
@@ -39,6 +47,12 @@ export default function Profile(){
  const [deleteAccountOpen,setDeleteAccountOpen] = useState(false)
  const [fontScale,setFontScaleState] = useState(getStoredFontScale())
  const [loggingOut,setLoggingOut] = useState(false)
+
+ const [pushSupported] = useState(isPushSupported())
+ const [pushEnabled,setPushEnabled] = useState(false)
+ const [pushLoading,setPushLoading] = useState(false)
+ const [pushConfirm,setPushConfirm] = useState<null | "enable" | "disable">(null)
+ const [pushError,setPushError] = useState<string | null>(null)
 
  const isOffline = useOffline()
 
@@ -55,6 +69,47 @@ export default function Profile(){
  },[isOffline])
 
  usePullToRefresh(loadProfile, !isOffline)
+
+ /* estado inicial do push (existe inscrição neste aparelho?) */
+ useEffect(()=>{
+  if(pushSupported) getPushStatus().then(setPushEnabled).catch(()=>{})
+ },[pushSupported])
+
+ function handlePushToggle(){
+  setPushError(null)
+  setPushConfirm(pushEnabled ? "disable" : "enable")
+ }
+
+ async function confirmEnablePush(){
+  setPushConfirm(null)
+  setPushLoading(true)
+  try{
+   await enablePush()
+   setPushEnabled(true)
+  }catch(err:any){
+   if(err?.message === "denied")
+    setPushError("Permissão negada. Ative as notificações nas configurações do aparelho.")
+   else if(err?.message === "unsupported")
+    setPushError("Seu aparelho não suporta notificações aqui.")
+   else
+    setPushError("Não foi possível ativar agora. Tente novamente.")
+  }finally{
+   setPushLoading(false)
+  }
+ }
+
+ async function confirmDisablePush(){
+  setPushConfirm(null)
+  setPushLoading(true)
+  try{
+   await disablePush()
+   setPushEnabled(false)
+  }catch{
+   setPushError("Não foi possível desativar agora.")
+  }finally{
+   setPushLoading(false)
+  }
+ }
 
  async function loadProfile(){
 
@@ -628,6 +683,82 @@ export default function Profile(){
      </div>
 
     </div>
+
+    {/* NOTIFICAÇÕES */}
+
+    <div className={styles.card}>
+
+     <div className={styles.cardTitle}>
+
+      <Bell size={18}/>
+
+      <h3>Notificações</h3>
+
+     </div>
+
+     <p className={styles.cardHint}>
+      Lembretes de oração, liturgia e novidades — também fora do app.
+     </p>
+
+     {!pushSupported ? (
+
+      <p className={styles.notifUnsupported}>
+       Este aparelho não suporta notificações aqui. No iPhone, adicione o
+       Oratio à tela inicial primeiro.
+      </p>
+
+     ) : (
+
+      <>
+
+       <button
+        className={`${styles.notifToggle} ${pushEnabled ? styles.notifToggleOn : ""}`}
+        onClick={handlePushToggle}
+        disabled={pushLoading}
+        role="switch"
+        aria-checked={pushEnabled}
+       >
+
+        <span className={styles.notifToggleLabel}>
+         {pushEnabled ? "Notificações ativadas" : "Ativar notificações"}
+        </span>
+
+        <span className={styles.notifSwitch}>
+         <span className={styles.notifKnob}/>
+        </span>
+
+       </button>
+
+       {pushError && (
+        <p className={styles.notifError}>{pushError}</p>
+       )}
+
+      </>
+
+     )}
+
+    </div>
+
+    <ConfirmModal
+     open={pushConfirm === "enable"}
+     title="Ativar notificações"
+     message="Você passará a receber lembretes de oração, liturgia e novidades também fora do app. Pode desligar quando quiser."
+     confirmLabel="Ativar"
+     cancelLabel="Agora não"
+     onConfirm={confirmEnablePush}
+     onCancel={()=>setPushConfirm(null)}
+    />
+
+    <ConfirmModal
+     open={pushConfirm === "disable"}
+     title="Desativar notificações"
+     message="Você deixará de receber notificações fora do app. Elas continuam guardadas no sino, dentro do aplicativo."
+     confirmLabel="Desativar"
+     cancelLabel="Cancelar"
+     danger
+     onConfirm={confirmDisablePush}
+     onCancel={()=>setPushConfirm(null)}
+    />
 
     {/* CONTA */}
 

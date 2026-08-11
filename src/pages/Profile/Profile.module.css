@@ -1217,3 +1217,82 @@ ZONA DE PERIGO
 }
 
 
+/* =========================
+NOTIFICAÇÕES (toggle)
+========================= */
+
+.notifToggle{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:14px;
+ width:100%;
+ padding:14px 16px;
+ border:1px solid var(--oratio-card-border);
+ border-radius:16px;
+ background:#fff;
+ cursor:pointer;
+ font-family:inherit;
+ transition:border-color .2s ease, background .2s ease;
+}
+
+.notifToggle:disabled{
+ opacity:.6;
+ cursor:default;
+}
+
+.notifToggleLabel{
+ font-size:15px;
+ font-weight:600;
+ color:var(--oratio-text-dark);
+}
+
+.notifToggleOn{
+ border-color:var(--oratio-primary);
+ background:rgba(176,24,26,.05);
+}
+
+.notifSwitch{
+ flex:none;
+ position:relative;
+ width:46px;
+ height:26px;
+ border-radius:999px;
+ background:#d9cfc0;
+ transition:background .2s ease;
+}
+
+.notifToggleOn .notifSwitch{
+ background:var(--oratio-primary);
+}
+
+.notifKnob{
+ position:absolute;
+ top:3px;
+ left:3px;
+ width:20px;
+ height:20px;
+ border-radius:50%;
+ background:#fff;
+ box-shadow:0 2px 4px rgba(0,0,0,.2);
+ transition:transform .2s ease;
+}
+
+.notifToggleOn .notifKnob{
+ transform:translateX(20px);
+}
+
+.notifError{
+ margin-top:10px;
+ font-size:13px;
+ font-weight:600;
+ color:#a01f22;
+}
+
+.notifUnsupported{
+ font-size:13px;
+ color:var(--oratio-text-soft);
+ line-height:1.5;
+}
+
+
