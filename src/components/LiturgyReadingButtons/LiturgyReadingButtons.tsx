@@ -6,6 +6,8 @@ import { BookOpen, ChevronRight } from "lucide-react"
 import { useLockBodyScroll } from "../../hooks/useLockBodyScroll"
 import type { LiturgyData, LiturgyReading } from "../../hooks/useLiturgy"
 import { buildQuickReadingShareText } from "../../utils/liturgyShareText"
+import { isLoggedIn } from "../../utils/auth"
+import GuestGateModal from "../GuestGateModal/GuestGateModal"
 import ShareReadingButton from "../ShareReadingButton/ShareReadingButton"
 
 import styles from "../../pages/Home/Home.module.css"
@@ -49,6 +51,8 @@ export default function LiturgyReadingButtons({ liturgy, dateOffset = 0 }: Props
 
  const [currentType,setCurrentType] =
   useState<ReadingType | null>(null)
+
+ const [showGate,setShowGate] = useState(false)
 
  useLockBodyScroll(!!(modal || selector))
 
@@ -334,7 +338,13 @@ export default function LiturgyReadingButtons({ liturgy, dateOffset = 0 }: Props
 
     <button
      className={styles.massButton}
-     onClick={()=>navigate("/oratio/liturgia-completa")}
+     onClick={()=>{
+      if(!isLoggedIn()){
+       setShowGate(true)
+       return
+      }
+      navigate("/oratio/liturgia-completa")
+     }}
     >
      <BookOpen size={17}/>
      Ler a Missa completa
@@ -561,6 +571,12 @@ export default function LiturgyReadingButtons({ liturgy, dateOffset = 0 }: Props
     document.body
 
    )}
+
+   <GuestGateModal
+    open={showGate}
+    message="Crie uma conta para ler a Missa completa do dia."
+    onClose={()=>setShowGate(false)}
+   />
 
   </>
 

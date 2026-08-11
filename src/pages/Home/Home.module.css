@@ -334,10 +334,10 @@ HERO
  var(--oratio-font-title);
 
  font-size:
- clamp(52px,8vw,94px);
+ clamp(46px,10vw,86px);
 
  letter-spacing:
- clamp(2px,.8vw,5px);
+ clamp(1px,.4vw,4px);
 
  color:var(--oratio-primary);
 
@@ -355,19 +355,19 @@ HERO
 
 }
 
+/* Cruz 100% proporcional à fonte (em) — mesma proporção e respiro em
+   qualquer tela, do desktop ao celular pequeno. */
 .cross{
 
  position:relative;
 
- width:10px;
+ width:.12em;
 
- height:
- clamp(98px,13vw,150px);
+ height:1.42em;
 
- margin:
- 0 clamp(6px,.8vw,12px);
+ margin:0 .26em;
 
- top:-6px;
+ top:-.05em;
 
  background:
  linear-gradient(
@@ -393,13 +393,11 @@ HERO
 
  left:50%;
 
- top:
- clamp(16px,2vw,34px);
+ top:.3em;
 
- width:
- clamp(180px,24vw,310px);
+ width:.5em;
 
- height:10px;
+ height:.12em;
 
  transform:translateX(-50%);
 

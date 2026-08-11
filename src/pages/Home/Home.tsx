@@ -281,7 +281,8 @@ export default function Home(){
 
   }
 
-  return list.slice(0, 4)
+  // Critério: no máximo 3 — um por tema (devoção, liturgia, leitura).
+  return list.slice(0, 3)
 
  },[suggestions, liturgy])
 
