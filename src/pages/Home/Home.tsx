@@ -51,6 +51,9 @@ import {
 
 import { getProfile } from "../../services/profileService"
 
+import { getHomeFeed } from "../../services/homeService"
+import type { HomeSuggestion } from "../../services/homeService"
+
 import {
  getSaudacao,
  getDataLonga,
@@ -122,6 +125,8 @@ export default function Home(){
 
  const [progress, setProgress] = useState<any>(null)
 
+ const [suggestions, setSuggestions] = useState<HomeSuggestion[]>([])
+
  /* saudação / momento do dia — recalculada na montagem */
  const saudacao = useMemo(()=>getSaudacao(userName),[userName])
  const dataLonga = useMemo(()=>getDataLonga(),[])
@@ -178,6 +183,10 @@ export default function Home(){
    .then((u)=>{ setUserName(u?.name ?? u?.nome ?? u?.firstName ?? null) })
    .catch(()=>{})
 
+  getHomeFeed()
+   .then((f)=>{ setSuggestions(f?.suggestions ?? []) })
+   .catch(()=>{ setSuggestions([]) })
+
  },[guest])
 
  // Aparece toda vez que a pessoa entra na Home sem conta.
@@ -232,6 +241,47 @@ export default function Home(){
   momento === "manha" ? Sun :
   momento === "tarde" ? Bell :
   Moon
+
+ /* =========================
+ PARA VOCÊ HOJE
+ (sugestões do backend + evangelho do dia, da liturgia)
+ ========================= */
+
+ const SUG_ICON:Record<string, ComponentType<{ size?: number }>> = {
+  rosary: Circle,
+  bible: BookOpen,
+  catechism: Book,
+  gospel: BookOpen
+ }
+
+ const forYou = useMemo<HomeSuggestion[]>(()=>{
+
+  const list = [...suggestions]
+
+  const gospelRef =
+   (liturgy as any)?.leituras?.evangelho?.[0]?.referencia as string | undefined
+
+  if(gospelRef){
+
+   const gospel:HomeSuggestion = {
+    id:"gospel-today",
+    kind:"gospel",
+    title:"Leia o Evangelho de hoje",
+    subtitle:gospelRef,
+    why:"Liturgia",
+    icon:"gospel",
+    path:"/oratio/liturgia-completa"
+   }
+
+   // O evangelho entra logo após o terço (se houver), como no layout.
+   const rosaryIdx = list.findIndex((s)=> s.kind === "rosary")
+   list.splice(rosaryIdx + 1, 0, gospel)
+
+  }
+
+  return list.slice(0, 4)
+
+ },[suggestions, liturgy])
 
  /* =========================
  JSX
@@ -439,6 +489,44 @@ export default function Home(){
      <ChevronRight size={20} className={styles.continueChevron}/>
 
     </button>
+
+   )}
+
+   {/* PARA VOCÊ HOJE */}
+
+   {!guest && forYou.length > 0 && (
+
+    <div className={styles.forYouWrap}>
+
+     <div className={styles.forYouHead}>
+      <h3>Para você hoje</h3>
+     </div>
+
+     <div className={styles.suggestions}>
+
+      {forYou.map((s)=>{
+       const Icon = SUG_ICON[s.icon] ?? Circle
+       return(
+        <button
+         key={s.id}
+         className={styles.suggestion}
+         onClick={()=>navigate(s.path)}
+        >
+         <span className={styles.suggestionIcon}>
+          <Icon size={19}/>
+         </span>
+         <span className={styles.suggestionBody}>
+          <span className={styles.suggestionTitle}>{s.title}</span>
+          <span className={styles.suggestionSub}>{s.subtitle}</span>
+         </span>
+         <span className={styles.suggestionWhy}>{s.why}</span>
+        </button>
+       )
+      })}
+
+     </div>
+
+    </div>
 
    )}
 

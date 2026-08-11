@@ -12,6 +12,9 @@ import {
 import { getChapter }
 from "../../services/bibliaService"
 
+import { saveReadingProgress }
+from "../../services/readingProgressService"
+
 import { useReadingSize }
 from "../../hooks/useReadingSize"
 
@@ -52,6 +55,14 @@ export default function BibliaChapter(){
    window.scrollTo({ top:0, behavior:"instant" })
   }
  },[])
+
+ /* salva "onde parou" na Bíblia (best-effort) — alimenta a seção
+    "Para você hoje" da Home. Só grava capítulo válido e só quem tem conta. */
+ useEffect(()=>{
+  if(!book || !chapter || !capitulo) return
+  const reference = `${encodeURIComponent(book)}/${encodeURIComponent(chapter)}`
+  saveReadingProgress("BIBLE", reference, `${book} ${chapter}`)
+ },[book,chapter,capitulo])
 
  /* auto-scroll + highlight para o versículo vindo da busca */
  useEffect(()=>{

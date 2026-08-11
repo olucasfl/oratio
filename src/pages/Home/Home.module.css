@@ -1581,6 +1581,105 @@ CONTINUAR DE ONDE PAROU
 
 
 /* =========================
+PARA VOCÊ HOJE (sugestões dinâmicas)
+========================= */
+
+.forYouWrap{
+ width:100%;
+ max-width:var(--home-content-max);
+ position:relative;
+ z-index:2;
+}
+
+.forYouHead{
+ margin:0 4px 12px;
+}
+
+.forYouHead h3{
+ margin:0;
+ font-size:13px;
+ font-weight:700;
+ letter-spacing:.1em;
+ text-transform:uppercase;
+ color:var(--oratio-text-soft);
+}
+
+.suggestions{
+ display:flex;
+ flex-direction:column;
+ gap:10px;
+}
+
+.suggestion{
+ display:flex;
+ align-items:center;
+ gap:13px;
+ padding:13px 14px;
+ border:1px solid var(--oratio-card-border);
+ border-radius:18px;
+ background:rgba(255,255,255,.82);
+ backdrop-filter:blur(12px);
+ cursor:pointer;
+ text-align:left;
+ transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.suggestion:hover{
+ transform:translateX(2px);
+ border-color:rgba(176,24,26,.4);
+ box-shadow:0 10px 24px rgba(0,0,0,.08);
+}
+
+.suggestionIcon{
+ flex:none;
+ width:42px;
+ height:42px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border-radius:13px;
+ background:rgba(176,24,26,.08);
+ color:var(--oratio-primary);
+}
+
+.suggestionBody{
+ flex:1;
+ display:flex;
+ flex-direction:column;
+ gap:2px;
+ min-width:0;
+}
+
+.suggestionTitle{
+ font-size:14.5px;
+ font-weight:600;
+ color:var(--oratio-text-dark);
+}
+
+.suggestionSub{
+ font-size:12.5px;
+ color:var(--oratio-text-soft);
+ line-height:1.4;
+ overflow:hidden;
+ text-overflow:ellipsis;
+ white-space:nowrap;
+}
+
+.suggestionWhy{
+ flex:none;
+ font-size:10px;
+ font-weight:700;
+ letter-spacing:.06em;
+ text-transform:uppercase;
+ color:var(--oratio-primary);
+ background:rgba(176,24,26,.08);
+ padding:4px 9px;
+ border-radius:999px;
+ white-space:nowrap;
+}
+
+
+/* =========================
 ATALHOS
 ========================= */
 

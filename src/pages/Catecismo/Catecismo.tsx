@@ -8,6 +8,7 @@ import "../../utils/pdfConfig"
 import "react-pdf/dist/Page/TextLayer.css"
 import "react-pdf/dist/Page/AnnotationLayer.css"
 import { usePublishHeightVar } from "../../hooks/usePublishHeightVar"
+import { saveReadingProgress } from "../../services/readingProgressService"
 
 const PAGE_KEY  = "catecismo_page"
 const ZOOM_KEY  = "catecismo_zoom"
@@ -69,6 +70,16 @@ export default function Catecismo() {
   /* ── persiste estado ── */
   useEffect(() => { if (loaded) localStorage.setItem(PAGE_KEY, String(page)) }, [page, loaded])
   useEffect(() => { if (loaded) localStorage.setItem(ZOOM_KEY, String(zoomLevel)) }, [zoomLevel, loaded])
+
+  /* ── salva "onde parou" no backend (best-effort, com debounce) ──
+     alimenta a seção "Para você hoje" da Home. Só quem tem conta. */
+  useEffect(() => {
+    if (!loaded) return
+    const t = setTimeout(() => {
+      saveReadingProgress("CATECHISM", String(page), `Catecismo · pág. ${page}`)
+    }, 1500)
+    return () => clearTimeout(t)
+  }, [page, loaded])
 
   /* ── scroll para o topo ao trocar página ── */
   useEffect(() => {
