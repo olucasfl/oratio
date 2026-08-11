@@ -44,6 +44,24 @@ export function getDataLonga(d: Date = new Date()): string {
 }
 
 /*
+Versículo curto que muda conforme o período do dia — exibido logo
+abaixo do logo, dando à Home um tom de oração que acompanha a hora.
+*/
+export function getFraseDoMomento(d: Date = new Date()): string {
+  const m = getMomento(d)
+
+  if (m === "manha") {
+    return "“As misericórdias do Senhor se renovam a cada manhã” · Lm 3,23"
+  }
+
+  if (m === "tarde") {
+    return "“Rezai sem cessar” · 1Ts 5,17"
+  }
+
+  return "“Em paz me deito e logo adormeço, Senhor” · Sl 4,9"
+}
+
+/*
 Convite de oração conforme o horário — o "Neste momento".
 Aponta sempre para telas que já existem no app.
 */

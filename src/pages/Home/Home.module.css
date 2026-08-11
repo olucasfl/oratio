@@ -419,14 +419,18 @@ HERO
 
 .subtitle{
 
- margin-top:18px;
+ margin:16px auto 0;
+ max-width:300px;
 
  color:var(--oratio-text-soft);
 
  font-size:
- clamp(14px,1.9vw,18px);
+ clamp(13px,1.8vw,15.5px);
 
- letter-spacing:.4px;
+ font-style:italic;
+ line-height:1.5;
+ text-align:center;
+ letter-spacing:.2px;
 
  opacity:.9;
 
