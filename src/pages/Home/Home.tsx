@@ -88,6 +88,8 @@ ATALHOS (todos os recursos)
 ========================= */
 
 const SHORTCUTS:Shortcut[] = [
+ { label:"VoxAI", path:"/oratio/vox", icon:MessageCircleHeart, locked:true, featured:true,
+   gateMessage:"Crie uma conta para conversar com o VoxAI, seu assistente espiritual católico." },
  { label:"Liturgia", path:"/oratio/liturgia-completa", icon:Calendar },
  { label:"Santo do dia", path:"/oratio/santo-do-dia", icon:Flame, locked:true,
    gateMessage:"Crie uma conta para ver os detalhes do Santo do Dia." },
@@ -99,9 +101,7 @@ const SHORTCUTS:Shortcut[] = [
    gateMessage:"Crie uma conta para acessar o Guia de Confissão." },
  { label:"Bíblia", path:"/oratio/biblia", icon:BookOpen },
  { label:"Catecismo", path:"/oratio/catecismo", icon:Book, locked:true,
-   gateMessage:"Crie uma conta para acessar o Catecismo completo." },
- { label:"VoxAI", path:"/oratio/vox", icon:MessageCircleHeart, locked:true, featured:true,
-   gateMessage:"Crie uma conta para conversar com o VoxAI, seu assistente espiritual católico." }
+   gateMessage:"Crie uma conta para acessar o Catecismo completo." }
 ]
 
 /* =========================

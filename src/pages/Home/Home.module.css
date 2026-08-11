@@ -2068,21 +2068,53 @@ ATALHOS
  color:#fff;
 }
 
-/* VoxAI em destaque entre os atalhos — borda dourada + tile sempre aceso */
+/* VoxAI entre os atalhos — clean, com glimmer dourado circulando a volta */
+@property --voxAngle{
+ syntax:"<angle>";
+ initial-value:0deg;
+ inherits:false;
+}
+
 .shortcutFeatured{
- border-color:rgba(240,209,138,.6);
- background:linear-gradient(180deg, rgba(240,209,138,.12), rgba(255,255,255,.82));
+ position:relative;
+ border-color:rgba(198,160,74,.4);
+}
+
+.shortcutFeatured::before{
+ content:"";
+ position:absolute;
+ inset:-2px;
+ border-radius:20px;
+ padding:2px;
+ background:conic-gradient(from var(--voxAngle),
+   transparent 0deg,
+   rgba(242,214,138,.15) 30deg,
+   #eecb74 62deg,
+   rgba(242,214,138,.15) 94deg,
+   transparent 130deg,
+   transparent 360deg);
+ -webkit-mask:
+   linear-gradient(#000 0 0) content-box,
+   linear-gradient(#000 0 0);
+ -webkit-mask-composite:xor;
+ mask:
+   linear-gradient(#000 0 0) content-box,
+   linear-gradient(#000 0 0);
+ mask-composite:exclude;
+ pointer-events:none;
+ animation:voxGlimmer 3.6s linear infinite;
+}
+
+@keyframes voxGlimmer{
+ to{ --voxAngle:360deg; }
+}
+
+@media (prefers-reduced-motion:reduce){
+ .shortcutFeatured::before{ animation:none; }
 }
 
 .shortcutIconVox{
- background:linear-gradient(150deg,#b0181a,#7d1113);
- border-color:rgba(240,209,138,.55);
- box-shadow:0 6px 14px -6px rgba(176,24,26,.5);
- color:#f2d68a;
-}
-
-.shortcut:hover .shortcutIconVox{
- color:#fff;
+ border-color:rgba(198,160,74,.5);
 }
 
 .shortcutLabel{
