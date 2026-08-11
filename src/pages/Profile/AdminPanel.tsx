@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
+import AdminNotifications from "../../components/AdminNotifications/AdminNotifications"
 import { createPortal } from "react-dom"
 import { useNavigate } from "react-router-dom"
 
@@ -8,7 +9,7 @@ import {
   BookHeart, ChevronDown, ChevronUp, ArrowUpDown, CalendarDays,
   SortAsc, Bot, LogIn, Gem, Heart, Pin, Check, AlertCircle,
   Loader2, Cross, RotateCcw, LayoutGrid, List, SlidersHorizontal,
-  BarChart3, Terminal, Cpu, Database, Clock, AlertTriangle
+  BarChart3, Terminal, Cpu, Database, Clock, AlertTriangle, Bell
 } from "lucide-react"
 
 import type { AdminFilters, AdminTimeseriesMetric, AdminTimeseriesRange } from "../../services/adminService"
@@ -25,7 +26,7 @@ import AdminHeatmap from "../../components/AdminHeatmap/AdminHeatmap"
 import AdminFilterSheet from "../../components/AdminFilterSheet/AdminFilterSheet"
 import styles from "./AdminPanel.module.css"
 
-type Tab          = "overview" | "users" | "charts" | "system"
+type Tab          = "overview" | "users" | "charts" | "system" | "notifications"
 type ViewMode      = "cards" | "compact"
 type SortKey      = "createdAt" | "name" | "streak" | "prayers" | "rosaries"
 type SortDir      = "desc" | "asc"
@@ -622,6 +623,12 @@ export default function AdminPanel() {
           >
             <Terminal size={15}/> Sistema
           </button>
+          <button
+            className={`${styles.tabBtn} ${activeTab === "notifications" ? styles.tabBtnActive : ""}`}
+            onClick={() => setActiveTab("notifications")}
+          >
+            <Bell size={15}/> Notificações
+          </button>
         </div>
       </header>
 
@@ -942,6 +949,10 @@ export default function AdminPanel() {
         )}
 
         {/* ── SISTEMA ── */}
+        {activeTab === "notifications" && (
+          <AdminNotifications/>
+        )}
+
         {activeTab === "system" && (
           <section className={styles.section}>
             <div className={styles.sectionTitle}>
