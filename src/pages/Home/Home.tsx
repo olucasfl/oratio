@@ -10,6 +10,9 @@ from "../../components/BottomNavbar/BottomNavbar"
 import MenuDrawer
 from "../../components/MenuDrawer/MenuDrawer"
 
+import NotificationBell
+from "../../components/NotificationBell/NotificationBell"
+
 import GuestWelcomeModal
 from "../../components/GuestWelcomeModal/GuestWelcomeModal"
 
@@ -295,6 +298,8 @@ export default function Home(){
   <div className={`${styles.container} page-enter`}>
 
    <MenuDrawer/>
+
+   {!guest && <NotificationBell/>}
 
    {!pwa && (
 
