@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { Bell, X, ChevronRight, ChevronDown } from "lucide-react"
 
 import styles from "./NotificationBell.module.css"
+import { isPWA } from "../../utils/isPwa"
 import {
   getInbox,
   getUnseenCount,
@@ -27,6 +28,10 @@ function timeAgo(iso: string): string {
 export default function NotificationBell(){
 
   const navigate = useNavigate()
+
+  // Fora do PWA, os botões de perfil/sair ocupam o canto sup. direito —
+  // desloca o sino pra esquerda deles pra não sobrepor. No PWA fica limpo.
+  const pwa = isPWA()
 
   const [open, setOpen] = useState(false)
   const [unseen, setUnseen] = useState(0)
@@ -79,7 +84,12 @@ export default function NotificationBell(){
 
     <>
 
-    <button className={styles.bell} onClick={openPanel} aria-label="Notificações">
+    <button
+      className={styles.bell}
+      style={!pwa ? { right: "130px" } : undefined}
+      onClick={openPanel}
+      aria-label="Notificações"
+    >
       <Bell size={20}/>
       {unseen > 0 && (
         <span className={styles.badge}>{unseen > 9 ? "9+" : unseen}</span>
