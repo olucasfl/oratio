@@ -32,3 +32,25 @@ export async function getSubscribers(): Promise<{ totalUsers: number; subscribed
   const { data } = await api.get("/oratio/admin/notifications/subscribers")
   return data
 }
+
+export type Rule = {
+  key: string
+  enabled: boolean
+  title: string
+  body: string | null
+  url: string | null
+}
+
+export async function getRules(): Promise<Rule[]> {
+  const { data } = await api.get("/oratio/admin/notifications/rules")
+  return data
+}
+
+export async function updateRule(
+  key: string,
+  patch: Partial<Pick<Rule, "enabled" | "title" | "body" | "url">>,
+): Promise<Rule> {
+  const { data } = await api.patch(`/oratio/admin/notifications/rules/${key}`, patch)
+  return data
+}
+

@@ -1,14 +1,23 @@
 import { useEffect, useMemo, useState } from "react"
-import { Send, Users, Search, Check, Bell } from "lucide-react"
+import { Send, Users, Search, Check, Bell, Clock } from "lucide-react"
 
 import styles from "./AdminNotifications.module.css"
 import {
   sendNotification,
   listCampaigns,
-  getSubscribers
+  getSubscribers,
+  getRules,
+  updateRule
 } from "../../services/adminNotificationsService"
-import type { Campaign } from "../../services/adminNotificationsService"
+import type { Campaign, Rule } from "../../services/adminNotificationsService"
 import { getAllUsers } from "../../services/adminService"
+
+const RULE_LABELS: Record<string, string> = {
+  LITURGY_MORNING: "Liturgia (manhã · 7h)",
+  ANGELUS_MIDDAY: "Angelus (meio-dia · 12h)",
+  ROSARY_UNFINISHED: "Terço não terminado (18h)",
+  STREAK_AT_RISK: "Sequência em risco (20h)"
+}
 
 export default function AdminNotifications(){
 
@@ -26,11 +35,32 @@ export default function AdminNotifications(){
 
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [subs, setSubs] = useState<{ totalUsers: number; subscribedUsers: number } | null>(null)
+  const [rules, setRules] = useState<Rule[]>([])
+  const [savingKey, setSavingKey] = useState<string | null>(null)
 
   useEffect(()=>{
     listCampaigns().then(setCampaigns).catch(()=>{})
     getSubscribers().then(setSubs).catch(()=>{})
+    getRules().then(setRules).catch(()=>{})
   },[])
+
+  function patchRuleLocal(key: string, patch: Partial<Rule>){
+    setRules(prev => prev.map(r => r.key === key ? { ...r, ...patch } : r))
+  }
+
+  async function saveRule(rule: Rule){
+    setSavingKey(rule.key)
+    try{
+      await updateRule(rule.key, { enabled: rule.enabled, title: rule.title, body: rule.body, url: rule.url })
+    }catch{ /* noop */ }finally{ setSavingKey(null) }
+  }
+
+  async function toggleRule(rule: Rule){
+    const next = !rule.enabled
+    patchRuleLocal(rule.key, { enabled: next })
+    try{ await updateRule(rule.key, { enabled: next }) }
+    catch{ patchRuleLocal(rule.key, { enabled: rule.enabled }) }
+  }
 
   useEffect(()=>{
     if(audience === "SPECIFIC" && users.length === 0){
@@ -148,6 +178,35 @@ export default function AdminNotifications(){
               {c.body && <p className={styles.campBody}>{c.body}</p>}
               <div className={styles.campMeta}>
                 {new Date(c.createdAt).toLocaleDateString("pt-BR")} · {c.targeted} alvo(s) · push {c.pushSent} ✓{c.pushFailed ? ` / ${c.pushFailed} ✕` : ""}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className={styles.card}>
+        <h3 className={styles.cardTitle}><Clock size={15}/> Automáticas</h3>
+        <p className={styles.muted}>Enviadas sozinhas para quem ativou o push. Use {"{count}"} p/ interpolar valores.</p>
+        <div className={styles.campList}>
+          {rules.map((rule)=>(
+            <div key={rule.key} className={styles.rule}>
+              <div className={styles.ruleTop}>
+                <span className={styles.ruleName}>{RULE_LABELS[rule.key] || rule.key}</span>
+                <button
+                  className={`${styles.ruleSwitch} ${rule.enabled ? styles.ruleSwitchOn : ""}`}
+                  onClick={()=>toggleRule(rule)}
+                  role="switch"
+                  aria-checked={rule.enabled}
+                  aria-label="Ligar/desligar"
+                ><span className={styles.ruleKnob}/></button>
+              </div>
+              <input className={styles.input} value={rule.title} onChange={e=>patchRuleLocal(rule.key,{title:e.target.value})} placeholder="Título"/>
+              <textarea className={styles.textarea} rows={2} value={rule.body ?? ""} onChange={e=>patchRuleLocal(rule.key,{body:e.target.value})} placeholder="Descrição"/>
+              <div className={styles.ruleFoot}>
+                <input className={styles.input} value={rule.url ?? ""} onChange={e=>patchRuleLocal(rule.key,{url:e.target.value})} placeholder="/oratio/…"/>
+                <button className={styles.saveMini} onClick={()=>saveRule(rule)} disabled={savingKey===rule.key}>
+                  {savingKey===rule.key ? "…" : "Salvar"}
+                </button>
               </div>
             </div>
           ))}
