@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { useNavigate, useSearchParams } from "react-router-dom"
+import { BookOpen, ChevronRight } from "lucide-react"
 
 import { useLockBodyScroll } from "../../hooks/useLockBodyScroll"
 import type { LiturgyData, LiturgyReading } from "../../hooks/useLiturgy"
@@ -246,73 +247,97 @@ export default function LiturgyReadingButtons({ liturgy, dateOffset = 0 }: Props
 
   <>
 
-   <div className={styles.liturgyButtons}>
+   <div className={styles.readingsGrid}>
 
     {(liturgy.leituras?.extras?.length ?? 0) > 0 && (
 
      <button
-      onClick={()=>
-       openModal("extra")
-      }
+      className={`${styles.readingCard} ${styles.readingCardWide}`}
+      onClick={()=>openModal("extra")}
      >
-
-      Extra
-
+      <span className={styles.readingLabel}>Leitura extra</span>
+      <span className={styles.readingRef}>
+       {liturgy.leituras?.extras?.[0]?.referencia || "Abrir"}
+      </span>
+      <span className={styles.readingCta}>
+       Ler <ChevronRight size={12}/>
+      </span>
      </button>
 
     )}
 
     <button
-     onClick={()=>
-      openModal("primeira")
-     }
+     className={styles.readingCard}
+     onClick={()=>openModal("primeira")}
     >
-
-     Primeira Leitura
-
+     <span className={styles.readingLabel}>1ª Leitura</span>
+     <span className={styles.readingRef}>
+      {liturgy.leituras?.primeiraLeitura?.[0]?.referencia || "Abrir"}
+     </span>
+     <span className={styles.readingCta}>
+      Ler <ChevronRight size={12}/>
+     </span>
     </button>
 
     <button
-     onClick={()=>
-      openModal("salmo")
-     }
+     className={styles.readingCard}
+     onClick={()=>openModal("salmo")}
     >
+     <span className={styles.readingLabel}>Salmo</span>
+     <span className={styles.readingRef}>
+      {liturgy.leituras?.salmo?.[0]?.referencia || "Abrir"}
+     </span>
+     <span className={styles.readingCta}>
+      Ler <ChevronRight size={12}/>
+     </span>
+    </button>
 
-     Salmo
+    {(liturgy.leituras?.segundaLeitura?.length ?? 0) > 0 ? (
 
+     <button
+      className={styles.readingCard}
+      onClick={()=>openModal("segunda")}
+     >
+      <span className={styles.readingLabel}>2ª Leitura</span>
+      <span className={styles.readingRef}>
+       {liturgy.leituras?.segundaLeitura?.[0]?.referencia || "Abrir"}
+      </span>
+      <span className={styles.readingCta}>
+       Ler <ChevronRight size={12}/>
+      </span>
+     </button>
+
+    ) : (
+
+     <div
+      className={`${styles.readingCard} ${styles.readingCardDisabled}`}
+      aria-hidden="true"
+     >
+      <span className={styles.readingLabel}>2ª Leitura</span>
+      <span className={styles.readingRef}>— só domingos</span>
+     </div>
+
+    )}
+
+    <button
+     className={styles.readingCard}
+     onClick={()=>openModal("evangelho")}
+    >
+     <span className={styles.readingLabel}>Evangelho</span>
+     <span className={styles.readingRef}>
+      {liturgy.leituras?.evangelho?.[0]?.referencia || "Abrir"}
+     </span>
+     <span className={styles.readingCta}>
+      Ler <ChevronRight size={12}/>
+     </span>
     </button>
 
     <button
-     onClick={()=>
-      openModal("segunda")
-     }
+     className={styles.massButton}
+     onClick={()=>navigate("/oratio/liturgia-completa")}
     >
-
-     Segunda Leitura
-
-    </button>
-
-    <button
-     onClick={()=>
-      openModal("evangelho")
-     }
-    >
-
-     Evangelho
-
-    </button>
-
-    <button
-     className={styles.primaryButton}
-     onClick={()=>
-      navigate(
-       "/oratio/liturgia-completa"
-      )
-     }
-    >
-
-     Ver Liturgia Completa
-
+     <BookOpen size={17}/>
+     Ler a Missa completa
     </button>
 
    </div>

@@ -68,9 +68,9 @@ export function getMomentoConvite(d: Date = new Date()): MomentoConvite {
 
   if (m === "tarde") {
     return {
-      titulo: "Reze o Angelus",
-      sub: "“O Anjo do Senhor anunciou a Maria…”",
-      acaoLabel: "Rezar Angelus",
+      titulo: "Faça uma pausa e reze",
+      sub: "Um instante com Deus no meio do dia.",
+      acaoLabel: "Rezar",
       path: "/oratio/prayers"
     }
   }

@@ -10,7 +10,6 @@ import {
   Flame,
   Circle,
   HandHeart,
-  Bell,
   Heart,
   Cross,
   BookOpen,
@@ -52,8 +51,7 @@ const GROUPS: Group[] = [
         gateMessage: "Crie uma conta para ver os detalhes do Santo do Dia."
       },
       { label: "Terço & Rosário", path: "/oratio/rosary", icon: Circle },
-      { label: "Orações e Ladainhas", path: "/oratio/prayers", icon: HandHeart },
-      { label: "Angelus", path: "/oratio/prayers", icon: Bell }
+      { label: "Orações e Ladainhas", path: "/oratio/prayers", icon: HandHeart }
     ]
   },
   {

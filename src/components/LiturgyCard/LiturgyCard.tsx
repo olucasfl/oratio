@@ -4,30 +4,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import LiturgyReadingButtons from "../LiturgyReadingButtons/LiturgyReadingButtons"
 import SaintOfDayCard from "../SaintOfDayCard/SaintOfDayCard"
 import type { LiturgyData } from "../../hooks/useLiturgy"
-import { getLiturgicalColor } from "../../utils/liturgicalCelebration"
+import { getLiturgicalColor, parseCelebration } from "../../utils/liturgicalCelebration"
 
 import styles from "../../pages/Home/Home.module.css"
-
-const MESES_LONGOS = [
- "janeiro","fevereiro","março","abril","maio","junho",
- "julho","agosto","setembro","outubro","novembro","dezembro"
-]
-
-function fullDateLabel(data?: string, dateOffset?: number){
-
- if(data){
-  const [diaStr, mesStr] = data.split("/")
-  const dia = Number(diaStr)
-  const mes = Number(mesStr)
-  if(dia && mes) return `${dia} de ${MESES_LONGOS[mes - 1]}`
- }
-
- const d = new Date()
- d.setDate(d.getDate() + (dateOffset ?? 0))
-
- return `${d.getDate()} de ${MESES_LONGOS[d.getMonth()]}`
-
-}
 
 interface Props {
  liturgy: LiturgyData | null
@@ -53,22 +32,32 @@ export default function LiturgyCard({
   ? liturgy.cor.charAt(0).toUpperCase() + liturgy.cor.slice(1)
   : null
 
+ // "Branco" e "Dourado" são cores litúrgicas CLARAS — um hero saturado com
+ // texto branco não funciona. Nesses dias o hero vira um marfim/bege com
+ // texto escuro e detalhes em dourado: característico e sem se confundir
+ // com o fundo de pergaminho da Home.
+ const corKey = (liturgy?.cor || "").trim().toLowerCase()
+ const isLight = corKey === "branco" || corKey === "dourado"
+
+ // A API entrega a celebração no campo "liturgia" (ex.: "Sábado da 19ª
+ // Semana do Tempo Comum"); parseCelebration separa nome e grau quando há.
+ const celeb = parseCelebration(liturgy?.liturgia)
+ const celebNome = celeb?.nome || liturgy?.liturgia || "Liturgia do dia"
+ const grau = celeb?.grau || "Féria"
+
  return(
 
-  <section
-   className={styles.liturgyCard}
-   style={{ ["--lit" as string]: lit.hex }}
-  >
+  <section className={styles.liturgyWrap}>
 
-   <span className={styles.liturgyColorBar} aria-hidden="true"/>
+   {/* CABEÇALHO + NAVEGAÇÃO DE DIA */}
 
-   <div className={styles.sectionHeader}>
+   <div className={styles.liturgyHead}>
 
     <span className={styles.sectionBadge}>
-     LITURGIA DO DIA
+     Liturgia de hoje
     </span>
 
-    <div className={styles.liturgyDateNav}>
+    <div className={styles.liturgyHeadNav}>
 
      <button
       className={styles.liturgyNavBtn}
@@ -78,7 +67,7 @@ export default function LiturgyCard({
       <ChevronLeft size={18}/>
      </button>
 
-     <h2>{displayDateLabel}</h2>
+     <span>{displayDateLabel}</span>
 
      <button
       className={styles.liturgyNavBtn}
@@ -91,47 +80,58 @@ export default function LiturgyCard({
 
     </div>
 
-    <span className={styles.liturgyFullDate}>
-     {fullDateLabel(liturgy?.data, dateOffset)}
-    </span>
+   </div>
 
-    {corLabel && (
-     <span className={styles.liturgyColorTag}>
-      <span className={styles.liturgyColorDot} aria-hidden="true"/>
-      Cor litúrgica: {corLabel}
-     </span>
-    )}
-
-    {dateOffset !== 0 && (
+   {dateOffset !== 0 && (
+    <div className={styles.liturgyTodayRow}>
      <button
       className={styles.liturgyTodayBtn}
       onClick={()=>setDateOffset(0)}
      >
       Voltar para hoje
      </button>
+    </div>
+   )}
+
+   {/* HERO NA COR LITÚRGICA */}
+
+   <div
+    className={`${styles.liturgyHero} ${isLight ? styles.liturgyHeroLight : ""}`}
+    style={{ ["--lit" as string]: lit.hex }}
+   >
+
+    <div className={styles.heroSeason}>
+     <span className={styles.heroDot} aria-hidden="true"/>
+     {corLabel ? `Tempo litúrgico · ${corLabel}` : "Liturgia do dia"}
+    </div>
+
+    <h2 className={styles.heroTitle}>{celebNome}</h2>
+
+    <div className={styles.heroGrau}>{grau}</div>
+
+    {corLabel && (
+     <div className={styles.heroColorLine}>
+      Cor litúrgica
+      <span className={styles.heroSwatch} aria-hidden="true"/>
+      {corLabel}
+     </div>
     )}
+
+    {loadingLiturgy && !liturgy && (
+     <p className={styles.heroInfo}>Carregando liturgia...</p>
+    )}
+
+    {liturgyError && !liturgy && (
+     <p className={styles.heroInfo}>{liturgyError}</p>
+    )}
+
+    <LiturgyReadingButtons liturgy={liturgy} dateOffset={dateOffset} />
 
    </div>
 
+   {/* SANTO DO DIA (card próprio, abaixo do hero) */}
+
    <SaintOfDayCard liturgy={liturgy} dateOffset={dateOffset}/>
-
-   {loadingLiturgy && !liturgy && (
-
-    <p className={styles.infoText}>
-     Carregando liturgia...
-    </p>
-
-   )}
-
-   {liturgyError && !liturgy && (
-
-    <p className={styles.errorText}>
-     {liturgyError}
-    </p>
-
-   )}
-
-   <LiturgyReadingButtons liturgy={liturgy} dateOffset={dateOffset} />
 
   </section>
 

@@ -91,7 +91,6 @@ const SHORTCUTS:Shortcut[] = [
    gateMessage:"Crie uma conta para ver os detalhes do Santo do Dia." },
  { label:"Terço", path:"/oratio/rosary", icon:Circle },
  { label:"Orações", path:"/oratio/prayers", icon:HandHeart },
- { label:"Angelus", path:"/oratio/prayers", icon:Bell },
  { label:"Consagração", path:"/oratio/consecration", icon:Heart, locked:true,
    gateMessage:"Crie uma conta para iniciar a Consagração de 33 dias e acompanhar seu progresso." },
  { label:"Confissão", path:"/oratio/confissao", icon:Cross, locked:true,
@@ -439,22 +438,30 @@ export default function Home(){
 
    {/* NESTE MOMENTO */}
 
-   <button
-    className={styles.moment}
-    onClick={()=>handleShortcut({ path:convite.path })}
-   >
-    <span className={styles.momentIcon}>
-     <MomentoIcon size={20}/>
-    </span>
-    <span className={styles.momentText}>
-     <strong>{convite.titulo}</strong>
-     <span>{convite.sub}</span>
-    </span>
-    <span className={styles.momentGo}>
-     {convite.acaoLabel}
-     <ChevronRight size={16}/>
-    </span>
-   </button>
+   <div className={styles.momentWrap}>
+
+    <div className={styles.momentHead}>
+     <h3>Neste momento</h3>
+    </div>
+
+    <button
+     className={styles.moment}
+     onClick={()=>handleShortcut({ path:convite.path })}
+    >
+     <span className={styles.momentIcon}>
+      <MomentoIcon size={20}/>
+     </span>
+     <span className={styles.momentText}>
+      <strong>{convite.titulo}</strong>
+      <span>{convite.sub}</span>
+     </span>
+     <span className={styles.momentGo}>
+      {convite.acaoLabel}
+      <ChevronRight size={16}/>
+     </span>
+    </button>
+
+   </div>
 
    {/* CONTINUAR DE ONDE PAROU */}
 
