@@ -405,8 +405,11 @@ export default function Home(){
    {/* SAUDAÇÃO */}
 
    <div className={styles.greeting}>
-    <span className={styles.greetingHi}>{saudacao}</span>
-    <span className={styles.greetingDate}>{dataLonga}</span>
+    <div className={styles.greetingText}>
+     <span className={styles.greetingHi}>{saudacao}</span>
+     <span className={styles.greetingDate}>{dataLonga}</span>
+    </div>
+    <FraseDiaria />
    </div>
 
    {/* HERO */}
@@ -422,8 +425,6 @@ export default function Home(){
     <p className={styles.subtitle}>
      {frasePeriodo}
     </p>
-
-    <FraseDiaria />
 
    </section>
 

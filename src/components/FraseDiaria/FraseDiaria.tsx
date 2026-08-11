@@ -1,78 +1,77 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { createPortal } from "react-dom";
+import { Sparkles } from "lucide-react";
+
 import styles from "./FraseDiaria.module.css";
 import { useFraseDiaria } from "../../hooks/useFraseDiaria";
+import { useLockBodyScroll } from "../../hooks/useLockBodyScroll";
 import { isLoggedIn } from "../../utils/auth";
 import GuestGateModal from "../GuestGateModal/GuestGateModal";
 
+/*
+Frase do dia — agora um chip discreto perto da saudação. Toca e abre a
+frase num modal. Continua sendo um ritual diário: a primeira abertura do
+dia "resgata" a frase (bolinha de destaque some depois disso).
+*/
 export function FraseDiaria() {
   const { frase, resgatada, resgatar } = useFraseDiaria();
-  const [visivel, setVisivel] = useState(false);
+  const [aberta, setAberta] = useState(false);
   const [showGate, setShowGate] = useState(false);
 
-  function handlePegarFrase() {
+  useLockBodyScroll(aberta);
+
+  if (!frase) return null;
+
+  function abrir() {
     if (!isLoggedIn()) {
       setShowGate(true);
       return;
     }
-    resgatar();
-    setVisivel(true);
-  }
-
-  // fecha o card automaticamente quando o usuário sai e volta à aba
-  useEffect(() => {
-    function aoVoltar() {
-      if (document.visibilityState === "hidden") {
-        setVisivel(false);
-      }
-    }
-    document.addEventListener("visibilitychange", aoVoltar);
-    return () => document.removeEventListener("visibilitychange", aoVoltar);
-  }, []);
-
-  if (!frase) return null;
-
-  if (!resgatada) {
-    return (
-      <div className={styles.wrapper}>
-        <button
-          className={styles.btnChamativo}
-          onClick={handlePegarFrase}
-        >
-          <span className={styles.icone}>"</span>
-          Pegue sua frase do dia
-        </button>
-
-        <GuestGateModal
-          open={showGate}
-          message="Crie uma conta para pegar sua frase do dia, todos os dias."
-          onClose={() => setShowGate(false)}
-        />
-      </div>
-    );
-  }
-
-  if (visivel) {
-    return (
-      <div className={styles.wrapper}>
-        <div className={styles.fraseCard}>
-          <button className={styles.btnFechar} onClick={() => setVisivel(false)}>✕</button>
-          <span className={styles.aspas}>"</span>
-          <p className={styles.texto}>{frase.texto}</p>
-          <span className={styles.autor}>
-            — {frase.autor}
-            {frase.referencia ? `, ${frase.referencia}` : ""}
-          </span>
-        </div>
-      </div>
-    );
+    if (!resgatada) resgatar();
+    setAberta(true);
   }
 
   return (
-    <div className={styles.wrapper}>
-      <button className={styles.btnVer} onClick={() => setVisivel(true)}>
-        <span className={styles.iconeVer}>"</span>
-        Veja a sua frase
+    <>
+      <button
+        className={`${styles.chip} ${!resgatada ? styles.chipNovo : ""}`}
+        onClick={abrir}
+        aria-label="Ver a frase do dia"
+      >
+        <Sparkles size={14} className={styles.chipIcon} />
+        <span>Frase</span>
+        {!resgatada && <span className={styles.chipDot} aria-hidden="true" />}
       </button>
-    </div>
+
+      {aberta &&
+        createPortal(
+          <div className={styles.overlay} onClick={() => setAberta(false)}>
+            <div className={styles.card} onClick={(e) => e.stopPropagation()}>
+              <button
+                className={styles.close}
+                onClick={() => setAberta(false)}
+                aria-label="Fechar"
+              >
+                ✕
+              </button>
+
+              <span className={styles.kicker}>Frase do dia</span>
+              <span className={styles.aspas}>“</span>
+              <p className={styles.texto}>{frase.texto}</p>
+              <span className={styles.autor}>
+                — {frase.autor}
+                {frase.referencia ? `, ${frase.referencia}` : ""}
+              </span>
+            </div>
+          </div>,
+          document.body
+        )}
+
+      <GuestGateModal
+        open={showGate}
+        message="Crie uma conta para pegar sua frase do dia, todos os dias."
+        onClose={() => setShowGate(false)}
+      />
+    </>
   );
 }

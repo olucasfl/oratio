@@ -1689,11 +1689,20 @@ SAUDAÇÃO
  max-width:var(--home-content-max);
  padding-left:58px;
  display:flex;
- flex-direction:column;
- gap:2px;
+ flex-direction:row;
+ align-items:center;
+ justify-content:space-between;
+ gap:12px;
  position:relative;
  z-index:2;
  animation:fadeUp .6s ease;
+}
+
+.greetingText{
+ display:flex;
+ flex-direction:column;
+ gap:2px;
+ min-width:0;
 }
 
 .greetingHi{
