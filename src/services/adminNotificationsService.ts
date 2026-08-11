@@ -39,6 +39,8 @@ export type Rule = {
   title: string
   body: string | null
   url: string | null
+  hour: number | null
+  condition: string | null
 }
 
 export async function getRules(): Promise<Rule[]> {
@@ -48,9 +50,27 @@ export async function getRules(): Promise<Rule[]> {
 
 export async function updateRule(
   key: string,
-  patch: Partial<Pick<Rule, "enabled" | "title" | "body" | "url">>,
+  patch: Partial<Pick<Rule, "enabled" | "title" | "body" | "url" | "hour">>,
 ): Promise<Rule> {
   const { data } = await api.patch(`/oratio/admin/notifications/rules/${key}`, patch)
   return data
+}
+
+export async function createRule(input: {
+  title: string
+  body?: string
+  url?: string
+  hour?: number
+}): Promise<Rule> {
+  const { data } = await api.post("/oratio/admin/notifications/rules", input)
+  return data
+}
+
+export async function deleteRule(key: string): Promise<void> {
+  await api.delete(`/oratio/admin/notifications/rules/${key}`)
+}
+
+export async function deleteCampaign(id: string): Promise<void> {
+  await api.delete(`/oratio/admin/notifications/${id}`)
 }
 

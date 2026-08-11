@@ -107,3 +107,30 @@
 .ruleFoot{ display:flex; gap:8px; align-items:center; }
 .saveMini{ flex:none; padding:10px 16px; border:none; border-radius:10px; background:var(--oratio-primary); color:#fff; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; }
 .saveMini:disabled{ opacity:.6; }
+
+.campRight{ display:flex; align-items:center; gap:8px; flex:none; }
+.ruleTopRight{ display:flex; align-items:center; gap:8px; }
+.iconDel{
+ flex:none; width:30px; height:30px; display:flex; align-items:center; justify-content:center;
+ border:1px solid var(--oratio-card-border); border-radius:9px; background:#fff;
+ color:#a01f22; cursor:pointer;
+}
+.iconDel:hover{ background:rgba(176,24,26,.08); }
+
+.hourWrap{
+ flex:none; display:inline-flex; align-items:center; gap:4px;
+ padding:0 10px; height:44px; border:1px solid var(--oratio-card-border);
+ border-radius:12px; background:#fff; color:var(--oratio-text-soft); font-size:13px; font-weight:600;
+}
+.hourInput{
+ width:34px; border:none; outline:none; background:none; font-family:inherit;
+ font-size:14px; font-weight:700; color:var(--oratio-text-dark); text-align:center;
+ -moz-appearance:textfield;
+}
+.hourInput::-webkit-outer-spin-button, .hourInput::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+
+.newRule{
+ border:1px dashed var(--oratio-card-border); border-radius:14px; padding:12px 13px;
+ display:flex; flex-direction:column; gap:8px; background:rgba(176,24,26,.02);
+}
+.newRuleTitle{ display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:var(--oratio-primary); }

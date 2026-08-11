@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { Send, Users, Search, Check, Bell, Clock } from "lucide-react"
+import { Send, Users, Search, Check, Bell, Clock, Trash2, Plus } from "lucide-react"
 
 import styles from "./AdminNotifications.module.css"
 import {
@@ -7,7 +7,10 @@ import {
   listCampaigns,
   getSubscribers,
   getRules,
-  updateRule
+  updateRule,
+  createRule,
+  deleteRule,
+  deleteCampaign
 } from "../../services/adminNotificationsService"
 import type { Campaign, Rule } from "../../services/adminNotificationsService"
 import { getAllUsers } from "../../services/adminService"
@@ -37,6 +40,8 @@ export default function AdminNotifications(){
   const [subs, setSubs] = useState<{ totalUsers: number; subscribedUsers: number } | null>(null)
   const [rules, setRules] = useState<Rule[]>([])
   const [savingKey, setSavingKey] = useState<string | null>(null)
+  const [newRule, setNewRule] = useState({ title: "", body: "", url: "", hour: "9" })
+  const [creating, setCreating] = useState(false)
 
   useEffect(()=>{
     listCampaigns().then(setCampaigns).catch(()=>{})
@@ -51,7 +56,7 @@ export default function AdminNotifications(){
   async function saveRule(rule: Rule){
     setSavingKey(rule.key)
     try{
-      await updateRule(rule.key, { enabled: rule.enabled, title: rule.title, body: rule.body, url: rule.url })
+      await updateRule(rule.key, { enabled: rule.enabled, title: rule.title, body: rule.body, url: rule.url, hour: rule.hour })
     }catch{ /* noop */ }finally{ setSavingKey(null) }
   }
 
@@ -60,6 +65,33 @@ export default function AdminNotifications(){
     patchRuleLocal(rule.key, { enabled: next })
     try{ await updateRule(rule.key, { enabled: next }) }
     catch{ patchRuleLocal(rule.key, { enabled: rule.enabled }) }
+  }
+
+  async function handleDeleteRule(key: string){
+    if(!window.confirm("Apagar esta regra automática?")) return
+    setRules(prev => prev.filter(r => r.key !== key))
+    try{ await deleteRule(key) }catch{ getRules().then(setRules).catch(()=>{}) }
+  }
+
+  async function handleCreateRule(){
+    if(!newRule.title.trim()) return
+    setCreating(true)
+    try{
+      const r = await createRule({
+        title: newRule.title.trim(),
+        body: newRule.body.trim() || undefined,
+        url: newRule.url.trim() || undefined,
+        hour: Number(newRule.hour)
+      })
+      setRules(prev => [...prev, r])
+      setNewRule({ title:"", body:"", url:"", hour:"9" })
+    }catch{ /* noop */ }finally{ setCreating(false) }
+  }
+
+  async function handleDeleteCampaign(id: string){
+    if(!window.confirm("Apagar este envio? Ele some do sino de quem recebeu.")) return
+    setCampaigns(prev => prev.filter(c => c.id !== id))
+    try{ await deleteCampaign(id) }catch{ listCampaigns().then(setCampaigns).catch(()=>{}) }
   }
 
   useEffect(()=>{
@@ -173,7 +205,12 @@ export default function AdminNotifications(){
             <div key={c.id} className={styles.camp}>
               <div className={styles.campHead}>
                 <strong>{c.title}</strong>
-                <span className={styles.campBadge}>{c.audience === "ALL" ? "Todos" : "Específicos"}</span>
+                <div className={styles.campRight}>
+                  <span className={styles.campBadge}>{c.audience === "ALL" ? "Todos" : "Específicos"}</span>
+                  <button className={styles.iconDel} onClick={()=>handleDeleteCampaign(c.id)} aria-label="Apagar envio">
+                    <Trash2 size={15}/>
+                  </button>
+                </div>
               </div>
               {c.body && <p className={styles.campBody}>{c.body}</p>}
               <div className={styles.campMeta}>
@@ -191,25 +228,48 @@ export default function AdminNotifications(){
           {rules.map((rule)=>(
             <div key={rule.key} className={styles.rule}>
               <div className={styles.ruleTop}>
-                <span className={styles.ruleName}>{RULE_LABELS[rule.key] || rule.key}</span>
-                <button
-                  className={`${styles.ruleSwitch} ${rule.enabled ? styles.ruleSwitchOn : ""}`}
-                  onClick={()=>toggleRule(rule)}
-                  role="switch"
-                  aria-checked={rule.enabled}
-                  aria-label="Ligar/desligar"
-                ><span className={styles.ruleKnob}/></button>
+                <span className={styles.ruleName}>{RULE_LABELS[rule.key] || "Personalizada"}</span>
+                <div className={styles.ruleTopRight}>
+                  <button
+                    className={`${styles.ruleSwitch} ${rule.enabled ? styles.ruleSwitchOn : ""}`}
+                    onClick={()=>toggleRule(rule)}
+                    role="switch"
+                    aria-checked={rule.enabled}
+                    aria-label="Ligar/desligar"
+                  ><span className={styles.ruleKnob}/></button>
+                  <button className={styles.iconDel} onClick={()=>handleDeleteRule(rule.key)} aria-label="Apagar regra">
+                    <Trash2 size={15}/>
+                  </button>
+                </div>
               </div>
               <input className={styles.input} value={rule.title} onChange={e=>patchRuleLocal(rule.key,{title:e.target.value})} placeholder="Título"/>
               <textarea className={styles.textarea} rows={2} value={rule.body ?? ""} onChange={e=>patchRuleLocal(rule.key,{body:e.target.value})} placeholder="Descrição"/>
               <div className={styles.ruleFoot}>
                 <input className={styles.input} value={rule.url ?? ""} onChange={e=>patchRuleLocal(rule.key,{url:e.target.value})} placeholder="/oratio/…"/>
+                <span className={styles.hourWrap}>
+                  <Clock size={13}/>
+                  <input className={styles.hourInput} type="number" min={0} max={23} value={rule.hour ?? 0} onChange={e=>patchRuleLocal(rule.key,{hour:Number(e.target.value)})}/>h
+                </span>
                 <button className={styles.saveMini} onClick={()=>saveRule(rule)} disabled={savingKey===rule.key}>
                   {savingKey===rule.key ? "…" : "Salvar"}
                 </button>
               </div>
             </div>
           ))}
+
+          <div className={styles.newRule}>
+            <span className={styles.newRuleTitle}><Plus size={14}/> Nova automática (diária no horário)</span>
+            <input className={styles.input} value={newRule.title} onChange={e=>setNewRule({...newRule,title:e.target.value})} placeholder="Título"/>
+            <textarea className={styles.textarea} rows={2} value={newRule.body} onChange={e=>setNewRule({...newRule,body:e.target.value})} placeholder="Descrição (opcional)"/>
+            <div className={styles.ruleFoot}>
+              <input className={styles.input} value={newRule.url} onChange={e=>setNewRule({...newRule,url:e.target.value})} placeholder="/oratio/…"/>
+              <span className={styles.hourWrap}>
+                <Clock size={13}/>
+                <input className={styles.hourInput} type="number" min={0} max={23} value={newRule.hour} onChange={e=>setNewRule({...newRule,hour:e.target.value})}/>h
+              </span>
+              <button className={styles.saveMini} onClick={handleCreateRule} disabled={creating}>{creating?"…":"Criar"}</button>
+            </div>
+          </div>
         </div>
       </div>
 
