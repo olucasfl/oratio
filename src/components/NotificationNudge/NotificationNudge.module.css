@@ -1,18 +1,20 @@
 .wrap{
  position:fixed;
- left:12px;
- right:12px;
- bottom:calc(84px + env(safe-area-inset-bottom));
- z-index:900;
+ inset:0;
+ z-index:1200;
  display:flex;
+ align-items:center;
  justify-content:center;
- pointer-events:none;
- animation:rise .32s cubic-bezier(.2,.7,.3,1);
+ padding:24px;
+ background:rgba(30,15,8,.5);
+ backdrop-filter:blur(4px);
+ -webkit-backdrop-filter:blur(4px);
+ animation:fade .25s ease;
 }
 
 .card{
  position:relative;
- pointer-events:auto;
+ animation:pop .28s cubic-bezier(.2,.7,.3,1);
  width:100%;
  max-width:430px;
  display:grid;
@@ -98,5 +100,6 @@
  font-family:inherit;
 }
 
-@keyframes rise{ from{opacity:0; transform:translateY(16px)} to{opacity:1; transform:translateY(0)} }
-@media (prefers-reduced-motion:reduce){ .wrap{ animation:none; } }
+@keyframes fade{ from{opacity:0} to{opacity:1} }
+@keyframes pop{ from{opacity:0; transform:translateY(10px) scale(.97)} to{opacity:1; transform:translateY(0) scale(1)} }
+@media (prefers-reduced-motion:reduce){ .wrap,.card{ animation:none; } }

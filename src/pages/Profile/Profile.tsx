@@ -62,13 +62,19 @@ export default function Profile(){
  useEffect(()=>{
   if(searchParams.get("notif") === "1"){
    setNotifHighlight(true)
-   setTimeout(()=>{
-    notifCardRef.current?.scrollIntoView({ behavior:"smooth", block:"center" })
-   },200)
-   const t = setTimeout(()=>setNotifHighlight(false),2800)
+   const t = setTimeout(()=>setNotifHighlight(false),3200)
    return ()=>clearTimeout(t)
   }
  },[searchParams])
+
+ // rola até o card só depois que o perfil renderizou (senão o ref é nulo)
+ useEffect(()=>{
+  if(notifHighlight && !loading){
+   requestAnimationFrame(()=>{
+    notifCardRef.current?.scrollIntoView({ behavior:"smooth", block:"center" })
+   })
+  }
+ },[notifHighlight, loading])
 
  const isOffline = useOffline()
 

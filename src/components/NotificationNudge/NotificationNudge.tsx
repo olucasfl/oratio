@@ -47,9 +47,9 @@ export default function NotificationNudge(){
 
   return createPortal(
 
-    <div className={styles.wrap}>
+    <div className={styles.wrap} onClick={dismiss}>
 
-      <div className={styles.card}>
+      <div className={styles.card} onClick={(e)=>e.stopPropagation()}>
 
         <button className={styles.close} onClick={dismiss} aria-label="Fechar">
           <X size={16}/>
