@@ -97,10 +97,7 @@ export default function BottomNavbar(){
     onClick={()=>handleItemClick(item)}
     aria-label={`Abrir ${item.label}`}
    >
-    <span className={styles.iconWrap}>
-     <Icon size={21}/>
-     {item.featured && <span className={styles.featuredDot} aria-hidden="true"/>}
-    </span>
+    <Icon size={21}/>
     <span>{item.label}</span>
    </button>
   )
