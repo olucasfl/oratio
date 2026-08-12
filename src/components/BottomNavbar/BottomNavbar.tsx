@@ -23,7 +23,6 @@ type NavItem = {
  icon:ComponentType<{ size?: number }>
  locked?:boolean
  gateMessage?:string
- featured?:boolean
 }
 
 export default function BottomNavbar(){
@@ -65,7 +64,6 @@ export default function BottomNavbar(){
    path:"/oratio/vox",
    icon:MessageCircleHeart,
    locked:true,
-   featured:true,
    gateMessage:"Crie uma conta para conversar com o VoxAI, seu assistente espiritual católico."
   },
   {
