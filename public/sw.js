@@ -253,6 +253,7 @@ self.addEventListener("push", (event) => {
  let body = ""
  let url = "/oratio/home"
  let icon = "/icon-192.png"
+ let tag = null
 
  try {
   const data = event.data.json()
@@ -260,16 +261,24 @@ self.addEventListener("push", (event) => {
   body = data.body || body
   if (data.url) url = data.url
   if (data.icon) icon = data.icon
+  if (data.tag) tag = data.tag
  } catch {
   body = event.data.text()
  }
+
+ /*
+ Tag ÚNICA por notificação (a menos que o backend mande uma `tag`
+ explícita pra agrupar). Antes todas usavam o mesmo tag fixo, então
+ uma nova SUBSTITUÍA a anterior — só dava pra ver uma por vez.
+ */
+ const finalTag = tag || `oratio-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
 
  event.waitUntil(
   self.registration.showNotification(title, {
    body,
    icon,
    badge: "/icon-192.png",
-   tag: "oratio-notification",
+   tag: finalTag,
    renotify: true,
    data: { url }
   })
