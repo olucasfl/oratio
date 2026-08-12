@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { Send, Users, Search, Check, Bell, Clock, Trash2, Plus } from "lucide-react"
+import { Send, Users, Search, Check, Bell, Clock, Trash2 } from "lucide-react"
 
 import styles from "./AdminNotifications.module.css"
 import {
@@ -8,8 +8,6 @@ import {
   getSubscribers,
   getRules,
   updateRule,
-  createRule,
-  deleteRule,
   deleteCampaign
 } from "../../services/adminNotificationsService"
 import type { Campaign, Rule } from "../../services/adminNotificationsService"
@@ -38,6 +36,22 @@ function ruleTrigger(rule: Rule): string {
   return `Todo dia às ${h}h · para todos que ativaram o push`
 }
 
+// Destinos do app pra escolher com um clique no link da notificação —
+// preenche a rota padrão de cada área.
+const APP_LOCATIONS: { label: string; path: string }[] = [
+  { label: "Início", path: "/oratio/home" },
+  { label: "Liturgia", path: "/oratio/liturgia-completa" },
+  { label: "Terço", path: "/oratio/rosary" },
+  { label: "Orações", path: "/oratio/prayers" },
+  { label: "Consagração", path: "/oratio/consecration" },
+  { label: "Confissão", path: "/oratio/confissao" },
+  { label: "Bíblia", path: "/oratio/biblia" },
+  { label: "Catecismo", path: "/oratio/catecismo" },
+  { label: "VoxAI", path: "/oratio/vox" },
+  { label: "Santo do dia", path: "/oratio/santo-do-dia" },
+  { label: "Perfil", path: "/oratio/profile" },
+]
+
 export default function AdminNotifications(){
 
   const [title, setTitle] = useState("")
@@ -56,8 +70,6 @@ export default function AdminNotifications(){
   const [subs, setSubs] = useState<{ totalUsers: number; subscribedUsers: number } | null>(null)
   const [rules, setRules] = useState<Rule[]>([])
   const [savingKey, setSavingKey] = useState<string | null>(null)
-  const [newRule, setNewRule] = useState({ title: "", body: "", url: "", hour: "9" })
-  const [creating, setCreating] = useState(false)
 
   useEffect(()=>{
     listCampaigns().then(setCampaigns).catch(()=>{})
@@ -81,27 +93,6 @@ export default function AdminNotifications(){
     patchRuleLocal(rule.key, { enabled: next })
     try{ await updateRule(rule.key, { enabled: next }) }
     catch{ patchRuleLocal(rule.key, { enabled: rule.enabled }) }
-  }
-
-  async function handleDeleteRule(key: string){
-    if(!window.confirm("Apagar esta regra automática?")) return
-    setRules(prev => prev.filter(r => r.key !== key))
-    try{ await deleteRule(key) }catch{ getRules().then(setRules).catch(()=>{}) }
-  }
-
-  async function handleCreateRule(){
-    if(!newRule.title.trim()) return
-    setCreating(true)
-    try{
-      const r = await createRule({
-        title: newRule.title.trim(),
-        body: newRule.body.trim() || undefined,
-        url: newRule.url.trim() || undefined,
-        hour: Number(newRule.hour)
-      })
-      setRules(prev => [...prev, r])
-      setNewRule({ title:"", body:"", url:"", hour:"9" })
-    }catch{ /* noop */ }finally{ setCreating(false) }
   }
 
   async function handleDeleteCampaign(id: string){
@@ -142,9 +133,10 @@ export default function AdminNotifications(){
         audience,
         userIds: audience === "SPECIFIC" ? selected : undefined
       })
-      setFeedback(`Enviada para ${c.targeted} pessoa(s) · push: ${c.pushSent} entregue(s).`)
+      setFeedback(`Enviada para ${c.targeted} pessoa(s). O push é entregue em segundo plano — os contadores atualizam na lista de envios abaixo.`)
       setTitle(""); setBody(""); setUrl(""); setSelected([])
-      listCampaigns().then(setCampaigns).catch(()=>{})
+      // pequeno atraso pra pegar os contadores já com a entrega em andamento
+      setTimeout(()=>{ listCampaigns().then(setCampaigns).catch(()=>{}) }, 1500)
     }catch{
       setFeedback("Falha ao enviar. Tente novamente.")
     }finally{
@@ -170,10 +162,27 @@ export default function AdminNotifications(){
         <input className={styles.input} value={title} onChange={e=>setTitle(e.target.value)} placeholder="Ex.: Novidade no Oratio ✝️" maxLength={120}/>
 
         <label className={styles.label}>Descrição (opcional)</label>
-        <textarea className={styles.textarea} value={body} onChange={e=>setBody(e.target.value)} rows={4} placeholder={"Texto completo — pode usar tópicos e emojis.\nQuebras de linha são preservadas."}/>
+        <textarea className={styles.textarea} value={body} onChange={e=>setBody(e.target.value)} rows={4} maxLength={500} placeholder={"Texto completo — pode usar tópicos e emojis.\nQuebras de linha são preservadas."}/>
 
         <label className={styles.label}>Link de destino (opcional)</label>
-        <input className={styles.input} value={url} onChange={e=>setUrl(e.target.value)} placeholder="/oratio/rosary"/>
+        <div className={styles.locGrid}>
+          {APP_LOCATIONS.map((loc)=>(
+            <button
+              key={loc.path}
+              type="button"
+              className={`${styles.locBtn} ${url === loc.path ? styles.locBtnOn : ""}`}
+              onClick={()=>setUrl(url === loc.path ? "" : loc.path)}
+            >
+              {loc.label}
+            </button>
+          ))}
+        </div>
+        <input
+          className={styles.input}
+          value={url}
+          onChange={e=>setUrl(e.target.value)}
+          placeholder="Nenhum (abre o app) — ou escolha um local acima"
+        />
 
         <label className={styles.label}>Público</label>
         <div className={styles.segRow}>
@@ -239,7 +248,7 @@ export default function AdminNotifications(){
 
       <div className={styles.card}>
         <h3 className={styles.cardTitle}><Clock size={15}/> Automáticas</h3>
-        <p className={styles.muted}>Enviadas sozinhas para quem ativou o push. As <strong>regras do sistema</strong> têm gatilho fixo (só editam texto/hora); você também pode criar <strong>avisos diários</strong> para todos. Use {"{count}"} p/ interpolar valores.</p>
+        <p className={styles.muted}>Enviadas sozinhas para quem ativou o push. Gatilho (quando e pra quem) é fixo em cada regra — você edita <strong>texto e hora</strong> e liga/desliga. Use {"{count}"} p/ interpolar valores.</p>
         <div className={styles.campList}>
           {rules.map((rule)=>(
             <div key={rule.key} className={styles.rule}>
@@ -256,16 +265,11 @@ export default function AdminNotifications(){
                     aria-checked={rule.enabled}
                     aria-label="Ligar/desligar"
                   ><span className={styles.ruleKnob}/></button>
-                  {!isSystemRule(rule) && (
-                    <button className={styles.iconDel} onClick={()=>handleDeleteRule(rule.key)} aria-label="Apagar regra">
-                      <Trash2 size={15}/>
-                    </button>
-                  )}
                 </div>
               </div>
               <span className={styles.ruleTrigger}><Clock size={12}/> {ruleTrigger(rule)}</span>
               <input className={styles.input} value={rule.title} onChange={e=>patchRuleLocal(rule.key,{title:e.target.value})} placeholder="Título"/>
-              <textarea className={styles.textarea} rows={2} value={rule.body ?? ""} onChange={e=>patchRuleLocal(rule.key,{body:e.target.value})} placeholder="Descrição"/>
+              <textarea className={styles.textarea} rows={2} maxLength={500} value={rule.body ?? ""} onChange={e=>patchRuleLocal(rule.key,{body:e.target.value})} placeholder="Descrição"/>
               <div className={styles.ruleFoot}>
                 <input className={styles.input} value={rule.url ?? ""} onChange={e=>patchRuleLocal(rule.key,{url:e.target.value})} placeholder="/oratio/…"/>
                 <span className={styles.hourWrap}>
@@ -278,21 +282,6 @@ export default function AdminNotifications(){
               </div>
             </div>
           ))}
-
-          <div className={styles.newRule}>
-            <span className={styles.newRuleTitle}><Plus size={14}/> Novo aviso diário (para todos, no horário)</span>
-            <p className={styles.muted}>Vai todo dia, no horário, para todos com push. Gatilhos condicionais (só quem tem terço não terminado, etc.) são fixos e vêm prontos acima.</p>
-            <input className={styles.input} value={newRule.title} onChange={e=>setNewRule({...newRule,title:e.target.value})} placeholder="Título"/>
-            <textarea className={styles.textarea} rows={2} value={newRule.body} onChange={e=>setNewRule({...newRule,body:e.target.value})} placeholder="Descrição (opcional)"/>
-            <div className={styles.ruleFoot}>
-              <input className={styles.input} value={newRule.url} onChange={e=>setNewRule({...newRule,url:e.target.value})} placeholder="/oratio/…"/>
-              <span className={styles.hourWrap}>
-                <Clock size={13}/>
-                <input className={styles.hourInput} type="number" min={0} max={23} value={newRule.hour} onChange={e=>setNewRule({...newRule,hour:e.target.value})}/>h
-              </span>
-              <button className={styles.saveMini} onClick={handleCreateRule} disabled={creating}>{creating?"…":"Criar"}</button>
-            </div>
-          </div>
         </div>
       </div>
 
