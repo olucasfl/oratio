@@ -15,10 +15,15 @@ import type { Campaign, Rule } from "../../services/adminNotificationsService"
 import { getAllUsers } from "../../services/adminService"
 
 const RULE_LABELS: Record<string, string> = {
-  LITURGY_MORNING: "Liturgia (manhã · 7h)",
-  ANGELUS_MIDDAY: "Angelus (meio-dia · 12h)",
-  ROSARY_UNFINISHED: "Terço não terminado (18h)",
-  STREAK_AT_RISK: "Sequência em risco (20h)"
+  ROSARY_UNFINISHED: "Terço não terminado",
+  STREAK_AT_RISK: "Sequência em risco",
+  BIBLE_RESUME: "Voltar à Bíblia",
+  CATECHISM_RESUME: "Voltar ao Catecismo",
+  ROSARY_LAPSE: "Faz tempo sem Terço",
+  COMEBACK: "Sentimos sua falta",
+  SUNDAY_MASS: "Domingo, dia do Senhor",
+  VOX_INTRO: "Conheça o VoxAI",
+  EXAMEN_NIGHT: "Exame de consciência"
 }
 
 // Regra do sistema = uma das pré-definidas (chave conhecida). Só edita
@@ -32,9 +37,18 @@ function isSystemRule(rule: Rule): boolean {
 // pra quem. As condições são fixas em código; o painel só ajusta texto/hora.
 function ruleTrigger(rule: Rule): string {
   const h = rule.hour ?? 0
-  if (rule.condition === "ROSARY_UNFINISHED") return `Às ${h}h · só quem começou um terço e não terminou`
-  if (rule.condition === "STREAK_AT_RISK") return `Às ${h}h · só quem pode perder a sequência de oração`
-  return `Todo dia às ${h}h · para todos que ativaram o push`
+  const from = `A partir das ${h}h`
+  switch (rule.condition) {
+    case "ROSARY_UNFINISHED": return `${from} · só quem começou um terço e não terminou`
+    case "STREAK_AT_RISK":    return `${from} · só quem pode perder a sequência de oração`
+    case "BIBLE_RESUME":      return `${from} · só quem parou a leitura da Bíblia há dias`
+    case "CATECHISM_RESUME":  return `${from} · só quem parou o Catecismo há dias`
+    case "ROSARY_LAPSE":      return `${from} · só quem não reza o terço há um tempo`
+    case "COMEBACK":          return `${from} · só quem está há dias sem abrir o app`
+    case "SUNDAY":            return `Domingo, a partir das ${h}h · para quem ativou o push`
+    case "VOX_INTRO":         return `${from} · só quem nunca usou o VoxAI`
+    default:                  return `À noite (a partir das ${h}h) · lembrete de reflexão`
+  }
 }
 
 // Destinos do app pra escolher com um clique no link da notificação —
@@ -264,7 +278,7 @@ export default function AdminNotifications(){
 
       <div className={styles.card}>
         <h3 className={styles.cardTitle}><Clock size={15}/> Automáticas</h3>
-        <p className={styles.muted}>Enviadas sozinhas para quem ativou o push. Gatilho (quando e pra quem) é fixo em cada regra — você edita <strong>texto e hora</strong> e liga/desliga. Use {"{count}"} p/ interpolar valores.</p>
+        <p className={styles.muted}>Enviadas sozinhas para quem ativou o push — <strong>no máx. 2 por dia</strong> por pessoa (6h de intervalo; as urgentes têm prioridade e nada repete todo dia). Gatilho fixo em cada regra; você edita <strong>texto e hora</strong> e liga/desliga. Use {"{count}"} e {"{label}"} pra interpolar.</p>
         <div className={styles.campList}>
           {rules.map((rule)=>(
             <div key={rule.key} className={styles.rule}>
