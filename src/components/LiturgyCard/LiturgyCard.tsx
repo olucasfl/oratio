@@ -37,7 +37,11 @@ export default function LiturgyCard({
  // texto escuro e detalhes em dourado: característico e sem se confundir
  // com o fundo de pergaminho da Home.
  const corKey = (liturgy?.cor || "").trim().toLowerCase()
- const isLight = corKey === "branco" || corKey === "dourado"
+ // includes (não ===) para pegar variações como "Branco e Ouro".
+ const isLight =
+  corKey.includes("branco") ||
+  corKey.includes("dourado") ||
+  corKey.includes("ouro")
 
  // A API entrega a celebração no campo "liturgia" (ex.: "Sábado da 19ª
  // Semana do Tempo Comum"); parseCelebration separa nome e grau quando há.

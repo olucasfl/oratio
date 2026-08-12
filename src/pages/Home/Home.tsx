@@ -207,7 +207,13 @@ export default function Home(){
  const handleRefresh = useCallback(async ()=>{
   await Promise.all([
    reloadLiturgy(),
-   guest ? Promise.resolve() : preloadConsecration()
+   guest ? Promise.resolve() : preloadConsecration(),
+   // Atualiza também o "Continue de onde parou" e o "Para você hoje",
+   // senão a Home fica com dados da montagem mesmo após o pull-to-refresh.
+   guest ? Promise.resolve() :
+    getProgress().then((p)=>{ if(p) setProgress(p) }).catch(()=>{}),
+   guest ? Promise.resolve() :
+    getHomeFeed().then((f)=>{ setSuggestions(f?.suggestions ?? []) }).catch(()=>{})
   ])
  },[reloadLiturgy, guest])
 

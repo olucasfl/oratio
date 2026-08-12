@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import styles from "./Catecismo.module.css"
@@ -16,6 +16,7 @@ const ZOOM_KEY  = "catecismo_zoom"
 export default function Catecismo() {
 
   const navigate     = useNavigate()
+  const [searchParams] = useSearchParams()
   const wrapRef      = useRef<HTMLDivElement>(null)
   const viewerRef    = useRef<HTMLDivElement>(null)
   const headerRef    = useRef<HTMLDivElement>(null)
@@ -58,13 +59,23 @@ export default function Catecismo() {
 
   /* ── restaura estado salvo ── */
   function restoreState(doc: any) {
-    const savedPage = localStorage.getItem(PAGE_KEY)
     const savedZoom = localStorage.getItem(ZOOM_KEY)
+    if (savedZoom) setZoomLevel(Number(savedZoom))
+
+    // ?page= (vindo do "Continue no Catecismo" da Home) tem prioridade —
+    // assim abre de onde parou mesmo em outro aparelho. Sem ele, cai no
+    // último ponto salvo localmente.
+    const queryPage = Number(searchParams.get("page"))
+    if (queryPage >= 1 && queryPage <= doc.numPages) {
+      setPage(queryPage)
+      return
+    }
+
+    const savedPage = localStorage.getItem(PAGE_KEY)
     if (savedPage) {
       const p = Number(savedPage)
       if (p >= 1 && p <= doc.numPages) setPage(p)
     }
-    if (savedZoom) setZoomLevel(Number(savedZoom))
   }
 
   /* ── persiste estado ── */
