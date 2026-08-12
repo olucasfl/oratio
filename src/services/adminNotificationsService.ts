@@ -74,3 +74,7 @@ export async function deleteCampaign(id: string): Promise<void> {
   await api.delete(`/oratio/admin/notifications/${id}`)
 }
 
+export async function deleteAllCampaigns(): Promise<void> {
+  await api.delete("/oratio/admin/notifications/all")
+}
+

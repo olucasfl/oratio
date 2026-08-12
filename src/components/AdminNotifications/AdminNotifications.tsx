@@ -8,7 +8,8 @@ import {
   getSubscribers,
   getRules,
   updateRule,
-  deleteCampaign
+  deleteCampaign,
+  deleteAllCampaigns
 } from "../../services/adminNotificationsService"
 import type { Campaign, Rule } from "../../services/adminNotificationsService"
 import { getAllUsers } from "../../services/adminService"
@@ -99,6 +100,14 @@ export default function AdminNotifications(){
     if(!window.confirm("Apagar este envio? Ele some do sino de quem recebeu.")) return
     setCampaigns(prev => prev.filter(c => c.id !== id))
     try{ await deleteCampaign(id) }catch{ listCampaigns().then(setCampaigns).catch(()=>{}) }
+  }
+
+  async function handleDeleteAllCampaigns(){
+    if(campaigns.length === 0) return
+    if(!window.confirm(`Apagar TODOS os ${campaigns.length} envios? Eles somem do sino de quem recebeu. Não afeta as automáticas.`)) return
+    const prev = campaigns
+    setCampaigns([])
+    try{ await deleteAllCampaigns() }catch{ setCampaigns(prev) }
   }
 
   useEffect(()=>{
@@ -223,8 +232,15 @@ export default function AdminNotifications(){
       </div>
 
       <div className={styles.card}>
-        <h3 className={styles.cardTitle}>Ativas (últimos 15 dias)</h3>
-        {campaigns.length === 0 && <p className={styles.muted}>Nenhuma notificação ativa.</p>}
+        <div className={styles.cardHead}>
+          <h3 className={styles.cardTitle}>Notificações criadas</h3>
+          {campaigns.length > 0 && (
+            <button className={styles.clearAll} onClick={handleDeleteAllCampaigns}>
+              <Trash2 size={14}/> Apagar todas
+            </button>
+          )}
+        </div>
+        {campaigns.length === 0 && <p className={styles.muted}>Nenhuma notificação criada ainda.</p>}
         <div className={styles.campList}>
           {campaigns.map(c=>(
             <div key={c.id} className={styles.camp}>
