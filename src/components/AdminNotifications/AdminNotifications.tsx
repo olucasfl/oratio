@@ -22,6 +22,22 @@ const RULE_LABELS: Record<string, string> = {
   STREAK_AT_RISK: "Sequência em risco (20h)"
 }
 
+// Regra do sistema = uma das pré-definidas (chave conhecida). Só edita
+// texto/hora/liga-desliga; a lógica de PRA QUEM enviar é código e não
+// pode ser apagada pelo painel.
+function isSystemRule(rule: Rule): boolean {
+  return !!RULE_LABELS[rule.key]
+}
+
+// Explica o gatilho de cada regra em linguagem clara — quando dispara e
+// pra quem. As condições são fixas em código; o painel só ajusta texto/hora.
+function ruleTrigger(rule: Rule): string {
+  const h = rule.hour ?? 0
+  if (rule.condition === "ROSARY_UNFINISHED") return `Às ${h}h · só quem começou um terço e não terminou`
+  if (rule.condition === "STREAK_AT_RISK") return `Às ${h}h · só quem pode perder a sequência de oração`
+  return `Todo dia às ${h}h · para todos que ativaram o push`
+}
+
 export default function AdminNotifications(){
 
   const [title, setTitle] = useState("")
@@ -223,12 +239,15 @@ export default function AdminNotifications(){
 
       <div className={styles.card}>
         <h3 className={styles.cardTitle}><Clock size={15}/> Automáticas</h3>
-        <p className={styles.muted}>Enviadas sozinhas para quem ativou o push. Use {"{count}"} p/ interpolar valores.</p>
+        <p className={styles.muted}>Enviadas sozinhas para quem ativou o push. As <strong>regras do sistema</strong> têm gatilho fixo (só editam texto/hora); você também pode criar <strong>avisos diários</strong> para todos. Use {"{count}"} p/ interpolar valores.</p>
         <div className={styles.campList}>
           {rules.map((rule)=>(
             <div key={rule.key} className={styles.rule}>
               <div className={styles.ruleTop}>
-                <span className={styles.ruleName}>{RULE_LABELS[rule.key] || "Personalizada"}</span>
+                <span className={styles.ruleName}>
+                  {RULE_LABELS[rule.key] || "Aviso diário"}
+                  {isSystemRule(rule) && <span className={styles.ruleTag}>sistema</span>}
+                </span>
                 <div className={styles.ruleTopRight}>
                   <button
                     className={`${styles.ruleSwitch} ${rule.enabled ? styles.ruleSwitchOn : ""}`}
@@ -237,11 +256,14 @@ export default function AdminNotifications(){
                     aria-checked={rule.enabled}
                     aria-label="Ligar/desligar"
                   ><span className={styles.ruleKnob}/></button>
-                  <button className={styles.iconDel} onClick={()=>handleDeleteRule(rule.key)} aria-label="Apagar regra">
-                    <Trash2 size={15}/>
-                  </button>
+                  {!isSystemRule(rule) && (
+                    <button className={styles.iconDel} onClick={()=>handleDeleteRule(rule.key)} aria-label="Apagar regra">
+                      <Trash2 size={15}/>
+                    </button>
+                  )}
                 </div>
               </div>
+              <span className={styles.ruleTrigger}><Clock size={12}/> {ruleTrigger(rule)}</span>
               <input className={styles.input} value={rule.title} onChange={e=>patchRuleLocal(rule.key,{title:e.target.value})} placeholder="Título"/>
               <textarea className={styles.textarea} rows={2} value={rule.body ?? ""} onChange={e=>patchRuleLocal(rule.key,{body:e.target.value})} placeholder="Descrição"/>
               <div className={styles.ruleFoot}>
@@ -258,7 +280,8 @@ export default function AdminNotifications(){
           ))}
 
           <div className={styles.newRule}>
-            <span className={styles.newRuleTitle}><Plus size={14}/> Nova automática (diária no horário)</span>
+            <span className={styles.newRuleTitle}><Plus size={14}/> Novo aviso diário (para todos, no horário)</span>
+            <p className={styles.muted}>Vai todo dia, no horário, para todos com push. Gatilhos condicionais (só quem tem terço não terminado, etc.) são fixos e vêm prontos acima.</p>
             <input className={styles.input} value={newRule.title} onChange={e=>setNewRule({...newRule,title:e.target.value})} placeholder="Título"/>
             <textarea className={styles.textarea} rows={2} value={newRule.body} onChange={e=>setNewRule({...newRule,body:e.target.value})} placeholder="Descrição (opcional)"/>
             <div className={styles.ruleFoot}>
