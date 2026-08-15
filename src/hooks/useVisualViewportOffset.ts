@@ -1,87 +1,99 @@
 import { useEffect } from "react"
 
 /*
-Histórico: já foram tentadas 4 correções pra navbar "bugando" depois
-de voltar do navigator.share() num PWA instalado (Android,
-principalmente) — nudge de scroll, reflow forçado, etc. Nenhuma
-resolveu, e a descrição mais recente do bug deixou o mecanismo real
-mais claro: rolando a tela pra baixo a navbar assenta no lugar certo;
-rolando pra cima ela "sobe" e para na metade — ou seja, o valor que o
-CSS usa pra saber onde fica o fundo real da tela (visualViewport)
-fica desatualizado especificamente durante/logo depois da folha
-nativa de compartilhamento, e só se corrige sozinho em certas
-transições de scroll.
+Navbar "bugando" ao voltar do navigator.share() num PWA (Android): a
+folha nativa deixa o LAYOUT viewport maior que o visível por um tempo,
+então a navbar (position:fixed; bottom:var(--vv-bottom-offset)) ora fica
+no fundo real, ora "voa" pra metade da tela conforme o scroll.
 
-A ÚNICA fonte confiável desse valor é window.visualViewport, lido ao
-vivo — é literalmente a API que existe pra isso. A primeira tentativa
-(há algumas versões atrás) já usava isso, mas aplicava o offset via
-estado do React em CADA evento de resize/scroll do visualViewport —
-e como esses eventos disparam várias vezes em sequência enquanto a
-sheet nativa termina de fechar (cada tick com um valor intermediário
-diferente), cada re-render aplicava um offset novo, e ISSO que causava
-a navbar visivelmente "subindo e descendo". A falha não era a fonte
-de dados, era aplicar cada valor intermediário sem esperar as coisas
-pararem de mudar.
+Já foram tentadas 5 correções que PERSEGUEM o viewport (offset por
+estado do React, nudge de scroll, reflow, offset global, e a última com
+debounce). Todas falham pela mesma razão: aplicam o valor do viewport
+mesmo quando ele está momentaneamente ERRADO (grande demais), e aí a
+navbar salta pro centro.
 
-Essa versão faz a mesma leitura, mas:
-- aplica via propriedade customizada de CSS (--vv-bottom-offset) num
-  ref direto, sem passar pelo estado do React — zero re-render, zero
-  chance de "piscar" um valor errado na tela;
-- só COMMITA um valor novo depois que os eventos do visualViewport
-  pararem de disparar por 120ms (debounce) — ignora os valores
-  intermediários da transição, só aplica quando ela já assentou.
+Esta versão muda a estratégia:
+
+1. TRAVA DURA (o mais importante): o offset é limitado a MAX_LIFT px. O
+   ajuste legítimo (barra de URL aparecendo/sumindo) é pequeno; o valor
+   bugado pós-share é enorme (~meia tela). Limitando, a navbar pode subir
+   no máximo um pouquinho — NUNCA vai pro centro nem "se solta". É o que
+   resolve o sintoma de vez, mesmo se o viewport continuar mentindo.
+2. Leitura contínua via requestAnimationFrame, escrita DIRETO no DOM
+   (sem estado do React, sem debounce) — some a lag e o "pisca-pisca";
+   assim que o Android reporta o viewport certo, a navbar assenta.
+3. Sem dividir por --oratio-font-scale: a navbar é renderizada em portal
+   no document.body, FORA do #root que tem o zoom, então não sofre a
+   escala (a divisão de antes introduzia erro).
+4. Ressincroniza em rajada ao voltar o foco/visibilidade e quando o
+   ShareReadingButton chamar resyncViewport() logo após a folha fechar —
+   é o que "fechar e abrir o app" faz na prática.
 */
-export function useVisualViewportOffset(){
 
- useEffect(()=>{
+const MAX_LIFT = 96 // teto de subida da navbar (px de tela real)
 
+function readOffset(): number {
   const vv = window.visualViewport
-  if(!vv) return
+  if (!vv) return 0
+  const raw = Math.round(window.innerHeight - (vv.height + vv.offsetTop))
+  // clamp: nunca negativo, nunca mais que MAX_LIFT (anti "voar pro centro")
+  return Math.min(Math.max(0, raw), MAX_LIFT)
+}
 
-  let debounceId: ReturnType<typeof setTimeout> | null = null
-
-  function apply(){
-
-   const offset = Math.max(
-    0,
-    Math.round(window.innerHeight - (vv!.height + vv!.offsetTop))
-   )
-
-   // window.innerHeight/visualViewport são px reais de tela, mas quem
-   // consome essa variável (.navbar) vive dentro do #root, que tem
-   // zoom:var(--oratio-font-scale) aplicado — nesse contexto qualquer
-   // px vira px*zoom na renderização. Sem dividir aqui, a navbar
-   // assentaria mais alto/baixo do que o necessário quando o usuário
-   // está com uma fonte maior que "Normal".
-   const scaleRaw = getComputedStyle(document.documentElement)
-    .getPropertyValue("--oratio-font-scale")
-   const scale = parseFloat(scaleRaw) || 1
-
-   document.documentElement.style.setProperty(
+function applyOffset() {
+  document.documentElement.style.setProperty(
     "--vv-bottom-offset",
-    `${offset / scale}px`
-   )
+    `${readOffset()}px`,
+  )
+}
 
-  }
+// Chamado pelo botão de compartilhar assim que a folha nativa fecha:
+// relê o viewport em rajada por ~1,2s até ele parar de mentir.
+export function resyncViewport() {
+  let n = 0
+  const id = setInterval(() => {
+    applyOffset()
+    if (++n > 24) clearInterval(id)
+  }, 50)
+}
 
-  function onChange(){
+export function useVisualViewportOffset() {
+  useEffect(() => {
+    const vv = window.visualViewport
+    if (!vv) return
 
-   if(debounceId) clearTimeout(debounceId)
-   debounceId = setTimeout(apply, 120)
+    let raf = 0
+    const schedule = () => {
+      if (!raf) {
+        raf = requestAnimationFrame(() => {
+          raf = 0
+          applyOffset()
+        })
+      }
+    }
 
-  }
+    applyOffset()
 
-  apply()
+    vv.addEventListener("resize", schedule)
+    vv.addEventListener("scroll", schedule)
+    window.addEventListener("resize", schedule)
+    window.addEventListener("orientationchange", schedule)
 
-  vv.addEventListener("resize", onChange)
-  vv.addEventListener("scroll", onChange)
+    // "fechar e abrir o app" corrige — replicamos ao reganhar visibilidade/foco
+    const onWake = () => resyncViewport()
+    window.addEventListener("visibilitychange", onWake)
+    window.addEventListener("pageshow", onWake)
+    window.addEventListener("focus", onWake)
 
-  return ()=>{
-   if(debounceId) clearTimeout(debounceId)
-   vv.removeEventListener("resize", onChange)
-   vv.removeEventListener("scroll", onChange)
-  }
-
- },[])
-
+    return () => {
+      if (raf) cancelAnimationFrame(raf)
+      vv.removeEventListener("resize", schedule)
+      vv.removeEventListener("scroll", schedule)
+      window.removeEventListener("resize", schedule)
+      window.removeEventListener("orientationchange", schedule)
+      window.removeEventListener("visibilitychange", onWake)
+      window.removeEventListener("pageshow", onWake)
+      window.removeEventListener("focus", onWake)
+    }
+  }, [])
 }
