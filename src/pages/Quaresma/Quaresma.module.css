@@ -1,0 +1,1411 @@
+/* =========================
+QUARESMA DE SÃO MIGUEL — página da devoção
+
+Tema próprio: azul-noite e dourado. A página fica no fundo claro do app
+(pra não brigar com a navbar), mas os elementos de destaque — hero,
+contagem regressiva, dias concluídos — puxam pro noturno.
+========================= */
+
+.container{
+
+ --miguel-night:#101c33;
+ --miguel-night-deep:#070e1c;
+ --miguel-gold:#b9902f;
+ --miguel-gold-bright:#d9b45f;
+ --miguel-gold-soft:#f0dba6;
+ --miguel-amber:#b7791f;
+
+ --content-max:640px;
+
+ position:relative;
+
+ min-height:100dvh;
+
+ padding:
+  calc(16px + env(safe-area-inset-top))
+  18px
+  calc(130px + env(safe-area-inset-bottom));
+
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ gap:18px;
+}
+
+.aurora{
+ position:absolute;
+ top:0;
+ left:0;
+ right:0;
+ height:340px;
+ pointer-events:none;
+ z-index:0;
+
+ background:
+  radial-gradient(70% 100% at 50% 0%, rgba(24,42,78,.14) 0%, transparent 70%);
+}
+
+/* `:not(.aurora)` é essencial: sem ele esta regra sobrescreve o
+   position:absolute do gradiente (mesma especificidade, vem depois),
+   e ele passa a ocupar 340px de altura no fluxo, empurrando a página. */
+.container > *:not(.aurora){
+ position:relative;
+ z-index:1;
+}
+
+
+/* =========================
+VOLTAR
+========================= */
+
+.back{
+ align-self:flex-start;
+
+ display:inline-flex;
+ align-items:center;
+ gap:4px;
+
+ padding:6px 10px 6px 4px;
+
+ background:none;
+ border:none;
+
+ font-family:var(--oratio-font-text);
+ font-size:15px;
+ color:var(--oratio-text-soft);
+
+ cursor:pointer;
+}
+
+
+/* =========================
+HERO
+========================= */
+
+.hero{
+ width:100%;
+ max-width:var(--content-max);
+
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ text-align:center;
+ gap:8px;
+
+ padding:26px 20px 28px;
+
+ border-radius:26px;
+ border:1px solid rgba(217,180,95,.3);
+
+ background:
+  radial-gradient(120% 130% at 50% -10%, rgba(80,110,170,.34) 0%, transparent 60%),
+  linear-gradient(160deg, var(--miguel-night) 0%, var(--miguel-night-deep) 100%);
+
+ box-shadow:
+  0 16px 44px rgba(10,18,36,.26),
+  inset 0 1px 0 rgba(240,219,166,.14);
+}
+
+.heroIcon{
+ width:60px;
+ height:60px;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ border-radius:50%;
+ border:1px solid rgba(217,180,95,.4);
+
+ background:linear-gradient(160deg, rgba(217,180,95,.22) 0%, rgba(217,180,95,.05) 100%);
+ color:var(--miguel-gold-soft);
+
+ animation:heroGlow 4.5s ease-in-out infinite;
+}
+
+@keyframes heroGlow{
+ 0%,100% { box-shadow:0 0 0 0 rgba(217,180,95,.24) }
+ 50%     { box-shadow:0 0 0 12px rgba(217,180,95,0) }
+}
+
+.heroBadge{
+ padding:3px 12px;
+
+ border-radius:99px;
+ border:1px solid rgba(217,180,95,.34);
+ background:rgba(217,180,95,.12);
+
+ font-size:11px;
+ font-weight:700;
+ letter-spacing:.14em;
+ text-transform:uppercase;
+ color:var(--miguel-gold-bright);
+}
+
+.heroTitle{
+ margin:0;
+ font-family:var(--oratio-font-title);
+ font-size:24px;
+ font-weight:600;
+ line-height:1.25;
+ color:#f6f1e6;
+}
+
+.heroSub{
+ margin:0;
+ font-size:15px;
+ line-height:1.45;
+ color:rgba(240,235,225,.62);
+}
+
+
+/* =========================
+OFFLINE
+========================= */
+
+.offline{
+ width:100%;
+ max-width:var(--content-max);
+
+ padding:11px 14px;
+
+ border-radius:14px;
+ border:1px solid #f0d9a8;
+ background:#fff8e8;
+
+ font-size:14px;
+ line-height:1.4;
+ color:#6b5320;
+}
+
+
+/* =========================
+ABAS
+========================= */
+
+.tabs{
+ position:relative;
+
+ width:100%;
+ max-width:var(--content-max);
+
+ display:grid;
+ grid-auto-flow:column;
+ grid-auto-columns:1fr;
+
+ border-bottom:1px solid var(--oratio-card-border);
+}
+
+.tab{
+ padding:11px 6px 13px;
+
+ background:none;
+ border:none;
+
+ font-family:var(--oratio-font-text);
+ font-size:15px;
+ font-weight:600;
+ color:var(--oratio-text-soft);
+
+ cursor:pointer;
+ transition:color .2s ease;
+}
+
+.tabActive{
+ color:var(--miguel-night);
+}
+
+.tabInk{
+ position:absolute;
+ bottom:-1px;
+ left:0;
+
+ height:2px;
+
+ border-radius:99px;
+ background:linear-gradient(90deg, var(--miguel-gold) 0%, var(--miguel-gold-bright) 100%);
+
+ transition:transform .28s cubic-bezier(.2,.7,.3,1);
+}
+
+
+/* =========================
+PAINEL (troca de aba)
+========================= */
+
+.panel{
+ width:100%;
+ max-width:var(--content-max);
+
+ display:flex;
+ flex-direction:column;
+ gap:16px;
+
+ animation:panelIn .3s ease backwards;
+}
+
+@keyframes panelIn{
+ from{ opacity:0; transform:translateY(8px) }
+ to{ opacity:1; transform:translateY(0) }
+}
+
+
+/* =========================
+CONTAGEM REGRESSIVA
+========================= */
+
+.countdown{
+ display:flex;
+ align-items:center;
+ gap:14px;
+
+ padding:16px 18px;
+
+ border-radius:20px;
+ border:1px solid rgba(217,180,95,.34);
+
+ background:
+  linear-gradient(135deg, rgba(16,28,51,.96) 0%, rgba(7,14,28,.98) 100%);
+
+ box-shadow:0 12px 34px rgba(10,18,36,.22);
+}
+
+.countdownFeast{
+ border-color:rgba(217,180,95,.6);
+ box-shadow:
+  0 12px 34px rgba(10,18,36,.28),
+  inset 0 0 44px rgba(217,180,95,.12);
+}
+
+.countdownNum{
+ flex:none;
+
+ min-width:56px;
+
+ font-family:var(--oratio-font-title);
+ font-size:38px;
+ font-weight:700;
+ line-height:1;
+ text-align:center;
+ color:var(--miguel-gold-soft);
+ font-variant-numeric:tabular-nums;
+
+ text-shadow:0 0 22px rgba(217,180,95,.34);
+}
+
+.countdownBody{
+ flex:1;
+ min-width:0;
+
+ display:flex;
+ flex-direction:column;
+ gap:1px;
+}
+
+.countdownUnit{
+ font-size:11px;
+ font-weight:700;
+ letter-spacing:.14em;
+ text-transform:uppercase;
+ color:var(--miguel-gold-bright);
+}
+
+.countdownBody strong{
+ font-family:var(--oratio-font-title);
+ font-size:15px;
+ font-weight:600;
+ line-height:1.3;
+ color:#f6f1e6;
+}
+
+.countdownDate{
+ font-size:13px;
+ color:rgba(240,235,225,.6);
+}
+
+.countdownFlame{
+ flex:none;
+ color:rgba(217,180,95,.5);
+}
+
+
+/* =========================
+DOMINGO — dia de descanso
+========================= */
+
+.sunday{
+ display:flex;
+ align-items:flex-start;
+ gap:12px;
+
+ padding:14px 16px;
+
+ border-radius:18px;
+ border:1px solid #e6d9bd;
+ background:linear-gradient(135deg,#fdf8ec 0%,#f8f0dd 100%);
+}
+
+.sundayIcon{
+ flex:none;
+ margin-top:2px;
+ color:#b98b1f;
+}
+
+.sunday span{
+ display:flex;
+ flex-direction:column;
+ gap:2px;
+}
+
+.sunday strong{
+ font-size:15px;
+ color:#6b5320;
+}
+
+.sunday span span{
+ font-size:13.5px;
+ line-height:1.4;
+ color:#8a7440;
+}
+
+
+/* =========================
+PROGRESSO
+========================= */
+
+.progressBox{
+ padding:15px 17px;
+
+ border-radius:18px;
+ border:1px solid var(--oratio-card-border);
+ background:var(--oratio-card-bg);
+ box-shadow:var(--oratio-shadow-soft);
+}
+
+.progressTop{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px;
+
+ margin-bottom:11px;
+}
+
+.progressTop strong{
+ font-family:var(--oratio-font-title);
+ font-size:20px;
+ color:var(--miguel-night);
+ font-variant-numeric:tabular-nums;
+}
+
+.progressTop strong span{
+ font-family:var(--oratio-font-text);
+ font-size:14px;
+ font-weight:500;
+ color:var(--oratio-text-soft);
+}
+
+.badges{
+ display:flex;
+ flex-wrap:wrap;
+ gap:6px;
+}
+
+.badge{
+ padding:3px 10px;
+
+ border-radius:99px;
+ border:1px solid var(--oratio-card-border);
+ background:#faf6ef;
+
+ font-size:12px;
+ font-weight:600;
+ color:var(--oratio-text-soft);
+ white-space:nowrap;
+}
+
+.badgeLate{
+ border-color:#e4b5a2;
+ background:#fdeee8;
+ color:#a8462c;
+}
+
+.badgeDone{
+ border-color:rgba(185,144,47,.4);
+ background:rgba(185,144,47,.12);
+ color:var(--miguel-gold);
+}
+
+.progressTrack{
+ height:7px;
+
+ border-radius:99px;
+ background:#efe7d9;
+ overflow:hidden;
+}
+
+.progressFill{
+ height:100%;
+
+ border-radius:99px;
+ background:linear-gradient(90deg, var(--miguel-night) 0%, var(--miguel-gold) 100%);
+
+ transition:width .6s cubic-bezier(.2,.7,.3,1);
+}
+
+
+/* =========================
+AÇÃO PRINCIPAL
+========================= */
+
+.cta{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+
+ padding:14px 20px;
+
+ border:none;
+ border-radius:16px;
+
+ background:linear-gradient(135deg, var(--miguel-night) 0%, var(--miguel-night-deep) 100%);
+
+ box-shadow:0 12px 30px rgba(10,18,36,.24);
+
+ font-family:var(--oratio-font-title);
+ font-size:15px;
+ font-weight:600;
+ color:var(--miguel-gold-soft);
+
+ cursor:pointer;
+ transition:transform .18s ease, box-shadow .18s ease;
+}
+
+.cta:hover{
+ transform:translateY(-2px);
+ box-shadow:0 16px 38px rgba(10,18,36,.3);
+}
+
+.cta:active{
+ transform:scale(.985);
+}
+
+
+/* =========================
+GRADE DOS 40 DIAS
+========================= */
+
+.gridWrap{
+ padding:16px;
+
+ border-radius:20px;
+ border:1px solid var(--oratio-card-border);
+ background:var(--oratio-card-bg);
+ box-shadow:var(--oratio-shadow-soft);
+}
+
+.gridHead{
+ display:flex;
+ align-items:baseline;
+ justify-content:space-between;
+ gap:10px;
+
+ margin-bottom:14px;
+}
+
+.gridHead h3{
+ margin:0;
+ font-family:var(--oratio-font-title);
+ font-size:16px;
+ font-weight:600;
+ color:var(--miguel-night);
+}
+
+.gridHead span{
+ font-size:12.5px;
+ color:var(--oratio-text-soft);
+}
+
+.grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fill,minmax(58px,1fr));
+ gap:8px;
+}
+
+.dayCell,
+.restCell{
+ position:relative;
+
+ aspect-ratio:1;
+
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:1px;
+
+ border-radius:14px;
+
+ animation:cellIn .34s ease backwards;
+}
+
+@keyframes cellIn{
+ from{ opacity:0; transform:scale(.86) }
+ to{ opacity:1; transform:scale(1) }
+}
+
+.dayCell{
+ border:1px solid var(--oratio-card-border);
+ background:#fbf8f2;
+
+ cursor:pointer;
+ transition:transform .18s ease, box-shadow .18s ease, background .2s ease;
+}
+
+.dayCell:hover{
+ transform:translateY(-2px);
+ box-shadow:0 8px 20px rgba(10,18,36,.1);
+}
+
+.cellNum{
+ font-family:var(--oratio-font-title);
+ font-size:16px;
+ font-weight:700;
+ line-height:1;
+ color:var(--miguel-night);
+ font-variant-numeric:tabular-nums;
+}
+
+.cellDate{
+ font-size:10px;
+ line-height:1;
+ color:var(--oratio-text-soft);
+ font-variant-numeric:tabular-nums;
+}
+
+.cellCheck{
+ color:var(--miguel-gold-soft);
+}
+
+.cellLock{
+ color:#bdb3a2;
+}
+
+/* Marca o último domingo, que é dia de oração e por isso vem numerado. */
+.cellSun{
+ position:absolute;
+ top:5px;
+ left:5px;
+ color:#c9a24a;
+ opacity:.75;
+}
+
+.done .cellSun{ color:var(--miguel-gold-soft) }
+
+
+/* ── estados ── */
+
+.done{
+ border-color:rgba(217,180,95,.5);
+ background:linear-gradient(150deg, var(--miguel-night) 0%, var(--miguel-night-deep) 100%);
+}
+
+.done .cellNum{ color:var(--miguel-gold-soft) }
+.done .cellDate{ color:rgba(240,219,166,.5) }
+
+/* "Hoje" é dourado CHEIO e "em atraso" é terracota — os dois eram
+   creme/âmbar antes e ficavam indistinguíveis de relance. Agora um é
+   saturado (a ação de agora), o outro é avermelhado (pendência). */
+
+.current{
+ border-color:transparent;
+ background:linear-gradient(150deg,#e8c274 0%,#c39a35 100%);
+ box-shadow:0 8px 24px rgba(185,144,47,.4);
+}
+
+.current .cellNum{ color:#2a2008 }
+.current .cellDate{ color:rgba(42,32,8,.62) }
+.current .cellSun{ color:#5c4a12; opacity:.7 }
+
+.ring{
+ position:absolute;
+ inset:-2px;
+
+ border-radius:16px;
+ border:2px solid #c39a35;
+
+ animation:ringPulse 2.1s ease-in-out infinite;
+ pointer-events:none;
+}
+
+@keyframes ringPulse{
+ 0%,100% { box-shadow:0 0 0 0 rgba(195,154,53,.55); opacity:1 }
+ 50%     { box-shadow:0 0 0 7px rgba(195,154,53,0); opacity:.75 }
+}
+
+.late{
+ border-color:#e4b5a2;
+ background:#fdeee8;
+}
+
+.late .cellNum{ color:#a8462c }
+.late .cellDate{ color:#b9715a }
+.late .cellSun{ color:#c08a76 }
+
+.locked{
+ border-color:#eae2d5;
+ background:#f7f4ee;
+ opacity:.62;
+ cursor:default;
+}
+
+.locked:hover{
+ transform:none;
+ box-shadow:none;
+}
+
+.locked .cellNum{ color:#a89e8d }
+
+.feastCell::after{
+ content:"";
+
+ position:absolute;
+ top:5px;
+ right:5px;
+
+ width:5px;
+ height:5px;
+
+ border-radius:50%;
+ background:var(--miguel-gold-bright);
+ box-shadow:0 0 7px rgba(217,180,95,.9);
+}
+
+
+/* ── domingo ── */
+
+.restCell{
+ border:1px dashed #ded3bf;
+ background:repeating-linear-gradient(
+  135deg,
+  #faf7f0 0px, #faf7f0 5px,
+  #f4efe4 5px, #f4efe4 10px
+ );
+
+ color:#a89c86;
+}
+
+.restCell span{
+ font-size:10px;
+ font-weight:600;
+ letter-spacing:.06em;
+ text-transform:uppercase;
+}
+
+
+/* ── legenda ── */
+
+.legend{
+ display:flex;
+ flex-wrap:wrap;
+ gap:12px;
+
+ margin-top:14px;
+ padding-top:12px;
+
+ border-top:1px solid var(--oratio-card-border);
+}
+
+.legend span{
+ display:inline-flex;
+ align-items:center;
+ gap:5px;
+
+ font-size:12px;
+ color:var(--oratio-text-soft);
+}
+
+.legend i{
+ width:9px;
+ height:9px;
+ border-radius:3px;
+}
+
+.dotDone{    background:var(--miguel-night) }
+.dotCurrent{ background:linear-gradient(150deg,#e8c274,#c39a35) }
+.dotLate{    background:#e08a6b }
+.dotLocked{  background:#e2dace }
+
+
+/* =========================
+TÍTULOS DE SEÇÃO
+========================= */
+
+.sectionTitle{
+ margin:0 0 6px;
+ font-family:var(--oratio-font-title);
+ font-size:17px;
+ font-weight:600;
+ color:var(--miguel-night);
+}
+
+.sectionHint{
+ margin:0 0 14px;
+ font-size:14.5px;
+ line-height:1.5;
+ color:var(--oratio-text-soft);
+}
+
+
+/* =========================
+PENITÊNCIAS — lista editável
+========================= */
+
+.penanceBox{
+ padding:17px;
+
+ border-radius:20px;
+ border:1px solid var(--oratio-card-border);
+ background:var(--oratio-card-bg);
+ box-shadow:var(--oratio-shadow-soft);
+}
+
+.penanceHead{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px;
+}
+
+.penanceStatus{
+ display:inline-flex;
+ align-items:center;
+ gap:5px;
+
+ font-size:12.5px;
+ color:var(--miguel-gold);
+}
+
+
+/* ── campo + botão de adicionar ── */
+
+.penanceForm{
+ display:flex;
+ gap:9px;
+
+ margin-bottom:16px;
+}
+
+.penanceInput,
+.penanceEditInput{
+ flex:1;
+ min-width:0;
+
+ padding:13px 15px;
+
+ border:1px solid var(--oratio-card-border);
+ border-radius:14px;
+ background:#fdfbf7;
+
+ font-family:var(--oratio-font-text);
+ font-size:16px;
+ color:var(--oratio-text-dark);
+
+ transition:border-color .2s ease, box-shadow .2s ease;
+}
+
+.penanceInput:focus,
+.penanceEditInput:focus{
+ outline:none;
+ border-color:var(--miguel-gold);
+ box-shadow:0 0 0 3px rgba(185,144,47,.14);
+}
+
+.penanceAdd{
+ flex:none;
+
+ width:48px;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ border:none;
+ border-radius:14px;
+
+ background:linear-gradient(135deg, var(--miguel-night) 0%, var(--miguel-night-deep) 100%);
+ box-shadow:0 8px 22px rgba(10,18,36,.2);
+ color:var(--miguel-gold-soft);
+
+ cursor:pointer;
+ transition:transform .18s ease, opacity .2s ease;
+}
+
+.penanceAdd:hover:not(:disabled){
+ transform:translateY(-2px);
+}
+
+.penanceAdd:active:not(:disabled){
+ transform:scale(.94);
+}
+
+.penanceAdd:disabled{
+ opacity:.35;
+ cursor:default;
+}
+
+
+/* ── estado vazio ── */
+
+.penanceEmpty{
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ gap:5px;
+
+ padding:26px 18px;
+
+ border:1px dashed #e0d5c0;
+ border-radius:16px;
+ background:#fdfbf6;
+
+ text-align:center;
+ color:#a89c86;
+}
+
+.penanceEmpty strong{
+ margin-top:4px;
+ font-family:var(--oratio-font-title);
+ font-size:15px;
+ color:var(--miguel-night);
+}
+
+.penanceEmpty span{
+ font-size:14px;
+ line-height:1.5;
+ max-width:280px;
+ color:var(--oratio-text-soft);
+}
+
+
+/* ── lista ── */
+
+.penanceList{
+ margin:0;
+ padding:0;
+ list-style:none;
+
+ display:flex;
+ flex-direction:column;
+ gap:9px;
+}
+
+.penanceItem{
+ display:flex;
+ align-items:center;
+ gap:10px;
+
+ padding:11px 12px;
+
+ border:1px solid var(--oratio-card-border);
+ border-radius:14px;
+ background:#fdfbf7;
+
+ animation:penanceIn .26s cubic-bezier(.2,.7,.3,1) backwards;
+}
+
+@keyframes penanceIn{
+ from{ opacity:0; transform:translateY(-6px) }
+ to{ opacity:1; transform:translateY(0) }
+}
+
+.penanceBullet{
+ flex:none;
+
+ width:26px;
+ height:26px;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ border-radius:9px;
+ border:1px solid rgba(185,144,47,.3);
+ background:rgba(185,144,47,.1);
+
+ color:var(--miguel-gold);
+}
+
+.penanceText{
+ flex:1;
+ min-width:0;
+
+ font-size:16px;
+ line-height:1.4;
+ color:var(--oratio-text-dark);
+ word-break:break-word;
+}
+
+.penanceIconButton{
+ flex:none;
+
+ width:32px;
+ height:32px;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ border:none;
+ border-radius:10px;
+ background:transparent;
+
+ color:var(--oratio-text-soft);
+
+ cursor:pointer;
+ transition:background .18s ease, color .18s ease;
+}
+
+.penanceIconButton:hover{
+ background:rgba(16,28,51,.06);
+ color:var(--miguel-night);
+}
+
+.penanceDelete:hover{
+ background:rgba(176,24,26,.08);
+ color:#a3282a;
+}
+
+
+/* =========================
+SOBRE — marcos da devoção
+========================= */
+
+.milestones{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+
+ padding:18px 12px;
+
+ border-radius:20px;
+ border:1px solid var(--oratio-card-border);
+ background:var(--oratio-card-bg);
+ box-shadow:var(--oratio-shadow-soft);
+}
+
+.milestone{
+ position:relative;
+
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ gap:2px;
+
+ text-align:center;
+}
+
+/* O fio dourado que liga um marco ao anterior. */
+.milestoneLine{
+ position:absolute;
+ top:19px;
+ right:50%;
+ left:-50%;
+
+ height:1px;
+
+ background:linear-gradient(90deg, transparent 0%, rgba(185,144,47,.45) 50%, transparent 100%);
+}
+
+.milestoneIcon{
+ position:relative;
+ z-index:1;
+
+ width:38px;
+ height:38px;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ margin-bottom:6px;
+
+ border-radius:50%;
+ border:1px solid rgba(185,144,47,.36);
+ background:linear-gradient(160deg,#fdf7e8 0%,#f7edd6 100%);
+
+ color:var(--miguel-gold);
+}
+
+.milestoneDate{
+ font-family:var(--oratio-font-title);
+ font-size:15px;
+ font-weight:700;
+ color:var(--miguel-night);
+ font-variant-numeric:tabular-nums;
+}
+
+.milestoneTitle{
+ font-size:13px;
+ font-weight:600;
+ color:var(--miguel-gold);
+}
+
+.milestoneSub{
+ font-size:11.5px;
+ line-height:1.35;
+ color:var(--oratio-text-soft);
+}
+
+
+/* =========================
+SOBRE — lema
+========================= */
+
+.motto{
+ position:relative;
+ overflow:hidden;
+
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ gap:3px;
+
+ padding:22px 20px;
+
+ border-radius:20px;
+ border:1px solid rgba(217,180,95,.34);
+
+ background:
+  radial-gradient(110% 130% at 50% -20%, rgba(80,110,170,.32) 0%, transparent 62%),
+  linear-gradient(150deg, var(--miguel-night) 0%, var(--miguel-night-deep) 100%);
+
+ box-shadow:0 14px 38px rgba(10,18,36,.24);
+
+ text-align:center;
+}
+
+.mottoIcon{
+ color:var(--miguel-gold-bright);
+ opacity:.85;
+ margin-bottom:4px;
+}
+
+.motto strong{
+ font-family:var(--oratio-font-title);
+ font-size:26px;
+ font-weight:600;
+ font-style:italic;
+ line-height:1.15;
+ color:var(--miguel-gold-soft);
+
+ text-shadow:0 0 26px rgba(217,180,95,.3);
+}
+
+.mottoTraducao{
+ font-size:16px;
+ color:rgba(246,241,230,.86);
+}
+
+.mottoNota{
+ font-size:12.5px;
+ letter-spacing:.04em;
+ color:rgba(240,235,225,.5);
+}
+
+
+/* =========================
+SOBRE — cards
+========================= */
+
+.aboutGrid{
+ display:flex;
+ flex-direction:column;
+ gap:11px;
+}
+
+.aboutCard{
+ padding:15px 16px;
+
+ border:1px solid var(--oratio-card-border);
+ border-left:3px solid var(--miguel-gold);
+ border-radius:16px;
+ background:var(--oratio-card-bg);
+ box-shadow:var(--oratio-shadow-soft);
+
+ transition:transform .18s ease, box-shadow .18s ease;
+}
+
+.aboutCard:hover{
+ transform:translateX(2px);
+ box-shadow:0 12px 30px rgba(10,18,36,.1);
+}
+
+.aboutCardHead{
+ display:flex;
+ align-items:center;
+ gap:9px;
+
+ margin-bottom:8px;
+}
+
+.aboutIcon{
+ flex:none;
+
+ width:30px;
+ height:30px;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ border-radius:10px;
+ background:linear-gradient(150deg, var(--miguel-night) 0%, var(--miguel-night-deep) 100%);
+ color:var(--miguel-gold-soft);
+}
+
+.aboutCardHead h3{
+ margin:0;
+ font-family:var(--oratio-font-title);
+ font-size:16px;
+ font-weight:600;
+ color:var(--miguel-night);
+}
+
+.aboutLead{
+ margin:0 0 5px;
+ font-size:15.5px;
+ font-weight:600;
+ line-height:1.4;
+ color:var(--miguel-gold);
+}
+
+.aboutText{
+ margin:0;
+ font-size:15.5px;
+ line-height:1.6;
+ color:var(--oratio-text-soft);
+}
+
+
+/* =========================
+SOBRE — antes de começar
+========================= */
+
+.tipsBox,
+.sequenceBox{
+ padding:17px;
+
+ border-radius:20px;
+ border:1px solid var(--oratio-card-border);
+ background:var(--oratio-card-bg);
+ box-shadow:var(--oratio-shadow-soft);
+}
+
+.tips{
+ margin:0;
+ padding:0;
+ list-style:none;
+
+ display:flex;
+ flex-direction:column;
+ gap:13px;
+}
+
+.tip{
+ display:flex;
+ align-items:flex-start;
+ gap:11px;
+}
+
+.tipIcon{
+ flex:none;
+
+ width:32px;
+ height:32px;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ border-radius:11px;
+ border:1px solid rgba(185,144,47,.32);
+ background:linear-gradient(150deg,#fdf7e8 0%,#f7edd6 100%);
+
+ color:var(--miguel-gold);
+}
+
+.tipBody{
+ display:flex;
+ flex-direction:column;
+ gap:2px;
+}
+
+.tipBody strong{
+ font-size:15.5px;
+ color:var(--miguel-night);
+}
+
+.tipBody span{
+ font-size:15px;
+ line-height:1.5;
+ color:var(--oratio-text-soft);
+}
+
+
+/* =========================
+SOBRE — sequência do dia
+========================= */
+
+.sequence{
+ margin:0;
+ padding:0;
+ list-style:none;
+
+ display:flex;
+ flex-direction:column;
+ gap:9px;
+}
+
+.sequence li{
+ display:flex;
+ align-items:center;
+ gap:11px;
+
+ font-size:16px;
+ color:var(--oratio-text-dark);
+}
+
+.sequenceNum{
+ flex:none;
+
+ width:23px;
+ height:23px;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ border-radius:7px;
+ background:var(--miguel-night);
+
+ font-family:var(--oratio-font-title);
+ font-size:12px;
+ font-weight:700;
+ color:var(--miguel-gold-soft);
+}
+
+.sequenceCta{
+ width:100%;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+
+ margin-top:16px;
+ padding:13px 20px;
+
+ border:none;
+ border-radius:14px;
+
+ background:linear-gradient(135deg,#c39a35 0%,#8f6d1c 100%);
+ box-shadow:0 10px 26px rgba(185,144,47,.28);
+
+ font-family:var(--oratio-font-title);
+ font-size:15px;
+ font-weight:600;
+ color:#fffaf0;
+
+ cursor:pointer;
+ transition:transform .18s ease;
+}
+
+.sequenceCta:hover{
+ transform:translateY(-2px);
+}
+
+
+/* =========================
+TOAST + AUXILIARES
+========================= */
+
+/* No topo, não no rodapé: o aviso responde a um toque que pode acontecer
+   em qualquer altura da grade, e no rodapé passava despercebido. */
+.toast{
+ position:fixed;
+ left:50%;
+ top:calc(14px + env(safe-area-inset-top));
+ transform:translateX(-50%);
+ z-index:60;
+
+ max-width:min(92vw,420px);
+
+ padding:12px 18px;
+
+ border-radius:14px;
+ border:1px solid rgba(217,180,95,.3);
+ background:rgba(16,28,51,.96);
+ backdrop-filter:blur(10px);
+ box-shadow:0 14px 40px rgba(10,18,36,.34);
+
+ font-size:14.5px;
+ line-height:1.4;
+ text-align:center;
+ color:#f4efe4;
+
+ animation:toastIn .26s cubic-bezier(.2,.7,.3,1) backwards;
+}
+
+@keyframes toastIn{
+ from{ opacity:0; transform:translate(-50%,-14px) }
+ to{ opacity:1; transform:translate(-50%,0) }
+}
+
+.loadingHint{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+
+ font-size:14px;
+ color:var(--oratio-text-soft);
+}
+
+.spin{
+ animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+ to{ transform:rotate(360deg) }
+}
+
+.pageSpacer{
+ height:8px;
+}
+
+
+/* =========================
+MOVIMENTO REDUZIDO
+========================= */
+
+@media (prefers-reduced-motion:reduce){
+
+ .panel,
+ .dayCell,
+ .restCell,
+ .toast{
+  animation:none;
+ }
+
+ .heroIcon,
+ .ring{
+  animation:none;
+ }
+
+ .tabInk,
+ .progressFill{
+  transition:none;
+ }
+
+}

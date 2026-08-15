@@ -41,6 +41,8 @@ const Catecismo        = lazy(() => import("./pages/Catecismo/Catecismo"))
 const LiturgiaFull     = lazy(() => import("./pages/Liturgia/LiturgiaFull"))
 const SantoDoDia       = lazy(() => import("./pages/SantoDoDia/SantoDoDia"))
 const Confissao        = lazy(() => import("./pages/Confissao/Confissao"))
+const Quaresma         = lazy(() => import("./pages/Quaresma/Quaresma"))
+const QuaresmaDia      = lazy(() => import("./pages/Quaresma/QuaresmaDia"))
 
 function App(){
 
@@ -187,6 +189,8 @@ useEffect(()=>{
   void import("./pages/Catecismo/Catecismo")
   void import("./pages/Liturgia/LiturgiaFull")
   void import("./pages/Profile/Profile")
+  void import("./pages/Quaresma/Quaresma")
+  void import("./pages/Quaresma/QuaresmaDia")
 },[]) // roda 1x na montagem, enquanto o splash ainda está visível
 
 /* =================================
@@ -356,6 +360,24 @@ element={
  element={
   <ProtectedRoute>
    <Confissao/>
+  </ProtectedRoute>
+ }
+/>
+
+<Route
+ path="/oratio/quaresma"
+ element={
+  <ProtectedRoute>
+   <Quaresma/>
+  </ProtectedRoute>
+ }
+/>
+
+<Route
+ path="/oratio/quaresma/dia/:day"
+ element={
+  <ProtectedRoute>
+   <QuaresmaDia/>
   </ProtectedRoute>
  }
 />

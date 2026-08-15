@@ -22,6 +22,12 @@ from "../../components/GuestWelcomeModal/GuestWelcomeModal"
 import GuestGateModal
 from "../../components/GuestGateModal/GuestGateModal"
 
+import QuaresmaCard
+from "../../components/QuaresmaCard/QuaresmaCard"
+
+import QuaresmaNudge
+from "../../components/QuaresmaNudge/QuaresmaNudge"
+
 import {
  LogOut,
  Loader2,
@@ -420,6 +426,11 @@ export default function Home(){
     onClose={()=>setGateMessage(null)}
    />
 
+   <QuaresmaNudge
+    guest={guest}
+    blocked={showWelcome || gateMessage !== null}
+   />
+
    {/* SAUDAÇÃO */}
 
    <div className={styles.greeting}>
@@ -445,6 +456,17 @@ export default function Home(){
     </p>
 
    </section>
+
+   {/* QUARESMA DE SÃO MIGUEL — faixa sazonal, só durante a devoção.
+       Fica depois do logo de propósito: é um convite visível de cara,
+       mas a marca é que abre a Home. */}
+
+   <QuaresmaCard
+    guest={guest}
+    onGuestClick={()=>setGateMessage(
+     "Crie uma conta para acompanhar a Quaresma de São Miguel — os dias, suas penitências e seu progresso ficam salvos."
+    )}
+   />
 
    {/* LITURGIA (inclui Santo do Dia) */}
 

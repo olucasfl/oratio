@@ -1,0 +1,223 @@
+/* =========================
+QUARESMA DE SÃO MIGUEL — faixa sazonal na Home
+
+Uma linha só, discreta. O azul-noite e o dourado já bastam pra destacá-la
+no meio dos cards claros da Home — não precisa de altura nem de texto pra
+ser vista. A história completa fica na tela da devoção.
+========================= */
+
+.card{
+
+ --miguel-night:#101c33;
+ --miguel-night-deep:#070e1c;
+ --miguel-gold:#d9b45f;
+ --miguel-gold-soft:#f0dba6;
+
+ position:relative;
+ isolation:isolate;
+ overflow:hidden;
+
+ width:100%;
+ max-width:var(--home-card-max,560px);
+
+ display:flex;
+ align-items:center;
+ gap:11px;
+
+ padding:11px 13px;
+
+ border:1px solid rgba(217,180,95,.26);
+ border-radius:16px;
+
+ background:linear-gradient(120deg, var(--miguel-night) 0%, var(--miguel-night-deep) 100%);
+
+ box-shadow:
+  0 6px 20px rgba(10,18,36,.18),
+  inset 0 1px 0 rgba(240,219,166,.1);
+
+ cursor:pointer;
+ text-align:left;
+
+ animation:quaresmaIn .45s cubic-bezier(.2,.7,.3,1) backwards;
+
+ transition:transform .2s ease, box-shadow .2s ease;
+}
+
+.card:hover{
+ transform:translateY(-1px);
+ box-shadow:
+  0 10px 26px rgba(10,18,36,.24),
+  inset 0 1px 0 rgba(240,219,166,.14);
+}
+
+.card:active{
+ transform:scale(.99);
+}
+
+@keyframes quaresmaIn{
+ from{ opacity:0; transform:translateY(8px) }
+ to{ opacity:1; transform:translateY(0) }
+}
+
+
+/* =========================
+BRILHO — bem discreto, só o suficiente pro olho pegar o movimento
+========================= */
+
+.shine{
+ position:absolute;
+ inset:0;
+ z-index:0;
+ pointer-events:none;
+
+ background:linear-gradient(
+  100deg,
+  transparent 40%,
+  rgba(240,219,166,.1) 50%,
+  transparent 60%
+ );
+
+ background-size:260% 100%;
+ background-position:180% 0;
+
+ animation:quaresmaShine 9s ease-in-out 1.5s infinite;
+}
+
+@keyframes quaresmaShine{
+ 0%   { background-position:180% 0 }
+ 40%  { background-position:-80% 0 }
+ 100% { background-position:-80% 0 }
+}
+
+
+/* =========================
+SELO
+========================= */
+
+.seal{
+ position:relative;
+ z-index:1;
+ flex:none;
+
+ width:30px;
+ height:30px;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ border-radius:9px;
+ border:1px solid rgba(217,180,95,.34);
+
+ background:rgba(217,180,95,.12);
+ color:var(--miguel-gold-soft);
+}
+
+
+/* =========================
+TEXTO — nome + estado, na mesma linha
+========================= */
+
+.body{
+ position:relative;
+ z-index:1;
+ flex:1;
+ min-width:0;
+
+ display:flex;
+ align-items:baseline;
+ flex-wrap:wrap;
+ gap:2px 7px;
+}
+
+.name{
+ font-family:var(--oratio-font-title);
+ font-size:14px;
+ font-weight:600;
+ color:#f2ece0;
+ white-space:nowrap;
+}
+
+.estado{
+ font-size:12.5px;
+ color:var(--miguel-gold);
+ white-space:nowrap;
+}
+
+
+/* =========================
+ATRASADOS + CHEVRON
+========================= */
+
+.lateBadge{
+ position:relative;
+ z-index:1;
+ flex:none;
+
+ min-width:19px;
+ height:19px;
+ padding:0 5px;
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ border-radius:99px;
+ border:1px solid rgba(224,138,107,.45);
+ background:rgba(200,80,50,.2);
+
+ font-size:10.5px;
+ font-weight:700;
+ color:#f3a88e;
+ font-variant-numeric:tabular-nums;
+}
+
+.chevron{
+ position:relative;
+ z-index:1;
+ flex:none;
+ color:rgba(240,219,166,.45);
+}
+
+
+/* =========================
+PROGRESSO — fio na borda de baixo, não ocupa altura
+========================= */
+
+.track{
+ position:absolute;
+ left:0;
+ right:0;
+ bottom:0;
+ z-index:1;
+
+ height:2px;
+ background:rgba(240,219,166,.1);
+}
+
+.trackFill{
+ display:block;
+ height:100%;
+
+ background:linear-gradient(90deg, rgba(217,180,95,.7) 0%, var(--miguel-gold-soft) 100%);
+
+ transition:width .5s cubic-bezier(.2,.7,.3,1);
+}
+
+
+/* =========================
+MOVIMENTO REDUZIDO
+========================= */
+
+@media (prefers-reduced-motion:reduce){
+
+ .card{ animation:none }
+
+ .shine{
+  animation:none;
+  background-position:-80% 0;
+ }
+
+ .trackFill{ transition:none }
+
+}
