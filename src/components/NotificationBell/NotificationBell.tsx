@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, Fragment } from "react"
+import { useEffect, useState, useCallback, useRef, Fragment } from "react"
 import { createPortal } from "react-dom"
 import { useNavigate } from "react-router-dom"
 import { Bell, X, ChevronRight, Sparkles, Megaphone, BellOff } from "lucide-react"
@@ -44,6 +44,7 @@ export default function NotificationBell(){
   const [cursor, setCursor] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [expanded, setExpanded] = useState<string | null>(null)
+  const itemRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
   useEffect(()=>{
     getUnseenCount().then(setUnseen).catch(()=>{})
@@ -78,6 +79,14 @@ export default function NotificationBell(){
       markSeen(it.id).catch(()=>{})
       setItems(prev => prev.map(x => x.id === it.id ? { ...x, seenAt: new Date().toISOString() } : x))
       setUnseen(c => Math.max(0, c - 1))
+    }
+
+    // Dá tempo da animação de altura (bodyWrap) terminar antes de rolar,
+    // senão o cálculo de posição pega o card ainda "fechado".
+    if(willExpand){
+      window.setTimeout(()=>{
+        itemRefs.current[it.id]?.scrollIntoView({ behavior: "smooth", block: "nearest" })
+      }, 320)
     }
   }
 
@@ -156,6 +165,7 @@ export default function NotificationBell(){
                   {header && <div className={styles.groupLabel}>{header}</div>}
 
                   <div
+                    ref={(el)=>{ itemRefs.current[it.id] = el }}
                     className={`${styles.item} ${unread ? styles.unread : ""}`}
                     data-open={isOpen}
                     style={{ animationDelay: `${Math.min(i, 8) * 45}ms` }}

@@ -70,8 +70,7 @@ import {
  getSaudacao,
  getDataLonga,
  getMomento,
- getMomentoConvite,
- getFraseDoMomento
+ getMomentoConvite
 } from "../../utils/greeting"
 
 import { FraseDiaria } from "../../components/FraseDiaria/FraseDiaria"
@@ -143,7 +142,6 @@ export default function Home(){
  /* saudação / momento do dia — recalculada na montagem */
  const saudacao = useMemo(()=>getSaudacao(userName),[userName])
  const dataLonga = useMemo(()=>getDataLonga(),[])
- const frasePeriodo = useMemo(()=>getFraseDoMomento(),[])
  const momento = useMemo(()=>getMomento(),[])
  const convite = useMemo(()=>getMomentoConvite(),[])
 
@@ -450,10 +448,6 @@ export default function Home(){
      <div className={styles.cross}></div>
      <span className={styles.logoRight}>IO</span>
     </div>
-
-    <p className={styles.subtitle}>
-     {frasePeriodo}
-    </p>
 
    </section>
 
