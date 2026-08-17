@@ -1,368 +1,368 @@
-import { useParams,useNavigate } from "react-router-dom"
-import { useEffect,useState } from "react"
-import { ChevronLeft } from "lucide-react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import { Check, ChevronLeft, ChevronRight, Crown, Loader2 } from "lucide-react"
 
 import styles from "./ConsecrationDay.module.css"
 
 import {
- getDay,
- getProgress,
- completeDay,
- uncompleteDay
+  apiErrorMessage,
+  completeDay,
+  getCachedProgress,
+  getDay,
+  getProgress,
+  uncompleteDay
 } from "../../services/consecrationService"
+import type { ConsecrationProgress } from "../../services/consecrationService"
 
 import { useOffline } from "../../hooks/useOffline"
 import { usePullToRefresh } from "../../hooks/usePullToRefresh"
+
+const TOTAL_DAYS = 33
 
 export default function ConsecrationDay(){
 
  const { day } = useParams()
  const navigate = useNavigate()
-
- const [data,setData] = useState<any>(null)
- const [progress,setProgress] = useState<any>(null)
- const [loading,setLoading] = useState(true)
- const [actionLoading,setActionLoading] = useState(false)
- const [successMessage,setSuccessMessage] = useState<string | null>(null)
- const [errorMessage,setErrorMessage] = useState<string | null>(null)
-
  const isOffline = useOffline()
 
- function offlineWarning(){
-    setErrorMessage(
-      "Você está offline. Para registrar a ação é necessário conexão com a internet."
-    )
-  }
+ const dayNumber = Number(day)
 
- useEffect(()=>{
+ const [data, setData] = useState<any>(null)
+ const [progress, setProgress] = useState<ConsecrationProgress | null>(
+   () => getCachedProgress()
+ )
+ const [loading, setLoading] = useState(true)
+ const [step, setStep] = useState(0)
+ const [saving, setSaving] = useState(false)
+ const [celebrating, setCelebrating] = useState(false)
+ const [error, setError] = useState<string | null>(null)
 
-  load()
+ const topRef = useRef<HTMLDivElement>(null)
 
- },[day])
+ const load = useMemo(() => async () => {
+   setLoading(true)
+   try {
+     const [dayData, progressData] = await Promise.all([
+       getDay(dayNumber).catch(() => null),
+       getProgress()
+     ])
+     if (dayData) setData(dayData)
+     if (progressData) setProgress(progressData)
+   } finally {
+     setLoading(false)
+   }
+ }, [dayNumber])
 
- useEffect(()=>{
-
-  if(!isOffline) load()
-
- },[isOffline])
+ useEffect(() => { load() }, [load])
+ useEffect(() => { if (!isOffline) load() }, [isOffline, load])
 
  usePullToRefresh(load, !isOffline)
 
-  async function load(){
+ const prayers: any[] = data?.prayers ?? []
+ const total = prayers.length
+ const current = prayers[step]
+ const isLast = total > 0 && step === total - 1
 
-    if(!day) return
+ const completedDays = progress?.completedDays ?? []
+ const currentDay = progress?.currentDay ?? 0
 
-    try{
+ const alreadyDone = completedDays.includes(dayNumber)
+ const isActionable = dayNumber === completedDays.length + 1 && dayNumber <= currentDay
+ const canUndo = alreadyDone && dayNumber === completedDays[completedDays.length - 1]
 
-      setLoading(true)
+ /**
+  * Sem progresso nenhum (offline e sem cache) a tela continua aberta em
+  * modo leitura: as orações já vieram da API/cache, e travar o acesso
+  * puniria quem só quer rezar. Só a conclusão fica indisponível.
+  */
+ const readOnly = !progress
 
-      /* ============================= */
-      /* OFFLINE */
-      /* ============================= */
+ useEffect(() => {
+   topRef.current?.scrollIntoView({ block: "start", behavior: "smooth" })
+ }, [step])
 
-      if(!navigator.onLine){
+ async function handleComplete() {
 
-        const cachedProgress =
-          localStorage.getItem("oratio_consecration_progress")
+   if (isOffline) {
+     setError("Você está offline. Conecte-se para registrar a conclusão.")
+     return
+   }
 
-        if(cachedProgress){
-          setProgress(JSON.parse(cachedProgress))
-        }
+   setError(null)
+   setSaving(true)
 
-        const cachedDay =
-          localStorage.getItem(`oratio_consecration_days_${day}`)
+   try {
+     await completeDay(dayNumber)
+     setCelebrating(true)
 
-        if(cachedDay){
-          setData(JSON.parse(cachedDay))
-        }
+     const nextRoute = dayNumber >= TOTAL_DAYS
+       ? "/oratio/consecration/finalizacao"
+       : "/oratio/consecration"
 
-        return
-      }
+     setTimeout(() => navigate(nextRoute, { replace: true }), 1650)
 
-      /* ============================= */
-      /* ONLINE → SEMPRE API */
-      /* ============================= */
+   } catch (err) {
+     setError(apiErrorMessage(err, "Não foi possível registrar. Tente de novo."))
+     setSaving(false)
+   }
 
-      const [dayData, progressData] = await Promise.all([
-        getDay(Number(day)),
-        getProgress()
-      ])
+ }
 
-      setData(dayData)
-      setProgress(progressData)
+ async function handleUndo() {
 
-    }catch{
+   if (isOffline) {
+     setError("Você está offline. Conecte-se para desfazer.")
+     return
+   }
 
-      console.log("Erro ao carregar dia")
+   setError(null)
+   setSaving(true)
 
-    }finally{
-      setLoading(false)
-    }
+   try {
+     await uncompleteDay(dayNumber)
+     navigate("/oratio/consecration", { replace: true })
+   } catch (err) {
+     setError(apiErrorMessage(err, "Não foi possível desfazer. Tente de novo."))
+     setSaving(false)
+   }
 
-  }
-
- /* ============================= */
- /* LOADING SCREEN */
- /* ============================= */
-
- if(loading){
-  return(
-   <div className={`${styles.container} page-enter`}>
-
-    <button className={styles.back} onClick={()=>navigate("/oratio/consecration")}>
-     <ChevronLeft size={18}/>
-     Voltar
-    </button>
-
-    <div className={styles.skeletonWrap}>
-
-     <div className={styles.skeletonHeader}>
-      <div className={`skeleton ${styles.skH1}`}/>
-      <div className={`skeleton ${styles.skBadge}`}/>
-     </div>
-
-     <div className={`skeleton ${styles.skTitle}`}/>
-
-     {[180,140,220].map((h,i)=>(
-      <div key={i} className={styles.skeletonPrayer}>
-       <div className={`skeleton ${styles.skPTitle}`}/>
-       <div className={`skeleton ${styles.skPBody}`} style={{height:h}}/>
-      </div>
-     ))}
-
-    </div>
-
-   </div>
-  )
  }
 
  /* ============================= */
- /* ERRO / DADOS AUSENTES */
+ /* CONCLUSÃO — animação */
  /* ============================= */
 
- if(!data || !progress){
+ if (celebrating) {
+   return (
+     <div className={styles.celebration}>
+
+       <div className={styles.burst}>
+         <span className={styles.burstRing} />
+         <span className={styles.burstRing} />
+         <span className={styles.burstCheck}>
+           <Check size={40} strokeWidth={3} />
+         </span>
+       </div>
+
+       <h2>Dia {dayNumber} concluído</h2>
+
+       <p>
+         {dayNumber >= TOTAL_DAYS
+           ? "Você completou os 33 dias de preparação. Agora é hora de escrever sua carta."
+           : "Nossa Senhora, rogai por nós."}
+       </p>
+
+     </div>
+   )
+ }
+
+ /* ============================= */
+ /* LOADING */
+ /* ============================= */
+
+ if (loading && !data) {
+   return(
+    <div className={`${styles.container} page-enter`}>
+
+     <button className={styles.back} onClick={()=>navigate("/oratio/consecration")}>
+      <ChevronLeft size={18}/>
+      Jornada
+     </button>
+
+     <div className={styles.skeletonWrap}>
+      <div className={styles.skeletonHeader}>
+       <div className={`skeleton ${styles.skH1}`}/>
+      </div>
+      <div className={`skeleton ${styles.skPrayer}`}/>
+     </div>
+
+    </div>
+   )
+ }
+
+ if (!data) {
   return(
-
    <div className={styles.loading}>
-
     <p>
      {isOffline
       ? "Você está offline e este dia ainda não foi carregado."
       : "Não foi possível carregar este dia."}
     </p>
-
-    <button
-     className={styles.back}
-     onClick={()=>navigate("/oratio/consecration")}
-    >
+    <button className={styles.back} onClick={()=>navigate("/oratio/consecration")}>
      <ChevronLeft size={18}/>
      Voltar
     </button>
-
    </div>
-
   )
  }
 
- const completed =
-  progress.completedDays >= data.dayNumber
-
- const canComplete =
-
-  progress.currentDay >= data.dayNumber &&
-  progress.completedDays === data.dayNumber - 1
-
- async function handleComplete(){
-
-  if(isOffline){
-   offlineWarning()
-   return
-  }
-
-  setErrorMessage(null)
-  setActionLoading(true)
-
-  try{
-   await completeDay(data.dayNumber)
-
-   setSuccessMessage(
-    `Dia ${data.dayNumber} concluído com sucesso!`
-   )
-
-   await load()
-  }catch(err){
-   console.error(err)
-   setErrorMessage("Erro ao registrar a conclusão. Tente novamente.")
-  }finally{
-   setActionLoading(false)
-  }
-
- }
-
- async function handleUndo(){
-
-  if(isOffline){
-   offlineWarning()
-   return
-  }
-
-  setErrorMessage(null)
-  setActionLoading(true)
-
-  try{
-   await uncompleteDay(data.dayNumber)
-   setSuccessMessage(
-    `A conclusão do dia ${data.dayNumber} foi desfeita.`
-   )
-   await load()
-  }catch(err){
-   console.error(err)
-   setErrorMessage("Erro ao desmarcar a conclusão. Tente novamente.")
-  }finally{
-   setActionLoading(false)
-  }
-
- }
+ const percent = total > 0 ? ((step + 1) / total) * 100 : 100
 
  return(
 
-  <>
+  <div className={`${styles.container} page-enter`}>
 
-   {(successMessage || errorMessage) && (
-    <div
-     className={styles.popupOverlay}
-     onClick={() => {
-      setSuccessMessage(null)
-      setErrorMessage(null)
-     }}
-    >
-     <div
-      className={styles.popupBox}
-      onClick={(e)=>e.stopPropagation()}
-     >
-      <strong className={styles.popupTitle}>
-       Oratio
-      </strong>
+   <div ref={topRef} />
 
-      <p className={styles.popupText}>
-       {successMessage || errorMessage}
-      </p>
+   <button className={styles.back} onClick={()=>navigate("/oratio/consecration")}>
+    <ChevronLeft size={18}/>
+    Jornada
+   </button>
 
-      <button
-        className={styles.popupClose}
-        onClick={() => {
-          setSuccessMessage(null)
-          setErrorMessage(null)
+   {/* CABEÇALHO */}
 
-          if(data?.stage?.id){
-            navigate(`/oratio/consecration/stage/${data.stage.id}`)
-          }
-        }}
-      >
-        Fechar
-      </button>
+   <header className={styles.header}>
+
+    <div className={styles.headerTop}>
+
+     <span className={styles.dayBadge}>
+      <Crown size={13}/>
+      Dia {dayNumber} de {TOTAL_DAYS}
+     </span>
+
+     {alreadyDone && (
+      <span className={styles.doneBadge}>
+       <Check size={12}/>
+       concluído
+      </span>
+     )}
+
+    </div>
+
+    <span className={styles.headerStage}>{data.stage?.title}</span>
+
+    {data.title && <h1 className={styles.dayTitle}>{data.title}</h1>}
+
+   </header>
+
+   {/* PROGRESSO DOS PASSOS */}
+
+   {total > 1 && (
+
+    <div className={styles.steps}>
+
+     <div className={styles.stepsTrack}>
+      <div className={styles.stepsFill} style={{ width: `${percent}%` }} />
      </div>
+
+     <div className={styles.stepsDots}>
+      {prayers.map((p, i) => (
+       <button
+        key={p.id}
+        className={`${styles.dot} ${i === step ? styles.dotActive : ""} ${
+         i < step ? styles.dotPast : ""
+        }`}
+        onClick={() => setStep(i)}
+        aria-label={p.prayer.title}
+       />
+      ))}
+     </div>
+
+     <span className={styles.stepsLabel}>Oração {step + 1} de {total}</span>
+
+    </div>
+
+   )}
+
+   {isOffline && (
+    <div className={styles.offline}>
+     Você está offline — reze à vontade, mas registrar a conclusão
+     precisa de conexão.
     </div>
    )}
 
-   <div className={`${styles.container} page-enter`}>
+   {/* ORAÇÃO */}
 
-    <button
-     className={styles.back}
-     onClick={()=>navigate("/oratio/consecration")}
-    >
-     <ChevronLeft size={18}/>
-     Voltar
-    </button>
+   {current && (
 
-    {isOffline && (
+    <article className={styles.prayer} key={current.id}>
+     <h2 className={styles.prayerTitle}>{current.prayer.title}</h2>
+     <div className={styles.prayerText}>{current.prayer.content}</div>
+    </article>
 
-     <div style={{
-      background:"#fff3cd",
-      padding:"10px",
-      borderRadius:"8px",
-      marginBottom:"16px",
-      fontSize:"14px"
-     }}>
-      Você está offline. As orações estão disponíveis, mas registrar progresso requer conexão.
-     </div>
+   )}
 
+   {error && <p className={styles.error}>{error}</p>}
+
+   {/* NAVEGAÇÃO */}
+
+   <div className={styles.nav}>
+
+    {total > 1 && (
+     <button
+      className={styles.secondary}
+      onClick={() => setStep((s) => Math.max(s - 1, 0))}
+      disabled={step === 0}
+     >
+      <ChevronLeft size={17}/>
+      Anterior
+     </button>
     )}
 
-    <div className={styles.header}>
+    {!isLast && total > 1 && (
+     <button
+      className={styles.primary}
+      onClick={() => setStep((s) => Math.min(s + 1, total - 1))}
+     >
+      Próxima
+      <ChevronRight size={17}/>
+     </button>
+    )}
 
-    <h1>
-     Dia {data.dayNumber}
-    </h1>
+    {isLast && !alreadyDone && (
+     <button
+      className={styles.finish}
+      onClick={handleComplete}
+      disabled={saving || readOnly || isOffline || !isActionable}
+     >
+      {saving ? (
+       <>
+        <Loader2 size={17} className={styles.spin}/>
+        Registrando…
+       </>
+      ) : (
+       <>
+        <Check size={17}/>
+        Concluir dia
+       </>
+      )}
+     </button>
+    )}
 
-    <span className={styles.stage}>
-     {data.stage?.title}
-    </span>
+    {isLast && alreadyDone && (
+     <button
+      className={styles.secondary}
+      onClick={handleUndo}
+      disabled={saving || isOffline || !canUndo}
+      title={!canUndo ? "Só é possível desmarcar o último dia concluído" : undefined}
+     >
+      {saving ? "Processando…" : "Desmarcar conclusão"}
+     </button>
+    )}
 
    </div>
 
-   {data.title && (
-
-    <h2 className={styles.dayTitle}>
-     {data.title}
-    </h2>
-
+   {/* A oração pode ser lida livremente, mas só dá pra concluir o dia
+       certo — se a pessoa chegou aqui adiantada ou atrasada, explica
+       o motivo em vez de só desabilitar o botão sem dizer por quê. */}
+   {isLast && !alreadyDone && !readOnly && !isActionable && (
+    <p className={styles.notYet}>
+     {dayNumber > currentDay
+      ? "Este dia ainda não chegou — volte quando for a vez dele."
+      : `Complete o dia ${completedDays.length + 1} antes deste, um de cada vez.`}
+    </p>
    )}
 
-   <div className={styles.prayers}>
-
-    {data.prayers?.map((p:any)=>(
-
-      <div
-       key={p.id}
-       className={styles.prayer}
-      >
-
-       <h3>
-        {p.prayer.title}
-       </h3>
-
-       <pre className={styles.prayerText}>
-        {p.prayer.content}
-       </pre>
-
-      </div>
-
-    ))}
-
-   </div>
-
-   {!completed && (
-
-    <button
-     disabled={!canComplete || isOffline || actionLoading}
-     className={
-      canComplete && !isOffline && !actionLoading
-      ? styles.completeButton
-      : styles.completeDisabled
-     }
-     onClick={handleComplete}
-    >
-     {actionLoading ? "Registrando..." : "Marcar dia como concluído"}
-    </button>
-
+   {loading && (
+    <p className={styles.loadingHint}>
+     <Loader2 size={14} className={styles.spin}/>
+     Atualizando…
+    </p>
    )}
 
-   {completed && (
-
-    <button
-     className={styles.undoButton}
-     disabled={isOffline || actionLoading}
-     onClick={handleUndo}
-    >
-     {actionLoading ? "Processando..." : "Desmarcar conclusão"}
-    </button>
-
-   )}
+   <div className={styles.pageSpacer} />
 
   </div>
-
-  </>
 
  )
 }

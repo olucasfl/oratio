@@ -1,9 +1,44 @@
 import api from "./api"
 import { saveLocal, getLocal } from "../utils/localCache"
 
-const PROGRESS_KEY = "oratio_consecration_progress"
 const DAYS_KEY = "oratio_consecration_days"
 const ALL_DAYS_KEY = "oratio_consecration_all_days"
+
+export type ConsecrationProgress = {
+  started: boolean
+  startDate?: string
+  consecrationDate?: string
+  currentDay?: number
+  startedToday?: boolean
+  daysUntilStart?: number
+  completedDays?: number[]
+  progress?: number
+  finished?: boolean
+  completedAt?: string | null
+  stages?: any[]
+}
+
+/**
+ * Namespace de cache por usuário — deriva do `sub` do access_token (sem
+ * precisar de request nem de libs extras). Sem isso, o progresso de uma
+ * conta podia sobreviver no localStorage e "vazar" pra outra conta usada
+ * no mesmo aparelho quando a leitura online falhava e caía no cache.
+ */
+function currentUserId(): string {
+  try {
+    const token = localStorage.getItem("access_token")
+    if (!token) return "anon"
+    const payload = token.split(".")[1]
+    const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")))
+    return json?.sub ?? "anon"
+  } catch {
+    return "anon"
+  }
+}
+
+function progressKey() {
+  return `oratio_consecration_progress_${currentUserId()}`
+}
 
 /* ============================= */
 /* PRELOAD ALL DAYS */
@@ -18,7 +53,6 @@ export async function preloadConsecration(){
   /* ============================= */
 
   if(cached){
-    console.log("Usando cache da consagração")
 
     /* ============================= */
     /* 2. ATUALIZA EM BACKGROUND */
@@ -35,30 +69,11 @@ export async function preloadConsecration(){
           saveLocal(`${DAYS_KEY}_${day.dayNumber}`, day, 60)
         })
 
-        const stages:any = {}
-
-        days.forEach((day:any)=>{
-          const stageId = day.stage.id
-
-          if(!stages[stageId]){
-            stages[stageId] = []
-          }
-
-          stages[stageId].push(day)
-        })
-
-        Object.keys(stages).forEach(stageId=>{
-          saveLocal(`stage_${stageId}`, stages[stageId], 60)
-        })
-
-        console.log("Cache atualizado em background")
-
       })
-      .catch(() => {
-        console.log("Erro ao atualizar em background")
-      })
+      .catch(() => {})
 
     return
+
   }
 
   /* ============================= */
@@ -77,53 +92,47 @@ export async function preloadConsecration(){
       saveLocal(`${DAYS_KEY}_${day.dayNumber}`, day, 60)
     })
 
-    const stages:any = {}
+  }catch{}
 
-    days.forEach((day:any)=>{
-      const stageId = day.stage.id
+}
 
-      if(!stages[stageId]){
-        stages[stageId] = []
-      }
+/** Todos os dias (com orações), já agrupados por etapa. Usa cache. */
+export async function getAllDays(): Promise<any[]> {
 
-      stages[stageId].push(day)
-    })
+  const cached = getLocal(ALL_DAYS_KEY)
+  if (cached) return cached
 
-    Object.keys(stages).forEach(stageId=>{
-      saveLocal(`stage_${stageId}`, stages[stageId], 60)
-    })
+  const res = await api.get("/oratio/consecration/all-days")
+  saveLocal(ALL_DAYS_KEY, res.data, 60)
+  return res.data
 
-    console.log("Consagração carregada da API")
-
-  }catch{
-    console.log("Erro no preload")
-  }
 }
 
 /* ============================= */
 /* PROGRESS */
 /* ============================= */
 
-export async function getProgress(){
+export async function getProgress(): Promise<ConsecrationProgress | null> {
 
  try{
 
   const res = await api.get("/oratio/consecration/progress")
 
-  saveLocal(PROGRESS_KEY, res.data, 5)
+  saveLocal(progressKey(), res.data, 5)
 
   return res.data
 
  }catch{
 
-  const cached = getLocal(PROGRESS_KEY)
-
-  if(cached) return cached
-
-  return null
+  return getLocal(progressKey())
 
  }
 
+}
+
+/** Progresso salvo no aparelho, sem tocar na rede. */
+export function getCachedProgress(): ConsecrationProgress | null {
+  return getLocal(progressKey())
 }
 
 /* ============================= */
@@ -132,17 +141,9 @@ export async function getProgress(){
 
 export async function startConsecration(consecrationDate:string){
 
- try{
-
   await api.post("/oratio/consecration/start",{
    consecrationDate
   })
-
- }catch(err){
-
-  console.log("Erro ao iniciar consagração",err)
-
- }
 
 }
 
@@ -177,53 +178,15 @@ export async function getDay(day:number){
 }
 
 /* ============================= */
-/* STAGE DAYS */
-/* ============================= */
-
-export async function getStageDays(stageId:string){
-
- const cached = getLocal(`stage_${stageId}`)
-
- if(cached) return cached
-
- try{
-
-  const res = await api.get(`/oratio/consecration/stage/${stageId}/days`)
-
-  saveLocal(`stage_${stageId}`,res.data, 60)
-
-  return res.data
-
- }catch{
-
-  const cached = getLocal(`stage_${stageId}`)
-
-  if(cached) return cached
-
-  throw new Error("Sem conexão")
-
- }
-
-}
-
-/* ============================= */
-/* COMPLETE DAY */
+/* COMPLETE / UNDO DAY */
 /* ============================= */
 
 export async function completeDay(day:number){
-
   await api.post(`/oratio/consecration/complete/${day}`)
-
 }
 
-/* ============================= */
-/* UNCOMPLETE DAY */
-/* ============================= */
-
 export async function uncompleteDay(day:number){
-
   await api.delete(`/oratio/consecration/complete/${day}`)
-
 }
 
 /* ============================= */
@@ -239,17 +202,33 @@ export async function updateStartDate(consecrationDate:string){
 }
 
 /* ============================= */
-/* RESET */
+/* FINISH (concluir os 33 dias) */
+/* ============================= */
+
+export async function finishConsecration(){
+  await api.post("/oratio/consecration/finish")
+}
+
+/* ============================= */
+/* RESET (cancelar) */
 /* ============================= */
 
 export async function resetConsecration(){
 
- localStorage.removeItem(PROGRESS_KEY)
+ removeLocalProgress()
 
- try{
+ await api.post("/oratio/consecration/reset")
 
-  await api.post("/oratio/consecration/reset")
+}
 
- }catch{}
+function removeLocalProgress(){
+  localStorage.removeItem(progressKey())
+}
 
+/** Mensagem de erro que o backend mandou, se houver — senão o fallback. */
+export function apiErrorMessage(err: any, fallback: string) {
+  const message = err?.response?.data?.message
+  if (Array.isArray(message)) return message[0] ?? fallback
+  if (typeof message === "string") return message
+  return fallback
 }

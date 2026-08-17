@@ -21,7 +21,6 @@ const ConfirmEmailChange = lazy(() => import("./pages/ConfirmEmailChange/Confirm
 const Home             = lazy(() => import("./pages/Home/Home"))
 const ConsecrationHome = lazy(() => import("./pages/Consecration/ConsecrationHome"))
 const ConsecrationDay  = lazy(() => import("./pages/Consecration/ConsecrationDay"))
-const ConsecrationStage= lazy(() => import("./pages/Consecration/ConsecrationStage"))
 const ConsecrationFinal= lazy(() => import("./pages/Consecration/ConsecrationFinal"))
 const ConsecrationCarta= lazy(() => import("./components/ConsecrationCarta/ConsecrationCarta"))
 const Tratado          = lazy(() => import("./pages/Consecration/Tratado"))
@@ -56,7 +55,7 @@ useEffect(()=>{
   /* 🔥 VERSIONAMENTO DE CACHE */
   /* ============================= */
 
-  const APP_VERSION = "v7"
+  const APP_VERSION = "v8"
 
   const savedVersion = localStorage.getItem("app_version")
 
@@ -245,15 +244,6 @@ element={
 />
 
 <Route
-path="/oratio/consecration/stage/:stageId"
-element={
-<ProtectedRoute>
-<ConsecrationStage/>
-</ProtectedRoute>
-}
-/>
-
-<Route
 path="/oratio/consecration/day/:day"
 element={
 <ProtectedRoute>
@@ -264,12 +254,20 @@ element={
 
 <Route
   path="/oratio/consecration/finalizacao"
-  element={<ConsecrationFinal />}
+  element={
+    <ProtectedRoute>
+      <ConsecrationFinal />
+    </ProtectedRoute>
+  }
 />
 
 <Route
   path="/oratio/consecration/carta"
-  element={< ConsecrationCarta />}
+  element={
+    <ProtectedRoute>
+      <ConsecrationCarta />
+    </ProtectedRoute>
+  }
 />
 
 <Route path="/oratio/prayers" element={<PrayersCategories/>}/>

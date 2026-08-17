@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import styles from "./ConfirmModal.module.css";
 
 interface Props {
@@ -24,7 +25,12 @@ export default function ConfirmModal({
 
   if (!open) return null;
 
-  return (
+  // Portal pro body: se renderizasse dentro da página, herdaria qualquer
+  // regra de posicionamento dela (ex.: ".container > *" que algumas
+  // páginas usam pra empilhar conteúdo acima de um fundo decorativo) e o
+  // position:fixed do overlay parava de valer — o modal ficava preso no
+  // topo do fluxo normal em vez de centralizado na tela.
+  return createPortal(
 
     <div className={styles.overlay}>
 
@@ -51,7 +57,9 @@ export default function ConfirmModal({
 
       </div>
 
-    </div>
+    </div>,
+
+    document.body
 
   );
 

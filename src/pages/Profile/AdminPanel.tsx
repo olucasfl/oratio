@@ -695,7 +695,9 @@ export default function AdminPanel() {
                 <div className={styles.statIcon}><Crown size={17}/></div>
                 <span className={styles.statLabel}>Consagrações</span>
                 <strong className={styles.statValue}>{stats?.consecrationStarted ?? "–"}</strong>
-                <Delta value={stats?.thisWeek?.consecrations}/>
+                <em className={styles.statDelta}>
+                  {stats ? `${stats.consecrationCompleted ?? 0} concluídas` : ""}
+                </em>
               </div>
 
               <button className={styles.statCard} onClick={() => goToChart("logins")}>
