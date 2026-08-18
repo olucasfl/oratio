@@ -64,6 +64,13 @@ useEffect(()=>{
 
     /* 🔥 LIMPA CACHE CRÍTICO */
     Object.keys(localStorage).forEach(key => {
+
+      // Flags de "já vi isso uma vez" (ex.: aviso de estreia da Quaresma
+      // de São Miguel) são permanentes por natureza, não cache de dados —
+      // se entrassem nessa limpeza, o aviso voltaria a aparecer a cada
+      // nova versão do app, mesmo pra quem já fechou ele há semanas.
+      if (key.startsWith("oratio_quaresma_nudge_")) return
+
       if (
         key.includes("oratio") ||
         key.includes("stage_") ||
@@ -71,6 +78,7 @@ useEffect(()=>{
       ) {
         localStorage.removeItem(key)
       }
+
     })
 
     localStorage.setItem("app_version", APP_VERSION)

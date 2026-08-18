@@ -97,7 +97,7 @@ export default function Prayers(){
 
       setCompleting(true)
 
-      await completePrayer(prayer?.title)
+      await completePrayer()
 
       navigate("/oratio/prayers")
 

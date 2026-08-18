@@ -24,9 +24,9 @@ export async function getPrayer(id:string){
 
 }
 
-export async function completePrayer(title?:string){
+export async function completePrayer(){
 
-  const res = await api.post("/oratio/prayers/complete", { title })
+  const res = await api.post("/oratio/prayers/complete")
 
   return res.data
 
