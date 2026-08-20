@@ -35,9 +35,9 @@ export async function cancelEmailChange(){
 
 }
 
-export async function deleteAccount(){
+export async function deleteAccount(password:string){
 
- const res = await api.delete("/users/me")
+ const res = await api.delete("/users/me", { data: { password } })
 
  return res.data
 

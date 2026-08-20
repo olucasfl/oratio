@@ -16,15 +16,19 @@ interface Props{
 export default function DeleteAccountModal({ open, userEmail, onClose }:Props){
 
  const [confirmation,setConfirmation] = useState("")
+ const [password,setPassword] = useState("")
  const [loading,setLoading] = useState(false)
  const [error,setError] = useState<string | null>(null)
 
  if(!open) return null
 
- const canDelete = confirmation.trim().toLowerCase() === userEmail.trim().toLowerCase()
+ const canDelete =
+  confirmation.trim().toLowerCase() === userEmail.trim().toLowerCase() &&
+  password.length > 0
 
  function handleClose(){
   setConfirmation("")
+  setPassword("")
   setError(null)
   onClose()
  }
@@ -38,7 +42,7 @@ export default function DeleteAccountModal({ open, userEmail, onClose }:Props){
 
   try{
 
-   await deleteAccount()
+   await deleteAccount(password)
    clearSession()
 
   }catch(err:any){
@@ -76,6 +80,18 @@ export default function DeleteAccountModal({ open, userEmail, onClose }:Props){
      placeholder="Digite seu email"
      value={confirmation}
      onChange={(e)=>setConfirmation(e.target.value)}
+    />
+
+    <p className={styles.hint}>
+     Confirme com sua senha atual:
+    </p>
+
+    <input
+     className={styles.input}
+     type="password"
+     placeholder="Sua senha"
+     value={password}
+     onChange={(e)=>setPassword(e.target.value)}
     />
 
     <button
