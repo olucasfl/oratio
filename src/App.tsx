@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom"
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom"
 import { useState, useEffect, lazy, Suspense } from "react"
 import ScrollToTop from "./components/ScrollToTop"
 
@@ -9,6 +9,7 @@ import AdminRoute from "./components/AdminRoute"
 import OfflineBanner from "./components/OfflineBanner/OfflineBanner"
 import PullToRefresh from "./components/PullToRefresh/PullToRefresh"
 import InstallAppNudge from "./components/InstallAppNudge/InstallAppNudge"
+import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary"
 import { preloadConsecration, getProgress } from "./services/consecrationService"
 import { sendActivityPing } from "./services/activityService"
 import { useVisualViewportOffset } from "./hooks/useVisualViewportOffset"
@@ -46,6 +47,8 @@ const QuaresmaDia      = lazy(() => import("./pages/Quaresma/QuaresmaDia"))
 function App(){
 
 const [loading,setLoading] = useState(true)
+const location = useLocation()
+const navigate = useNavigate()
 
 useVisualViewportOffset()
 
@@ -188,8 +191,11 @@ useEffect(()=>{
   void import("./pages/Prayers/CategoryPrayers")
   void import("./pages/Prayers/Prayers")
   void import("./pages/Prayers/RosaryHome")
-  void import("./pages/Biblia/BibliaHome")
-  void import("./pages/Biblia/BibliaBook")
+  // Bíblia (BibliaHome/BibliaBook) fica de fora de propósito: puxa
+  // bibliaService, que carrega o texto bíblico inteiro (~5MB) — é o maior
+  // chunk do build inteiro. Pré-carregar isso pra todo mundo, mesmo quem
+  // nunca abre a Bíblia, gastava banda/bateria à toa. Continua lazy() nas
+  // rotas normalmente, só não é mais forçado a baixar durante o boot.
   void import("./pages/Consecration/ConsecrationHome")
   void import("./pages/Consecration/ConsecrationDay")
   void import("./pages/Vox/Vox")
@@ -222,6 +228,17 @@ return(
 <ScrollToTop />
 
 <InstallAppNudge />
+
+{/*
+  Boundary por rota (key={location.pathname}): se uma página quebrar no
+  render, só ela mostra o fallback — reiniciar a mesma boundary da raiz
+  (main.tsx) derrubaria PullToRefresh/OfflineBanner/InstallAppNudge junto,
+  mesmo eles não tendo nada a ver com o erro. Trocar de rota (o próprio
+  botão "Voltar ao início" já faz isso via onReset) remonta a boundary
+  automaticamente, então não fica presa depois que o usuário navega pra
+  longe da página que quebrou.
+*/}
+<ErrorBoundary key={location.pathname} onReset={()=>navigate("/oratio/home")}>
 
 <PullToRefresh>
 
@@ -393,6 +410,8 @@ element={
 </Routes>
 
 </PullToRefresh>
+
+</ErrorBoundary>
 
 </Suspense>
 
