@@ -1,0 +1,117 @@
+# Oratio Web — Architecture Guide
+
+This is the guide for **oratio** (the frontend): a React/Vite PWA for **Oratio**, a Catholic prayer app (daily liturgy, the Rosary, a 33-day Marian consecration, the "Quaresma de São Miguel" devotion, Bible/Catechism reading, a prayer library, and VoxAI — an AI spiritual-assistant chat). It talks to a separate NestJS backend, **oratio-api** (sibling repo). See that repo's `docs/ARCHITECTURE.md` for the backend side of every integration described here.
+
+Read this before touching the code — human or AI agent. It explains what exists, why it's shaped the way it is, and where the non-obvious constraints live. When you make a decision that isn't obvious from the code (a workaround, a subtle ordering requirement, a "why not the simpler way"), record it here or as a comment at the point of use.
+
+## 1. Quick facts
+
+| | |
+|---|---|
+| Framework | React 19 + Vite 7, TypeScript |
+| Routing | `react-router-dom` v7, all routes declared in `src/App.tsx` (no nested route files) |
+| Styling | CSS Modules, one `*.module.css` per component/page — no CSS-in-JS, no Tailwind |
+| State | No global state library (no Redux/Zustand/Context-as-store). `localStorage` is the only client persistence; component state + one `PullToRefreshContext` cover the rest |
+| HTTP | A single `axios` instance (`src/services/api.ts`), one thin `*Service.ts` wrapper per backend domain |
+| PWA | Yes — `public/sw.js` (hand-written service worker), `public/manifest.json`, offline app-shell caching |
+| Testing | **None configured.** No test runner in `package.json` — there is no `npm test` |
+| Hosting | Vercel (`vercel.json` — SPA rewrite to `index.html`); production URL `https://oratio-phi.vercel.app/` (referenced directly in a couple of places, see §8) |
+| Path aliases | None — all imports are relative (`./`, `../`); `tsconfig.app.json` has no `paths` map |
+
+## 2. Commands
+
+```bash
+npm run dev        # Vite dev server (port 5173)
+npm run build        # tsc -b && vite build — type-checks BEFORE bundling; a type error fails the build
+npm run lint          # ESLint over the whole project
+npm run preview        # serve the production build locally
+```
+
+There is no test runner. If you add meaningful logic that deserves a regression test, you'll need to introduce a test setup (e.g. Vitest) — don't assume one exists.
+
+## 3. App boot sequence (`src/App.tsx`, `src/main.tsx`)
+
+This is the least obvious part of the codebase and worth reading end to end before changing routing or auth behavior.
+
+**`main.tsx`** mounts `<ErrorBoundary><BrowserRouter><App /></BrowserRouter></ErrorBoundary>`, applies a stored font-scale before first paint (avoids a flash of default size), and registers `public/sw.js` as a service worker. It also wires the "new version available" prompt: when the SW detects a waiting update, it shows a `confirm()` dialog and, on accept, tells the SW to `SKIP_WAITING`; a `controllerchange` listener then force-reloads the page.
+
+**`App.tsx`**, on mount, does three separate things in sequence — don't reorder them without understanding why each exists:
+
+1. **Cache-version bump.** A hardcoded `APP_VERSION` string (currently `"v8"`) is compared against `localStorage.app_version`. On mismatch, every `localStorage` key containing `"oratio"`, `"stage_"`, or `"consecration"` is deleted — **except** keys starting with `oratio_quaresma_nudge_`, which are permanent "already saw this" flags, not cache, and must survive version bumps. **Bump `APP_VERSION` whenever you ship a change that invalidates previously cached client-side state** (a changed shape for a cached object, a new field the old cache won't have, etc.) — nothing else triggers this cleanup.
+2. **Boot loader** (`bootLoader`): if an `access_token` exists, preloads consecration data and pings `sendActivityPing()` at most once every 10 minutes (tracked via `localStorage.last_ping`) — this is the login-streak/activity-tracking heartbeat the backend's `ActivityService` depends on (see backend docs §7).
+3. **URL correction before first paint** (`startApp`): while the splash screen (`<Splash/>`) is still covering the screen, the code rewrites `window.location.pathname` via `history.replaceState` — not `<Navigate>` — specifically so routes don't visibly flash into the wrong screen before redirecting. The logic:
+   - No token + path `/` → `/oratio/home` (home is the public landing).
+   - No token + path not in `publicPaths` (`/login`, `/register`, `/verificar-email`, `/confirmar-troca-email`) and not under a `guestAllowedPrefixes` prefix (`/oratio/home`, `/oratio/liturgia-completa`, `/oratio/prayers`, `/oratio/prayer/`, `/oratio/rosary`, `/oratio/biblia`) → forced to `/login`.
+   - Token present + path is `/` or `/login` → redirected to `/oratio/home`, **unless** the URL has a `?resetToken=` query param — a stale/expired `access_token` sitting in `localStorage` must never swallow a password-reset link.
+   - "Guest mode" (browsing `guestAllowedPrefixes` without a token) is **read-only by convention**, not enforced by this logic — those pages read content but any action requiring identity (completing a prayer, saving progress) will 401 downstream. See `api.ts`'s "no session at all" branch in §4 for how that 401 is handled without forcing a redirect.
+
+**Route preloading**: a second `useEffect` fires `void import(...)` for a fixed list of "likely next" pages (Home, Confissão, Prayers*, Biblia*, Consecration*, Vox, Catecismo, LiturgiaFull, Profile, Quaresma*) while the splash is still showing, so the first real navigation after boot doesn't show a lazy-load flash. All page components are declared with `React.lazy(...)` at the top of `App.tsx` (not colocated with their routes) — if you add a page, add it to both the `lazy()` list and, if it's a likely first destination, the preload list.
+
+**Route guards**: `ProtectedRoute` (`src/components/ProtectedRoute.tsx`) is a synchronous check on `localStorage.access_token` — it does not validate the token, just its presence; an expired token still passes this guard and fails on the first API call, which then goes through the refresh flow in §4. `AdminRoute` (`src/components/AdminRoute.tsx`) is asynchronous — it calls `getProfile()` and checks `isAdmin`, showing nothing (`null`) while loading and redirecting to `/oratio/home` on denial or fetch failure. Composition is always `<ProtectedRoute><AdminRoute><AdminPanel/></AdminRoute></ProtectedRoute>` — `AdminRoute` alone does not guarantee the user is logged in.
+
+## 4. API layer and auth flow (`src/services/api.ts`)
+
+One `axios` instance (`api`), used by every `*Service.ts` file. Two behaviors matter more than the rest of the file:
+
+- **Every request carries `x-app: oratio`** (fixed header on the instance) — the backend uses this header to distinguish clients (see backend docs §3/§8). This frontend only ever sends `"oratio"`; there is nothing to configure here.
+- **Automatic 401 → refresh → retry**, with request queuing: a request interceptor attaches `Authorization: Bearer <access_token>` from `localStorage`. On a `401`, the response interceptor:
+  1. Skips the refresh flow entirely for `PUBLIC_AUTH_PATHS` (`/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/forgot-password`, `/auth/reset-password`, `/auth/resend-verification`, `/auth/verify-email`, `/auth/verify-email-change`, `/auth/check-verification`) — a 401 from *these* endpoints is a normal business response (wrong password, expired reset link), not an expired session. Routing it through refresh+retry would swallow the real error message behind a silent logout.
+  2. If a refresh is already in flight, queues the failed request (`failedQueue`) instead of firing a second concurrent refresh call; all queued requests are replayed once the in-flight refresh resolves.
+  3. Otherwise calls `POST /auth/refresh` directly via a **plain `axios.post`** (not the `api` instance — this deliberately bypasses the interceptor chain, or refreshing would itself be interceptable and recurse), stores the new token pair, and retries the original request.
+  4. If there's no `refresh_token` in `localStorage` at all: checks whether there *was* an `access_token`. If yes, treats it as an expired session and logs out (`clearSession()`, which wipes `localStorage` and hard-navigates to `/login`). If no access token either, this is a guest hitting a protected endpoint for the first time (e.g. a guest tapping "complete this prayer") — the 401 is just passed through to the caller, **no logout, no redirect**. Getting this branch wrong breaks guest mode (§3) by forcing anonymous visitors to `/login` the moment they touch any authenticated action.
+  5. If the refresh call itself fails, the queue is rejected and `clearSession()` runs.
+- **`clearSession()`** deletes every `localStorage` key **except** `app_version` and `last_ping` (an allowlist-of-exclusions, not a list of keys to remove) — new per-feature cache keys added later are automatically wiped on logout without needing to be enumerated here. Don't add a new `localStorage` key that must *survive* logout without adding it to `KEEP_ON_LOGOUT` in `api.ts`.
+
+**Service file convention**: one file per backend domain (`authService`, `profileService`, `consecrationService`, `liturgiaService`, `prayersService`, `rosaryService`, `bibliaService`, `activityService`, `adminService`, `adminNotificationsService`, `notificationsService`, `pushService`, `quaresmaService`, `readingProgressService`, `homeService`, `voxService`), each a thin wrapper calling `api.get/post/...` with a relative path (e.g. `api.post("/users", ...)`). `authService.login()` is the one exception — it builds an absolute URL (`` `${import.meta.env.VITE_API_URL}/auth/login` ``) even though `api`'s `baseURL` already does that; harmless (axios treats an absolute URL as an override, not a concatenation) but inconsistent — new auth-related calls should use a relative path like every other service file, not copy this one.
+
+## 5. PWA / offline behavior (`public/sw.js`, `public/manifest.json`)
+
+Hand-written service worker (no Workbox or similar). Two things to know before editing it:
+
+- **Two independent version strings exist and must both be bumped together when shipping a change that affects cached data or assets**: `CACHE_NAME` in `sw.js` (currently `"oratio-cache-v19"`, controls the SW's own cache lifecycle — old `oratio-cache-*` caches are deleted on `activate`) and `APP_VERSION` in `App.tsx` (§3, controls `localStorage` invalidation). They're unrelated mechanisms — one for the SW's asset cache, one for client-side data cache — that happen to both need bumping for most "breaking" client-side changes.
+- **Precaching reads `public/asset-manifest.json`**, which doesn't exist in source — it's generated at build time (see `vite.config.ts`'s `copyManifestPlugin`, which copies Vite's `dist/.vite/manifest.json` to `dist/asset-manifest.json` because a dot-prefixed directory may be treated as hidden and not served by some static hosts). The SW's `install` handler fetches that manifest and precaches every chunk it lists — not just the ones referenced directly in `index.html` — using `Promise.allSettled` per-file so one failed chunk doesn't abort the rest. This matters because a route the user never visited in a previous session (say, they never opened the Rosary) would otherwise have no cached chunk, and opening it offline would throw an unhandled `import()` failure straight into `ErrorBoundary`.
+- **Fetch handling**: any request whose origin includes the literal string `"render.com"` is passed through untouched (never cached) — this is how API calls are excluded from the SW's cache, based on the backend being hosted on Render. **This is a hardcoded hostname substring check, not derived from `VITE_API_URL`** — if the backend ever moves off Render, this line breaks silently (API responses would start being cached / offline-served, which is wrong for a JSON API). Navigation requests (`mode: "navigate"` or `destination: "document"`) use network-first with an offline fallback to the cached `/` or `/index.html`, which is what lets the SPA open at all without a network connection.
+
+## 6. Project structure
+
+```
+src/
+  App.tsx, main.tsx        boot, routing, SW registration — see §3
+  components/               shared UI: modals, cards, nav, admin widgets (AdminChart/AdminHeatmap/AdminFilterSheet
+                             mirror the backend's admin/stats endpoints), ProtectedRoute/AdminRoute/ErrorBoundary
+  pages/                     one folder per route, each usually a `Name.tsx` + `Name.module.css` pair
+  services/                  one `*Service.ts` per backend domain, all going through services/api.ts — see §4
+  contexts/                  PullToRefreshContext.ts — the only shared context; no other global state
+  hooks/                     useLiturgy, useOffline, usePullToRefresh, useReadingSize, useFraseDiaria, etc.
+  data/                      static/local content: bibleTopics, saintBios, saintsOfTheDay, frases-diarias.json,
+                             bibliaAveMaria.json (full Bible text shipped client-side), quaresmaSaoMiguel, consecracao
+  utils/                     auth.ts (isLoggedIn), authRedirect, authErrors, fontScale, localCache, pdfConfig,
+                             rosary* helpers, *ShareText helpers (share-sheet copy for prayers/rosary/liturgy/Bible)
+  styles/                    global.css, variables.css (CSS custom properties — colors, shadows; see below)
+public/
+  sw.js, manifest.json        PWA — see §5
+  *.pdf                        Catecismo, tratado de consagração, modelo de carta — served as static files, read
+                               client-side via react-pdf/pdfjs-dist (see `pdf` manual chunk in vite.config.ts)
+```
+
+**Pages own their styling** — each page/component pairs a `.tsx` with its own `.module.css`; there's no shared component library or design-system package. Shared visual language lives in `src/styles/variables.css` as CSS custom properties (`--oratio-primary`, `--oratio-text-*`, `--oratio-shadow-*`, etc.) — reference these instead of hardcoding colors in a new `.module.css`.
+
+**`src/data/`** holds content that ships in the JS bundle rather than coming from the API — notably the full Ave Maria Bible text (`bibliaAveMaria.json`) and saint-of-the-day data. This is why `pdf`, `markdown`, and other content-heavy libraries get their own manual Vite chunk (`vite.config.ts`) — keeping them out of the main bundle matters for load time.
+
+## 7. Naming and things that will confuse you if unexplained
+
+- **No test runner is configured.** Don't assume `npm test` exists or that any existing behavior is covered by automated tests — verify manually (dev server, browser) when changing shared code like `api.ts` or `App.tsx`'s boot sequence.
+- **Two unrelated "version" concepts, both manual, both easy to forget**: `APP_VERSION` in `App.tsx` (client-side `localStorage` cache) and `CACHE_NAME` in `sw.js` (service-worker asset cache) — see §5. Bumping one does not bump the other.
+- **The service worker hardcodes `"render.com"`** to identify API traffic (§5) rather than reading `VITE_API_URL`. If the backend's host ever changes, this must be updated by hand or offline behavior silently breaks.
+- **Guest mode is implicit**, defined by the `guestAllowedPrefixes` list in `App.tsx` (§3) and by which routes are wrapped in `<ProtectedRoute>` in the route table — there's no single source of truth documenting "these pages work logged out." When adding a new page meant to be guest-accessible, you must update both the route (don't wrap it in `ProtectedRoute`) and, if it should survive the boot-time redirect logic, `guestAllowedPrefixes`.
+- **`authService.login()`'s absolute-URL construction** (§4) is a one-off inconsistency, not a pattern to copy.
+- **`VITE_API_URL`** is the only frontend env var (see `.env`/`.env_example` at the repo root) — it must be a full origin (e.g. `https://...onrender.com`), since `api.ts` uses it directly as `baseURL` and a couple of call sites concatenate it manually (§4).
+- **The production URL `https://oratio-phi.vercel.app/`** is hardcoded in a few places outside the frontend itself worth knowing about even though they're not in this repo: the backend's `AuthService.verifyEmail` redirects here after email verification (see backend docs §5), and `index.html`'s `og:url` meta tag references it. If the production domain ever changes, both repos need updating, not just this one.
+
+## 8. Working in this codebase — conventions to follow
+
+- **Comments explain *why*, not *what***, especially around timing/ordering (boot sequence, cache invalidation, the SW's precache trick) — this codebase already does this well; match it rather than adding comments that restate the line below them.
+- **New pages**: add the route in `App.tsx`, lazy-import it in the same file's `lazy()` block, decide whether it needs `<ProtectedRoute>` / `<AdminRoute>`, and add it to the preload list only if it's a likely first destination after boot (don't preload everything — that defeats lazy loading).
+- **New backend domain calls**: add a `*Service.ts` file following the existing thin-wrapper pattern (relative paths through the shared `api` instance), not ad-hoc `axios` calls inside components.
+- **New `localStorage` keys**: decide up front whether the key should survive logout (`KEEP_ON_LOGOUT` in `api.ts`, §4) and whether it should survive an `APP_VERSION` bump (the `oratio`/`stage_`/`consecration` substring match in `App.tsx`, §3) — both are opt-out by pattern-matching, not opt-in lists, so a key can accidentally get swept by either without an explicit decision.
+- Keep the two repos in sync where they share a contract: any backend route path, DTO shape, or header requirement change (see oratio-api's `docs/ARCHITECTURE.md`) needs a matching change in the relevant `*Service.ts` here.
