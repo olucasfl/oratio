@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import type { ReactNode } from "react"
 import { createPortal } from "react-dom"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { BookOpen, ChevronRight } from "lucide-react"
@@ -187,21 +188,52 @@ export default function LiturgyReadingButtons({ liturgy, dateOffset = 0 }: Props
  FORMATAR TEXTO
  ========================= */
 
- function formatVerses(
-  text:string
- ){
+ /*
+ Retorna nós React (texto + <span> pontuais), nunca HTML bruto — o texto
+ vem da API pública de liturgia (terceiro, fora do nosso controle), então
+ montar uma string HTML e injetar via dangerouslySetInnerHTML abriria XSS
+ pra quem abrir essa leitura rápida caso a API devolva algo malicioso.
+ */
+ function formatVerses(text:string): ReactNode[]{
 
-  let formatted = text.replace(
-   /(\d+)(?=[A-Za-zÀ-ÿ“])/g,
-   '<span class="verse">$1</span>'
-  )
+  const value = text || ""
+  const nodes: ReactNode[] = []
+  let key = 0
+  let lastIndex = 0
 
-  formatted = formatted.replace(
-   /^([A-Za-zÀ-ÿ])/,
-   '<span class="capitular">$1</span>'
-  )
+  const versePattern = /(\d+)(?=[A-Za-zÀ-ÿ“])/g
+  let match: RegExpExecArray | null
 
-  return formatted
+  while((match = versePattern.exec(value)) !== null){
+
+   if(match.index > lastIndex){
+    nodes.push(value.slice(lastIndex, match.index))
+   }
+
+   nodes.push(<span key={key++} className="verse">{match[1]}</span>)
+
+   lastIndex = match.index + match[1].length
+
+  }
+
+  if(lastIndex < value.length){
+   nodes.push(value.slice(lastIndex))
+  }
+
+  if(typeof nodes[0] === "string" && /^[A-Za-zÀ-ÿ]/.test(nodes[0])){
+
+   const first = nodes[0]
+
+   nodes[0] = (
+    <span key={`capitular-${key++}`}>
+     <span className="capitular">{first[0]}</span>
+     {first.slice(1)}
+    </span>
+   )
+
+  }
+
+  return nodes
 
  }
 
@@ -500,15 +532,9 @@ export default function LiturgyReadingButtons({ liturgy, dateOffset = 0 }: Props
 
       )}
 
-      <div
-       className={styles.modalText}
-       dangerouslySetInnerHTML={{
-        __html:
-        formatVerses(
-         modal.texto || ""
-        )
-       }}
-      />
+      <div className={styles.modalText}>
+       {formatVerses(modal.texto || "")}
+      </div>
 
       {(() => {
 

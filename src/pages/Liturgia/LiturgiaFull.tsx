@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import type { ReactNode } from "react"
 import { useNavigate } from "react-router-dom"
 import styles from "./LiturgiaFull.module.css"
 import { ChevronLeft, ChevronRight, Calendar, RotateCcw } from "lucide-react"
@@ -234,20 +235,60 @@ const ORDEM_SECOES: Record<string, string[]> = {
   ]
 }
 
-function formatVerses(text:string){
+/*
+Retorna nós React (texto puro + <span> pontuais), nunca uma string HTML —
+o texto vem da API pública de liturgia (terceiro, fora do nosso controle);
+montar HTML bruto e injetar via dangerouslySetInnerHTML abriria XSS pra
+todo mundo que abrisse a liturgia do dia caso essa API um dia devolva algo
+malicioso. Renderizando como filhos normais do React, tudo que não é
+número de versículo/capitular é sempre tratado como texto, nunca marcação.
+*/
+function formatVerses(text:string): ReactNode[]{
 
-    let formatted = (text || "").replace(
-      /(\d+)(?=[A-Za-zÀ-ÿ“])/g,
-      '<span class="verse">$1</span>'
-    )
+  const value = text || ""
+  const nodes: ReactNode[] = []
+  let key = 0
+  let lastIndex = 0
 
-    formatted = formatted.replace(
-      /^([A-Za-zÀ-ÿ])/,
-      '<span class="capitular">$1</span>'
-    )
+  const versePattern = /(\d+)(?=[A-Za-zÀ-ÿ“])/g
+  let match: RegExpExecArray | null
 
-    return formatted
+  while((match = versePattern.exec(value)) !== null){
+
+    if(match.index > lastIndex){
+      nodes.push(value.slice(lastIndex, match.index))
+    }
+
+    nodes.push(<span key={key++} className="verse">{match[1]}</span>)
+
+    lastIndex = match.index + match[1].length
+
   }
+
+  if(lastIndex < value.length){
+    nodes.push(value.slice(lastIndex))
+  }
+
+  // Capitular: só se aplica quando o primeiro trecho ainda é texto puro
+  // começando por letra — se um versículo já tomou a posição 0 (texto
+  // começando com número seguido de letra), o padrão original também não
+  // aplicava o capitular, então mantemos o mesmo comportamento aqui.
+  if(typeof nodes[0] === "string" && /^[A-Za-zÀ-ÿ]/.test(nodes[0])){
+
+    const first = nodes[0]
+
+    nodes[0] = (
+      <span key={`capitular-${key++}`}>
+        <span className="capitular">{first[0]}</span>
+        {first.slice(1)}
+      </span>
+    )
+
+  }
+
+  return nodes
+
+}
 
 function renderConteudo(conteudo:any, tituloSecao:string){
 
@@ -304,13 +345,9 @@ function renderEvangelho(evangelho:any, keyIndex:number){
         <p key={i} className={styles.text}>
           {item.padre && <span className={styles.padre}>Padre: </span>}
           {item.assembleia && <span className={styles.assembleia}>Assembleia: </span>}
-          <span
-              dangerouslySetInnerHTML={{
-                __html: formatVerses(
-                  item.padre || item.assembleia || ""
-                )
-              }}
-            />
+          <span>
+            {formatVerses(item.padre || item.assembleia || "")}
+          </span>
         </p>
       ))}
 
@@ -318,24 +355,17 @@ function renderEvangelho(evangelho:any, keyIndex:number){
         {evangelho.referencia}
       </p>
 
-      <p
-        className={styles.text}
-        dangerouslySetInnerHTML={{
-          __html: formatVerses(evangelho.texto)
-        }}
-      />
+      <p className={styles.text}>
+        {formatVerses(evangelho.texto)}
+      </p>
 
       {evangelho.final?.map((item:any,i:number)=>(
         <p key={i} className={styles.text}>
           {item.padre && <span className={styles.padre}>Padre: </span>}
           {item.assembleia && <span className={styles.assembleia}>Assembleia: </span>}
-          <span
-              dangerouslySetInnerHTML={{
-                __html: formatVerses(
-                  item.padre || item.assembleia || ""
-                )
-              }}
-            />
+          <span>
+            {formatVerses(item.padre || item.assembleia || "")}
+          </span>
         </p>
       ))}
 
@@ -347,12 +377,9 @@ function renderValor(valor:any, isLeitura:boolean = false):any{
 
   if(typeof valor === "string"){
     return (
-      <p
-        className={styles.text}
-        dangerouslySetInnerHTML={{
-          __html: isLeitura ? formatVerses(valor) : valor
-        }}
-      />
+      <p className={styles.text}>
+        {isLeitura ? formatVerses(valor) : valor}
+      </p>
     )
   }
 
@@ -366,13 +393,11 @@ function renderValor(valor:any, isLeitura:boolean = false):any{
             {subItem.assembleia && <span className={styles.assembleia}>Assembleia: </span>}
             {subItem.todos && <span className={styles.todos}>Todos: </span>}
 
-            <span
-              dangerouslySetInnerHTML={{
-                __html: isLeitura
+            <span>
+              {isLeitura
                 ? formatVerses(subItem.padre || subItem.assembleia || subItem.todos || "")
-                : (subItem.padre || subItem.assembleia || subItem.todos || "")
-              }}
-            />
+                : (subItem.padre || subItem.assembleia || subItem.todos || "")}
+            </span>
           </p>
         ))
       }
@@ -383,13 +408,11 @@ function renderValor(valor:any, isLeitura:boolean = false):any{
           {item.assembleia && <span className={styles.assembleia}>Assembleia: </span>}
           {item.todos && <span className={styles.todos}>Todos: </span>}
 
-          <span
-            dangerouslySetInnerHTML={{
-              __html: isLeitura
-                ? formatVerses(item.padre || item.assembleia || item.todos || "")
-                : (item.padre || item.assembleia || item.todos || "")
-            }}
-          />
+          <span>
+            {isLeitura
+              ? formatVerses(item.padre || item.assembleia || item.todos || "")
+              : (item.padre || item.assembleia || item.todos || "")}
+          </span>
         </p>
       )
     })
@@ -409,14 +432,9 @@ function renderValor(valor:any, isLeitura:boolean = false):any{
           ℟. {valor.refrao}
         </p>
 
-        <p
-          className={styles.text}
-          dangerouslySetInnerHTML={{
-            __html: isLeitura
-              ? formatVerses(valor.texto)
-              : valor.texto
-          }}
-        />
+        <p className={styles.text}>
+          {isLeitura ? formatVerses(valor.texto) : valor.texto}
+        </p>
 
       </div>
     )
