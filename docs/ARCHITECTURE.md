@@ -14,7 +14,7 @@ Read this before touching the code — human or AI agent. It explains what exist
 | State | No global state library (no Redux/Zustand/Context-as-store). `localStorage` is the only client persistence; component state + one `PullToRefreshContext` cover the rest |
 | HTTP | A single `axios` instance (`src/services/api.ts`), one thin `*Service.ts` wrapper per backend domain |
 | PWA | Yes — `public/sw.js` (hand-written service worker), `public/manifest.json`, offline app-shell caching |
-| Testing | **None configured.** No test runner in `package.json` — there is no `npm test` |
+| Testing | **Vitest + React Testing Library, minimal.** `npm test` exists now, but only two spec files (`LiturgiaFull.test.tsx`, `api.test.ts`) covering the XSS-sanitization fix and `clearSession()` — most of the app still has no automated coverage. Expand this incrementally as you touch a file, don't assume broad coverage exists. |
 | Hosting | Vercel (`vercel.json` — SPA rewrite to `index.html`); production URL `https://oratio-phi.vercel.app/` (referenced directly in a couple of places, see §8) |
 | Path aliases | None — all imports are relative (`./`, `../`); `tsconfig.app.json` has no `paths` map |
 
@@ -23,11 +23,13 @@ Read this before touching the code — human or AI agent. It explains what exist
 ```bash
 npm run dev        # Vite dev server (port 5173)
 npm run build        # tsc -b && vite build — type-checks BEFORE bundling; a type error fails the build
-npm run lint          # ESLint over the whole project
+npm run lint          # ESLint over the whole project (currently broken — see §7, ESLint 9 needs a flat eslint.config.js that isn't checked in)
 npm run preview        # serve the production build locally
+npm test              # Vitest, single run (vitest.config.ts, jsdom environment)
+npm run test:watch      # Vitest, watch mode
 ```
 
-There is no test runner. If you add meaningful logic that deserves a regression test, you'll need to introduce a test setup (e.g. Vitest) — don't assume one exists.
+Test coverage is minimal (see §1) — most of the app has no automated regression tests. If you add meaningful logic that deserves one, use the existing Vitest setup rather than reaching for something else.
 
 ## 3. App boot sequence (`src/App.tsx`, `src/main.tsx`)
 
@@ -63,6 +65,8 @@ One `axios` instance (`api`), used by every `*Service.ts` file. Two behaviors ma
 - **`clearSession()`** deletes every `localStorage` key **except** `app_version` and `last_ping` (an allowlist-of-exclusions, not a list of keys to remove) — new per-feature cache keys added later are automatically wiped on logout without needing to be enumerated here. Don't add a new `localStorage` key that must *survive* logout without adding it to `KEEP_ON_LOGOUT` in `api.ts`.
 
 **Service file convention**: one file per backend domain (`authService`, `profileService`, `consecrationService`, `liturgiaService`, `prayersService`, `rosaryService`, `bibliaService`, `activityService`, `adminService`, `adminNotificationsService`, `notificationsService`, `pushService`, `quaresmaService`, `readingProgressService`, `homeService`, `voxService`), each a thin wrapper calling `api.get/post/...` with a relative path (e.g. `api.post("/users", ...)`). `authService.login()` is the one exception — it builds an absolute URL (`` `${import.meta.env.VITE_API_URL}/auth/login` ``) even though `api`'s `baseURL` already does that; harmless (axios treats an absolute URL as an override, not a concatenation) but inconsistent — new auth-related calls should use a relative path like every other service file, not copy this one.
+
+**`profileService.deleteAccount(password)`** now takes the current password and sends it as the request body (`api.delete("/users/me", { data: { password } })`) — the backend added this requirement (`oratio-api` `DeleteAccountDto`) because an access token alone used to be enough to permanently destroy an account. `DeleteAccountModal` collects the password alongside the existing "type your email to confirm" step. If this contract ever changes again on the backend, update both together.
 
 ## 5. PWA / offline behavior (`public/sw.js`, `public/manifest.json`)
 
@@ -107,14 +111,16 @@ public/
 
 ## 7. Naming and things that will confuse you if unexplained
 
-- **No test runner is configured.** Don't assume `npm test` exists or that any existing behavior is covered by automated tests — verify manually (dev server, browser) when changing shared code like `api.ts` or `App.tsx`'s boot sequence.
+- **Test coverage is minimal** (Vitest is configured — see §1/§2 — but only two spec files exist). Don't assume existing behavior is covered by automated tests — verify manually (dev server, browser) when changing shared code like `api.ts` or `App.tsx`'s boot sequence, in addition to whatever automated tests exist.
+- **`ESLint` is currently broken** (`npm run lint` fails with "couldn't find an eslint.config.(js|mjs|cjs) file") — this project's ESLint 9 needs the new flat-config format and none is checked in. Not something introduced recently; just don't assume `npm run lint` works before relying on it. `tsc -b` (part of `npm run build`) still catches real type errors regardless.
+- **Never render third-party or externally-fetched content with `dangerouslySetInnerHTML`.** `LiturgiaFull.tsx` and `LiturgyReadingButtons.tsx` used to do exactly this with the daily liturgy text (fetched by the backend from a public API neither repo controls) — an unsanitized string built by hand and injected as raw HTML, on a public route, was a real stored-XSS path to stealing every visitor's `access_token`/`refresh_token` out of `localStorage`. Fixed by making `formatVerses()` return React nodes (plain strings + a couple of `<span>`s) instead of an HTML string, rendered as normal JSX children. If you need similar inline formatting elsewhere (wrapping a substring in a styled `<span>`, etc.), follow that pattern — build an array of nodes, never a string of HTML — rather than reaching for `dangerouslySetInnerHTML`. There is no `DOMPurify` or similar sanitizer in this project; don't assume one is available as a shortcut.
 - **Two unrelated "version" concepts, both manual, both easy to forget**: `APP_VERSION` in `App.tsx` (client-side `localStorage` cache) and `CACHE_NAME` in `sw.js` (service-worker asset cache) — see §5. Bumping one does not bump the other.
 - **The service worker hardcodes `"render.com"`** to identify API traffic (§5) rather than reading `VITE_API_URL`. If the backend's host ever changes, this must be updated by hand or offline behavior silently breaks.
 - **Guest mode has no single source of truth.** Three independent things all need to agree for a page to genuinely work logged out: the route isn't wrapped in `<ProtectedRoute>`, the path is listed in `guestAllowedPrefixes` in `App.tsx` (§3, or the boot-time redirect sends guests to `/login` anyway), and every identity-gated action on that page has its own `isLoggedIn()` + `GuestGateModal` check (§3). Missing any one of the three produces a different failure mode (forced to login, boot-time redirect loop, or a raw failed request with no "create an account" prompt) — when adding a guest-accessible page, check all three explicitly rather than copying just one.
 - **There is no shared page layout/shell.** `BottomNavbar`/`MenuDrawer` are plain components each page imports individually (§6) — nothing in `App.tsx`'s route table wraps pages in a common layout. Forgetting to add `<BottomNavbar/>` to a new page is a silent omission (no error, the page just renders without nav), not something the router or a guard will catch.
 - **`authService.login()`'s absolute-URL construction** (§4) is a one-off inconsistency, not a pattern to copy.
 - **`VITE_API_URL`** is the only frontend env var (see `.env`/`.env_example` at the repo root) — it must be a full origin (e.g. `https://...onrender.com`), since `api.ts` uses it directly as `baseURL` and a couple of call sites concatenate it manually (§4).
-- **The production URL `https://oratio-phi.vercel.app/`** is hardcoded in a few places outside the frontend itself worth knowing about even though they're not in this repo: the backend's `AuthService.verifyEmail` redirects here after email verification (see backend docs §5), and `index.html`'s `og:url` meta tag references it. If the production domain ever changes, both repos need updating, not just this one.
+- **The production URL `https://oratio-phi.vercel.app/`** is hardcoded in a few places outside the frontend itself worth knowing about even though they're not in this repo: the backend's `AuthService.verifyEmail` redirect, all three `MailService` email templates, and the backend's CORS allowlist default (`ALLOWED_ORIGINS`, see backend docs §3/§9) all reference it directly — plus `index.html`'s `og:url` meta tag here. If the production domain ever changes, both repos need updating, not just this one, and the backend's `ALLOWED_ORIGINS` env var needs updating too or the API will reject requests from the new domain.
 
 ## 8. Working in this codebase — conventions to follow
 
