@@ -243,7 +243,7 @@ todo mundo que abrisse a liturgia do dia caso essa API um dia devolva algo
 malicioso. Renderizando como filhos normais do React, tudo que não é
 número de versículo/capitular é sempre tratado como texto, nunca marcação.
 */
-function formatVerses(text:string): ReactNode[]{
+export function formatVerses(text:string): ReactNode[]{
 
   const value = text || ""
   const nodes: ReactNode[] = []

@@ -35,6 +35,55 @@ type ReadingType =
  | "evangelho"
  | "extra"
 
+/*
+Retorna nós React (texto + <span> pontuais), nunca HTML bruto — o texto
+vem da API pública de liturgia (terceiro, fora do nosso controle), então
+montar uma string HTML e injetar via dangerouslySetInnerHTML abriria XSS
+pra quem abrir essa leitura rápida caso a API devolva algo malicioso.
+*/
+export function formatVerses(text:string): ReactNode[]{
+
+ const value = text || ""
+ const nodes: ReactNode[] = []
+ let key = 0
+ let lastIndex = 0
+
+ const versePattern = /(\d+)(?=[A-Za-zÀ-ÿ“])/g
+ let match: RegExpExecArray | null
+
+ while((match = versePattern.exec(value)) !== null){
+
+  if(match.index > lastIndex){
+   nodes.push(value.slice(lastIndex, match.index))
+  }
+
+  nodes.push(<span key={key++} className="verse">{match[1]}</span>)
+
+  lastIndex = match.index + match[1].length
+
+ }
+
+ if(lastIndex < value.length){
+  nodes.push(value.slice(lastIndex))
+ }
+
+ if(typeof nodes[0] === "string" && /^[A-Za-zÀ-ÿ]/.test(nodes[0])){
+
+  const first = nodes[0]
+
+  nodes[0] = (
+   <span key={`capitular-${key++}`}>
+    <span className="capitular">{first[0]}</span>
+    {first.slice(1)}
+   </span>
+  )
+
+ }
+
+ return nodes
+
+}
+
 export default function LiturgyReadingButtons({ liturgy, dateOffset = 0 }: Props){
 
  const navigate = useNavigate()
@@ -183,59 +232,6 @@ export default function LiturgyReadingButtons({ liturgy, dateOffset = 0 }: Props
 
  // eslint-disable-next-line react-hooks/exhaustive-deps
  },[liturgy, searchParams])
-
- /* =========================
- FORMATAR TEXTO
- ========================= */
-
- /*
- Retorna nós React (texto + <span> pontuais), nunca HTML bruto — o texto
- vem da API pública de liturgia (terceiro, fora do nosso controle), então
- montar uma string HTML e injetar via dangerouslySetInnerHTML abriria XSS
- pra quem abrir essa leitura rápida caso a API devolva algo malicioso.
- */
- function formatVerses(text:string): ReactNode[]{
-
-  const value = text || ""
-  const nodes: ReactNode[] = []
-  let key = 0
-  let lastIndex = 0
-
-  const versePattern = /(\d+)(?=[A-Za-zÀ-ÿ“])/g
-  let match: RegExpExecArray | null
-
-  while((match = versePattern.exec(value)) !== null){
-
-   if(match.index > lastIndex){
-    nodes.push(value.slice(lastIndex, match.index))
-   }
-
-   nodes.push(<span key={key++} className="verse">{match[1]}</span>)
-
-   lastIndex = match.index + match[1].length
-
-  }
-
-  if(lastIndex < value.length){
-   nodes.push(value.slice(lastIndex))
-  }
-
-  if(typeof nodes[0] === "string" && /^[A-Za-zÀ-ÿ]/.test(nodes[0])){
-
-   const first = nodes[0]
-
-   nodes[0] = (
-    <span key={`capitular-${key++}`}>
-     <span className="capitular">{first[0]}</span>
-     {first.slice(1)}
-    </span>
-   )
-
-  }
-
-  return nodes
-
- }
 
  /* =========================
  RESPOSTA FINAL
