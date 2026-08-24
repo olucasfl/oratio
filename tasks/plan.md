@@ -26,10 +26,12 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
 
 ## Fase 1 — Services (maior densidade de lógica, melhor ROI)
 
-- [ ] **Tarefa 1** — `src/services/api.ts`: interceptors (request auth header, 401→refresh→retry,
-      fila de requisições concorrentes, guest-401-passthrough, `PUBLIC_AUTH_PATHS`). Zero
-      cobertura hoje; é o trecho que o ARCHITECTURE.md chama de "least obvious part of the
-      codebase". `clearSession()` já está coberto — não retestar.
+- [x] **Tarefa 1** — `src/services/api.ts`: interceptors (request auth header, 401→refresh→retry,
+      fila de requisições concorrentes, guest-401-passthrough, `PUBLIC_AUTH_PATHS`,
+      `_retry` já setado, erro sem `config`, não-401). 14 testes novos em `api.test.ts`, direto
+      contra `interceptors.{request,response}.handlers[0]` (sem lib de mock de HTTP — ver
+      comentário no arquivo). Nenhum bug encontrado: o fluxo se comportou como o
+      ARCHITECTURE.md descreve em todos os cenários testados.
 - [ ] Tarefa 2 — `authService.ts`, `utils/authErrors.ts`, `utils/authRedirect.ts`
 - [ ] Tarefa 3 — `pushService.ts`, `notificationsService.ts`, `adminNotificationsService.ts`,
       `activityService.ts`
