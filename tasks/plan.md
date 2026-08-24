@@ -117,8 +117,13 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
 
 ## Fase 3 — Hooks
 
-- [ ] Tarefa 13 — `useOffline`, `usePullToRefresh`, `useReadingSize`, `useLockBodyScroll`,
-      `usePublishHeightVar`
+- [x] **Tarefa 13** — `useOffline` (eventos `online`/`offline`, listeners removidos no unmount),
+      `usePullToRefresh` (o handler registrado no contexto sempre chama a versão MAIS RECENTE de
+      `onRefresh` sem precisar re-registrar — via `handlerRef`), `useReadingSize` (fallback pra
+      `md` em valor inválido salvo), `useLockBodyScroll` (regressão documentada no próprio
+      hook: restaura usando o `scrollY` CAPTURADO, não relido do DOM depois do cleanup já ter
+      zerado), `usePublishHeightVar` (`ResizeObserver` stubado globalmente, já que jsdom não
+      implementa). 21 testes novos, nenhum bug encontrado.
 - [ ] Tarefa 14 — `useFraseDiaria`, `useVisualViewportOffset`, `useLiturgy`
 
 ## Fase 4 — Contexts & Guards
