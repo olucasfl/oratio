@@ -124,7 +124,14 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       hook: restaura usando o `scrollY` CAPTURADO, não relido do DOM depois do cleanup já ter
       zerado), `usePublishHeightVar` (`ResizeObserver` stubado globalmente, já que jsdom não
       implementa). 21 testes novos, nenhum bug encontrado.
-- [ ] Tarefa 14 — `useFraseDiaria`, `useVisualViewportOffset`, `useLiturgy`
+- [x] **Tarefa 14** — `useFraseDiaria` (JSON de frases mockado pra controle total; janela de 30
+      dias, reinício do histórico quando tudo já apareceu, `Math.random` mockado pra
+      determinismo), `useVisualViewportOffset` (o núcleo documentado no arquivo: um gap "bugado"
+      pós-compartilhar NUNCA empurra a navbar além de MAX_LIFT=96px; `resyncViewport()` para
+      sozinho após ~1.2s), `useLiturgy` (cache aplicado na hora enquanto o fetch fresco ainda
+      está em voo, cache ignorado se for de outro dia, JSON corrompido removido sem crashar,
+      offset≠0 nunca grava cache, labels Hoje/Ontem/Amanhã). 23 testes novos, nenhum bug
+      encontrado. **Fecha a Fase 3 (Hooks).**
 
 ## Fase 4 — Contexts & Guards
 
