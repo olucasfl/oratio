@@ -46,8 +46,11 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       teste específico pro caso "push desligado = no-op"), `notificationsService.ts`,
       `adminNotificationsService.ts`, `activityService.ts` (todos thin wrappers sobre `./api`
       mockado). 56 testes novos, nenhum bug encontrado.
-- [ ] Tarefa 4 — `profileService.ts`, `rosaryService.ts`, `readingProgressService.ts`,
-      `prayersService.ts`, `homeService.ts`
+- [x] **Tarefa 4** — `profileService.ts`, `rosaryService.ts`, `homeService.ts`,
+      `prayersService.ts` (thin wrappers), `readingProgressService.ts` (a única com lógica real:
+      gate `isLoggedIn()` — nunca chama a API pra convidado — e best-effort — nunca deixa uma
+      falha de rede subir, "leitura não pode ser prejudicada"). 19 testes novos, nenhum bug
+      encontrado.
 - [ ] Tarefa 5 — `quaresmaService.ts`, `adminService.ts`
 - [ ] Tarefa 6 — `consecrationService.ts`, `bibliaService.ts`
 - [ ] Tarefa 7 — `voxService.ts`
