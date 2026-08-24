@@ -183,8 +183,21 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
 
 ## Fase 6 — Páginas com lógica real
 
-- [ ] Tarefa 21 — `App.tsx`: boot sequence (cache-version bump, correção de URL antes do
-      primeiro paint, redirecionamento guest) — alto risco, alto valor
+- [x] **Tarefa 21** — `App.tsx`: boot sequence. 28 páginas lazy mockadas por stub pra isolar só a
+      lógica de boot. **Bug crítico real encontrado e corrigido, com sign-off explícito do
+      usuário antes de mexer**: a correção de URL no boot usava `window.history.replaceState`
+      cru, que o `<BrowserRouter>` nunca observa (só reage ao próprio `history` interno via
+      `history.listen()`, disparado só em `popstate` ou chamadas pela API do react-router) — na
+      prática, **qualquer visitante que abrisse a URL raiz (só o domínio) caía no `/login` em vez
+      da Home pública**, contrariando o que o ARCHITECTURE.md documenta. Tentar trocar por
+      `navigate()` dentro do efeito também não resolveu (a atualização do history do react-router
+      passa por `startTransition`, perde a corrida contra o `setLoading(false)` síncrono). Fix
+      definitivo: **declarativo**, não imperativo — `<Route path="/">` aponta direto pra
+      `/oratio/home`, e um `LoginGate` (mesmo padrão do `ProtectedRoute`: síncrono, sem efeito)
+      decide na hora do match se `/login` mostra o formulário ou redireciona quem já tem sessão.
+      Toda a lógica de "rota bloqueada → /login" imperativa foi removida por ser redundante — o
+      `ProtectedRoute` já cobre isso de forma síncrona e correta pra toda rota protegida. 17
+      testes novos, suíte completa (447 testes) estável em duas rodadas.
 - [ ] Tarefa 22 — `Profile.tsx` (cálculo/exibição de sequência — ligado aos bugs de notificação
       já corrigidos no backend), `AdminPanel.tsx`
 - [ ] Tarefa 23 — Login/Register/ForgotPassword/ResetPassword (validação client-side, tratamento

@@ -45,6 +45,24 @@ const Confissao        = lazy(() => import("./pages/Confissao/Confissao"))
 const Quaresma         = lazy(() => import("./pages/Quaresma/Quaresma"))
 const QuaresmaDia      = lazy(() => import("./pages/Quaresma/QuaresmaDia"))
 
+/*
+Decide de forma declarativa (na hora do match da rota, sem efeito nem
+navigate() imperativo — ver o comentário longo em startApp()) se /login
+deve mostrar o formulário ou mandar quem já tem sessão de volta pra Home.
+Um ?resetToken= na URL precisa continuar levando ao formulário mesmo com
+um access_token velho/expirado salvo no aparelho.
+*/
+function LoginGate(){
+  const hasToken = !!localStorage.getItem("access_token")
+  const hasResetToken = new URLSearchParams(window.location.search).has("resetToken")
+
+  if(hasToken && !hasResetToken){
+    return <Navigate to="/oratio/home" replace />
+  }
+
+  return <Login />
+}
+
 function App(){
 
 const [loading,setLoading] = useState(true)
@@ -132,44 +150,28 @@ useEffect(()=>{
   const startApp = async () => {
     await bootLoader()
 
-    // Corrige o URL enquanto o splash ainda está cobrindo a tela,
-    // evitando que as rotas pisquem na posição errada ao renderizar.
-    const token = localStorage.getItem("access_token")
-    const path  = window.location.pathname
+    /*
+    A correção de "pra onde essa URL deveria ir" costumava morar aqui,
+    feita com window.history.replaceState cru. Isso nunca funcionou de
+    verdade: o <BrowserRouter> (main.tsx) só re-renderiza <Routes> quando
+    o PRÓPRIO history interno do react-router muda — um replaceState
+    direto no window.history troca a barra de endereço, mas o router
+    nunca fica sabendo, então <Routes> continua casando contra a URL de
+    ANTES da correção. Na prática isso fazia até a Home pública (path
+    "/") cair no /login, porque a única rota que "/" de fato casava era
+    o <Navigate to="/login"> do próprio catálogo de rotas — a correção
+    daqui nunca chegava a valer.
 
-    // Páginas públicas que não devem ser trocadas por /login, mesmo sem token
-    const publicPaths = ["/login", "/register", "/verificar-email", "/confirmar-troca-email"]
+    Tentar consertar isso com navigate() aqui dentro do efeito também não
+    é confiável: a atualização do history do react-router passa por
+    startTransition internamente (baixa prioridade) e pode perder a
+    corrida contra o setLoading(false) da própria linha de baixo, então
+    <Routes> ainda pode montar pela primeira vez com a localização velha.
 
-    // Telas que podem ser exploradas sem conta (modo convidado) — ler,
-    // não salvar. Qualquer outra rota sem token cai no login normal.
-    const guestAllowedPrefixes = [
-      "/oratio/home",
-      "/oratio/liturgia-completa",
-      "/oratio/prayers",
-      "/oratio/prayer/",
-      "/oratio/rosary",
-      "/oratio/biblia"
-    ]
-
-    const isGuestAllowed = guestAllowedPrefixes.some(
-      (prefix) => path === prefix || path.startsWith(prefix)
-    )
-
-    // Se veio de um link de reset de senha, não pode perder o ?resetToken=
-    // mesmo que exista um access_token antigo/expirado salvo no aparelho
-    const hasResetToken = new URLSearchParams(window.location.search).has("resetToken")
-
-    if (!token) {
-      if (path === "/") {
-        window.history.replaceState(null, "", "/oratio/home")
-      } else if (!publicPaths.includes(path) && !isGuestAllowed) {
-        window.history.replaceState(null, "", "/login")
-      }
-    } else {
-      if ((path === "/" || path === "/login") && !hasResetToken) {
-        window.history.replaceState(null, "", "/oratio/home")
-      }
-    }
+    A correção de verdade é declarativa, não imperativa — ver as rotas
+    "/" e "/login" logo abaixo, e ProtectedRoute (que já faz exatamente
+    isso, de forma síncrona, pra qualquer rota que exige conta).
+    */
 
     setLoading(false)
   }
@@ -248,9 +250,9 @@ return(
 
 <Routes>
 
-<Route path="/" element={<Navigate to="/login" replace />} />
+<Route path="/" element={<Navigate to="/oratio/home" replace />} />
 
-<Route path="/login" element={<Login />} />
+<Route path="/login" element={<LoginGate />} />
 
 <Route path="/register" element={<Register />} />
 
