@@ -92,7 +92,7 @@ export async function preloadConsecration(){
       saveLocal(`${DAYS_KEY}_${day.dayNumber}`, day, 60)
     })
 
-  }catch{}
+  }catch{ /* melhor esforço: cache não é crítico, segue sem ele */ }
 
 }
 

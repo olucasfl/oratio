@@ -81,6 +81,52 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
 - [ ] Tarefa 25 — páginas restantes, só o suficiente pra fechar o gap até 80% — sem forçar teste
       em página puramente visual
 
+## Fase Lint — limpar `npm run lint` (148 problemas, 128 erros / 20 avisos)
+
+`npm run lint` estava 100% quebrado (sem `eslint.config.js`) — corrigido, e com ele rodando de
+verdade apareceram 148 problemas reais. Regra: nenhuma correção pode mudar comportamento
+observável pro usuário — prioriza reordenação/tipagem sobre reescrever lógica, e qualquer
+`useEffect`/dependência é tratado com cautela extra (adicionar uma dependência errada pode
+causar loop de re-fetch — ver nota na Tarefa L2).
+
+- [x] **Tarefa L1** — Erros estruturais seguros, sem digitação de tipos: 2 casos de "variável
+      acessada antes de declarada" (`LiturgiaFull.tsx`, `RosaryHome.tsx` — reordenação pura de
+      `function` já hoisted, zero mudança de comportamento) + 5 blocos `catch{}` vazios
+      (`AdminPanel.tsx` x3, `consecrationService.ts`, `VerifyEmailModal.tsx` — `no-empty` ignora
+      bloco com comentário, então só documentar a intenção já resolve sem tocar em lógica).
+      148 → 143 problemas.
+- [ ] Tarefa L2 — `react-hooks/set-state-in-effect` (6 arquivos: `OfflineBanner.tsx`,
+      `useFraseDiaria.ts`, `BibliaHome.tsx` x2, `ConfirmEmailChange.tsx`, `VerifyEmail.tsx`) —
+      setState síncrono dentro de effect. Cuidado: cada caso precisa da técnica certa (estado
+      inicial preguiçoso via `useState(() => ...)` quando o valor não depende de nada externo
+      assíncrono; manter o padrão atual quando há uma chamada assíncrona real no meio).
+- [ ] Tarefa L3 — `no-explicit-any` em `services/` e `utils/` (api.ts, api.test.ts,
+      bibliaService.ts, consecrationService.ts, quaresmaService.ts, voxService.ts,
+      authErrors.ts, isPwa.ts, liturgyShareText.ts, localCache.ts, rosaryDays.ts,
+      rosaryPrayers.ts) — tipar contra o shape real que a `oratio-api` devolve, não `unknown`
+      genérico onde dá pra saber o formato.
+- [ ] Tarefa L4 — `no-explicit-any` em `components/` (AdminNotifications, ChangeEmailModal,
+      ChangePasswordModal, DeleteAccountModal, ResetPasswordModal, ShareReadingButton)
+- [ ] Tarefa L5 — `no-explicit-any` em `pages/` cluster 1 (Biblia: BibliaBook, BibliaChapter,
+      BibliaHome; Catecismo)
+- [ ] Tarefa L6 — `no-explicit-any` em `pages/` cluster 2 (Consecration: ConsecrationDay,
+      ConsecrationHome, Tratado; ConfirmEmailChange; Home.tsx)
+- [ ] Tarefa L7 — `no-explicit-any` em `pages/Liturgia/LiturgiaFull.tsx` (9 ocorrências, arquivo
+      isolado por volume) + `LiturgiaFull.test.tsx`
+- [ ] Tarefa L8 — `no-explicit-any` em `pages/` cluster 3 (Login, Register, Prayers: Prayers,
+      CategoryPrayers, RosaryHome*, RosaryPage; SantoDoDia; VerifyEmail)
+- [ ] Tarefa L9 — `no-explicit-any` em `pages/Profile/AdminPanel.tsx` (17 ocorrências, arquivo
+      isolado por volume) + `Profile.tsx`
+- [ ] Tarefa L10 — `react-hooks/exhaustive-deps` (13 avisos restantes) — caso a caso: só
+      adicionar a dependência quando a função referenciada for estável (`useCallback` com deps
+      corretas) ou o efeito for genuinely "rodar quando X mudar"; do contrário, comentário
+      `eslint-disable-next-line` explicando por que é intencional (mesmo padrão de "roda uma vez
+      na montagem" já usado no boot do `App.tsx`).
+- [ ] Tarefa L11 — sobras: `QuaresmaCard.tsx` (eslint-disable não usado, remover),
+      `ConsecrationHome.tsx` (mover `stages` pra dentro do `useMemo`), 2 avisos
+      `react-refresh/only-export-components` (avaliar se vale separar constante/função em outro
+      arquivo ou é aceitável como está)
+
 ## Processo
 
 Cada tarefa: RED (teste que expõe o comportamento esperado) → GREEN → suíte completa →

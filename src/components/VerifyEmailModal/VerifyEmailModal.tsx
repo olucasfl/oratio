@@ -51,7 +51,7 @@ export default function VerifyEmailModal({
 
         }
 
-      } catch {}
+      } catch { /* poll continua na próxima rodada, sem UI de erro dedicada */ }
 
     }, 3000);
 

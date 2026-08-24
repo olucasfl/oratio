@@ -193,11 +193,11 @@ export default function AdminPanel() {
   }, [activeTab])
 
   async function getCurrentUser() {
-    try { setCurrentUserId((await getProfile()).id) } catch {}
+    try { setCurrentUserId((await getProfile()).id) } catch { /* melhor esforço, sem UI de erro dedicada */ }
   }
 
   async function loadStats() {
-    try { setStats(await getAdminStats()) } catch {}
+    try { setStats(await getAdminStats()) } catch { /* melhor esforço, sem UI de erro dedicada */ }
   }
 
   async function loadUsers() {
@@ -241,7 +241,7 @@ export default function AdminPanel() {
   }
 
   async function loadHighlights() {
-    try { setAllUsersSnapshot(await getAllUsers({})) } catch {}
+    try { setAllUsersSnapshot(await getAllUsers({})) } catch { /* melhor esforço, sem UI de erro dedicada */ }
   }
 
   async function loadHealth() {

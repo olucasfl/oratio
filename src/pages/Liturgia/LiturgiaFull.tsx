@@ -28,12 +28,6 @@ export default function LiturgiaFull(){
   const isOffline = useOffline()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    loadMissa(dataSelecionada)
-  }, [dataSelecionada])
-
-  usePullToRefresh(() => loadMissa(dataSelecionada), !isOffline)
-
   async function loadMissa(date: Date){
 
     setErro(false)
@@ -81,6 +75,12 @@ export default function LiturgiaFull(){
     }
 
   }
+
+  useEffect(() => {
+    loadMissa(dataSelecionada)
+  }, [dataSelecionada])
+
+  usePullToRefresh(() => loadMissa(dataSelecionada), !isOffline)
 
   function changeDay(offset:number){
     const newDate = new Date(dataSelecionada)

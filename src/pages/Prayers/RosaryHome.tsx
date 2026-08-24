@@ -73,14 +73,6 @@ export default function RosaryHome(){
       totalSteps:number
     }>>({})
 
-  useEffect(()=>{
-
-    loadProgress()
-
-  },[])
-
-  usePullToRefresh(loadProgress)
-
   async function loadProgress(){
 
     try{
@@ -111,6 +103,14 @@ export default function RosaryHome(){
     }
 
   }
+
+  useEffect(()=>{
+
+    loadProgress()
+
+  },[])
+
+  usePullToRefresh(loadProgress)
 
   function goToRosary(
     slug:string
