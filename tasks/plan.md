@@ -67,7 +67,15 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       Bíblia — sem mockar dado nenhum: normalização acento/maiúscula, limite de resultados,
       `getChapter` retornando `null` vs `undefined` conforme o caso, buscas recentes com
       dedup case-insensitive e teto de 6 itens). 41 testes novos, nenhum bug encontrado.
-- [ ] Tarefa 7 — `voxService.ts`
+- [x] **Tarefa 7** — `voxService.ts` (encerra a Fase 1). Os 3 branches de erro (429→
+      LIMIT_EXCEEDED, sem `response`→NETWORK_ERROR, resto→AI_PROVIDER_ERROR) em `askVox` e
+      `askVoxStream`; o parser SSE de `askVoxStream` — reaproveita `api`/axios com
+      `onDownloadProgress` em vez de `fetch()` cru pra manter o refresh automático de token —
+      incl. o caso que o comentário do código avisa explicitamente: uma linha `data:` cortada ao
+      meio entre dois pacotes de rede não pode ser processada cedo demais (testado forçando o
+      corte no meio de uma linha real e conferindo que só dispara `onDelta` depois de completa),
+      evento `error` no meio do stream, stream que termina sem `done` (`UNKNOWN_ERROR`), linha
+      JSON malformada ignorada sem lançar. 21 testes novos, nenhum bug encontrado.
 
 ## Fase 2 — Utils (funções puras)
 
