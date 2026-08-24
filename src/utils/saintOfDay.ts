@@ -93,6 +93,13 @@ export function resolveSaintOfDay(
         nome = fixedEntry.nome
         opcional = !!fixedEntry.opcional
         grau = opcional ? "Memória Facultativa" : celebration.grau
+      }else{
+        // título local não bate com o que a API confirma pra hoje (foi
+        // suprimido/transferido nesse ano específico) — usa o texto cru
+        // da API, nunca o título "bonito" não confirmado. `nome` tinha
+        // ficado com fixedEntry.nome (linha 70, `fixedEntry?.nome ?? …`)
+        // e nunca era corrigido pra esse caso.
+        nome = celebration.nome
       }
 
     }else{

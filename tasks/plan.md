@@ -90,7 +90,18 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       desconhecido, ida-e-volta de todo item do catálogo). `rosaryPrayers.ts`/`rosaryDays.ts` são
       dados estáticos sem nenhuma função — `/* v8 ignore file */` em vez de teste forçado, regra
       já prevista no plano. 3 testes novos, nenhum bug encontrado.
-- [ ] Tarefa 10 — `greeting.ts`, `saintOfDay.ts`, `liturgicalCelebration.ts`
+- [x] **Tarefa 10** — `greeting.ts` (limites exatos de hora entre manhã/tarde/noite),
+      `liturgicalCelebration.ts` (`parseCelebration` com múltiplas vírgulas no nome,
+      `getEasterSunday` conferido contra datas reais conhecidas de 2024/2025, `getFerialColor`
+      em cada estação), `saintOfDay.ts` (`resolveSaintOfDay`, com `../data/saintsOfTheDay` e
+      `../data/saintBios` mockados). **Bug real encontrado e corrigido** (não crítico pela
+      política do SPEC.md — precisão de conteúdo devocional, não dado do usuário/segurança;
+      correção mínima e óbvia): quando a data tinha entrada no índice local de santos mas o nome
+      NÃO batia com o que a API da liturgia confirmava pra aquele dia (celebração suprimida/
+      transferida naquele ano), o código mantinha o título local não confirmado em vez de cair
+      pro texto cru da API — violando o contrato explícito documentado no cabeçalho de
+      `saintBios.ts` ("nunca inventa, nunca mostra algo que não está de fato sendo celebrado").
+      Faltava o `else` que reseta `nome` pro texto da API nesse caso. 36 testes novos.
 - [ ] Tarefa 11 — `liturgyShareText.ts`, `bibleShareText.ts`, `prayerShareText.ts`,
       `rosaryShareText.ts`
 - [ ] Tarefa 12 — `installPrompt.ts`, `isPwa.ts`, `deviceDetect.ts` (`pdfConfig.ts` já parcial)
