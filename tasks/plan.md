@@ -171,7 +171,15 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       `MenuDrawer` (item bloqueado NÃO fecha o drawer — só o gate aparece por cima —, diferente
       do `BottomNavbar` que nem abre nada; item liberado fecha e navega). 12 testes novos,
       nenhum bug encontrado.
-- [ ] Tarefa 20 — `InstallAppNudge`/`InstallAppModal`, `PullToRefresh`
+- [x] **Tarefa 20** — `PullToRefresh` (`InstallAppNudge`/`InstallAppModal` já cobertos na Tarefa
+      16, junto do resto do cluster de `overlayCoordinator`). Gesto de toque nativo via
+      `addEventListener` real (não sintético do React) — eventos `Touch*` construídos à mão em
+      cima de `Event` (jsdom não implementa `TouchEvent`); cobre não ativar com a página já
+      rolada, ignorar arrasto abaixo do mínimo de ativação, curva elástica amortecida, soltar
+      abaixo do threshold reseta sem chamar o handler, soltar acima dispara o refresh e trava o
+      indicador em `REFRESH_PIN_HEIGHT`, erro do handler é engolido sem travar o spinner, trava
+      de segurança de 15s pra handler que nunca resolve, e `touchcancel`. 9 testes novos, nenhum
+      bug encontrado. **Fecha a Fase 5 (Componentes com lógica real).**
 
 ## Fase 6 — Páginas com lógica real
 
