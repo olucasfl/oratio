@@ -12,6 +12,7 @@ import InstallAppNudge from "./components/InstallAppNudge/InstallAppNudge"
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary"
 import { preloadConsecration, getProgress } from "./services/consecrationService"
 import { sendActivityPing } from "./services/activityService"
+import { syncPushTimezone } from "./services/pushService"
 import { useVisualViewportOffset } from "./hooks/useVisualViewportOffset"
 
 /* Páginas carregadas sob demanda */
@@ -112,6 +113,9 @@ useEffect(()=>{
           sendActivityPing().catch(()=>{})
           localStorage.setItem("last_ping", now.toString())
         }
+
+        /* mantém o fuso da inscrição de push em dia (no-op se push desligado) */
+        syncPushTimezone().catch(()=>{})
 
       }
 
