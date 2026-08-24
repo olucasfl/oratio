@@ -51,7 +51,13 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       gate `isLoggedIn()` — nunca chama a API pra convidado — e best-effort — nunca deixa uma
       falha de rede subir, "leitura não pode ser prejudicada"). 19 testes novos, nenhum bug
       encontrado.
-- [ ] Tarefa 5 — `quaresmaService.ts`, `adminService.ts`
+- [x] **Tarefa 5** — `quaresmaService.ts` (`getProgress()` cai pro cache local quando a rede
+      falha — orações são estáticas, a tela do dia continua offline; `completeDay`/`uncompleteDay`
+      propagam erro de propósito, ao contrário de `readingProgressService`, pro backend mostrar
+      a mensagem específica de validação; `apiErrorMessage` com os 3 ramos), `adminService.ts`
+      (`getAllUsers()` monta a query só com filtros presentes usando `!== undefined`, não
+      truthiness — testado especificamente `isAdmin:false`/`emailVerified:false` continuarem na
+      URL). 26 testes novos, nenhum bug encontrado.
 - [ ] Tarefa 6 — `consecrationService.ts`, `bibliaService.ts`
 - [ ] Tarefa 7 — `voxService.ts`
 
