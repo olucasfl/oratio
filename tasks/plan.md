@@ -58,7 +58,15 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       (`getAllUsers()` monta a query só com filtros presentes usando `!== undefined`, não
       truthiness — testado especificamente `isAdmin:false`/`emailVerified:false` continuarem na
       URL). 26 testes novos, nenhum bug encontrado.
-- [ ] Tarefa 6 — `consecrationService.ts`, `bibliaService.ts`
+- [x] **Tarefa 6** — `consecrationService.ts` (isolamento de cache por usuário via `sub` do JWT —
+      testado indiretamente, é o que evita progresso "vazar" entre contas no mesmo aparelho;
+      `preloadConsecration()` retorna na hora quando já tem cache e atualiza em background;
+      `getDay()` reconsulta o cache dentro do `catch` antes de desistir — pode ter sido populado
+      por um refresh em background nesse meio tempo; `resetConsecration()` limpa o cache local
+      mesmo se a chamada à API falhar depois), `bibliaService.ts` (busca contra o JSON real da
+      Bíblia — sem mockar dado nenhum: normalização acento/maiúscula, limite de resultados,
+      `getChapter` retornando `null` vs `undefined` conforme o caso, buscas recentes com
+      dedup case-insensitive e teto de 6 itens). 41 testes novos, nenhum bug encontrado.
 - [ ] Tarefa 7 — `voxService.ts`
 
 ## Fase 2 — Utils (funções puras)
