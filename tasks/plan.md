@@ -135,7 +135,12 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
 
 ## Fase 4 — Contexts & Guards
 
-- [ ] Tarefa 15 — `PullToRefreshContext`, `ProtectedRoute`, `AdminRoute`
+- [x] **Tarefa 15** — `ProtectedRoute` (redireciona pra `/login` sem `access_token`),
+      `AdminRoute` (estado `loading` não renderiza nada, `getProfile()` mockado — `isAdmin:true`
+      libera, `false` ou erro de rede redireciona pra `/oratio/home`, "falha fechado"). 6 testes
+      novos, nenhum bug encontrado. `PullToRefreshContext.ts` é só `createContext` + tipos, sem
+      lógica própria — `/* v8 ignore file */`, já exercitado indiretamente por
+      `usePullToRefresh.test.tsx`. **Fecha a Fase 4 (Contexts & Guards).**
 
 ## Fase 5 — Componentes com lógica real
 

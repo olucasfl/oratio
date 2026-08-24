@@ -1,3 +1,4 @@
+/* v8 ignore file -- createContext + tipos, sem lógica própria; exercitado via usePullToRefresh.test.tsx */
 import { createContext } from "react"
 
 export type RefreshHandler = () => Promise<void>
