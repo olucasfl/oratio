@@ -159,7 +159,13 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       (validação de título/audiência antes de enviar, `getAllUsers` só carrega ao trocar pra
       "Escolher pessoas", apagar campanha/todas com `window.confirm`, toggle de regra otimista
       com reversão em falha). 28 testes novos, nenhum bug encontrado.
-- [ ] Tarefa 18 — `NotificationBell`, `NotificationNudge`
+- [x] **Tarefa 18** — `NotificationBell` (agrupamento por dia Hoje/Ontem/Anteriores, expandir
+      item não-visto marca como visto e decrementa o badge, item sem `body`/`url` não expande,
+      "Ver mais" só com `nextCursor`, "Abrir" navega e fecha o painel), `NotificationNudge`
+      (janela de 7 dias entre exibições, só verifica status de push se `isPushSupported()`). 17
+      testes novos, nenhum bug de produção encontrado — só um problema no próprio teste
+      (`vi.useFakeTimers()` sem `shouldAdvanceTime` trava o polling do `findBy`/`waitFor` do
+      Testing Library, corrigido).
 - [ ] Tarefa 19 — `BottomNavbar`, `MenuDrawer` (estado ativo por rota)
 - [ ] Tarefa 20 — `InstallAppNudge`/`InstallAppModal`, `PullToRefresh`
 
