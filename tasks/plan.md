@@ -38,8 +38,14 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       sem response, 429, mensagem conhecida traduzida, array do class-validator, mensagem
       desconhecida repassada, fallback, fallback customizado, string vazia), `utils/
       authRedirect.ts` (encoding do `?redirect=`). 20 testes novos, nenhum bug encontrado.
-- [ ] Tarefa 3 — `pushService.ts`, `notificationsService.ts`, `adminNotificationsService.ts`,
-      `activityService.ts`
+- [x] **Tarefa 3** — `pushService.ts` (jsdom não implementa a Push API — cada teste liga/desliga
+      `serviceWorker`/`PushManager`/`Notification` via stub global; cobre `isPushSupported`,
+      `getPermission`, `getPushStatus` incl. erro engolido, `enablePush` incl. os 3 erros
+      nomeados e a conversão base64url→`Uint8Array` da VAPID key, `disablePush` incl. resiliência
+      a falha do backend, `sendTestPush`, `syncPushTimezone` — o fix de boot desta sessão, com
+      teste específico pro caso "push desligado = no-op"), `notificationsService.ts`,
+      `adminNotificationsService.ts`, `activityService.ts` (todos thin wrappers sobre `./api`
+      mockado). 56 testes novos, nenhum bug encontrado.
 - [ ] Tarefa 4 — `profileService.ts`, `rosaryService.ts`, `readingProgressService.ts`,
       `prayersService.ts`, `homeService.ts`
 - [ ] Tarefa 5 — `quaresmaService.ts`, `adminService.ts`
