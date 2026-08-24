@@ -86,7 +86,10 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       legado acima do máximo atual — opção "Muito grande" removida —, fallback pra 1 em valor
       não numérico/zero/negativo, `localStorage` indisponível não impede aplicar o scale na
       sessão atual). 22 testes novos, nenhum bug encontrado.
-- [ ] Tarefa 9 — `rosaryList.ts`, `rosaryPrayers.ts`, `rosaryDays.ts`
+- [x] **Tarefa 9** — `rosaryList.ts` (`getRosaryName` — fallback pro próprio slug quando
+      desconhecido, ida-e-volta de todo item do catálogo). `rosaryPrayers.ts`/`rosaryDays.ts` são
+      dados estáticos sem nenhuma função — `/* v8 ignore file */` em vez de teste forçado, regra
+      já prevista no plano. 3 testes novos, nenhum bug encontrado.
 - [ ] Tarefa 10 — `greeting.ts`, `saintOfDay.ts`, `liturgicalCelebration.ts`
 - [ ] Tarefa 11 — `liturgyShareText.ts`, `bibleShareText.ts`, `prayerShareText.ts`,
       `rosaryShareText.ts`

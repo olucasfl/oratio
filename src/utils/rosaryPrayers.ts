@@ -1,3 +1,4 @@
+/* v8 ignore file -- conteúdo estático (textos de oração), sem lógica pra testar */
 export const rosaryPrayers:any = {
 
     "Sinal da Santa Cruz": `Pelo sinal da Santa Cruz, 

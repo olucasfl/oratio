@@ -1,3 +1,4 @@
+/* v8 ignore file -- conteúdo estático (dias da semana por terço), sem lógica pra testar */
 export const ROSARY_DAYS: any = {
   gozosos: "Segunda e Sábado",
   luminosos: "Quinta",
