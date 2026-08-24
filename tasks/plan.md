@@ -153,7 +153,12 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       de overlay bloqueando só no momento em que o timer dispara). 36 testes novos, nenhum bug
       encontrado — inclusive no teste multi-etapa do `InstallAppNudge` que isola cooldown,
       contagem de telas e bypass em sequência.
-- [ ] Tarefa 17 — `AdminNotifications`, `AdminChart`/`AdminHeatmap`/`AdminFilterSheet`
+- [x] **Tarefa 17** — `AdminChart`/`AdminHeatmap` (seleção padrão no último ponto/pico, delta
+      vs. ponto anterior, clamp de alpha em 0.16 no heatmap), `AdminFilterSheet` (chips por
+      grupo de filtro, "Limpar filtros" desabilitado sem filtro ativo), `AdminNotifications`
+      (validação de título/audiência antes de enviar, `getAllUsers` só carrega ao trocar pra
+      "Escolher pessoas", apagar campanha/todas com `window.confirm`, toggle de regra otimista
+      com reversão em falha). 28 testes novos, nenhum bug encontrado.
 - [ ] Tarefa 18 — `NotificationBell`, `NotificationNudge`
 - [ ] Tarefa 19 — `BottomNavbar`, `MenuDrawer` (estado ativo por rota)
 - [ ] Tarefa 20 — `InstallAppNudge`/`InstallAppModal`, `PullToRefresh`
