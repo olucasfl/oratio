@@ -107,7 +107,13 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       extração da linha "Proclamação..." dentro do array `abertura`), `bibleShareText.ts`,
       `prayerShareText.ts`, `rosaryShareText.ts` (formatação simples, um teste cada). 13 testes
       novos, nenhum bug encontrado.
-- [ ] Tarefa 12 — `installPrompt.ts`, `isPwa.ts`, `deviceDetect.ts` (`pdfConfig.ts` já parcial)
+- [x] **Tarefa 12** — `installPrompt.ts` (dispara `beforeinstallprompt`/`appinstalled` de verdade
+      via `window.dispatchEvent`, já que o estado é privado ao módulo e só muda por esses
+      eventos; `promptInstall()` consome o prompt adiado e aceita/recusa), `isPwa.ts`
+      (`matchMedia` stubado + `navigator.standalone` do iOS Safari), `deviceDetect.ts` (iPad
+      moderno que se identifica como "Macintosh", distinguido só pelo suporte a touch). 16 testes
+      novos, nenhum bug encontrado. (`pdfConfig.ts` já tinha teste parcial de antes desta
+      sessão — mantido como está.)
 
 ## Fase 3 — Hooks
 
