@@ -102,8 +102,11 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       pro texto cru da API — violando o contrato explícito documentado no cabeçalho de
       `saintBios.ts` ("nunca inventa, nunca mostra algo que não está de fato sendo celebrado").
       Faltava o `else` que reseta `nome` pro texto da API nesse caso. 36 testes novos.
-- [ ] Tarefa 11 — `liturgyShareText.ts`, `bibleShareText.ts`, `prayerShareText.ts`,
-      `rosaryShareText.ts`
+- [x] **Tarefa 11** — `liturgyShareText.ts` (as 4 funções de montagem de texto — leitura, salmo,
+      leitura rápida, evangelho —, incl. a limpeza de número de versículo colado na palavra e a
+      extração da linha "Proclamação..." dentro do array `abertura`), `bibleShareText.ts`,
+      `prayerShareText.ts`, `rosaryShareText.ts` (formatação simples, um teste cada). 13 testes
+      novos, nenhum bug encontrado.
 - [ ] Tarefa 12 — `installPrompt.ts`, `isPwa.ts`, `deviceDetect.ts` (`pdfConfig.ts` já parcial)
 
 ## Fase 3 — Hooks
