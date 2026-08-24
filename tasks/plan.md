@@ -32,7 +32,12 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       contra `interceptors.{request,response}.handlers[0]` (sem lib de mock de HTTP — ver
       comentário no arquivo). Nenhum bug encontrado: o fluxo se comportou como o
       ARCHITECTURE.md descreve em todos os cenários testados.
-- [ ] Tarefa 2 — `authService.ts`, `utils/authErrors.ts`, `utils/authRedirect.ts`
+- [x] **Tarefa 2** — `authService.ts` (login/register/logout/forgotPassword/verifyEmail/
+      confirmEmailChange, `./api` mockado — logout best-effort mesmo com falha no revoke do
+      servidor, mesmo sem revoke quando não há refresh_token), `utils/authErrors.ts` (8 cenários:
+      sem response, 429, mensagem conhecida traduzida, array do class-validator, mensagem
+      desconhecida repassada, fallback, fallback customizado, string vazia), `utils/
+      authRedirect.ts` (encoding do `?redirect=`). 20 testes novos, nenhum bug encontrado.
 - [ ] Tarefa 3 — `pushService.ts`, `notificationsService.ts`, `adminNotificationsService.ts`,
       `activityService.ts`
 - [ ] Tarefa 4 — `profileService.ts`, `rosaryService.ts`, `readingProgressService.ts`,
