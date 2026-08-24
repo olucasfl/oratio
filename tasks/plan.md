@@ -144,8 +144,15 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
 
 ## Fase 5 — Componentes com lógica real
 
-- [ ] Tarefa 16 — `GuestGateModal`, `GuestWelcomeModal`, demais modais que registram em
-      `overlayCoordinator`
+- [x] **Tarefa 16** — `GuestGateModal`/`GuestWelcomeModal`/`InstallAppModal` (registro em
+      `overlayCoordinator`, redirects com `?redirect=` codificado), `QuaresmaNudge` (janela de
+      anúncio, chave de dispensa por ano, o `blocked` que evita ganhar a corrida dos modais da
+      Home — timer de 350ms só começa a contar depois de desbloqueado), `InstallAppNudge` (o
+      gate combinado mais complexo do app: SKIP_ROUTES, PWA já instalado, cooldown de 3h,
+      threshold de 3 telas navegadas com bypass pra "primeira tela"/"acabou de logar", e checagem
+      de overlay bloqueando só no momento em que o timer dispara). 36 testes novos, nenhum bug
+      encontrado — inclusive no teste multi-etapa do `InstallAppNudge` que isola cooldown,
+      contagem de telas e bypass em sequência.
 - [ ] Tarefa 17 — `AdminNotifications`, `AdminChart`/`AdminHeatmap`/`AdminFilterSheet`
 - [ ] Tarefa 18 — `NotificationBell`, `NotificationNudge`
 - [ ] Tarefa 19 — `BottomNavbar`, `MenuDrawer` (estado ativo por rota)
