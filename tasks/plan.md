@@ -166,7 +166,11 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       testes novos, nenhum bug de produção encontrado — só um problema no próprio teste
       (`vi.useFakeTimers()` sem `shouldAdvanceTime` trava o polling do `findBy`/`waitFor` do
       Testing Library, corrigido).
-- [ ] Tarefa 19 — `BottomNavbar`, `MenuDrawer` (estado ativo por rota)
+- [x] **Tarefa 19** — `BottomNavbar` (não renderiza fora de PWA, item ativo por
+      `pathname.startsWith`, item bloqueado abre o gate em vez de navegar pra convidado),
+      `MenuDrawer` (item bloqueado NÃO fecha o drawer — só o gate aparece por cima —, diferente
+      do `BottomNavbar` que nem abre nada; item liberado fecha e navega). 12 testes novos,
+      nenhum bug encontrado.
 - [ ] Tarefa 20 — `InstallAppNudge`/`InstallAppModal`, `PullToRefresh`
 
 ## Fase 6 — Páginas com lógica real
