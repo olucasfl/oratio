@@ -79,7 +79,13 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
 
 ## Fase 2 — Utils (funções puras)
 
-- [ ] Tarefa 8 — `overlayCoordinator.ts`, `localCache.ts`, `fontScale.ts`
+- [x] **Tarefa 8** — `overlayCoordinator.ts` (Set de ids + notificação de listeners, dedup ao
+      abrir o mesmo id duas vezes, unsubscribe para de notificar), `localCache.ts` (TTL com
+      timers falsos: válido no instante antes de expirar, expirado remove a entrada do storage,
+      JSON corrompido também limpa em vez de só retornar null), `fontScale.ts` (clamp de valor
+      legado acima do máximo atual — opção "Muito grande" removida —, fallback pra 1 em valor
+      não numérico/zero/negativo, `localStorage` indisponível não impede aplicar o scale na
+      sessão atual). 22 testes novos, nenhum bug encontrado.
 - [ ] Tarefa 9 — `rosaryList.ts`, `rosaryPrayers.ts`, `rosaryDays.ts`
 - [ ] Tarefa 10 — `greeting.ts`, `saintOfDay.ts`, `liturgicalCelebration.ts`
 - [ ] Tarefa 11 — `liturgyShareText.ts`, `bibleShareText.ts`, `prayerShareText.ts`,
