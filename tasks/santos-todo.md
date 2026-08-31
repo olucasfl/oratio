@@ -43,12 +43,12 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - [x] 12/nov — NOVO `sao-josafa-kuncewicz`. Memória obrigatória (M) no Geral. Índice: "São Josafá" → "São Josafá Kuncewicz" (+match `kuncewicz`). Fontes: vaticannews.va, osaopaulo.org.br, arquidiocesedemanaus.org.br, padrepauloricardo.org (n. ~1580 Volínia, família ortodoxa, nome João; basiliano em Vilna 1604; padre 1609; União de Brest 1596; arceb. de Polotsk 1618; +martirizado em Vitebsk 12/11/1623, corpo lançado no rio Dzwina; beat. 1643, canon. 1867 Pio IX; 1º santo oriental católico no calendário romano).
 - [x] 13/nov — NOVO `santo-estanislau-kostka`. Índice: "Santo Estanislau Kostka" → "+, religioso". Dia ferial no Geral pós-1969 (13/11 = data tradicional/jesuíta; na Polônia 18/9). Tratado como conteúdo complementar. Fontes: pt.wikipedia, vaticannews.va, franciscanos.org.br, cancaonova (n. 28/10/1550 castelo de Rostków; colégio jesuíta em Viena aos 14; fuga a pé até Dilinga e Roma; noviço admitido por S. Francisco de Bórgia em 1567; +Roma 15/8/1568, 18 anos; canon. 1726 Bento XIII; padroeiro dos jovens e noviços).
 
-## Lote 6 — 14 a 18/nov
-- [ ] 14/nov —
-- [ ] 15/nov —
-- [ ] 16/nov —
-- [ ] 17/nov —
-- [ ] 18/nov —
+## Lote 6 — 14 a 18/nov  ✅
+- [x] 14/nov — NOVO `sao-jose-pignatelli`. Dia ferial no Geral/BR (mem. jesuíta 14/11). Índice: "São José Pignatelli" → "+, presbítero". Fontes: pt.wikipedia, acidigital.com, vaticannews.va, cancaonova (n. 27/12/1737 Saragoça, família nobre napolitana; SJ; expulso da Espanha 1767 por Carlos III, exílio na Itália; supressão da SJ 1773 Clemente XIV; manteve a Ordem em Parma e na Rússia; restaurou a SJ em Nápoles 1804; +Roma 15/11/1811; beat. 1933 Pio XI, canon. 1954 Pio XII).
+- [x] 15/nov — NOVO `santo-alberto-magno`. Memória Facultativa (m) no Geral → `opcional:true`. Fontes: paulus.com.br, vaticannews.va, acidigital.com, osaopaulo.org.br (n. ~1206 Lauingen/Baviera; dominicano ~1223 sob bto. Jordão da Saxônia; mestre em Paris e Colônia, mestre de Tomás de Aquino; Aristóteles + ciências naturais; bispo de Ratisbona 1260–62; II Conc. de Lyon; +Colônia 1280; canon. e doutor da Igreja 1931 Pio XI; "Doutor Universal").
+- [x] 16/nov — NOVO `santa-margarida-escocia`. Memória Facultativa (m) no Geral → `opcional:true`. Mantido índice "Santa Margarida da Escócia" (Sta. Gertrudes divide o dia mas não entrou no `match`). Fontes: pt.wikipedia, gaudiumpress.org, vaticannews.va, cancaonova (n. ~1045 no exílio na Hungria, bisneta de Edmundo Braço de Ferro; refúgio na Escócia pós-1066; casou c/ Malcolm III; sínodos, abadia de Dunfermline; caridade diária, Quaresma; 8 filhos, filha Matilde rainha da Inglaterra; +Edimburgo 16/11/1093; canon. 1250 Inocêncio IV; padroeira da Escócia).
+- [x] 17/nov — NOVO `santa-isabel-hungria`. Memória obrigatória (M) no Geral. Fontes: franciscanos.org.br, pt.wikipedia, cancaonova, bibliotecacatolica.com.br (n. 1207, filha de André II da Hungria; castelo de Wartburg/Eisenach; casou c/ Luís da Turíngia 1221, 3 filhos; viúva 1227 — Luís +febre a caminho da cruzada; O.F.S. Sexta-feira Santa 1228; hospital de São Francisco em Marburgo; +17/11/1231, 24 anos; canon. 1235 Gregório IX; padroeira da O.F.S.).
+- [x] 18/nov — NOVO `dedicacao-pedro-paulo`. Memória Facultativa (m) no Geral → `opcional:true`. Fontes: vaticannews.va, opusdei.org, cancaonova (basílicas sobre os túmulos de Pedro — Vaticano — e Paulo — via Ostiense; 1as no séc. IV sob Constantino; São Pedro atual consagrada por Urbano VIII em 18/11/1626; São Paulo destruída por incêndio em 1823, nova dedicação fixada no mesmo dia por Pio IX).
 
 ## Lote 7 — 19 a 23/nov
 - [ ] 19/nov —
@@ -91,6 +91,10 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - 08/nov · "São Deodato" → "São Deodato I, Papa" · Martirológio Romano (identifica o Papa Deodato/Adeodato I)
 - 12/nov · "São Josafá, bispo e mártir" → "São Josafá Kuncewicz, bispo e mártir" (+match `kuncewicz`) · Calendário Romano Geral
 - 13/nov · "Santo Estanislau Kostka" → "+, religioso" · convenção do arquivo (grau no nome)
+- 14/nov · "São José Pignatelli" → "+, presbítero" · convenção do arquivo
+- 15/nov · +`opcional:true` (Memória Facultativa) · Calendário Romano Geral
+- 16/nov · +`opcional:true` (Memória Facultativa) · Calendário Romano Geral
+- 18/nov · +`opcional:true` (Memória Facultativa) · Calendário Romano Geral
 
 ## Dias deixados sem bio (data · motivo)
 _(preencher conforme avança)_

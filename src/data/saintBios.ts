@@ -1460,6 +1460,61 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
     ]
   },
 
+  "sao-jose-pignatelli": {
+    titulo: "São José Pignatelli, presbítero",
+    resumo: "Jesuíta espanhol que manteve viva a Companhia de Jesus durante os anos em que a Ordem foi suprimida, sendo chamado o elo entre a antiga e a nova Companhia.",
+    texto: [
+      "Nasceu em 27 de dezembro de 1737, em Saragoça (Espanha), em família nobre de origem napolitana. Entrou na Companhia de Jesus aos quinze anos e, ordenado padre, dedicou-se à catequese de crianças e ao cuidado de presos.",
+      "Em 1767 o rei Carlos III expulsou os jesuítas da Espanha; ofereceram a Pignatelli a permissão de ficar, desde que deixasse a Ordem, e ele preferiu o exílio na Itália com os confrades. Em 1773 o Papa Clemente XIV, pressionado pelas cortes europeias, suprimiu a própria Companhia de Jesus.",
+      "Nos anos seguintes, Pignatelli manteve o espírito e a regra da Ordem entre os jesuítas dispersos e reagrupou-os onde ainda era possível — no ducado de Parma e na Rússia, onde a supressão não fora promulgada. Foi mestre de noviços e provincial, e em 1804 conseguiu restabelecer a Companhia no reino de Nápoles.",
+      "Morreu em Roma em 15 de novembro de 1811, três anos antes da restauração universal da Ordem. Foi beatificado em 1933 pelo Papa Pio XI e canonizado em 1954 pelo Papa Pio XII. Sua memória litúrgica é celebrada em 14 de novembro."
+    ]
+  },
+
+  "santo-alberto-magno": {
+    titulo: "Santo Alberto Magno, bispo e doutor da Igreja",
+    resumo: "Frade dominicano do século XIII, mestre de Santo Tomás de Aquino e sábio de saber tão vasto que os contemporâneos o chamaram de \"Doutor Universal\".",
+    texto: [
+      "Nasceu por volta de 1206 em Lauingen, na Baviera, em família nobre. Estudou em Pádua, onde, sob a influência do beato Jordão da Saxônia, entrou para a Ordem dos Pregadores, os dominicanos, por volta de 1223.",
+      "Ensinou nas principais escolas da Alemanha e da França. Em Paris teve entre seus alunos o jovem Tomás de Aquino, que levou consigo ao fundar o estudo geral dos dominicanos em Colônia. Foi um dos primeiros a estudar a fundo as obras de Aristóteles e a pô-las a serviço da teologia cristã, e escreveu também sobre ciências naturais, observando plantas, animais e minerais.",
+      "Por dois anos (1260–1262) foi bispo de Ratisbona, cargo que aceitou por obediência e deixou para voltar ao ensino. Trabalhou pela paz entre cidades e príncipes e participou do II Concílio de Lyon.",
+      "Morreu em Colônia em 1280. Foi canonizado e declarado doutor da Igreja em 1931 pelo Papa Pio XI. É padroeiro dos que se dedicam às ciências naturais, e sua memória litúrgica é celebrada em 15 de novembro."
+    ]
+  },
+
+  "santa-margarida-escocia": {
+    titulo: "Santa Margarida da Escócia",
+    resumo: "Princesa de origem inglesa que, tornada rainha da Escócia, uniu a vida de esposa e mãe de oito filhos a uma intensa dedicação aos pobres e à reforma da Igreja.",
+    texto: [
+      "Nasceu por volta de 1045, no exílio na Hungria, bisneta do rei inglês Edmundo Braço de Ferro. Depois da conquista normanda da Inglaterra, sua família buscou refúgio na Escócia, onde Margarida se casou com o rei Malcolm III.",
+      "Como rainha, moderou os costumes rudes da corte e influiu na vida do marido e do reino. Promoveu sínodos que puseram ordem na disciplina eclesiástica escocesa, fundou a abadia de Dunfermline e construiu igrejas e albergues para peregrinos.",
+      "Sua caridade era diária e concreta: servia à mesa os pobres, lavava os pés dos doentes e, na Quaresma, alimentava centenas de necessitados no próprio castelo. Rezava longas horas e jejuava com rigor. Teve oito filhos, três dos quais se tornaram reis, e uma filha, Matilde, rainha da Inglaterra.",
+      "Morreu no castelo de Edimburgo em 16 de novembro de 1093, poucos dias depois de perder o marido e um filho em batalha. Foi canonizada em 1250 pelo Papa Inocêncio IV e é padroeira da Escócia. Sua memória é celebrada em 16 de novembro."
+    ]
+  },
+
+  "santa-isabel-hungria": {
+    titulo: "Santa Isabel da Hungria, religiosa",
+    resumo: "Filha de rei e princesa da Turíngia que, viúva aos vinte anos, despojou-se de tudo, vestiu o hábito franciscano e passou a servir os doentes num hospital que ela mesma fundou.",
+    texto: [
+      "Nasceu em 1207, filha do rei André II da Hungria. Ainda criança foi prometida a Luís, herdeiro do landgraviato da Turíngia, e criada no castelo de Wartburg, em Eisenach. Casaram-se em 1221 e tiveram três filhos; foi um casamento feliz, marcado já então pela intensa vida de oração e de esmola de Isabel.",
+      "Em 1227 Luís morreu de febre a caminho da cruzada. Isabel, viúva aos vinte anos, deixou a corte — expulsa, segundo várias fontes, por parentes do marido — e foi viver na pobreza com os filhos.",
+      "Na Sexta-feira Santa de 1228 foi recebida na Ordem Terceira de São Francisco, entre as primeiras terciárias da Alemanha. Com o que restava de seu dote, construiu em Marburgo um hospital dedicado a São Francisco, onde ela própria cuidava dos enfermos mais repugnantes.",
+      "Esgotada pelo trabalho e pela penitência, morreu em Marburgo em 17 de novembro de 1231, aos vinte e quatro anos. Foi canonizada em 1235 pelo Papa Gregório IX. É padroeira da Ordem Franciscana Secular, e sua memória litúrgica é celebrada em 17 de novembro."
+    ]
+  },
+
+  "dedicacao-pedro-paulo": {
+    titulo: "Dedicação das Basílicas de São Pedro e São Paulo",
+    resumo: "A festa da consagração das duas maiores basílicas de Roma, erguidas sobre os túmulos dos apóstolos Pedro e Paulo.",
+    texto: [
+      "A celebração recorda a dedicação de dois templos romanos ligados aos apóstolos: a Basílica de São Pedro, no Vaticano, sobre o lugar onde o apóstolo foi crucificado e sepultado, e a Basílica de São Paulo Fora dos Muros, na via Ostiense, sobre o seu túmulo.",
+      "As primeiras basílicas foram construídas no século IV, no tempo do imperador Constantino. A atual Basílica de São Pedro, refeita ao longo dos séculos XVI e XVII, foi consagrada pelo Papa Urbano VIII em 18 de novembro de 1626.",
+      "A Basílica de São Paulo, destruída por um incêndio em 1823 e reconstruída, teve sua nova dedicação fixada pelo Papa Pio IX no mesmo dia 18 de novembro, unindo as duas memórias numa só.",
+      "Ao recordar esses templos, a Igreja celebra a fé dos apóstolos Pedro e Paulo, colunas sobre as quais foi edificada. É memória facultativa, observada em 18 de novembro."
+    ]
+  },
+
 }
 
 export type MovableFeast = {
