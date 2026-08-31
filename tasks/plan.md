@@ -216,7 +216,21 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       cancelar), `ResetPasswordModal.tsx` (exige os dois campos, rejeita senhas diferentes, faz
       `POST /auth/reset-password` e redireciona pra /login após o alerta de sucesso, mensagem de
       erro do servidor sem redirecionar). 19 testes novos, nenhum bug encontrado.
-- [ ] Tarefa 24 — `RosaryPage`, `LiturgiaFull` (expandir teste existente), páginas de Consagração
+- [x] **Tarefa 24** — `RosaryPage.tsx` (skeleton, fluxo de visitante só com `getRosary`, `startRosary`
+      quando não há sessão, prompt de retomar via `ConfirmModal` — continuar e recomeçar do zero,
+      navegação Próximo/Anterior + barra de progresso, concluir com overlay "Terço concluído",
+      guest gate no lugar de concluir, fallback de conteúdo vazio), `ConsecrationHome.tsx`
+      (skeleton, formulário de início, validação de data passada/futura, countdown pré-preparação,
+      progresso + CTA do dia acionável, banner de concluída + reabrir formulário, aba "Sobre",
+      cancelar consagração via `ConfirmModal`), `ConsecrationDay.tsx` (skeleton, cabeçalho +
+      primeira oração, passos, concluir dia acionável com animação, aviso de dia futuro, desmarcar
+      último dia, fallback), `ConsecrationFinal.tsx` (skeleton, bloqueio até 33 dias, concluir via
+      `ConfirmModal`, hero de concluída, link do modelo de carta), `Tratado.tsx` (react-pdf
+      stubado: contagem de páginas, navegação com clamp, ir-para-página válido/inválido, zoom
+      +/−/reset, persistência e restauração do `localStorage`), `LiturgiaFull.tsx` (teste ampliado:
+      loading, render + cache, estado de erro com "Tentar novamente", troca de dia, fechar aviso).
+      Também: stub global de `scrollIntoView`/`scrollTo` no `vitest.setup.ts` (lacuna do jsdom).
+      68 testes novos, nenhum bug encontrado. Cobertura: 41,8% → 58,3% linhas.
 - [ ] Tarefa 25 — páginas restantes, só o suficiente pra fechar o gap até 80% — sem forçar teste
       em página puramente visual
 
