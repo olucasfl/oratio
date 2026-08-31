@@ -1405,6 +1405,61 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
     ]
   },
 
+  "dedicacao-latrao": {
+    titulo: "Dedicação da Basílica de Latrão",
+    resumo: "A festa da consagração da catedral do Papa como Bispo de Roma — \"mãe e cabeça de todas as igrejas da cidade e do mundo\".",
+    texto: [
+      "A catedral da diocese de Roma não é a Basílica de São Pedro, no Vaticano, mas a Basílica de São João de Latrão. Por ser a igreja do Papa enquanto Bispo de Roma, ela recebe o título de \"mãe e cabeça de todas as igrejas da cidade e do mundo\".",
+      "Foi erguida em terreno da antiga família Laterano, doado pelo imperador Constantino, e dedicada pelo Papa São Silvestre I por volta do ano 324 — primeiro ao Santíssimo Salvador e, mais tarde, também a São João Batista e São João Evangelista, de onde vem o nome popular.",
+      "Ao longo dos séculos foi incendiada, abalada por terremoto e reconstruída várias vezes; ali se realizaram cinco concílios ecumênicos. Mesmo depois de a residência papal passar para o Vaticano, no século XV, permaneceu a catedral do Papa.",
+      "Celebrar a dedicação de um edifício de pedra é, no fundo, celebrar a Igreja viva: o povo de Deus reunido em torno do sucessor de Pedro. A festa é observada em toda a Igreja latina em 9 de novembro."
+    ]
+  },
+
+  "sao-leao-magno": {
+    titulo: "São Leão Magno, Papa e doutor da Igreja",
+    resumo: "Papa do século V, defensor da fé de Calcedônia com o \"Tomo de Leão\" e o pontífice que, segundo a tradição, deteve Átila às portas de Roma.",
+    texto: [
+      "Nascido provavelmente na Toscana no fim do século IV, Leão serviu como diácono da Igreja de Roma antes de ser eleito Papa em 440 — cargo que exerceu por vinte e um anos. Governou num tempo de invasões e de crises doutrinais, e sua firmeza lhe valeu o título de \"Magno\", o primeiro Papa assim chamado.",
+      "Em 451 enviou ao Concílio de Calcedônia uma carta doutrinal, o chamado Tomo de Leão, que expôs com clareza a fé em Cristo verdadeiro Deus e verdadeiro homem numa só pessoa. Lida diante dos bispos reunidos, foi acolhida com a aclamação \"Pedro falou pela boca de Leão\".",
+      "Em 452 saiu ao encontro de Átila, rei dos hunos, que ameaçava marchar sobre Roma, e o convenceu a recuar; três anos depois, diante da chegada dos vândalos, obteve ao menos que a cidade não fosse incendiada nem sua população massacrada.",
+      "Deixou numerosos sermões e cartas, base de seu magistério. Morreu em Roma em 461 e foi o primeiro Papa sepultado em São Pedro. Foi declarado doutor da Igreja em 1754. Sua memória litúrgica é celebrada em 10 de novembro."
+    ]
+  },
+
+  "sao-martinho-tours": {
+    titulo: "São Martinho de Tours, bispo",
+    resumo: "Soldado romano que dividiu a capa com um pobre, tornou-se monge e bispo de Tours e foi um dos primeiros santos não mártires venerados pela Igreja.",
+    texto: [
+      "Nasceu por volta de 316 em Sabária, na Panônia (atual Hungria), filho de um oficial romano pagão, e cresceu em Pavia, na Itália. Ainda menino sentiu-se atraído pela fé cristã. Obrigado a seguir a carreira militar do pai, serviu na cavalaria romana na Gália.",
+      "Ainda catecúmeno, num inverno rigoroso à porta de Amiens, cortou o próprio manto ao meio para vestir um mendigo seminu; na noite seguinte viu em sonho Cristo coberto com aquela metade da capa. Batizado pouco depois, deixou o exército assim que pôde fazê-lo sem desertar.",
+      "Em Poitiers ligou-se ao bispo Santo Hilário e abraçou a vida monástica, fundando em Ligugé um dos mais antigos mosteiros do Ocidente. Aclamado bispo de Tours pelo povo em 371, continuou vivendo como monge, evangelizou o campo e defendeu os pobres e os condenados.",
+      "Morreu em Candes em 8 de novembro de 397 e foi sepultado em Tours no dia 11. Seu túmulo tornou-se um dos maiores centros de peregrinação da Europa medieval. Sua memória litúrgica é celebrada em 11 de novembro."
+    ]
+  },
+
+  "sao-josafa-kuncewicz": {
+    titulo: "São Josafá Kuncewicz, bispo e mártir",
+    resumo: "Monge e arcebispo do rito bizantino que deu a vida pela união dos cristãos rutenos com Roma, morto por uma multidão em Vitebsk.",
+    texto: [
+      "Nasceu por volta de 1580 em Volodímir, na Volínia (atual Ucrânia), numa família ortodoxa, e recebeu o nome de João. Ainda jovem foi trabalhar no comércio em Vilna. Ali, em 1604, entrou no mosteiro basiliano da Santíssima Trindade, tomando o nome de Josafá.",
+      "Foi ordenado padre em 1609 e destacou-se como pregador e reformador da vida monástica. Vivia-se então o tempo da União de Brest (1596), pela qual parte da Igreja rutena entrara em comunhão com Roma conservando o rito bizantino. Em 1618 tornou-se arcebispo de Polotsk.",
+      "Trabalhou com energia pela unidade, o que lhe atraiu forte oposição de quem via na União uma traição à Ortodoxia. Numa visita pastoral a Vitebsk, em 12 de novembro de 1623, uma multidão invadiu a casa episcopal, matou-o a golpes e atirou seu corpo ao rio Dzwina.",
+      "Foi beatificado em 1643 e canonizado em 1867 pelo Papa Pio IX — o primeiro santo das Igrejas orientais católicas inscrito no calendário romano. É lembrado como padroeiro da causa da unidade dos cristãos, e sua memória litúrgica é celebrada em 12 de novembro."
+    ]
+  },
+
+  "santo-estanislau-kostka": {
+    titulo: "Santo Estanislau Kostka, religioso",
+    resumo: "Jovem nobre polonês que atravessou a Europa a pé para entrar na Companhia de Jesus e morreu noviço, aos dezoito anos, em fama de santidade.",
+    texto: [
+      "Nasceu em 28 de outubro de 1550, no castelo de Rostków, na Polônia, filho de um senador do reino. Aos catorze anos foi enviado com o irmão mais velho ao colégio dos jesuítas em Viena. Piedoso e reservado, sofria com o ambiente dissipado da casa em que se hospedavam fora do colégio.",
+      "Decidido a entrar na Companhia de Jesus e impedido pelo pai, fugiu de Viena disfarçado e a pé, percorrendo centenas de quilômetros até Dilinga e depois Roma, onde São Francisco de Bórgia o admitiu como noviço em 1567.",
+      "No noviciado do Colégio Romano chamou a atenção pela alegria, pela obediência pronta e por uma intensa vida de oração. Poucos meses depois adoeceu gravemente.",
+      "Morreu em Roma na madrugada de 15 de agosto de 1568, aos dezoito anos. Foi canonizado em 1726 pelo Papa Bento XIII e é venerado como padroeiro dos jovens e dos noviços. Sua memória é celebrada em 13 de novembro."
+    ]
+  },
+
 }
 
 export type MovableFeast = {

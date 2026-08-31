@@ -36,12 +36,12 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - [x] 07/nov — NOVO `sao-wilibrordo`. Dia ferial no Geral/BR (Festa nos Países Baixos/Luxemburgo). Fontes: paulus.com.br, pt.wikipedia, newadvent.org, britannica.com (n. ~658 Nortúmbria; Ripon sob S. Wilfrido; 12 anos na Irlanda; missão à Frísia ~690 c/ 11 companheiros e apoio de Pepino de Herstal; consagrado bispo dos frísios pelo Papa Sérgio I em 695, nome Clemente; sé em Utreque; abadia de Echternach; +7/11/739).
 - [x] 08/nov — NOVO `sao-deodato`. Dia ferial (Martirológio). Índice: "São Deodato" → "São Deodato I, Papa". Fontes: arquidiocesedemanaus.org.br, ipco.org.br, santoinaciosp.com.br (romano, filho do subdiácono Estêvão; Papa out/615–8/11/618, sucessor de Bonifácio IV; terremoto e epidemia em Roma; Martirológio: curou um leproso com um beijo; legado testamentário ao clero; sepultado em São Pedro).
 
-## Lote 5 — 09 a 13/nov
-- [ ] 09/nov —
-- [ ] 10/nov —
-- [ ] 11/nov —
-- [ ] 12/nov —
-- [ ] 13/nov —
+## Lote 5 — 09 a 13/nov  ✅
+- [x] 09/nov — NOVO `dedicacao-latrao`. Festa no Calendário Romano Geral. Fontes: vatican.va (homilia), paulus.com.br, cancaonova, arquidiocesedemanaus.org.br (catedral do Papa como Bispo de Roma; terreno da família Laterano doado por Constantino; dedicada por S. Silvestre I ~324; "mãe e cabeça de todas as igrejas"; 5 concílios ecumênicos).
+- [x] 10/nov — NOVO `sao-leao-magno`. Memória obrigatória (M) no Geral. Fontes: vaticannews.va, pt.wikipedia, paulus.com.br, osaopaulo.org.br (toscano, diácono; Papa 440–461; Tomo de Leão / Calcedônia 451, "Pedro falou pela boca de Leão"; encontro com Átila 452; vândalos 455; 1º Papa sepultado em São Pedro; doutor da Igreja 1754).
+- [x] 11/nov — NOVO `sao-martinho-tours`. Memória obrigatória (M) no Geral. Fontes: pt.wikipedia, dn.pt, institutojacksondefigueiredo.org, revista.arautos.org (n. ~316 Sabária/Panônia; cavalaria romana na Gália; capa partilhada em Amiens; S. Hilário em Poitiers; mosteiro de Ligugé; bispo de Tours 371; +Candes 8/11/397, sepultado em Tours 11/11; dos primeiros santos não mártires).
+- [x] 12/nov — NOVO `sao-josafa-kuncewicz`. Memória obrigatória (M) no Geral. Índice: "São Josafá" → "São Josafá Kuncewicz" (+match `kuncewicz`). Fontes: vaticannews.va, osaopaulo.org.br, arquidiocesedemanaus.org.br, padrepauloricardo.org (n. ~1580 Volínia, família ortodoxa, nome João; basiliano em Vilna 1604; padre 1609; União de Brest 1596; arceb. de Polotsk 1618; +martirizado em Vitebsk 12/11/1623, corpo lançado no rio Dzwina; beat. 1643, canon. 1867 Pio IX; 1º santo oriental católico no calendário romano).
+- [x] 13/nov — NOVO `santo-estanislau-kostka`. Índice: "Santo Estanislau Kostka" → "+, religioso". Dia ferial no Geral pós-1969 (13/11 = data tradicional/jesuíta; na Polônia 18/9). Tratado como conteúdo complementar. Fontes: pt.wikipedia, vaticannews.va, franciscanos.org.br, cancaonova (n. 28/10/1550 castelo de Rostków; colégio jesuíta em Viena aos 14; fuga a pé até Dilinga e Roma; noviço admitido por S. Francisco de Bórgia em 1567; +Roma 15/8/1568, 18 anos; canon. 1726 Bento XIII; padroeiro dos jovens e noviços).
 
 ## Lote 6 — 14 a 18/nov
 - [ ] 14/nov —
@@ -89,6 +89,8 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - 03/nov · "São Martinho de Lima (Martinho de Porres)" → "São Martinho de Porres (Martinho de Lima), religioso" + `opcional:true` · Calendário Romano Geral (Memória Facultativa)
 - 06/nov · "São Leonardo de Noblac" → "+, eremita" · Martirológio Romano
 - 08/nov · "São Deodato" → "São Deodato I, Papa" · Martirológio Romano (identifica o Papa Deodato/Adeodato I)
+- 12/nov · "São Josafá, bispo e mártir" → "São Josafá Kuncewicz, bispo e mártir" (+match `kuncewicz`) · Calendário Romano Geral
+- 13/nov · "Santo Estanislau Kostka" → "+, religioso" · convenção do arquivo (grau no nome)
 
 ## Dias deixados sem bio (data · motivo)
 _(preencher conforme avança)_
