@@ -1207,6 +1207,61 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
     ]
   },
 
+  "santa-maria-bertila": {
+    titulo: "Santa Maria Bertila Boscardin, virgem",
+    resumo: "Religiosa e enfermeira italiana que serviu os doentes e os feridos da Primeira Guerra Mundial com humildade absoluta, aceitando até as tarefas mais escondidas como vontade de Deus.",
+    texto: [
+      "Nasceu Ana Francisca Boscardin em 6 de outubro de 1888, em Brendola, na província de Vicência (Itália), a mais velha de três filhos de uma família pobre de camponeses. De saúde frágil e tida por lenta pelos que a cercavam, ajudava os pais no trabalho da terra e crescia numa fé simples e perseverante.",
+      "Aos dezessete anos entrou na Congregação das Mestras de Santa Doroteia, em Vicência, recebendo o nome de Maria Bertila. Enviada ao hospital de Treviso, começou pelos serviços da cozinha e, depois de formar-se enfermeira, passou a cuidar diretamente dos doentes — em especial das crianças atingidas pela difteria, a quem se dedicava dia e noite.",
+      "Durante a Primeira Guerra Mundial permaneceu junto aos feridos mesmo quando os bombardeios atingiram Treviso. Numa ocasião, uma superiora, por um mal-entendido, afastou-a da enfermaria e a mandou para a lavanderia; ela aceitou a mudança sem uma queixa, dizendo cumprir ali a mesma vontade de Deus.",
+      "Havia anos carregava um tumor. Depois de uma segunda cirurgia, morreu em Treviso em 20 de outubro de 1922, aos trinta e quatro anos. Foi beatificada em 1952 pelo Papa Pio XII e canonizada em 1961 pelo Papa João XXIII. É invocada pelos doentes, sobretudo pelas vítimas do câncer, e sua memória litúrgica é celebrada em 20 de outubro."
+    ]
+  },
+
+  "santa-ursula": {
+    titulo: "Santa Úrsula e companheiras, mártires",
+    resumo: "Um grupo de virgens martirizadas em Colônia nos primeiros séculos da Igreja, cuja memória antiquíssima foi, com o passar dos séculos, envolvida em lenda.",
+    texto: [
+      "A devoção a Santa Úrsula nasce de um fato histórico modesto e muito antigo: em Colônia, na atual Alemanha, um grupo de moças cristãs foi morto por causa da fé, provavelmente entre os séculos III e IV. Uma inscrição em pedra, conservada na igreja que leva o nome da santa, guarda a memória dessas virgens mártires.",
+      "Ao longo da Idade Média, a história foi crescendo. Surgiu o relato de Úrsula, filha de um rei bretão, que teria atravessado a Europa numa peregrinação e sido martirizada com suas companheiras ao chegar a Colônia. O número das companheiras, a princípio pequeno, acabou fixado pela tradição popular em onze mil — amplificação provavelmente ligada à leitura equivocada de uma abreviação antiga.",
+      "A festa foi muito celebrada durante séculos e inspirou, no século XVI, a Companhia de Santa Úrsula, fundada por Santa Ângela Merici — as ursulinas, dedicadas à educação das jovens.",
+      "Em 1969, ao rever o calendário, a Igreja retirou Santa Úrsula do Calendário Romano Geral, justamente porque o núcleo histórico não pode ser reconstruído com segurança, mas a manteve no Martirológio Romano. Sua memória é lembrada em 21 de outubro."
+    ]
+  },
+
+  "sao-joao-paulo-ii": {
+    titulo: "São João Paulo II, Papa",
+    resumo: "Karol Wojtyła, o primeiro Papa eslavo da história, que por mais de 26 anos levou o Evangelho a todos os continentes e teve papel decisivo na queda pacífica dos regimes comunistas do Leste europeu.",
+    texto: [
+      "Karol Józef Wojtyła nasceu em 18 de maio de 1920, em Wadowice, na Polônia. Perdeu cedo a mãe, o irmão e o pai. Durante a ocupação nazista, trabalhou numa pedreira e numa fábrica de produtos químicos e estudou num seminário clandestino, sendo ordenado padre em 1946.",
+      "Bispo aos 38 anos, tornou-se arcebispo de Cracóvia e cardeal, e participou do Concílio Vaticano II. Em 16 de outubro de 1978 foi eleito Papa — o primeiro não italiano em mais de quatro séculos e o primeiro eslavo da história.",
+      "Seu pontificado, o terceiro mais longo, foi marcado por mais de uma centena de viagens internacionais, pela criação das Jornadas Mundiais da Juventude, por um vasto magistério e por pedidos públicos de perdão pelas faltas históricas de cristãos. Em 13 de maio de 1981 sofreu um atentado a tiros na Praça de São Pedro; recuperado, foi visitar na prisão e perdoar quem havia atirado nele.",
+      "Morreu no Vaticano em 2 de abril de 2005. Foi beatificado em 2011 pelo Papa Bento XVI e canonizado em 27 de abril de 2014 pelo Papa Francisco, junto com o Papa João XXIII. Sua memória litúrgica é celebrada em 22 de outubro, dia em que iniciou solenemente o pontificado, em 1978."
+    ]
+  },
+
+  "sao-joao-capistrano": {
+    titulo: "São João de Capistrano, presbítero",
+    resumo: "Jurista convertido na prisão, tornou-se um dos maiores pregadores franciscanos do século XV e, já idoso, animou a defesa cristã de Belgrado contra os turcos.",
+    texto: [
+      "Nasceu em 24 de junho de 1386, em Capestrano, nos Abruzos (então reino de Nápoles). Estudou Direito em Perúgia, tornou-se jurista e chegou a governador da cidade. Preso durante um conflito entre famílias rivais, viveu ali uma profunda conversão.",
+      "Em 1416 entrou entre os Franciscanos, ligando-se a São Bernardino de Sena, de quem foi discípulo e defensor. Tornou-se um pregador incansável: percorreu a Itália e boa parte da Europa central como legado papal, chamando o povo à penitência e à reforma dos costumes.",
+      "Aos setenta anos, enviado pelo Papa Calisto III, pregou a mobilização cristã diante do avanço otomano. Ao lado do comandante húngaro João Hunyadi, esteve no cerco de Belgrado, em 1456, encorajando os combatentes — vitória que afastou por décadas a ameaça turca sobre a Europa central.",
+      "Morreu poucos meses depois, em 23 de outubro de 1456, em Ilok, na atual Croácia. Foi beatificado em 1650 e canonizado em 1690 pelo Papa Alexandre VIII. Sua memória litúrgica é celebrada em 23 de outubro."
+    ]
+  },
+
+  "santo-antonio-claret": {
+    titulo: "Santo Antônio Maria Claret, bispo",
+    resumo: "Tecelão catalão que se tornou padre missionário, fundou os Claretianos e, como arcebispo de Santiago de Cuba, reorganizou uma Igreja em ruínas em meio a atentados contra a própria vida.",
+    texto: [
+      "Nasceu em 23 de dezembro de 1807, em Sallent, na Catalunha (Espanha), filho de um pequeno fabricante de lã. Trabalhou como tecelão desde os doze anos e aperfeiçoou o ofício em Barcelona, até decidir entrar no seminário de Vique, sendo ordenado padre em 1835.",
+      "Dedicou-se à pregação de missões populares pela Catalunha e pelas Ilhas Canárias. Em 16 de julho de 1849 fundou em Vique a Congregação dos Missionários Filhos do Imaculado Coração de Maria — os claretianos — e criou uma editora, a Livraria Religiosa, que espalhou milhões de livros católicos baratos.",
+      "Nomeado arcebispo de Santiago de Cuba em 1850, encontrou seminário arruinado, clero despreparado e igrejas abandonadas. Reorganizou a diocese, validou milhares de casamentos e abriu escolas e hospitais. Sobreviveu a um atentado a faca em Holguín, que lhe deixou uma cicatriz no rosto.",
+      "De volta à Espanha em 1857, foi confessor da rainha Isabel II; com a revolução de 1868, seguiu para o exílio e participou do Concílio Vaticano I. Morreu em 24 de outubro de 1870, na abadia de Fontfroide, na França. Foi beatificado em 1934 pelo Papa Pio XI e canonizado em 1950 pelo Papa Pio XII. Sua memória litúrgica é celebrada em 24 de outubro."
+    ]
+  },
+
 }
 
 export type MovableFeast = {
