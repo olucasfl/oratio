@@ -1570,6 +1570,61 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
     ]
   },
 
+  "santo-andre-dung-lac": {
+    titulo: "Santo André Dung-Lac e companheiros, mártires",
+    resumo: "Padre vietnamita decapitado por causa da fé em 1839, canonizado com outros 116 mártires do Vietnã — bispos, padres, religiosos e leigos de três séculos de perseguição.",
+    texto: [
+      "Entre os séculos XVII e XIX, a Igreja no Vietnã sofreu longas ondas de perseguição, com dezenas de editos contra os cristãos e milhares de mortos. Em 1988 o Papa João Paulo II canonizou de uma vez cento e dezessete desses mártires: noventa e seis vietnamitas, onze dominicanos espanhóis e dez missionários franceses, mortos entre 1745 e 1862.",
+      "André Dung-Lac, o mais conhecido do grupo e que lhe dá o nome, nasceu por volta de 1795 em família pobre, foi confiado a um catequista, batizado e mais tarde ordenado padre. Trabalhou como pároco e evangelizador.",
+      "Preso várias vezes, chegou a ser libertado mediante resgate e mudou o nome de Dung para Lac para não ser reconhecido. No último aprisionamento recusou-se a pisar a cruz e a renegar a fé, e foi decapitado em Hanói, em 1839, junto com o padre Pedro Thi.",
+      "A memória de todos os mártires do Vietnã é celebrada em 24 de novembro."
+    ]
+  },
+
+  "santa-catarina-alexandria": {
+    titulo: "Santa Catarina de Alexandria, virgem e mártir",
+    resumo: "Mártir muito venerada na Idade Média, invocada como padroeira dos filósofos e estudantes, cuja história chegou até nós envolvida em lenda.",
+    texto: [
+      "A devoção a Catarina é antiga e larga, mas as notícias sobre sua vida vêm de relatos tardios, dos séculos IX e X, de valor histórico incerto. Segundo eles, era uma jovem nobre e instruída de Alexandria, no Egito, morta por causa da fé durante as perseguições do início do século IV.",
+      "Conta a tradição que enfrentou o imperador que perseguia os cristãos e, num debate público, converteu os filósofos encarregados de refutá-la. Condenada, teria sido posta numa roda cravada de lâminas que se quebrou; foi então decapitada.",
+      "Na Idade Média tornou-se uma das santas mais populares do Ocidente, contada entre os \"catorze santos auxiliadores\" e escolhida como padroeira dos teólogos, dos filósofos, dos estudantes e dos que trabalham com rodas. O mosteiro do Sinai, um dos mais antigos do mundo, guarda o que a tradição venera como suas relíquias.",
+      "Retirada do calendário romano em 1969 pela incerteza histórica, foi reinserida em 2002 como memória facultativa, celebrada em 25 de novembro."
+    ]
+  },
+
+  "sao-leonardo-porto-mauricio": {
+    titulo: "São Leonardo de Porto Maurício, presbítero",
+    resumo: "Franciscano italiano do século XVIII, incansável pregador de missões populares e o grande difusor da devoção da Via-Sacra.",
+    texto: [
+      "Nasceu em 1676 em Porto Maurício, na Ligúria (Itália), filho de um capitão de navio. Órfão de mãe menino, foi levado a Roma, estudou no Colégio Romano e entrou entre os Franciscanos, no retiro de São Boaventura, no monte Palatino.",
+      "Por mais de quarenta anos percorreu a Itália pregando missões populares, retiros e exercícios espirituais, atraindo multidões. Ficou conhecido sobretudo por espalhar a prática da Via-Sacra: montou o percurso das quatorze estações em centenas de igrejas e praças.",
+      "No Ano Santo de 1750, com o apoio do Papa Bento XIV, ergueu uma Via-Sacra dentro do Coliseu de Roma e plantou uma grande cruz no centro do anfiteatro — gesto que ajudou a preservar o monumento, até então usado como pedreira, como lugar consagrado à memória dos mártires.",
+      "Morreu em Roma em 26 de novembro de 1751, no retiro de São Boaventura. Foi canonizado em 1867 pelo Papa Pio IX, que o declarou patrono das missões populares. Sua memória é celebrada em 26 de novembro."
+    ]
+  },
+
+  "nossa-senhora-gracas": {
+    titulo: "Nossa Senhora das Graças (Medalha Milagrosa)",
+    resumo: "A invocação de Maria ligada às aparições de 1830 a Santa Catarina Labouré, em Paris, e à medalha que ela pediu que fosse cunhada.",
+    texto: [
+      "Em 1830, na capela das Filhas da Caridade da Rue du Bac, em Paris, a religiosa Catarina Labouré, então noviça, afirmou ter recebido a visita da Virgem Maria em três ocasiões.",
+      "Na aparição de 27 de novembro, Maria mostrou-se de pé sobre o globo, com raios de luz saindo de suas mãos, dentro de uma moldura oval com a frase: \"Ó Maria concebida sem pecado, rogai por nós que recorremos a vós.\" Pediu que se cunhasse uma medalha com essa imagem, prometendo graças a quem a usasse com confiança.",
+      "A medalha começou a ser distribuída em 1832 e, diante do grande número de conversões e curas atribuídas a ela — em especial durante uma epidemia de cólera —, o povo passou a chamá-la de \"Medalha Milagrosa\".",
+      "A capela da Rue du Bac tornou-se um dos santuários marianos mais visitados do mundo. A memória de Nossa Senhora da Medalha Milagrosa é celebrada em 27 de novembro."
+    ]
+  },
+
+  "santa-catarina-laboure": {
+    titulo: "Santa Catarina Labouré, religiosa",
+    resumo: "Filha da Caridade que recebeu as aparições da Medalha Milagrosa e depois viveu mais de quarenta anos no anonimato, servindo idosos, sem revelar que era a vidente.",
+    texto: [
+      "Nasceu em 2 de maio de 1806, em Fain-lès-Moutiers, na Borgonha (França), numa família de camponeses. Perdeu a mãe cedo e assumiu ainda jovem os cuidados da casa. Entrou para as Filhas da Caridade de São Vicente de Paulo e fez o noviciado em Paris.",
+      "Foi ali, em 1830, que disse ter visto a Virgem Maria e recebido o pedido da medalha. Contou tudo apenas ao seu confessor e obteve dele que sua identidade fosse mantida em segredo.",
+      "Passou o resto da vida na casa da congregação em Enghien-Reuilly, nos arredores de Paris, cuidando de anciãos e da criação de aves, em trabalhos humildes. Só nos últimos meses de vida, para que pudessem ser cumpridos alguns pedidos de Nossa Senhora, revelou à superiora que era ela a vidente.",
+      "Morreu em 31 de dezembro de 1876. Seu corpo foi encontrado incorrupto e repousa na capela da Rue du Bac. Foi canonizada em 1947 pelo Papa Pio XII. Sua memória é celebrada em 28 de novembro."
+    ]
+  },
+
 }
 
 export type MovableFeast = {

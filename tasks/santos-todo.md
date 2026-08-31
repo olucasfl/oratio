@@ -57,12 +57,12 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - [x] 22/nov — NOVO `santa-cecilia`. Memória obrigatória (M) no Geral; em 2026 a data cai em Cristo Rei (Solenidade móvel, resolvida via `MOVABLE_FEASTS` sobre o texto da API — a entrada fixa Sta. Cecília e a nova bio ficam corretas para os demais anos; nada mexido na lógica). Fontes: pt.wikipedia, cancaonova, diocesederoraima.org.br (mártir romana séc. II–III; igreja em Trastevere no séc. IV; nome no Cânon da Missa; atas tardias: Valeriano e Tiburcio; catacumbas de São Calisto → translação por Pascoal I no séc. IX; túmulo aberto em 1599, corpo incorrupto, estátua de Maderno; padroeira dos músicos desde o séc. XV).
 - [x] 23/nov — NOVO `sao-clemente-i`. Memória Facultativa (m) no Geral → `opcional:true`. Fontes: vatican.va (catequese de Bento XVI), pt.wikipedia, paulus.com.br, ipco.org.br (3º sucessor de Pedro, fim do séc. I; conheceu os apóstolos segundo S. Ireneu; Carta aos Coríntios ~96 — 1º documento papal; tradição tardia do martírio: exílio na Crimeia, afogado c/ âncora; nome na Oração Eucarística I).
 
-## Lote 8 — 24 a 28/nov
-- [ ] 24/nov —
-- [ ] 25/nov —
-- [ ] 26/nov —
-- [ ] 27/nov —
-- [ ] 28/nov —
+## Lote 8 — 24 a 28/nov  ✅
+- [x] 24/nov — NOVO `santo-andre-dung-lac`. Memória obrigatória (M) no Geral. Fontes: vaticannews.va, a12.com, osaopaulo.org.br, ipco.org.br (117 mártires do Vietnã — 96 vietnamitas, 11 dominicanos espanhóis, 10 missionários franceses, mortos 1745–1862; canon. 1988 João Paulo II; André Tran An Dung, pobre, catequista, padre; mudou Dung→Lac; decapitado em Hanói 1839 c/ pe. Pedro Thi). Data de execução deixada em "1839" (fontes divergem entre 24/11 e 21/12).
+- [x] 25/nov — NOVO `santa-catarina-alexandria`. Memória Facultativa (m) no Geral → `opcional:true`. Tratada com honestidade: relatos tardios (séc. IX–X), retirada do calendário em 1969, reinserida em 2002. Fontes: paulus.com.br, osaopaulo.org.br, diocesederoraima.org.br, bibliotecacatolica.com.br (nobre instruída de Alexandria; debate c/ filósofos; roda de lâminas quebrada; decapitação; 14 santos auxiliadores; mosteiro do Sinai).
+- [x] 26/nov — NOVO `sao-leonardo-porto-mauricio`. Dia ferial no Geral (calendário franciscano). Índice: "+, presbítero". Fontes: pt.wikipedia, vaticannews.va, paulus.com.br, osaopaulo.org.br (n. 1676 Porto Maurício/Ligúria, filho de capitão de navio; Colégio Romano; franciscano no retiro de São Boaventura/Palatino; difusor da Via-Sacra; Coliseu no Ano Santo de 1750 c/ Bento XIV; +Roma 26/11/1751; canon. 1867 Pio IX, patrono das missões populares).
+- [x] 27/nov — NOVO `nossa-senhora-gracas`. Devoção (dia ferial no Geral; mem. vicentina). Fontes: pt.wikipedia, bibliotecacatolica.com.br, opusdei.org, rccbrasil.org.br (aparições de 1830 a Catarina Labouré na Rue du Bac; aparição de 27/11: globo, raios, moldura oval "Ó Maria concebida sem pecado..."; medalha cunhada em 1832; "Medalha Milagrosa" após epidemia de cólera).
+- [x] 28/nov — NOVO `santa-catarina-laboure`. Dia ferial no Geral (mem. vicentina). Índice mantido (título já traz o papel). Bio-título usa "religiosa". Fontes: bibliotecacatolica.com.br, pt.wikipedia, viacrucis.pt (n. 2/5/1806 Fain-lès-Moutiers/Borgonha; Filha da Caridade; vidente de 1830; segredo mantido; +31/12/1876 em Enghien-Reuilly; corpo incorrupto na Rue du Bac; canon. 1947 Pio XII).
 
 ## Lote 9 — 29/nov a 03/dez
 - [ ] 29/nov —
@@ -97,6 +97,8 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - 18/nov · +`opcional:true` (Memória Facultativa) · Calendário Romano Geral
 - 20/nov · "São Félix de Valois" → "+, religioso" · convenção do arquivo
 - 23/nov · +`opcional:true` (Memória Facultativa) · Calendário Romano Geral
+- 25/nov · +`opcional:true` (Memória Facultativa) · Calendário Romano Geral (reinserida 2002)
+- 26/nov · "São Leonardo de Porto Maurício" → "+, presbítero" · convenção do arquivo
 
 ## Dias deixados sem bio (data · motivo)
 _(preencher conforme avança)_
