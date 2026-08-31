@@ -1625,6 +1625,61 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
     ]
   },
 
+  "sao-saturnino-toulouse": {
+    titulo: "São Saturnino de Toulouse, bispo e mártir",
+    resumo: "Primeiro bispo de Toulouse, martirizado no século III por recusar-se a sacrificar aos deuses pagãos.",
+    texto: [
+      "Saturnino — Sernin, na forma popular francesa — foi um missionário enviado à Gália no século III. Fixou-se em Toulouse por volta de 250 e tornou-se o primeiro bispo da cidade, pregando também nos Pirineus e na Península Ibérica.",
+      "Diz a tradição que, ao passar diante do templo do Capitólio de Toulouse no dia de um sacrifício, foi intimado a oferecer culto aos ídolos. Como se recusou e confessou o único Deus verdadeiro, a multidão o prendeu.",
+      "Amarraram-no pelos pés a um touro destinado ao sacrifício e aguilhoaram o animal, que se lançou escadaria abaixo arrastando o bispo, morto no caminho. Sobre seu túmulo ergueu-se mais tarde a grande basílica de Saint-Sernin.",
+      "Sua morte se deu por volta de 257. É um dos santos mais populares do sul da França e do norte da Espanha, e sua memória é celebrada em 29 de novembro."
+    ]
+  },
+
+  "santo-andre-apostolo": {
+    titulo: "Santo André, Apóstolo",
+    resumo: "Pescador da Galileia, irmão de Simão Pedro e primeiro dos apóstolos a seguir Jesus, por isso chamado no Oriente de \"o Primeiro Chamado\".",
+    texto: [
+      "André nasceu em Betsaida, à beira do lago da Galileia, e era pescador com o irmão Simão Pedro. Discípulo de João Batista, foi um dos primeiros a reconhecer Jesus como o Messias e logo levou o irmão até Ele — cena narrada no Evangelho de João.",
+      "Os Evangelhos o mostram em alguns momentos-chave: é ele que aponta o menino dos pães e dos peixes antes da multiplicação e que, com Filipe, leva a Jesus os gregos que queriam vê-lo.",
+      "Segundo a tradição, depois de Pentecostes pregou na Grécia, na Ásia Menor e nas regiões junto ao mar Negro. Foi martirizado em Patras, na Grécia, crucificado numa cruz em forma de X — a \"cruz de Santo André\" — que se tornou seu símbolo.",
+      "É padroeiro da Grécia, da Escócia e da Rússia, e a Igreja de Constantinopla o venera como seu fundador. Sua festa é celebrada em 30 de novembro."
+    ]
+  },
+
+  "sao-carlos-foucauld": {
+    titulo: "São Carlos de Foucauld, presbítero",
+    resumo: "Oficial e explorador francês que, depois de uma juventude dissipada, converteu-se e foi viver como eremita e \"irmão universal\" entre os tuaregues do Saara.",
+    texto: [
+      "Charles de Foucauld nasceu em Estrasburgo, na França, em 15 de setembro de 1858, em família nobre; órfão cedo, foi criado pelo avô. Seguiu a carreira militar como oficial de cavalaria, levando uma vida rica e sem fé, e depois ganhou fama como explorador do Marrocos.",
+      "Em 1886, de volta a Paris, reencontrou a fé e sentiu o chamado a seguir a Jesus \"no último lugar\". Foi monge trapista por alguns anos, depois criado das Clarissas em Nazaré, e em 1901 foi ordenado padre.",
+      "Partiu então para o deserto da Argélia — primeiro em Béni Abbès, depois em Tamanrasset, no maciço do Hoggar — para viver entre os tuaregues, pobre entre os pobres. Não fez conversões: dedicou-se a acolher a todos, a rezar diante do Santíssimo e a estudar a língua e a cultura tuaregue, deixando um dicionário e traduções do Evangelho.",
+      "Foi morto à porta de seu eremitério em 1º de dezembro de 1916, durante um assalto. Sonhara com companheiros para uma vida assim, mas nenhum viera; só depois de sua morte nasceram as famílias religiosas inspiradas nele. Foi beatificado em 2005 pelo Papa Bento XVI e canonizado em 15 de maio de 2022 pelo Papa Francisco. Sua memória é celebrada em 1º de dezembro."
+    ]
+  },
+
+  "santa-bibiana": {
+    titulo: "Santa Bibiana, virgem e mártir",
+    resumo: "Jovem mártir romana venerada desde a Antiguidade, com igreja própria em Roma, cuja história chegou até nós sobretudo pela tradição.",
+    texto: [
+      "A veneração a Bibiana em Roma é antiga: já no século V havia, junto ao seu túmulo, uma igreja com o seu nome, reconstruída no século XVII com fachada de Bernini. As atas do seu martírio, porém, são tardias e de valor histórico incerto.",
+      "Segundo elas, Bibiana era filha de um casal cristão de Roma, Flaviano e Dafrosa, mortos por causa da fé numa perseguição do século IV. Ela e a irmã Demétria ficaram órfãs e sob vigilância; Demétria morreu primeiro.",
+      "Bibiana resistiu às pressões para renegar a fé e foi, por fim, açoitada até a morte, amarrada a uma coluna. Foi sepultada perto de casa, no lugar onde depois se ergueu a sua igreja.",
+      "Retirada do calendário romano em 1969 pela incerteza sobre sua história, permanece no Martirológio Romano. É invocada contra as dores de cabeça, e sua memória é lembrada em 2 de dezembro."
+    ]
+  },
+
+  "sao-francisco-xavier": {
+    titulo: "São Francisco Xavier, presbítero",
+    resumo: "Um dos primeiros companheiros de Santo Inácio, missionário na Índia, na Insulíndia e no Japão, e um dos maiores evangelizadores da história da Igreja.",
+    texto: [
+      "Nasceu em 7 de abril de 1506, no castelo de Xavier, em Navarra (Espanha). Estudante em Paris, tornou-se amigo de Inácio de Loyola e um dos primeiros a fazer com ele os votos que dariam origem à Companhia de Jesus. Foi ordenado padre em 1537.",
+      "A pedido do rei João III de Portugal e do Papa, partiu de Lisboa para o Oriente em 1541 e chegou a Goa em 1542. Dali percorreu, a pé e de barco, a costa da Índia, o Ceilão, Malaca e as ilhas Molucas, batizando milhares e cuidando dos mais pobres.",
+      "Em 1549 chegou ao Japão, onde permaneceu mais de dois anos, aprendendo a língua e fundando as primeiras comunidades cristãs do país. Convenceu-se de que a evangelização da Ásia passava pela China e pôs-se a caminho dela.",
+      "Morreu em 3 de dezembro de 1552 na ilha de Sanchoão, diante da costa chinesa, sem ter conseguido entrar. Foi canonizado em 1622, junto com Santo Inácio, e em 1927 foi declarado padroeiro das missões. Sua memória litúrgica é celebrada em 3 de dezembro."
+    ]
+  },
+
 }
 
 export type MovableFeast = {

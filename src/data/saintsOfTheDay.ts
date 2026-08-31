@@ -416,13 +416,13 @@ export const SAINTS_OF_THE_DAY: SaintOfDayEntry[] = [
   { dia:26, mes:11, nome:"São Leonardo de Porto Maurício, presbítero", match:["leonardo de porto mauricio"], bioId:"sao-leonardo-porto-mauricio" },
   { dia:27, mes:11, nome:"Nossa Senhora das Graças (Medalha Milagrosa)", match:["nossa senhora das gracas","medalha milagrosa"], bioId:"nossa-senhora-gracas" },
   { dia:28, mes:11, nome:"Santa Catarina Labouré, vidente de Nossa Senhora das Graças", match:["catarina laboure"], bioId:"santa-catarina-laboure" },
-  { dia:29, mes:11, nome:"São Saturnino, mártir", match:["saturnino, martir"] },
-  { dia:30, mes:11, nome:"Santo André, Apóstolo", match:["santo andre, apostolo"] },
+  { dia:29, mes:11, nome:"São Saturnino de Toulouse, bispo e mártir", match:["saturnino"], bioId:"sao-saturnino-toulouse" },
+  { dia:30, mes:11, nome:"Santo André, Apóstolo", match:["santo andre, apostolo"], bioId:"santo-andre-apostolo" },
 
   // ---------- DEZEMBRO ----------
-  { dia:1, mes:12, nome:"Santo Elói, bispo", match:["santo eloi","eligio"] },
-  { dia:2, mes:12, nome:"São Silvério, Papa", match:["silverio, papa"] },
-  { dia:3, mes:12, nome:"São Francisco Xavier, presbítero", match:["francisco xavier"] },
+  { dia:1, mes:12, nome:"São Carlos de Foucauld, presbítero", match:["carlos de foucauld","foucauld"], bioId:"sao-carlos-foucauld" },
+  { dia:2, mes:12, nome:"Santa Bibiana, virgem e mártir", match:["bibiana","viviana"], bioId:"santa-bibiana" },
+  { dia:3, mes:12, nome:"São Francisco Xavier, presbítero", match:["francisco xavier"], bioId:"sao-francisco-xavier" },
   { dia:4, mes:12, nome:"São João Damasceno, presbítero e doutor da Igreja", match:["joao damasceno"] },
   { dia:5, mes:12, nome:"São Sabas, abade", match:["sabas, abade"] },
   { dia:6, mes:12, nome:"São Nicolau de Mira, bispo", match:["nicolau de mira"] },

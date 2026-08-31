@@ -64,12 +64,12 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - [x] 27/nov — NOVO `nossa-senhora-gracas`. Devoção (dia ferial no Geral; mem. vicentina). Fontes: pt.wikipedia, bibliotecacatolica.com.br, opusdei.org, rccbrasil.org.br (aparições de 1830 a Catarina Labouré na Rue du Bac; aparição de 27/11: globo, raios, moldura oval "Ó Maria concebida sem pecado..."; medalha cunhada em 1832; "Medalha Milagrosa" após epidemia de cólera).
 - [x] 28/nov — NOVO `santa-catarina-laboure`. Dia ferial no Geral (mem. vicentina). Índice mantido (título já traz o papel). Bio-título usa "religiosa". Fontes: bibliotecacatolica.com.br, pt.wikipedia, viacrucis.pt (n. 2/5/1806 Fain-lès-Moutiers/Borgonha; Filha da Caridade; vidente de 1830; segredo mantido; +31/12/1876 em Enghien-Reuilly; corpo incorrupto na Rue du Bac; canon. 1947 Pio XII).
 
-## Lote 9 — 29/nov a 03/dez
-- [ ] 29/nov —
-- [ ] 30/nov —
-- [ ] 01/dez — (conferir com atenção: possível São Carlos de Foucauld)
-- [ ] 02/dez — (conferir com atenção: índice atual "São Silvério" parece errado)
-- [ ] 03/dez —
+## Lote 9 — 29/nov a 03/dez  ✅
+- [x] 29/nov — NOVO `sao-saturnino-toulouse`. Dia ferial (Martirológio). Índice: "São Saturnino, mártir" → "São Saturnino de Toulouse, bispo e mártir" (match simplificado p/ `saturnino`). Fontes: paulus.com.br, acidigital.com, franciscanos.org.br, gaudiumpress.org (1º bispo de Toulouse ~250; pregou nos Pirineus e na Ibéria; recusou sacrifício no Capitólio; amarrado a um touro, arrastado escada abaixo; +~257; basílica de Saint-Sernin).
+- [x] 30/nov — NOVO `santo-andre-apostolo`. Festa no Calendário Romano Geral. Fontes: vaticannews.va, pt.wikipedia, franciscanos.org.br, bibliotecacatolica.com.br (Betsaida, pescador, irmão de Pedro; discípulo de João Batista; "o Primeiro Chamado"; pães e peixes / os gregos que queriam ver Jesus; martírio em Patras na cruz em X; padroeiro da Grécia, Escócia e Rússia).
+- [x] 01/dez — **SANTO TROCADO** (ver nota). Índice: "Santo Elói, bispo" → "São Carlos de Foucauld, presbítero" (match `carlos de foucauld`/`foucauld`). NOVO `sao-carlos-foucauld`. O plano já previa ("possível São Carlos de Foucauld"). Fontes: hozana.org, cancaonova, acidigital.com, santosebeatoscatolicos.com (n. 15/9/1858 Estrasburgo, nobre; oficial de cavalaria e explorador do Marrocos; reconversão 1886 em Paris; trapista; criado das Clarissas em Nazaré; padre 1901, dioc. Viviers; Béni Abbès e Tamanrasset entre os tuaregues; dicionário tuaregue; +assassinado 1/12/1916; beat. 2005 Bento XVI, canon. 15/5/2022 Francisco). Santo Elói (1/12, ourives) fica de fora — se preferir, dá pra manter como entrada alternativa.
+- [x] 02/dez — **ÍNDICE CORRIGIDO** (era erro claro). "São Silvério, Papa" (Silvério = 20/jun) → "Santa Bibiana, virgem e mártir" (match `bibiana`/`viviana`). NOVO `santa-bibiana`. Dia ferial (retirada do calendário em 1969; Martirológio). Tratada com honestidade (atas tardias). Fontes: pt.wikipedia, fatima.org.br, ipco.org.br, heroinasdacristandade (mártir romana séc. IV; pais Flaviano e Dafrosa, irmã Demétria; açoitada até a morte numa coluna; igreja de Sta. Bibiana em Roma, fachada de Bernini séc. XVII; invocada contra dores de cabeça).
+- [x] 03/dez — NOVO `sao-francisco-xavier`. Memória obrigatória (M) no Geral. Fontes: infopedia.pt, ensina.rtp.pt, viacrucis.pt, jornaldamadeira.com (n. 7/4/1506 castelo de Xavier/Navarra; amigo de Inácio em Paris, 1os companheiros SJ; padre 1537; partiu de Lisboa 1541, Goa 1542; Índia, Ceilão, Malaca, Molucas, Japão 1549–51; +ilha de Sanchoão 3/12/1552, às portas da China; canon. 1622 c/ Inácio; padroeiro das missões 1927).
 
 ## Lote 10 — 04 a 08/dez
 - [ ] 04/dez —
@@ -99,6 +99,9 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - 23/nov · +`opcional:true` (Memória Facultativa) · Calendário Romano Geral
 - 25/nov · +`opcional:true` (Memória Facultativa) · Calendário Romano Geral (reinserida 2002)
 - 26/nov · "São Leonardo de Porto Maurício" → "+, presbítero" · convenção do arquivo
+- 29/nov · "São Saturnino, mártir" → "São Saturnino de Toulouse, bispo e mártir" (match → `saturnino`) · Martirológio Romano
+- 01/dez · **SANTO TROCADO**: "Santo Elói, bispo" → "São Carlos de Foucauld, presbítero" · canonizado em 2022; devoção atual; plano previa
+- 02/dez · **CORREÇÃO**: "São Silvério, Papa" (data errada — Silvério = 20/jun) → "Santa Bibiana, virgem e mártir" · Martirológio Romano
 
 ## Dias deixados sem bio (data · motivo)
 _(preencher conforme avança)_
