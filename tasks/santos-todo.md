@@ -71,12 +71,17 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - [x] 02/dez — **ÍNDICE CORRIGIDO** (era erro claro). "São Silvério, Papa" (Silvério = 20/jun) → "Santa Bibiana, virgem e mártir" (match `bibiana`/`viviana`). NOVO `santa-bibiana`. Dia ferial (retirada do calendário em 1969; Martirológio). Tratada com honestidade (atas tardias). Fontes: pt.wikipedia, fatima.org.br, ipco.org.br, heroinasdacristandade (mártir romana séc. IV; pais Flaviano e Dafrosa, irmã Demétria; açoitada até a morte numa coluna; igreja de Sta. Bibiana em Roma, fachada de Bernini séc. XVII; invocada contra dores de cabeça).
 - [x] 03/dez — NOVO `sao-francisco-xavier`. Memória obrigatória (M) no Geral. Fontes: infopedia.pt, ensina.rtp.pt, viacrucis.pt, jornaldamadeira.com (n. 7/4/1506 castelo de Xavier/Navarra; amigo de Inácio em Paris, 1os companheiros SJ; padre 1537; partiu de Lisboa 1541, Goa 1542; Índia, Ceilão, Malaca, Molucas, Japão 1549–51; +ilha de Sanchoão 3/12/1552, às portas da China; canon. 1622 c/ Inácio; padroeiro das missões 1927).
 
-## Lote 10 — 04 a 08/dez
-- [ ] 04/dez —
-- [ ] 05/dez —
-- [ ] 06/dez —
-- [ ] 07/dez —
-- [ ] 08/dez — (REV: já tem `imaculada-conceicao`)
+## Lote 10 — 04 a 08/dez  ✅
+- [x] 04/dez — NOVO `sao-joao-damasceno`. Memória Facultativa (m) no Geral → `opcional:true`. Fontes: paulus.com.br, arquisp.org.br, snpcultura.org, acidigital.com (n. ~675 Damasco, família cristã sob domínio árabe; cargo na administração do califa; monge em São Sabas; 3 discursos a favor das imagens — distinção adoração/veneração, fundada na Encarnação; A Fonte do Conhecimento; hinos; +~749; doutor da Igreja 1890 Leão XIII).
+- [x] 05/dez — NOVO `sao-sabas`. Memória Facultativa (m) no Geral → `opcional:true`. Fontes: paulus.com.br, osaopaulo.org.br, pt.wikipedia, fatima.org.br (n. 439 Capadócia; Palestina aos 18, discípulo de S. Eutímio; organizou as "lauras" no vale do Cédron; Grande Laura = mosteiro de Mar Sabá, habitado sem interrupção; defensor de Calcedônia; +5/12/532, 90+ anos).
+- [x] 06/dez — NOVO `sao-nicolau`. Memória Facultativa (m) no Geral → `opcional:true`. Índice: +alias `nicolau de bari`. Fontes: vaticannews.va, pt.wikipedia, arquidiocesedemanaus.org.br, ipco.org.br (bispo de Mira/Lícia séc. IV; perseguição de Diocleciano; Concílio de Niceia 325; dote das três moças — moedas pela janela; relíquias levadas a Bari em 1087; origem do Papai Noel).
+- [x] 07/dez — NOVO `santo-ambrosio`. Memória obrigatória (M) no Geral. Fontes: paulus.com.br, vaticannews.va, gaudiumpress.org (n. ~340 Tréveris, filho de alto funcionário; governador em Milão; aclamado bispo pelo povo em 374 sendo catecúmeno; batizado e ordenado em dias; contra o arianismo; penitência de Teodósio; guia e batizou Sto. Agostinho na Páscoa de 387; hinos / canto ambrosiano; +Sábado Santo de 397; um dos 4 grandes doutores do Ocidente).
+- [x] 08/dez — REV `imaculada-conceicao`. Solenidade. Bio existente reconferida (dogma Pio IX 1854, Ineffabilis Deus; Lourdes 1858) — mantida sem alteração.
+
+## Fim do plano — 20/out a 08/dez  ✅
+50 dias cobertos (47 bios novas + 3 REV). 5 dias deixados sem bio própria: nenhum
+(todos os 50 receberam `bioId`). Correções de índice: ver seção acima. Cobertura
+contínua de biografias: 17/jul → 08/dez.
 
 ## Correções de índice feitas (data · de → para · fonte)
 - 22/out · +`opcional:true` (Memória Facultativa) · gcatholic BR 2026
@@ -102,6 +107,9 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - 29/nov · "São Saturnino, mártir" → "São Saturnino de Toulouse, bispo e mártir" (match → `saturnino`) · Martirológio Romano
 - 01/dez · **SANTO TROCADO**: "Santo Elói, bispo" → "São Carlos de Foucauld, presbítero" · canonizado em 2022; devoção atual; plano previa
 - 02/dez · **CORREÇÃO**: "São Silvério, Papa" (data errada — Silvério = 20/jun) → "Santa Bibiana, virgem e mártir" · Martirológio Romano
+- 04/dez · +`opcional:true` (Memória Facultativa) · Calendário Romano Geral
+- 05/dez · +`opcional:true` (Memória Facultativa) · Calendário Romano Geral
+- 06/dez · +`opcional:true` (Memória Facultativa) + alias `nicolau de bari` · Calendário Romano Geral
 
 ## Dias deixados sem bio (data · motivo)
 _(preencher conforme avança)_

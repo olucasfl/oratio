@@ -1680,6 +1680,50 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
     ]
   },
 
+  "sao-joao-damasceno": {
+    titulo: "São João Damasceno, presbítero e doutor da Igreja",
+    resumo: "Monge sírio do século VIII, último grande Padre do Oriente, defensor da veneração das imagens sagradas contra a iconoclastia.",
+    texto: [
+      "Nasceu por volta de 675 em Damasco, na Síria, então sob domínio árabe, em família cristã de destaque. Chegou a exercer um cargo importante na administração do califa antes de deixar tudo para se tornar monge no mosteiro de São Sabas, no deserto perto de Jerusalém, onde foi ordenado padre.",
+      "Quando o imperador de Constantinopla proibiu o culto às imagens sagradas, João — protegido por viver fora do Império — escreveu três discursos em sua defesa. Neles distinguiu a adoração, devida só a Deus, da veneração, que se pode prestar a uma imagem enquanto conduz a quem ela representa, e fundamentou tudo no mistério da Encarnação: se Deus se fez visível em Cristo, pode ser representado.",
+      "Deixou também uma vasta síntese da fé, A Fonte do Conhecimento, que reúne e ordena o ensinamento dos Padres gregos, além de muitos hinos ainda hoje cantados nas Igrejas do Oriente.",
+      "Morreu no mosteiro de São Sabas por volta de 749. O Papa Leão XIII o declarou doutor da Igreja em 1890. Sua memória, facultativa, é celebrada em 4 de dezembro."
+    ]
+  },
+
+  "sao-sabas": {
+    titulo: "São Sabas, abade",
+    resumo: "Monge da Capadócia que organizou a vida monástica no deserto da Judeia e fundou a grande laura que ainda leva seu nome, Mar Sabá.",
+    texto: [
+      "Nasceu em 439 na Capadócia (atual Turquia). Ainda jovem entrou num mosteiro e, aos dezoito anos, foi à Palestina, onde se pôs sob a direção de São Eutímio, um dos mestres da vida no deserto.",
+      "Depois de anos de solidão, reuniu discípulos e organizou-os em \"lauras\": conjuntos de celas dispersas em torno de uma igreja, em que os monges viviam sozinhos durante a semana e se reuniam aos domingos. Fundou várias delas no vale do Cédron, entre Jerusalém e o mar Morto.",
+      "A maior ficou conhecida como a Grande Laura, hoje o mosteiro de Mar Sabá, habitado sem interrupção desde então. Sabas foi também defensor da fé de Calcedônia e enviado várias vezes a Constantinopla para tratar com o imperador em favor da Igreja da Palestina e da população pobre.",
+      "Morreu na Grande Laura em 5 de dezembro de 532, com mais de noventa anos. Sua memória, facultativa, é celebrada em 5 de dezembro."
+    ]
+  },
+
+  "sao-nicolau": {
+    titulo: "São Nicolau de Mira, bispo",
+    resumo: "Bispo de Mira, na Ásia Menor, no século IV, famoso pela generosidade escondida — na origem da figura do Papai Noel.",
+    texto: [
+      "Nicolau foi bispo de Mira, na região da Lícia (atual Turquia), no século IV. Os dados seguros sobre sua vida são poucos: teria sofrido na perseguição de Diocleciano e participado do Concílio de Niceia, em 325, contra o arianismo.",
+      "A tradição guarda dele sobretudo episódios de caridade discreta. O mais conhecido conta que, sabendo de um pai empobrecido que não tinha como dar dote às três filhas e estava prestes a entregá-las à prostituição, Nicolau jogou por três noites, pela janela, sacos de moedas de ouro, salvando as moças sem se deixar ver.",
+      "Sua fama de santo e de protetor — de crianças, marinheiros, viajantes e pobres — espalhou-se pelo Oriente e pelo Ocidente. Em 1087, mercadores levaram suas relíquias de Mira para Bari, no sul da Itália, onde permanecem.",
+      "Dos costumes de presentear em segredo no seu dia nasceu, através de tradições do norte da Europa, a figura de \"São Nicolau\" que deu origem ao Papai Noel. Sua memória, facultativa, é celebrada em 6 de dezembro."
+    ]
+  },
+
+  "santo-ambrosio": {
+    titulo: "Santo Ambrósio, bispo e doutor da Igreja",
+    resumo: "Governador romano aclamado bispo de Milão pelo povo, mestre de Santo Agostinho e um dos quatro grandes doutores da Igreja do Ocidente.",
+    texto: [
+      "Nasceu por volta de 340 em Tréveris, filho de um alto funcionário do Império. Estudou direito e retórica em Roma e foi nomeado governador da região do norte da Itália, com sede em Milão.",
+      "Em 374, à morte do bispo ariano da cidade, foi durante uma assembleia tumultuada aclamado bispo pelo povo, embora fosse ainda apenas catecúmeno. Batizado e ordenado em poucos dias, distribuiu seus bens aos pobres e dedicou-se ao estudo da Escritura e dos Padres.",
+      "Como bispo, defendeu a fé de Niceia contra o arianismo, resistiu às pressões da corte imperial e chegou a impor penitência pública ao imperador Teodósio depois de um massacre. Foi guia espiritual de Santo Agostinho, a quem batizou na Páscoa de 387. Compôs hinos e introduziu o canto que leva seu nome.",
+      "Morreu em Milão no Sábado Santo de 397. É contado, com Jerônimo, Agostinho e Gregório Magno, entre os quatro grandes doutores da Igreja latina. Sua memória litúrgica é celebrada em 7 de dezembro, dia de sua ordenação episcopal."
+    ]
+  },
+
 }
 
 export type MovableFeast = {
