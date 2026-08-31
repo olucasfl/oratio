@@ -207,8 +207,15 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       cards, modal de detalhe com atividades, exclusão via modal de confirmação, modal de senha
       antes do `setAdminStatus`, `errorBox` em falha, "Limpar filtros" no empty state, ordenação
       por nome). 27 testes novos, nenhum bug encontrado. Cobertura: 34,6% → 41,8% linhas.
-- [ ] Tarefa 23 — Login/Register/ForgotPassword/ResetPassword (validação client-side, tratamento
-      de erro)
+- [x] **Tarefa 23** — `Login.tsx` (redirect se já logado respeitando `?redirect=`, login OK →
+      navigate, erro traduzido via `getAuthErrorMessage`, fluxo "esqueci a senha" OK e com erro,
+      `ResetPasswordModal` montado quando há `?resetToken=`, "Criar conta" preservando o redirect),
+      `Register.tsx` (registro OK abre `VerifyEmailModal`, `emailSent:false` mostra `AlertModal` e
+      depois abre o verify, erro traduzido, "Entrar" preservando o redirect),
+      `ForgotPasswordModal.tsx` (fechado = null, não envia email vazio, envia o email digitado,
+      cancelar), `ResetPasswordModal.tsx` (exige os dois campos, rejeita senhas diferentes, faz
+      `POST /auth/reset-password` e redireciona pra /login após o alerta de sucesso, mensagem de
+      erro do servidor sem redirecionar). 19 testes novos, nenhum bug encontrado.
 - [ ] Tarefa 24 — `RosaryPage`, `LiturgiaFull` (expandir teste existente), páginas de Consagração
 - [ ] Tarefa 25 — páginas restantes, só o suficiente pra fechar o gap até 80% — sem forçar teste
       em página puramente visual
