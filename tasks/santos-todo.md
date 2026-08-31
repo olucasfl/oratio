@@ -50,12 +50,12 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - [x] 17/nov — NOVO `santa-isabel-hungria`. Memória obrigatória (M) no Geral. Fontes: franciscanos.org.br, pt.wikipedia, cancaonova, bibliotecacatolica.com.br (n. 1207, filha de André II da Hungria; castelo de Wartburg/Eisenach; casou c/ Luís da Turíngia 1221, 3 filhos; viúva 1227 — Luís +febre a caminho da cruzada; O.F.S. Sexta-feira Santa 1228; hospital de São Francisco em Marburgo; +17/11/1231, 24 anos; canon. 1235 Gregório IX; padroeira da O.F.S.).
 - [x] 18/nov — NOVO `dedicacao-pedro-paulo`. Memória Facultativa (m) no Geral → `opcional:true`. Fontes: vaticannews.va, opusdei.org, cancaonova (basílicas sobre os túmulos de Pedro — Vaticano — e Paulo — via Ostiense; 1as no séc. IV sob Constantino; São Pedro atual consagrada por Urbano VIII em 18/11/1626; São Paulo destruída por incêndio em 1823, nova dedicação fixada no mesmo dia por Pio IX).
 
-## Lote 7 — 19 a 23/nov
-- [ ] 19/nov —
-- [ ] 20/nov —
-- [ ] 21/nov —
-- [ ] 22/nov — (Cristo Rei em 2026: NÃO mexer; entrada fixa = Sta. Cecília)
-- [ ] 23/nov —
+## Lote 7 — 19 a 23/nov  ✅
+- [x] 19/nov — NOVO `sao-roque-gonzalez`. Próprio do Brasil (mártir em Caaró/RS). Fontes: osaopaulo.org.br, gaudiumpress.org, pt.wikipedia, diocesedeblumenau.org.br (n. 1576 Assunção; padre antes de entrar na SJ 1609; reduções guaranis do rio da Prata; +15/11/1628 em Caaró c/ Afonso Rodríguez, e João del Castillo 2 dias depois em Ijuí; beat. 28/1/1934 Pio XI; canon. 16/5/1988 João Paulo II em Assunção; 1os santos que viveram e morreram no Brasil).
+- [x] 20/nov — NOVO `sao-felix-valois`. Dia ferial no Geral (retirado em 1969; calendário trinitário). Índice: "São Félix de Valois" → "+, religioso". Fontes: acidigital.com, gaudiumpress.org, pt.wikipedia (eremita francês; com S. João de Mata fundou a Ordem da Santíssima Trindade — resgate de cativos; aprov. Inocêncio III 1198; casa-mãe de Cerfroid + S. Maturino em Paris; +1212; culto aprov. 1666 Alexandre VII).
+- [x] 21/nov — NOVO `apresentacao-maria`. Memória obrigatória (M) no Geral. Fontes: vaticannews.va, a12.com, cancaonova, dehonianos.org (episódio nos apócrifos / Protoevangelho de Tiago; dedicação de igreja de Sta. Maria junto ao Templo em 21/11/543; universalizada por Sisto V em 1585; dia Pro Orantibus / religiosas de clausura).
+- [x] 22/nov — NOVO `santa-cecilia`. Memória obrigatória (M) no Geral; em 2026 a data cai em Cristo Rei (Solenidade móvel, resolvida via `MOVABLE_FEASTS` sobre o texto da API — a entrada fixa Sta. Cecília e a nova bio ficam corretas para os demais anos; nada mexido na lógica). Fontes: pt.wikipedia, cancaonova, diocesederoraima.org.br (mártir romana séc. II–III; igreja em Trastevere no séc. IV; nome no Cânon da Missa; atas tardias: Valeriano e Tiburcio; catacumbas de São Calisto → translação por Pascoal I no séc. IX; túmulo aberto em 1599, corpo incorrupto, estátua de Maderno; padroeira dos músicos desde o séc. XV).
+- [x] 23/nov — NOVO `sao-clemente-i`. Memória Facultativa (m) no Geral → `opcional:true`. Fontes: vatican.va (catequese de Bento XVI), pt.wikipedia, paulus.com.br, ipco.org.br (3º sucessor de Pedro, fim do séc. I; conheceu os apóstolos segundo S. Ireneu; Carta aos Coríntios ~96 — 1º documento papal; tradição tardia do martírio: exílio na Crimeia, afogado c/ âncora; nome na Oração Eucarística I).
 
 ## Lote 8 — 24 a 28/nov
 - [ ] 24/nov —
@@ -95,6 +95,8 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - 15/nov · +`opcional:true` (Memória Facultativa) · Calendário Romano Geral
 - 16/nov · +`opcional:true` (Memória Facultativa) · Calendário Romano Geral
 - 18/nov · +`opcional:true` (Memória Facultativa) · Calendário Romano Geral
+- 20/nov · "São Félix de Valois" → "+, religioso" · convenção do arquivo
+- 23/nov · +`opcional:true` (Memória Facultativa) · Calendário Romano Geral
 
 ## Dias deixados sem bio (data · motivo)
 _(preencher conforme avança)_

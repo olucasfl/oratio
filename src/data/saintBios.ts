@@ -1515,6 +1515,61 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
     ]
   },
 
+  "sao-roque-gonzalez": {
+    titulo: "São Roque González e companheiros, mártires",
+    resumo: "Jesuíta paraguaio, organizador das reduções do rio da Prata, morto por causa da fé em Caaró, no atual Rio Grande do Sul, com dois companheiros espanhóis.",
+    texto: [
+      "Roque González de Santa Cruz nasceu em Assunção, no Paraguai, em 1576, de família espanhola. Já era padre quando entrou na Companhia de Jesus, em 1609, e por quase vinte anos dedicou-se aos povos indígenas da região do rio da Prata.",
+      "Foi um dos principais organizadores das \"reduções\" — povoados onde os guaranis viviam em liberdade, longe dos caçadores de escravos, aprendendo a fé e trabalhando em comum. Fundou ou ajudou a fundar várias delas em território hoje paraguaio, argentino e brasileiro.",
+      "Em 15 de novembro de 1628, na redução de Caaró, no atual Rio Grande do Sul, Roque González e o padre espanhol Afonso Rodríguez foram mortos a golpes por ordem de um líder local hostil à missão. Dois dias depois, na redução de Ijuí, o padre João del Castillo teve a mesma sorte.",
+      "Os três foram beatificados em 1934 pelo Papa Pio XI e canonizados em 16 de maio de 1988, em Assunção, pelo Papa João Paulo II. São os primeiros santos que viveram e morreram em terras do Brasil, e sua memória é celebrada em 19 de novembro."
+    ]
+  },
+
+  "sao-felix-valois": {
+    titulo: "São Félix de Valois, religioso",
+    resumo: "Eremita francês que, já idoso, fundou com São João de Mata a Ordem da Santíssima Trindade, dedicada a resgatar cativos cristãos das mãos dos muçulmanos.",
+    texto: [
+      "Segundo a tradição, nasceu na França em 1127 e, depois de anos de vida eremítica, foi ordenado padre. Vivia retirado numa floresta perto de Meaux quando o procurou um sacerdote mais jovem, João de Mata, com um projeto: uma ordem religiosa consagrada à libertação dos cristãos feitos escravos em terras muçulmanas.",
+      "Apesar da idade avançada, Félix aceitou. Em 1198 os dois foram a Roma e obtiveram do Papa Inocêncio III a aprovação da nova Ordem da Santíssima Trindade — os trinitários —, cujos membros destinavam parte de suas rendas ao resgate de cativos.",
+      "Enquanto João de Mata organizava as missões de resgate no Norte da África e na Espanha, Félix ficou na França, governando a casa-mãe de Cerfroid e o convento de São Maturino, em Paris, e consolidando a vida da Ordem.",
+      "Morreu em Cerfroid em 1212, com mais de oitenta anos. Seu culto foi aprovado em 1666 pelo Papa Alexandre VII. Sua memória é celebrada em 20 de novembro."
+    ]
+  },
+
+  "apresentacao-maria": {
+    titulo: "Apresentação da Virgem Maria",
+    resumo: "A memória de Maria oferecida a Deus desde a infância, celebrada pela Igreja como imagem da alma inteiramente consagrada ao Senhor.",
+    texto: [
+      "A festa recorda o momento em que, segundo antiquíssima tradição, os pais de Maria — Joaquim e Ana — a levaram ainda menina ao Templo de Jerusalém para consagrá-la a Deus. O episódio não está nos Evangelhos, mas em escritos apócrifos muito antigos, como o Protoevangelho de Tiago.",
+      "Sua origem litúrgica está ligada à dedicação, em 21 de novembro de 543, de uma igreja de Santa Maria construída junto ao Templo, em Jerusalém. A celebração passou depois para o Oriente cristão e, no fim da Idade Média, para toda a Igreja latina; o Papa Sisto V a estendeu a toda a Igreja em 1585.",
+      "Mais do que um fato histórico, a Igreja celebra o que ele significa: Maria pertenceu a Deus desde o primeiro instante de sua vida. Por isso o dia é dedicado à oração pelas religiosas de clausura, inteiramente entregues a Deus.",
+      "É memória obrigatória, celebrada em 21 de novembro."
+    ]
+  },
+
+  "santa-cecilia": {
+    titulo: "Santa Cecília, virgem e mártir",
+    resumo: "Mártir romana dos primeiros séculos, venerada desde a Antiguidade e, a partir da Idade Média, proclamada padroeira dos músicos e da música sacra.",
+    texto: [
+      "Cecília foi uma jovem cristã de Roma, martirizada por causa da fé provavelmente entre os séculos II e III. A veneração à sua memória é muito antiga: já no século IV havia em Roma uma igreja com o seu nome, no bairro de Trastevere, e seu nome entrou no Cânon da Missa.",
+      "As atas de seu martírio, escritas séculos depois, contam que era de família nobre, fez voto de castidade e converteu à fé o marido, Valeriano, e o cunhado, Tiburcio, também martirizados. Presa e condenada, teria sobrevivido três dias a uma tentativa de execução, sem deixar de confessar a Cristo.",
+      "Foi sepultada nas catacumbas de São Calisto, perto da cripta dos Papas; no século IX o Papa Pascoal I transladou suas relíquias para a basílica de Trastevere. Quando o túmulo foi aberto, em 1599, o corpo foi encontrado incorrupto, e o escultor Stefano Maderno o retratou na imagem que está sob o altar.",
+      "A tradição de que, durante as núpcias, Cecília \"cantava a Deus no seu coração\" fez com que, a partir do século XV, fosse representada com um órgão e invocada como padroeira dos músicos, dos cantores e dos instrumentistas. Sua memória litúrgica é celebrada em 22 de novembro."
+    ]
+  },
+
+  "sao-clemente-i": {
+    titulo: "São Clemente I, Papa e mártir",
+    resumo: "Terceiro sucessor de São Pedro no governo da Igreja de Roma, autor da mais antiga carta de um Papa que chegou até nós.",
+    texto: [
+      "Clemente foi bispo de Roma nos últimos anos do século I, terceiro sucessor de Pedro depois de Lino e Anacleto. Segundo Santo Ireneu, ainda conhecera pessoalmente os apóstolos e guardava viva a memória de sua pregação.",
+      "Por volta do ano 96 escreveu, em nome da Igreja de Roma, uma longa carta à comunidade de Corinto, dividida porque alguns fiéis haviam deposto seus presbíteros. A Carta aos Coríntios exorta à paz, à ordem e à obediência, e é o primeiro documento em que a Igreja de Roma intervém, com autoridade, na vida de outra Igreja.",
+      "Testemunhos dos séculos IV a VI atribuem-lhe o martírio: teria sido desterrado para a Crimeia e morto afogado com uma âncora ao pescoço — símbolo com que costuma ser representado.",
+      "Sua memória litúrgica, facultativa, é celebrada em 23 de novembro. Seu nome é lembrado todos os dias na Igreja, pois figura na Oração Eucarística I."
+    ]
+  },
+
 }
 
 export type MovableFeast = {
