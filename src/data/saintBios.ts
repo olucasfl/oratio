@@ -1306,6 +1306,50 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
     ]
   },
 
+  "sao-germano-capua": {
+    titulo: "São Germano de Cápua, bispo",
+    resumo: "Bispo de Cápua no século VI e legado do Papa que ajudou a encerrar o cisma acaciano; sua morte foi vista em visão por São Bento.",
+    texto: [
+      "Nasceu em Cápua, no sul da Itália, no fim do século V, em família abastada. Órfão de pai, distribuiu seus bens aos pobres e abraçou a vida eclesiástica; por volta de 516 foi eleito bispo de sua cidade.",
+      "Em 519 o Papa Hormisdas o pôs à frente de uma delegação enviada a Constantinopla para restabelecer a comunhão entre Roma e o Oriente, rompida havia mais de trinta anos pelo chamado cisma acaciano. A missão teve êxito e a unidade foi restaurada.",
+      "Era amigo de São Bento de Núrsia. São Gregório Magno conta, nos Diálogos, que Bento, em oração numa noite em Monte Cassino, viu a alma de Germano ser levada ao céu pelos anjos numa esfera de fogo — e depois se soube que o bispo morrera naquele instante.",
+      "Sua morte se deu em 30 de outubro, por volta do ano 540. Sua memória é conservada no Martirológio Romano e celebrada em 30 de outubro."
+    ]
+  },
+
+  "santo-afonso-rodrigues": {
+    titulo: "Santo Afonso Rodrigues, religioso",
+    resumo: "Comerciante castelhano que, viúvo e sem os filhos, entrou já maduro na Companhia de Jesus como irmão e passou quase meio século como porteiro de um colégio em Maiorca.",
+    texto: [
+      "Nasceu em 25 de julho de 1532, em Segóvia (Espanha), filho de um comerciante de lãs. Assumiu os negócios da família, casou-se e teve filhos. Em poucos anos perdeu a esposa e as crianças, e essa provação o voltou inteiramente para Deus.",
+      "Quis entrar na Companhia de Jesus, mas foi recusado pela idade e pela falta de estudos. Persistiu e foi admitido em 1571 como irmão coadjutor. Enviado ao colégio de Montesión, em Palma de Maiorca, recebeu o encargo de porteiro, que exerceu por cerca de quarenta e seis anos, até o fim da vida.",
+      "Atendia a cada pessoa que batia à porta como se fosse o próprio Cristo. Homem simples e de intensa vida de oração, tornou-se conselheiro procurado por religiosos e leigos; entre os que orientou esteve o jovem estudante Pedro Claver, futuro apóstolo dos escravos em Cartagena.",
+      "Morreu em Palma de Maiorca em 31 de outubro de 1617. Foi canonizado em 15 de janeiro de 1888 pelo Papa Leão XIII, no mesmo dia que São Pedro Claver. Sua memória litúrgica é celebrada em 31 de outubro."
+    ]
+  },
+
+  "fieis-defuntos": {
+    titulo: "Comemoração de Todos os Fiéis Defuntos",
+    resumo: "O dia em que a Igreja reza por todos os que morreram e ainda se purificam antes de entrar plenamente na glória de Deus.",
+    texto: [
+      "No dia seguinte à Solenidade de Todos os Santos, a Igreja lembra todos os fiéis já falecidos e oferece por eles, de modo especial, a Missa e a oração — sobretudo pelos que passam pela purificação final antes de contemplar a Deus face a face.",
+      "A celebração foi difundida a partir do ano 998 por Santo Odilão, abade de Cluny, que fixou o dia 2 de novembro para todos os mosteiros da ordem; o costume espalhou-se depois por toda a Igreja latina.",
+      "Repousa sobre a fé na comunhão dos santos: os vivos podem interceder pelos mortos, como já se lê no Segundo Livro dos Macabeus. Por isso é tradição, nesses dias, visitar os cemitérios e rezar pelos que partiram.",
+      "Nesta data cada sacerdote pode celebrar três Missas. No Brasil, o dia é popularmente conhecido como Finados."
+    ]
+  },
+
+  "sao-martinho-porres": {
+    titulo: "São Martinho de Porres, religioso",
+    resumo: "Filho de um fidalgo espanhol e de uma negra liberta, foi irmão dominicano em Lima, enfermeiro dos pobres e o primeiro santo mestiço das Américas.",
+    texto: [
+      "Nasceu em Lima, no Peru, em 9 de dezembro de 1579, filho ilegítimo de João de Porres, fidalgo espanhol, e de Ana Velázquez, mulher negra liberta natural do Panamá. Cresceu na pobreza e aprendeu o ofício de barbeiro-cirurgião, que na época incluía tratar feridas e cuidar de doentes.",
+      "Aos pouco mais de quinze anos entrou no convento dominicano de Nossa Senhora do Rosário, em Lima, como \"doado\" — o grau mais humilde da casa. Anos depois foi admitido como irmão religioso. Cuidou da enfermaria do convento e, mais ainda, dos doentes pobres, dos escravos e dos abandonados da cidade, a quem acolhia sem distinção de cor ou condição.",
+      "Sua caridade e sua penitência tornaram-se conhecidas ainda em vida, e a ele se atribuíram curas e um trato singular com os animais. Foi amigo de Santa Rosa de Lima e de São João Macías, seu companheiro de vida religiosa na mesma cidade.",
+      "Morreu em Lima em 3 de novembro de 1639. Foi beatificado em 1837 pelo Papa Gregório XVI e canonizado em 1962 pelo Papa João XXIII. É invocado como padroeiro da justiça social e da fraternidade entre os povos, e sua memória litúrgica é celebrada em 3 de novembro."
+    ]
+  },
+
 }
 
 export type MovableFeast = {

@@ -384,13 +384,13 @@ export const SAINTS_OF_THE_DAY: SaintOfDayEntry[] = [
   { dia:27, mes:10, nome:"Beato Gonçalo de Lagos, presbítero", match:["goncalo de lagos"], bioId:"beato-goncalo-lagos" },
   { dia:28, mes:10, nome:"São Simão e São Judas Tadeu, Apóstolos", match:["simao e sao judas tadeu","judas tadeu, apostolo"], bioId:"sao-judas-tadeu" },
   { dia:29, mes:10, nome:"São Narciso de Jerusalém, bispo", match:["narciso"], bioId:"sao-narciso-jerusalem" },
-  { dia:30, mes:10, nome:"São Germano, bispo", match:["germano, bispo"] },
-  { dia:31, mes:10, nome:"Santo Afonso Rodrigues, religioso", match:["afonso rodrigues"] },
+  { dia:30, mes:10, nome:"São Germano de Cápua, bispo", match:["germano, bispo","germano de capua"], bioId:"sao-germano-capua" },
+  { dia:31, mes:10, nome:"Santo Afonso Rodrigues, religioso", match:["afonso rodrigues"], bioId:"santo-afonso-rodrigues" },
 
   // ---------- NOVEMBRO ----------
   { dia:1, mes:11, nome:"Todos os Santos", match:["todos os santos"], bioId:"todos-os-santos" },
-  { dia:2, mes:11, nome:"Comemoração de Todos os Fiéis Defuntos", match:["todos os fieis defuntos","fieis defuntos"] },
-  { dia:3, mes:11, nome:"São Martinho de Lima (Martinho de Porres)", match:["martinho de porres","martinho de lima"] },
+  { dia:2, mes:11, nome:"Comemoração de Todos os Fiéis Defuntos", match:["todos os fieis defuntos","fieis defuntos"], bioId:"fieis-defuntos" },
+  { dia:3, mes:11, nome:"São Martinho de Porres (Martinho de Lima), religioso", match:["martinho de porres","martinho de lima"], bioId:"sao-martinho-porres", opcional:true },
   { dia:4, mes:11, nome:"São Carlos Borromeu, bispo", match:["carlos borromeu"] },
   { dia:5, mes:11, nome:"São Zacarias e Santa Isabel, pais de São João Batista", match:["zacarias e santa isabel"] },
   { dia:6, mes:11, nome:"São Leonardo de Noblac", match:["leonardo de noblac"] },

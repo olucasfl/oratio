@@ -22,12 +22,12 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - [x] 28/out — REV `sao-judas-tadeu`. Reconferido: Apóstolo, "Judas de Tiago" (Lc 6,16), festa com São Simão em 28/10. Bio existente mantida sem alteração.
 - [x] 29/out — NOVO `sao-narciso-jerusalem`. Dia ferial (Martirológio Romano). Índice corrigido: "São Narciso" → "São Narciso de Jerusalém, bispo". Fontes: arquidiocesedemanaus.org.br, cancaonova, templariodemaria.com (bispo de Jerusalém fim do séc. II segundo Eusébio; idade longeva; sínodo da Páscoa no domingo; caluniado, retiro no deserto, retorno; auxiliar bispo Alexandre; +início séc. III).
 
-## Lote 3 — 30/out a 03/nov
-- [ ] 30/out —
-- [ ] 31/out —
-- [ ] 01/nov — (REV: já tem `todos-os-santos`)
-- [ ] 02/nov —
-- [ ] 03/nov —
+## Lote 3 — 30/out a 03/nov  ✅
+- [x] 30/out — NOVO `sao-germano-capua`. Dia ferial (Martirológio Romano). Índice: "São Germano, bispo" → "São Germano de Cápua, bispo" (+alias `germano de capua`). Fontes: vaticannews.va, it.wikipedia, diocesedeblumenau.org.br (bispo de Cápua ~516; legado do Papa Hormisdas a Constantinopla 519, fim do cisma acaciano; amigo de S. Bento; visão de S. Bento nos Diálogos de S. Gregório Magno; +30/10 ~540).
+- [x] 31/out — NOVO `santo-afonso-rodrigues`. Dia ferial (calendário jesuíta; ferial no Geral/BR). Fontes: pt.wikipedia, paulus.com.br, arquidiocesebh.org.br, cancaonova (n. 25/7/1532 Segóvia, filho de comerciante de lãs; viúvo, perdeu os filhos; SJ irmão coadjutor 1571; porteiro de Montesión/Palma de Maiorca ~46 anos; orientou o jovem Pedro Claver; +31/10/1617; canon. 15/1/1888 Leão XIII junto c/ S. Pedro Claver).
+- [x] 01/nov — REV `todos-os-santos`. Solenidade. Bio existente reconferida (data fixada por Gregório IV, séc. IX) — mantida sem alteração.
+- [x] 02/nov — NOVO `fieis-defuntos`. Comemoração litúrgica. Fontes: pt.wikipedia, vaticannews.va, cancaonova (difundida por Santo Odilão de Cluny ~998; dia 2/11; comunhão dos santos, 2Mac; 3 Missas; "Finados" no Brasil).
+- [x] 03/nov — NOVO `sao-martinho-porres`. Mem. Facultativa (m) no Geral → `opcional:true`. Índice: "São Martinho de Lima (Martinho de Porres)" → "São Martinho de Porres (Martinho de Lima), religioso". Fontes: arquisp.org.br, pt.wikipedia, vaticannews.va, snpcultura.org (n. 9/12/1579 Lima, filho de fidalgo espanhol e de Ana Velázquez, negra liberta do Panamá; barbeiro-cirurgião; dominicano "doado" e depois irmão no conv. do Rosário; amigo de Sta. Rosa de Lima e S. João Macías; +3/11/1639; beat. 1837 Gregório XVI, canon. 1962 João XXIII).
 
 ## Lote 4 — 04 a 08/nov
 - [ ] 04/nov —
@@ -85,6 +85,8 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - (20 e 21/out: `match[]` ganhou 1 alias cada; nome mantido)
 - 25/out · nome +`, presbítero` · Missal 3ª ed. (Frei Galvão, presbítero franciscano)
 - 29/out · "São Narciso" → "São Narciso de Jerusalém, bispo" · Martirológio Romano (identifica o bispo de Jerusalém de Eusébio)
+- 30/out · "São Germano, bispo" → "São Germano de Cápua, bispo" (+alias) · Martirológio Romano
+- 03/nov · "São Martinho de Lima (Martinho de Porres)" → "São Martinho de Porres (Martinho de Lima), religioso" + `opcional:true` · Calendário Romano Geral (Memória Facultativa)
 
 ## Dias deixados sem bio (data · motivo)
 _(preencher conforme avança)_
