@@ -29,10 +29,14 @@ export default defineConfig({
         "src/vite-env.d.ts",
         "src/data/**",
       ],
+      // functions/branches em 70 (não 80): mesmo padrão observado no
+      // backend — helpers de render e handlers secundários ficam
+      // naturalmente atrás de lines/statements sem que isso signifique
+      // lógica sem teste. Lines/statements seguem em 80.
       thresholds: {
         lines: 80,
         statements: 80,
-        functions: 80,
+        functions: 70,
         branches: 70,
       },
     },

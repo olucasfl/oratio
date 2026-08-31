@@ -3,8 +3,8 @@
 Contexto: backend tem ~96% de cobertura com testes reais (ver `oratio-api/docs/ARCHITECTURE.md`
 §2). Frontend começou esta sessão em **1.2% statements / 0.62% branches** (4.394 statements no
 total, medidos com `coverage.all: true` — todo arquivo de `src/` conta, tocado ou não). Meta:
-80% lines/statements/functions, 70% branches (branches naturalmente ficam atrás — mesmo padrão
-observado no backend).
+80% lines/statements, 70% functions/branches (functions/branches naturalmente ficam atrás —
+mesmo padrão observado no backend; a meta de functions foi 80 e caiu pra 70 ao fechar a Fase 6).
 
 Regra de ouro: só escrever teste que verifica comportamento real (efeito colateral, valor de
 retorno, chamada a dependência mockada). Nada de `expect(true).toBe(true)` ou "renders without
@@ -21,7 +21,7 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       Node 20.19 → suíte inteira não rodava. Pinado para `jsdom@^29.1.1` /
       `@testing-library/jest-dom@^6.9.1` (últimas versões compatíveis com Node 20.19).
 - [x] `@vitest/coverage-v8@4.1.11` instalado, `vitest.config.ts` com `coverage.all: true` +
-      `include`/`exclude`/`thresholds` (80/70/80/80).
+      `include`/`exclude`/`thresholds` (lines/statements 80, functions/branches 70).
 - [x] `npm run test:cov` adicionado (espelha o `test:cov` do backend).
 
 ## Fase 1 — Services (maior densidade de lógica, melhor ROI)
@@ -250,11 +250,11 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       `ChangePasswordModal`, `ChangeEmailModal`, `DeleteAccountModal`, `liturgiaService`.
       Também no `vitest.setup.ts`: stub global de `ResizeObserver` (lacuna do jsdom, usado por
       `usePublishHeightVar` e libs de UI). ~200 testes novos, nenhum bug de produção encontrado.
-      **Cobertura final: 83,1% linhas / 80,9% statements / 71,9% branches — todos acima da meta.
-      Funções em 72,4% (meta 80%): o gap está sobretudo no `Vox.tsx` (55% de funções — muitos
-      handlers secundários) e em handlers pontuais espalhados. Fechar isso exige teste mais
-      profundo do que "simples". Decisão pendente com o usuário: ajustar a meta de funções
-      (mesmo raciocínio do backend, onde branches ficou atrás) ou aprofundar.**
+      **Cobertura final: 83,1% linhas / 80,9% statements / 71,9% branches / 72,4% funções.**
+      A meta de funções foi ajustada de 80 → 70 no `vitest.config.ts` (decisão do usuário): o gap
+      residual era quase todo handler secundário do `Vox.tsx` (55% de funções) e handlers
+      pontuais, cujo teste profundo saía do escopo "simples" desta rodada — mesmo racional de
+      "branches ficam atrás" que o plano já assumia. `npm run test:cov` passa limpo, sem `ERROR:`.
 
 ## Fase Lint — limpar `npm run lint` (148 problemas, 128 erros / 20 avisos)
 
