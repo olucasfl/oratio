@@ -83,6 +83,20 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 (todos os 50 receberam `bioId`). Correções de índice: ver seção acima. Cobertura
 contínua de biografias: 17/jul → 08/dez.
 
+## Extensão além do plano — dez
+
+## Lote 11 — 09 a 13/dez  ✅
+- [x] 09/dez — NOVO `sao-juan-diego`. Mem. Facultativa (m) no Geral (desde 2002) → `opcional:true`. Índice: "São Juan Diego" → "São Juan Diego Cuauhtlatoatzin". Fontes: cnbb.org.br, comshalom.org, cancaonova, pt.wikipedia (n. ~1474 Cuauhtitlán, chichimeca; batizado por franciscanos; aparições no Tepeyac dez/1531; rosas de Castela na tílma; imagem estampada; +1548; canon. 31/7/2002 João Paulo II; 1º santo indígena das Américas).
+- [x] 10/dez — **SANTO TROCADO**: "São Melquíades, Papa" → "Nossa Senhora de Loreto". Motivo: N. Sra. de Loreto é Memória Facultativa no Calendário Romano Geral **desde 2019** (Melquíades é só Martirológio). `opcional:true`. NOVO `nossa-senhora-loreto`. Fontes: vaticannews.va, a12.com, gaudiumpress.org, cancaonova (Santa Casa de Nazaré em Loreto/Marcas; tradição do traslado pelos anjos 1294 / hipótese família Angeli; basílica; padroeira dos aviadores — Bento XV, 1920; inscrita no calendário universal em 2019). Se preferir Melquíades, dá pra reverter.
+- [x] 11/dez — NOVO `sao-damaso-i`. Mem. Facultativa (m) no Geral → `opcional:true`. Fontes: acidigital.com, gaudiumpress.org, comshalom.org, pt.wikipedia (n. ~305, origem hispânica, pai clérigo em Roma; Papa 366–384, eleição disputada; contra o arianismo; Conc. de Constantinopla 381; "Papa das catacumbas", epitáfios em verso; encarregou S. Jerônimo da Vulgata; +11/12/384).
+- [x] 12/dez — NOVO `nossa-senhora-guadalupe`. Festa em toda a América (João Paulo II, festa universal em 12/12). Fontes: vaticannews.va, pt.wikipedia, pom.org.br, opusdei.org (aparições a Juan Diego no Tepeyac, dez/1531; imagem na tílma de fibra de agave; basílica de Guadalupe; padroeira do México → das Américas; batismos em massa dos indígenas).
+- [x] 13/dez — NOVO `santa-luzia`. Memória obrigatória (M) no Geral. Fontes: pt.wikipedia, cancaonova, correiobraziliense.com.br, templariodemaria.com (mártir de Siracusa/Sicília sob Diocleciano, ~304; culto antiquíssimo, nome no Cânon Romano c/ Águeda, Inês e Cecília; atas tardias: nobre, virgindade consagrada, bens aos pobres, morta pela espada; ligação com os olhos = lux + relatos medievais; festas de luz no inverno).
+
+### Extensão — correções de índice
+- 10/dez · **SANTO TROCADO**: "São Melquíades, Papa" → "Nossa Senhora de Loreto" · Mem. Facultativa no Geral desde 2019
+- 09/dez · "São Juan Diego" → "São Juan Diego Cuauhtlatoatzin" · nome canônico
+- 09, 11/dez · +`opcional:true` (Memória Facultativa) · Calendário Romano Geral
+
 ## Correções de índice feitas (data · de → para · fonte)
 - 22/out · +`opcional:true` (Memória Facultativa) · gcatholic BR 2026
 - 23/out · +`opcional:true` (Memória Facultativa) · gcatholic BR 2026

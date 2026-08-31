@@ -1724,6 +1724,61 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
     ]
   },
 
+  "sao-juan-diego": {
+    titulo: "São Juan Diego Cuauhtlatoatzin",
+    resumo: "Indígena mexicano a quem Nossa Senhora de Guadalupe apareceu em 1531, deixando sua imagem na capa dele — o primeiro santo indígena das Américas.",
+    texto: [
+      "Nasceu por volta de 1474 em Cuauhtitlán, no vale do México, do povo chichimeca. Já adulto, foi batizado por missionários franciscanos e recebeu o nome de Juan Diego. Era homem simples, do campo, e caminhava léguas para participar da catequese e da Missa.",
+      "Em dezembro de 1531, no monte Tepeyac, disse ter encontrado várias vezes a Virgem Maria, que lhe pediu que fosse ao bispo solicitar a construção de uma igreja naquele lugar. Como o bispo pedia um sinal, Maria fez brotar rosas de Castela em pleno inverno, que Juan Diego recolheu na tílma, seu manto de fibra de agave.",
+      "Ao abrir o manto diante do bispo, apareceu nele estampada a imagem de Nossa Senhora — a mesma que ainda hoje se venera na basílica de Guadalupe, na Cidade do México, um dos santuários mais visitados do mundo.",
+      "Juan Diego passou o resto da vida junto à capela, cuidando dela e acolhendo os peregrinos. Morreu em 1548. Foi canonizado em 31 de julho de 2002 pelo Papa João Paulo II. Sua memória é celebrada em 9 de dezembro."
+    ]
+  },
+
+  "nossa-senhora-loreto": {
+    titulo: "Nossa Senhora de Loreto",
+    resumo: "A devoção ligada à Santa Casa de Nazaré venerada em Loreto, na Itália, e a Maria como padroeira dos aviadores.",
+    texto: [
+      "Em Loreto, na região das Marcas (Itália), venera-se desde o fim do século XIII a chamada Santa Casa: três paredes de pedra que a tradição identifica com a casa de Nazaré onde Maria recebeu o anúncio do anjo e viveu com José e Jesus.",
+      "A tradição popular conta que a Casa foi transportada pelos anjos de Nazaré até a Dalmácia e depois até Loreto, em 1294, para salvá-la da destruição. Estudos posteriores sugerem que as pedras foram de fato trazidas por mar, por iniciativa de uma família chamada Angeli — o que pode estar na origem da lenda dos \"anjos\".",
+      "Sobre a Casa ergueu-se uma grande basílica, que se tornou um dos maiores santuários marianos da Europa. Pelo símbolo da \"casa que voou\", o Papa Bento XV, em 1920, proclamou Nossa Senhora de Loreto padroeira dos aviadores.",
+      "A memória, facultativa, foi inscrita no calendário de toda a Igreja em 2019 e é celebrada em 10 de dezembro."
+    ]
+  },
+
+  "sao-damaso-i": {
+    titulo: "São Dâmaso I, Papa",
+    resumo: "Papa do século IV, chamado \"o Papa das catacumbas\", que encarregou São Jerônimo da tradução latina da Bíblia — a Vulgata.",
+    texto: [
+      "Dâmaso nasceu por volta de 305, de família provavelmente de origem hispânica; seu pai era clérigo em Roma, e ele cresceu servindo na mesma igreja. Foi eleito Papa em 366, numa disputa marcada por violência entre facções, e governou a Igreja por dezoito anos.",
+      "Combateu o arianismo e outras heresias e afirmou com força o primado da Igreja de Roma. Durante seu pontificado reuniu-se o Concílio de Constantinopla, em 381, que completou o Credo de Niceia.",
+      "Dedicou-se a restaurar e honrar os túmulos dos mártires nas catacumbas, para os quais compôs epitáfios em verso, gravados em bela caligrafia. Confiou ao seu secretário, São Jerônimo, a revisão e tradução das Escrituras para o latim, trabalho que deu origem à Vulgata, usada na Igreja latina por mais de mil anos.",
+      "Morreu em Roma em 11 de dezembro de 384. Sua memória, facultativa, é celebrada em 11 de dezembro."
+    ]
+  },
+
+  "nossa-senhora-guadalupe": {
+    titulo: "Nossa Senhora de Guadalupe",
+    resumo: "A aparição de Maria a São Juan Diego em 1531, no México, e a imagem deixada em sua capa — Nossa Senhora é venerada sob este título como padroeira de toda a América.",
+    texto: [
+      "Em dezembro de 1531, dez anos após a conquista espanhola do México, a Virgem Maria apareceu ao indígena Juan Diego no monte Tepeyac, perto da atual Cidade do México. Apresentou-se com traços e vestes indígenas, falou na língua dele e pediu que ali se erguesse uma igreja.",
+      "Como sinal para o bispo, Maria fez florir rosas em pleno inverno; ao desdobrar o manto onde as levava, Juan Diego e o bispo viram nele impressa a imagem da Virgem. Essa imagem, no tecido rústico de fibra de agave, é venerada até hoje na basílica de Guadalupe.",
+      "A aparição, numa língua e numa cultura que o evangelho mal começara a alcançar, marcou profundamente a fé dos povos da América. Em poucos anos, milhões de indígenas pediram o batismo.",
+      "Nossa Senhora de Guadalupe foi proclamada padroeira do México e, depois, de todo o continente americano. O Papa João Paulo II fixou sua festa em 12 de dezembro para toda a Igreja."
+    ]
+  },
+
+  "santa-luzia": {
+    titulo: "Santa Luzia, virgem e mártir",
+    resumo: "Mártir de Siracusa, na Sicília, venerada desde a Antiguidade e invocada como padroeira dos olhos e da visão.",
+    texto: [
+      "Luzia foi uma jovem cristã de Siracusa, na Sicília, morta por causa da fé durante a perseguição de Diocleciano, por volta do ano 304. Seu culto é antiquíssimo: já no século IV era venerada em toda a Igreja, e seu nome foi incluído no Cânon Romano da Missa, ao lado de Águeda, Inês e Cecília.",
+      "As atas do seu martírio, mais tardias, contam que era de família nobre, consagrou a Deus a sua virgindade e distribuiu seus bens aos pobres. Denunciada como cristã, foi condenada; resistiu firme às ameaças e morreu traspassada pela espada.",
+      "A ligação de Luzia com os olhos aparece na Idade Média — em parte por seu nome, que vem do latim lux, \"luz\", em parte por relatos de que teria perdido os olhos no martírio. Por isso é invocada por quem sofre de doenças da visão.",
+      "É uma das santas mais populares do mundo cristão, festejada com luzes em muitos países no auge do inverno. Sua memória litúrgica é celebrada em 13 de dezembro."
+    ]
+  },
+
 }
 
 export type MovableFeast = {
