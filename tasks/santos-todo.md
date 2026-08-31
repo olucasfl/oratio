@@ -15,12 +15,12 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - [x] 23/out — NOVO `sao-joao-capistrano`. Mem. Facultativa (m). Fontes: pt.wikipedia, paulus, franciscanos.org.br (n. 24/6/1386 Capestrano; Direito em Perúgia; franciscano 1416; discípulo de S. Bernardino; cerco de Belgrado 1456 c/ Hunyadi; +23/10/1456 Ilok; beat. 1650, canon. 1690 Alexandre VIII).
 - [x] 24/out — NOVO `santo-antonio-claret`. Mem. Facultativa (m). Fontes: newworldencyclopedia.org, vaticannews (URL), cancaonova (n. 23/12/1807 Sallent, filho de fabricante de lã; tecelão; ordenado 1835; claretianos 16/7/1849; arceb. Santiago de Cuba 1850; atentado em Holguín; confessor de Isabel II; Vaticano I; +24/10/1870 Fontfroide; beat. 1934 Pio XI, canon. 1950 Pio XII).
 
-## Lote 2 — 25 a 29/out
-- [ ] 25/out —
-- [ ] 26/out —
-- [ ] 27/out —
-- [ ] 28/out — (REV: já tem `sao-judas-tadeu`)
-- [ ] 29/out —
+## Lote 2 — 25 a 29/out  ✅
+- [x] 25/out — NOVO `santo-antonio-galvao`. Memória obrigatória no Brasil (Missal 3ª ed.). Primeiro santo nascido no Brasil. Fontes: cnbb.org.br, vaticannews.va, franciscanos.org.br, pt.wikipedia (n. 10/5/1739 Guaratinguetá; jesuítas em Salvador; franciscano em Taubaté; ord. 1762; Recolhimento da Luz 1774 c/ Ir. Helena Maria do Espírito Santo; "pílulas"; +23/12/1822 São Paulo, Mosteiro da Luz; beat. 1998 João Paulo II, canon. 11/5/2007 Bento XVI em São Paulo).
+- [x] 26/out — NOVO `santo-evaristo`. Dia ferial (não está no Calendário Romano Geral nem no próprio BR; só Martirológio). Tratado com honestidade: fontes escassas (Ireneu, Eusébio); martírio venerado mas sem registro seguro. Fontes: gaudiumpress.org, ipco.org.br, cancaonova (5º Papa; grego de família judia de Belém em Antioquia; sucessor de Clemente ~100–108; "títulos" romanos; sepultado junto a São Pedro).
+- [x] 27/out — NOVO `beato-goncalo-lagos`. Calendário próprio de Portugal (Patriarcado de Lisboa / Diocese do Algarve); ferial no BR. Fontes: pt.wikipedia, cancaonova, turismo.diocese-algarve.pt, cm-tvedras.pt (n. ~1360 Lagos; agostiniano em N. Sra. da Graça de Lisboa; prior Lourinhã/Lisboa/Santarém/Torres Vedras desde 1412; iluminador; +15/10/1422 Torres Vedras; beat. 27/5/1778 Pio VI; nunca canonizado; padroeiro de Torres Vedras e Lagos).
+- [x] 28/out — REV `sao-judas-tadeu`. Reconferido: Apóstolo, "Judas de Tiago" (Lc 6,16), festa com São Simão em 28/10. Bio existente mantida sem alteração.
+- [x] 29/out — NOVO `sao-narciso-jerusalem`. Dia ferial (Martirológio Romano). Índice corrigido: "São Narciso" → "São Narciso de Jerusalém, bispo". Fontes: arquidiocesedemanaus.org.br, cancaonova, templariodemaria.com (bispo de Jerusalém fim do séc. II segundo Eusébio; idade longeva; sínodo da Páscoa no domingo; caluniado, retiro no deserto, retorno; auxiliar bispo Alexandre; +início séc. III).
 
 ## Lote 3 — 30/out a 03/nov
 - [ ] 30/out —
@@ -83,6 +83,8 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - 23/out · +`opcional:true` (Memória Facultativa) · gcatholic BR 2026
 - 24/out · +`opcional:true` (Memória Facultativa) · gcatholic BR 2026
 - (20 e 21/out: `match[]` ganhou 1 alias cada; nome mantido)
+- 25/out · nome +`, presbítero` · Missal 3ª ed. (Frei Galvão, presbítero franciscano)
+- 29/out · "São Narciso" → "São Narciso de Jerusalém, bispo" · Martirológio Romano (identifica o bispo de Jerusalém de Eusébio)
 
 ## Dias deixados sem bio (data · motivo)
 _(preencher conforme avança)_

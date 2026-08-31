@@ -1262,6 +1262,50 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
     ]
   },
 
+  "santo-antonio-galvao": {
+    titulo: "Santo Antônio de Sant'Ana Galvão, presbítero",
+    resumo: "Franciscano de Guaratinguetá, fundador do Mosteiro da Luz e conhecido pelas \"pílulas\" que distribuía aos doentes — o primeiro santo nascido no Brasil.",
+    texto: [
+      "Nasceu em 10 de maio de 1739, em Guaratinguetá, no Vale do Paraíba (São Paulo), quarto de dez filhos de uma família portuguesa, próspera e devota; o pai, Antônio Galvão de França, era comerciante e membro da Ordem Terceira Franciscana. Estudou com os jesuítas em Salvador, na Bahia, e, diante da perseguição do Marquês de Pombal à Companhia de Jesus, entrou para os franciscanos no convento de Taubaté, sendo ordenado padre em 1762.",
+      "Viveu em São Paulo como pregador, confessor e mestre de noviços. Em 1774 fundou, com a Irmã Helena Maria do Espírito Santo, o Recolhimento de Nossa Senhora da Conceição da Divina Providência — hoje Mosteiro da Luz —, casa de vida religiosa para mulheres que acompanhou até o fim da vida e cuja igreja e convento levou décadas para concluir.",
+      "Espalhou-se a devoção às suas \"pílulas\": pequenos papéis com uma jaculatória latina a Nossa Senhora, entregues a doentes e a mulheres em trabalho de parto e associados pelo povo a muitas graças alcançadas. Homem de vida pobre e simples, era procurado por gente de toda condição em busca de conselho e reconciliação, e ficou lembrado como \"o homem da paz e da caridade\".",
+      "Morreu em São Paulo em 23 de dezembro de 1822 e está sepultado no Mosteiro da Luz. Foi beatificado em 1998 pelo Papa João Paulo II e canonizado em 11 de maio de 2007, em São Paulo, pelo Papa Bento XVI — o primeiro santo nascido no Brasil. Sua memória litúrgica é celebrada em 25 de outubro."
+    ]
+  },
+
+  "santo-evaristo": {
+    titulo: "Santo Evaristo, Papa",
+    resumo: "Quinto Papa da história, sucessor de São Clemente, governou a Igreja de Roma no início do século II, em tempo de perseguição.",
+    texto: [
+      "As poucas informações sobre Evaristo vêm sobretudo de Santo Ireneu e de Eusébio de Cesareia. Teria origem grega, de uma família judia de Belém estabelecida em Antioquia. Sucedeu ao Papa São Clemente por volta do ano 100 e governou a Igreja de Roma até cerca de 108.",
+      "A tradição lhe atribui a organização das primeiras circunscrições eclesiásticas de Roma — os \"títulos\", igrejas confiadas a presbíteros que estão na origem das paróquias — e o costume de a bênção dos casamentos ser dada publicamente. Esses dados, porém, são de atribuição tardia e não podem ser confirmados.",
+      "Exerceu o ministério num tempo em que professar a fé cristã em Roma já podia custar a vida. O Martirológio Romano o venera como mártir e afirma que foi sepultado perto do túmulo de São Pedro, no Vaticano; não há, contudo, registro histórico seguro das circunstâncias de sua morte.",
+      "Sua memória é lembrada em 26 de outubro. Não consta do Calendário Romano Geral nem do próprio do Brasil, sendo conservada no Martirológio Romano."
+    ]
+  },
+
+  "beato-goncalo-lagos": {
+    titulo: "Beato Gonçalo de Lagos, presbítero",
+    resumo: "Frade agostiniano português, pregador incansável e prior de vários conventos, venerado no Algarve e padroeiro de Torres Vedras.",
+    texto: [
+      "Nasceu por volta de 1360 em Lagos, no Algarve (Portugal), em família humilde. Ainda jovem entrou na Ordem dos Eremitas de Santo Agostinho, no convento de Nossa Senhora da Graça de Lisboa, onde se formou e foi ordenado presbítero.",
+      "Foi prior de vários conventos agostinianos — São Lourenço da Lourinhã, Nossa Senhora da Graça de Lisboa, Santarém e, a partir de 1412, Nossa Senhora da Graça de Torres Vedras, onde permaneceu até a morte. Ficou conhecido como pregador infatigável e homem de estudo, dedicado também à iluminura e à cópia de livros litúrgicos.",
+      "Cuidava pessoalmente dos doentes e dos pobres e era procurado como conselheiro. A devoção popular lhe atribuiu numerosos milagres, sobretudo em favor dos pescadores do Algarve em perigo no mar.",
+      "Morreu em Torres Vedras em 15 de outubro de 1422. Foi beatificado em 27 de maio de 1778 pelo Papa Pio VI; nunca foi formalmente canonizado, embora o povo o chame de \"São Gonçalo\". É padroeiro de Torres Vedras e de Lagos, e sua memória é celebrada em 27 de outubro no Patriarcado de Lisboa e na Diocese do Algarve."
+    ]
+  },
+
+  "sao-narciso-jerusalem": {
+    titulo: "São Narciso de Jerusalém, bispo",
+    resumo: "Bispo de Jerusalém no fim do século II, lembrado por Eusébio pela santidade, pela idade avançadíssima e pelos anos de retiro no deserto depois de ser caluniado.",
+    texto: [
+      "O que se sabe de Narciso vem sobretudo da História Eclesiástica de Eusébio de Cesareia. Foi bispo de Jerusalém no fim do século II, já em idade avançada, e governou aquela Igreja por muitos anos, alcançando, segundo a tradição, idade extraordinariamente longeva.",
+      "Eusébio lhe reconhece grande autoridade moral: presidiu um sínodo reunido na Palestina que firmou a celebração da Páscoa no domingo. A tradição também lhe atribui o milagre de, numa vigília pascal, transformar água em azeite para as lâmpadas da igreja.",
+      "Caluniado por três homens que juraram falso contra ele, preferiu retirar-se para a solidão do deserto a defender-se, permanecendo oculto por vários anos. Reconhecida sua inocência, foi reconduzido ao episcopado e, já muito idoso, teve como auxiliar o bispo Alexandre.",
+      "Morreu em Jerusalém no início do século III. Sua memória é conservada no Martirológio Romano e celebrada em 29 de outubro."
+    ]
+  },
+
 }
 
 export type MovableFeast = {
