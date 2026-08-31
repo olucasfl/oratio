@@ -29,12 +29,12 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - [x] 02/nov — NOVO `fieis-defuntos`. Comemoração litúrgica. Fontes: pt.wikipedia, vaticannews.va, cancaonova (difundida por Santo Odilão de Cluny ~998; dia 2/11; comunhão dos santos, 2Mac; 3 Missas; "Finados" no Brasil).
 - [x] 03/nov — NOVO `sao-martinho-porres`. Mem. Facultativa (m) no Geral → `opcional:true`. Índice: "São Martinho de Lima (Martinho de Porres)" → "São Martinho de Porres (Martinho de Lima), religioso". Fontes: arquisp.org.br, pt.wikipedia, vaticannews.va, snpcultura.org (n. 9/12/1579 Lima, filho de fidalgo espanhol e de Ana Velázquez, negra liberta do Panamá; barbeiro-cirurgião; dominicano "doado" e depois irmão no conv. do Rosário; amigo de Sta. Rosa de Lima e S. João Macías; +3/11/1639; beat. 1837 Gregório XVI, canon. 1962 João XXIII).
 
-## Lote 4 — 04 a 08/nov
-- [ ] 04/nov —
-- [ ] 05/nov —
-- [ ] 06/nov —
-- [ ] 07/nov —
-- [ ] 08/nov —
+## Lote 4 — 04 a 08/nov  ✅
+- [x] 04/nov — NOVO `sao-carlos-borromeu`. Memória obrigatória (M) no Calendário Romano Geral. Fontes: vaticannews.va, pt.wikipedia, padrepauloricardo.org, paulinas (n. 2/10/1538 Arona; Direito em Pávia; sobrinho de Pio IV; cardeal aos 21; conclusão do Conc. de Trento 1562–63 + Catecismo Romano; ord. bispo 1563; posse de Milão 1565; peste de 1576; atentado na capela; +3/11/1584; canon. 1610 Paulo V).
+- [x] 05/nov — NOVO `zacarias-isabel`. Dia ferial (a fonte confirma: nomes NÃO estão no calendário litúrgico; tradição + Martirológio). Fontes: diocesedeblumenau.org.br, conventodapenha.org.br, fatima.org.br (Lc 1: Zacarias sacerdote, Isabel descendente de Aarão e parente de Maria; anúncio de Gabriel; mudez; Benedictus; Visitação / Ave-Maria).
+- [x] 06/nov — NOVO `sao-leonardo-noblac`. Dia ferial (Martirológio). Índice: "São Leonardo de Noblac" → "+, eremita". Tratado com honestidade: "vita" tardia, valor histórico incerto. Fontes: arquisp.org.br, gaudiumpress.org, templariodemaria.com (Gália ~500; afilhado de Clodoveu s/ tradição; discípulo de S. Remígio; eremita na floresta de Pauvain perto de Limoges; mosteiro → Saint-Léonard-de-Noblat; padroeiro dos prisioneiros e das parturientes; +~559).
+- [x] 07/nov — NOVO `sao-wilibrordo`. Dia ferial no Geral/BR (Festa nos Países Baixos/Luxemburgo). Fontes: paulus.com.br, pt.wikipedia, newadvent.org, britannica.com (n. ~658 Nortúmbria; Ripon sob S. Wilfrido; 12 anos na Irlanda; missão à Frísia ~690 c/ 11 companheiros e apoio de Pepino de Herstal; consagrado bispo dos frísios pelo Papa Sérgio I em 695, nome Clemente; sé em Utreque; abadia de Echternach; +7/11/739).
+- [x] 08/nov — NOVO `sao-deodato`. Dia ferial (Martirológio). Índice: "São Deodato" → "São Deodato I, Papa". Fontes: arquidiocesedemanaus.org.br, ipco.org.br, santoinaciosp.com.br (romano, filho do subdiácono Estêvão; Papa out/615–8/11/618, sucessor de Bonifácio IV; terremoto e epidemia em Roma; Martirológio: curou um leproso com um beijo; legado testamentário ao clero; sepultado em São Pedro).
 
 ## Lote 5 — 09 a 13/nov
 - [ ] 09/nov —
@@ -87,6 +87,8 @@ Legenda: `[ ]` pendente · `[x]` feito · `NOVO` bio nova · `CORR` índice corr
 - 29/out · "São Narciso" → "São Narciso de Jerusalém, bispo" · Martirológio Romano (identifica o bispo de Jerusalém de Eusébio)
 - 30/out · "São Germano, bispo" → "São Germano de Cápua, bispo" (+alias) · Martirológio Romano
 - 03/nov · "São Martinho de Lima (Martinho de Porres)" → "São Martinho de Porres (Martinho de Lima), religioso" + `opcional:true` · Calendário Romano Geral (Memória Facultativa)
+- 06/nov · "São Leonardo de Noblac" → "+, eremita" · Martirológio Romano
+- 08/nov · "São Deodato" → "São Deodato I, Papa" · Martirológio Romano (identifica o Papa Deodato/Adeodato I)
 
 ## Dias deixados sem bio (data · motivo)
 _(preencher conforme avança)_

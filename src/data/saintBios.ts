@@ -1350,6 +1350,61 @@ export const SAINT_BIOS: Record<string, SaintBio> = {
     ]
   },
 
+  "sao-carlos-borromeu": {
+    titulo: "São Carlos Borromeu, bispo",
+    resumo: "Cardeal aos 21 anos e arcebispo de Milão, tornou-se o modelo do bispo reformador saído do Concílio de Trento.",
+    texto: [
+      "Nasceu em 2 de outubro de 1538, no castelo de Arona, junto ao Lago Maior, em nobre família milanesa. Estudou Direito Civil e Canônico em Pávia. Em 1559 seu tio materno foi eleito Papa como Pio IV e o chamou a Roma; aos vinte e um anos foi feito cardeal e encarregado da administração da arquidiocese de Milão.",
+      "Teve papel decisivo na reabertura e conclusão do Concílio de Trento (1562–1563) e na redação do Catecismo Romano. A morte do irmão mais velho o levou a uma vida mais austera: recusou-se a deixar o estado clerical para chefiar a família, foi ordenado padre e bispo em 1563 e, em 1565, tomou posse pessoalmente da sé de Milão.",
+      "Como arcebispo, governou com rigor e caridade: percorreu toda a diocese em visitas pastorais, fundou seminários, promoveu a catequese das crianças e reuniu concílios provinciais. Durante a peste de 1576 permaneceu em Milão, organizando o socorro e visitando os doentes. Certa vez escapou de um atentado a tiros dentro da própria capela.",
+      "Esgotado pelo trabalho, morreu em Milão em 3 de novembro de 1584, aos quarenta e seis anos. Foi canonizado em 1610 pelo Papa Paulo V. Sua memória litúrgica é celebrada em 4 de novembro."
+    ]
+  },
+
+  "zacarias-isabel": {
+    titulo: "São Zacarias e Santa Isabel, pais de São João Batista",
+    resumo: "O casal idoso e justo do Evangelho de Lucas a quem, contra toda esperança, foi dado o filho que prepararia o caminho do Messias.",
+    texto: [
+      "Zacarias e Isabel aparecem no primeiro capítulo do Evangelho de São Lucas. Ele era sacerdote do templo de Jerusalém; ela, descendente de Aarão e parente de Maria de Nazaré. O evangelista os descreve como \"justos diante de Deus\", fiéis a todos os mandamentos, mas já idosos e sem filhos.",
+      "Enquanto oferecia o incenso no santuário, Zacarias recebeu do anjo Gabriel o anúncio de que Isabel teria um filho, João. Por duvidar, ficou mudo até o nascimento da criança, quando recuperou a voz para entoar o cântico Benedictus.",
+      "Grávida de João, Isabel recebeu a visita de Maria, também grávida, e, cheia do Espírito Santo, saudou-a como \"bendita entre as mulheres\" e \"mãe do meu Senhor\" — palavras que a Igreja repete todos os dias na Ave-Maria.",
+      "Seus nomes não constam do calendário litúrgico da Missa, mas a tradição cristã dedica a eles o dia 5 de novembro, e o Martirológio Romano guarda a sua memória."
+    ]
+  },
+
+  "sao-leonardo-noblac": {
+    titulo: "São Leonardo de Noblac, eremita",
+    resumo: "Eremita franco do século VI, fundador do mosteiro que deu origem a Saint-Léonard-de-Noblat, invocado desde a Idade Média como libertador dos prisioneiros.",
+    texto: [
+      "As notícias sobre Leonardo vêm de uma \"vida\" escrita séculos depois de sua morte, de valor histórico incerto. Segundo ela, nasceu na Gália por volta do ano 500, em família ligada à corte franca, e teria tido como padrinho o rei Clodoveu. Formou-se junto de São Remígio, bispo de Reims.",
+      "Recusou a dignidade episcopal que lhe ofereceram e retirou-se como eremita para a floresta de Pauvain, perto de Limoges. Ali reuniu discípulos e fundou o mosteiro que deu origem à cidade de Saint-Léonard-de-Noblat.",
+      "A tradição lhe atribui o poder de obter a libertação de prisioneiros: dizia-se que bastava invocá-lo para que as correntes se rompessem, e muitos libertados iam depositar seus grilhões junto ao seu túmulo. É também invocado pelas mulheres em trabalho de parto.",
+      "Morreu por volta de 559, num 6 de novembro. Sua devoção espalhou-se por toda a Europa na Idade Média, e sua memória é conservada no Martirológio Romano."
+    ]
+  },
+
+  "sao-wilibrordo": {
+    titulo: "São Wilibrordo, bispo",
+    resumo: "Monge inglês que evangelizou a Frísia, primeiro bispo de Utreque e fundador da abadia de Echternach — o \"apóstolo dos frísios\".",
+    texto: [
+      "Nasceu por volta de 658 na Nortúmbria (Inglaterra). Educou-se no mosteiro de Ripon, sob São Wilfrido, e depois passou doze anos na Irlanda, aprofundando os estudos e a vida monástica. Ordenado padre, sentiu o chamado de evangelizar os povos ainda pagãos do continente.",
+      "Por volta de 690 partiu para a Frísia (atuais Países Baixos) com onze companheiros, com o apoio de Pepino de Herstal. Em 695 o Papa Sérgio I o consagrou em Roma bispo dos frísios, com o nome de Clemente, e ele fixou sua sede em Utreque.",
+      "Fundou igrejas, mosteiros e escolas, entre eles a célebre abadia de Echternach, em Luxemburgo, que se tornou centro de missão e de cultura. Enfrentou reveses quando guerras e a reação pagã destruíram parte de sua obra, mas sempre recomeçava.",
+      "Morreu em Echternach em 7 de novembro de 739, com cerca de oitenta anos. Venerado como \"apóstolo dos frísios\", é padroeiro dos Países Baixos e de Luxemburgo, e sua memória é celebrada em 7 de novembro."
+    ]
+  },
+
+  "sao-deodato": {
+    titulo: "São Deodato I, Papa",
+    resumo: "Papa romano do início do século VII, sacerdote idoso e caridoso, que governou a Igreja em três anos marcados por terremoto e epidemia em Roma.",
+    texto: [
+      "Deodato — nome que em latim significa \"dado por Deus\" — era romano, filho de um subdiácono chamado Estêvão. Já em idade madura e depois de longos anos de sacerdócio, foi eleito Bispo de Roma em outubro de 615, sucedendo a Bonifácio IV.",
+      "Seu pontificado, de pouco mais de três anos, coincidiu com tempos duros para a cidade: um forte terremoto e uma epidemia. A tradição diz que permaneceu em Roma socorrendo os doentes, e o Martirológio Romano recorda o relato de que curou um leproso com um beijo.",
+      "Cuidou de restituir dignidade ao clero das paróquias de Roma e foi lembrado por sua caridade: em testamento, deixou aos clérigos da cidade o equivalente a um ano de sustento.",
+      "Morreu em 8 de novembro de 618 e foi sepultado na Basílica de São Pedro. Sua memória é celebrada em 8 de novembro."
+    ]
+  },
+
 }
 
 export type MovableFeast = {
