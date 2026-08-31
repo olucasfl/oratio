@@ -231,8 +231,30 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       loading, render + cache, estado de erro com "Tentar novamente", troca de dia, fechar aviso).
       Também: stub global de `scrollIntoView`/`scrollTo` no `vitest.setup.ts` (lacuna do jsdom).
       68 testes novos, nenhum bug encontrado. Cobertura: 41,8% → 58,3% linhas.
-- [ ] Tarefa 25 — páginas restantes, só o suficiente pra fechar o gap até 80% — sem forçar teste
-      em página puramente visual
+- [x] **Tarefa 25** — o resto das páginas/componentes com lógica, testes simples (render +
+      serviços mockados + estados principais + 1–2 interações). 31 arquivos novos:
+      `Vox.tsx` (bootstrap → conversa ativa, erro de bootstrap, nova conversa, envio + streaming
+      da resposta, cópia de erro em falha do stream, apagar conversa via `ConfirmModal`),
+      `Home.tsx` (welcome/gate de visitante, atalho travado, atalho livre navega, "continue de
+      onde parou", "para você hoje", logout), `Quaresma.tsx` (redirect fora da janela, grade dos
+      dias, CTA do dia acionável, adicionar/apagar penitência, aba Sobre), `QuaresmaDia.tsx`
+      (redirect de dia inválido, passos, concluir dia acionável, desmarcar, modo leitura),
+      `Catecismo.tsx` / `BibliaHome.tsx` / `BibliaBook.tsx` / `BibliaChapter.tsx` (react-pdf
+      stubado onde aplica; busca de página/artigo, filtro de livros/capítulos, busca de
+      versículos com debounce, `saveReadingProgress`), `Prayers.tsx` / `PrayersCategories.tsx` /
+      `CategoryPrayers.tsx` / `RosaryHome.tsx` (listas, filtro, gate de conclusão, navegação),
+      `Confissao.tsx` (abas + acordeão), `SantoDoDia.tsx`, `VerifyEmail.tsx`,
+      `ConfirmEmailChange.tsx`, `AccountSettings.tsx`, e os componentes `LiturgyReadingButtons`,
+      `LiturgyCard`, `SaintOfDayCard`, `ShareReadingButton`, `FraseDiaria`, `QuaresmaCard`,
+      `ConsecrationCarta`, `VerifyEmailModal`, `AlertModal`, `OfflineBanner`,
+      `ChangePasswordModal`, `ChangeEmailModal`, `DeleteAccountModal`, `liturgiaService`.
+      Também no `vitest.setup.ts`: stub global de `ResizeObserver` (lacuna do jsdom, usado por
+      `usePublishHeightVar` e libs de UI). ~200 testes novos, nenhum bug de produção encontrado.
+      **Cobertura final: 83,1% linhas / 80,9% statements / 71,9% branches — todos acima da meta.
+      Funções em 72,4% (meta 80%): o gap está sobretudo no `Vox.tsx` (55% de funções — muitos
+      handlers secundários) e em handlers pontuais espalhados. Fechar isso exige teste mais
+      profundo do que "simples". Decisão pendente com o usuário: ajustar a meta de funções
+      (mesmo raciocínio do backend, onde branches ficou atrás) ou aprofundar.**
 
 ## Fase Lint — limpar `npm run lint` (148 problemas, 128 erros / 20 avisos)
 
