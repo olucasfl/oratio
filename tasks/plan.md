@@ -198,8 +198,15 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       Toda a lógica de "rota bloqueada → /login" imperativa foi removida por ser redundante — o
       `ProtectedRoute` já cobre isso de forma síncrona e correta pra toda rota protegida. 17
       testes novos, suíte completa (447 testes) estável em duas rodadas.
-- [ ] Tarefa 22 — `Profile.tsx` (cálculo/exibição de sequência — ligado aos bugs de notificação
-      já corrigidos no backend), `AdminPanel.tsx`
+- [x] **Tarefa 22** — `Profile.tsx` (estados carregando/erro/sem-perfil, redirect sem token e em
+      401, faixas de `getStreakInfo`, escolha de tamanho de fonte, fluxo de push com `ConfirmModal`
+      incl. erro "denied", banner de email pendente + cancelar, logout via `authService`),
+      `AdminPanel.tsx` (skeleton inicial, stats/health-pill da Visão Geral incl. health "down",
+      aba Usuários com contagem, busca com debounce de 350ms montando os filtros, troca pra
+      Gráficos dispara `getAdminTimeseries`, aba Sistema dispara `getSystemStatus` e renderiza os
+      cards, modal de detalhe com atividades, exclusão via modal de confirmação, modal de senha
+      antes do `setAdminStatus`, `errorBox` em falha, "Limpar filtros" no empty state, ordenação
+      por nome). 27 testes novos, nenhum bug encontrado. Cobertura: 34,6% → 41,8% linhas.
 - [ ] Tarefa 23 — Login/Register/ForgotPassword/ResetPassword (validação client-side, tratamento
       de erro)
 - [ ] Tarefa 24 — `RosaryPage`, `LiturgiaFull` (expandir teste existente), páginas de Consagração
