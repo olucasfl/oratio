@@ -10,10 +10,13 @@ import {
   Plus,
   Search,
   BookOpen,
+  Loader2,
 } from "lucide-react"
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 import GuestGateModal from "../../components/GuestGateModal/GuestGateModal"
+import PromptModal from "../../components/PromptModal/PromptModal"
+import NoteViewerModal from "../../components/NoteViewerModal/NoteViewerModal"
 
 import { isLoggedIn } from "../../utils/auth"
 import { getAllMarks, type BibleMark } from "../../services/bibleMarksService"
@@ -38,6 +41,13 @@ function norm(s: string) {
   return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
 }
 
+const NOTE_PREVIEW_MAX = 200
+
+function notePreview(note: string) {
+  if (note.length <= NOTE_PREVIEW_MAX) return { text: note, clipped: false }
+  return { text: note.slice(0, NOTE_PREVIEW_MAX).trimEnd() + "…", clipped: true }
+}
+
 export default function MinhaBiblia() {
 
   const navigate = useNavigate()
@@ -49,6 +59,8 @@ export default function MinhaBiblia() {
   const [query, setQuery] = useState("")
   const [gate, setGate] = useState(!isLoggedIn())
   const [creating, setCreating] = useState(false)
+  const [showCreate, setShowCreate] = useState(false)
+  const [noteView, setNoteView] = useState<BibleMark | null>(null)
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" })
@@ -90,9 +102,8 @@ export default function MinhaBiblia() {
     )
   }
 
-  async function handleCreate() {
-    const name = window.prompt("Nome da coleção")?.trim()
-    if (!name) return
+  async function handleCreate(name: string) {
+    setShowCreate(false)
     setCreating(true)
     try {
       await createCollection(name)
@@ -148,12 +159,14 @@ export default function MinhaBiblia() {
       )}
 
       {loading ? (
-        <div className={styles.stateBox}>Carregando…</div>
+        <div className={styles.stateBox}>
+          <Loader2 size={26} className={styles.spinner} />
+        </div>
       ) : tab === "colecoes" ? (
         <div className={styles.list}>
           <button
             className={styles.newCollection}
-            onClick={handleCreate}
+            onClick={() => setShowCreate(true)}
             disabled={creating}
           >
             <Plus size={16} /> Nova coleção
@@ -197,25 +210,38 @@ export default function MinhaBiblia() {
         </div>
       ) : (
         <div className={styles.list}>
-          {filtered.map((m) => (
-            <button key={m.id} className={styles.card} onClick={() => openVerse(m)}>
-              <div className={styles.cardHead}>
-                {tab === "grifados" && (
-                  <span
-                    className={styles.colorDot}
-                    data-hl-color={m.highlightColor ?? "amber"}
-                  />
+          {filtered.map((m) => {
+            const preview = tab === "anotacoes" && m.note ? notePreview(m.note) : null
+            return (
+              <div key={m.id} className={styles.card}>
+                <button className={styles.cardMain} onClick={() => openVerse(m)}>
+                  <div className={styles.cardHead}>
+                    {tab === "grifados" && (
+                      <span
+                        className={styles.colorDot}
+                        data-hl-color={m.highlightColor ?? "amber"}
+                      />
+                    )}
+                    <strong>{m.reference}</strong>
+                  </div>
+                  <p className={styles.cardText}>{m.text}</p>
+                  {preview && (
+                    <p className={styles.cardNote}>
+                      <NotebookPen size={13} /> {preview.text}
+                    </p>
+                  )}
+                </button>
+                {preview?.clipped && (
+                  <button
+                    className={styles.noteMoreBtn}
+                    onClick={() => setNoteView(m)}
+                  >
+                    Ver anotação completa
+                  </button>
                 )}
-                <strong>{m.reference}</strong>
               </div>
-              <p className={styles.cardText}>{m.text}</p>
-              {tab === "anotacoes" && m.note && (
-                <p className={styles.cardNote}>
-                  <NotebookPen size={13} /> {m.note}
-                </p>
-              )}
-            </button>
-          ))}
+            )
+          })}
         </div>
       )}
 
@@ -227,6 +253,23 @@ export default function MinhaBiblia() {
         open={gate}
         message="Crie uma conta para ter sua área de grifos, favoritos e anotações."
         onClose={() => { setGate(false); navigate("/oratio/biblia") }}
+      />
+
+      <PromptModal
+        open={showCreate}
+        title="Nova coleção"
+        description="Dê um nome para juntar versículos por tema."
+        placeholder="Ex: Promessas de Deus"
+        confirmLabel="Criar"
+        onConfirm={handleCreate}
+        onCancel={() => setShowCreate(false)}
+      />
+
+      <NoteViewerModal
+        open={noteView !== null}
+        reference={noteView?.reference ?? ""}
+        note={noteView?.note ?? ""}
+        onClose={() => setNoteView(null)}
       />
     </div>
   )

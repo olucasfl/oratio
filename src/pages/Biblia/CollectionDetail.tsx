@@ -1,11 +1,14 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { ChevronLeft, Pencil, Trash2, X, BookOpen } from "lucide-react"
+import { ChevronLeft, Loader2, NotebookPen, Pencil, Trash2, X, BookOpen } from "lucide-react"
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
+import PromptModal from "../../components/PromptModal/PromptModal"
+import NoteViewerModal from "../../components/NoteViewerModal/NoteViewerModal"
 
 import { isLoggedIn } from "../../utils/auth"
+import { getAllMarks } from "../../services/bibleMarksService"
 import {
   getCollection,
   renameCollection,
@@ -16,14 +19,21 @@ import {
 
 import styles from "./CollectionDetail.module.css"
 
+const verseKey = (book: string, chapter: number, verse: number) =>
+  `${book}|${chapter}|${verse}`
+
 export default function CollectionDetail() {
 
   const { id } = useParams()
   const navigate = useNavigate()
 
   const [collection, setCollection] = useState<BibleCollection | null>(null)
+  const [notesByVerse, setNotesByVerse] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [showRename, setShowRename] = useState(false)
+  const [confirmRemove, setConfirmRemove] = useState<{ id: string; reference: string } | null>(null)
+  const [noteView, setNoteView] = useState<{ reference: string; note: string } | null>(null)
 
   const load = useCallback(() => {
     if (!id) return
@@ -37,12 +47,20 @@ export default function CollectionDetail() {
     window.scrollTo({ top: 0, behavior: "instant" })
     if (!isLoggedIn()) { navigate("/oratio/biblia"); return }
     load()
+    getAllMarks().then((marks) => {
+      const map: Record<string, string> = {}
+      for (const m of marks) {
+        if (m.note) map[verseKey(m.book, m.chapter, m.verse)] = m.note
+      }
+      setNotesByVerse(map)
+    })
   }, [load, navigate])
 
-  async function handleRename() {
-    if (!collection || !id) return
-    const name = window.prompt("Novo nome da coleção", collection.name)?.trim()
-    if (!name || name === collection.name) return
+  const items = useMemo(() => collection?.items ?? [], [collection])
+
+  async function handleRename(name: string) {
+    setShowRename(false)
+    if (!collection || !id || name === collection.name) return
     try {
       await renameCollection(id, name)
       setCollection({ ...collection, name })
@@ -61,21 +79,27 @@ export default function CollectionDetail() {
     navigate("/oratio/biblia/minha")
   }
 
-  async function handleRemoveItem(itemId: string) {
-    if (!id || !collection) return
+  async function confirmRemoveItem() {
+    const target = confirmRemove
+    setConfirmRemove(null)
+    if (!id || !collection || !target) return
     setCollection({
       ...collection,
-      items: (collection.items ?? []).filter((it) => it.id !== itemId),
+      items: items.filter((it) => it.id !== target.id),
     })
     try {
-      await removeCollectionItem(id, itemId)
+      await removeCollectionItem(id, target.id)
     } catch {
       load() // reconcilia se falhou
     }
   }
 
   if (loading) {
-    return <div className={styles.stateBox}>Carregando…</div>
+    return (
+      <div className={styles.stateBox}>
+        <Loader2 size={26} className={styles.spinner} />
+      </div>
+    )
   }
 
   if (!collection) {
@@ -89,8 +113,6 @@ export default function CollectionDetail() {
       </div>
     )
   }
-
-  const items = collection.items ?? []
 
   return (
     <div className={`${styles.container} page-enter`}>
@@ -107,7 +129,7 @@ export default function CollectionDetail() {
           {items.length} versículo{items.length === 1 ? "" : "s"}
         </span>
         <div className={styles.heroActions}>
-          <button className={styles.heroBtn} onClick={handleRename}>
+          <button className={styles.heroBtn} onClick={() => setShowRename(true)}>
             <Pencil size={14} /> Renomear
           </button>
           <button className={styles.heroBtnDanger} onClick={() => setConfirmDelete(true)}>
@@ -127,29 +149,41 @@ export default function CollectionDetail() {
         </div>
       ) : (
         <div className={styles.list}>
-          {items.map((it) => (
-            <div key={it.id} className={styles.card}>
-              <button
-                className={styles.cardMain}
-                onClick={() =>
-                  navigate(
-                    `/oratio/biblia/${encodeURIComponent(it.book)}/${it.chapter}?verse=${it.verse}`,
-                  )
-                }
-              >
-                <strong className={styles.ref}>{it.reference}</strong>
-                <p className={styles.text}>{it.text}</p>
-                {it.note && <p className={styles.note}>{it.note}</p>}
-              </button>
-              <button
-                className={styles.removeBtn}
-                onClick={() => handleRemoveItem(it.id)}
-                aria-label="Remover da coleção"
-              >
-                <X size={16} />
-              </button>
-            </div>
-          ))}
+          {items.map((it) => {
+            const note = notesByVerse[verseKey(it.book, it.chapter, it.verse)]
+            return (
+              <div key={it.id} className={styles.card}>
+                <button
+                  className={styles.cardMain}
+                  onClick={() =>
+                    navigate(
+                      `/oratio/biblia/${encodeURIComponent(it.book)}/${it.chapter}?verse=${it.verse}`,
+                    )
+                  }
+                >
+                  <strong className={styles.ref}>{it.reference}</strong>
+                  <p className={styles.text}>{it.text}</p>
+                </button>
+
+                {note && (
+                  <button
+                    className={styles.noteBtn}
+                    onClick={() => setNoteView({ reference: it.reference, note })}
+                  >
+                    <NotebookPen size={13} /> Ver anotação
+                  </button>
+                )}
+
+                <button
+                  className={styles.removeBtn}
+                  onClick={() => setConfirmRemove({ id: it.id, reference: it.reference })}
+                  aria-label="Remover da coleção"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            )
+          })}
         </div>
       )}
 
@@ -166,6 +200,34 @@ export default function CollectionDetail() {
         danger
         onConfirm={handleDelete}
         onCancel={() => setConfirmDelete(false)}
+      />
+
+      <ConfirmModal
+        open={confirmRemove !== null}
+        title="Remover da coleção"
+        message={`Tirar ${confirmRemove?.reference ?? "este versículo"} desta coleção? Ele continua na Bíblia e nas suas outras marcações.`}
+        confirmLabel="Remover"
+        cancelLabel="Cancelar"
+        danger
+        onConfirm={confirmRemoveItem}
+        onCancel={() => setConfirmRemove(null)}
+      />
+
+      <PromptModal
+        open={showRename}
+        title="Renomear coleção"
+        initialValue={collection.name}
+        placeholder="Nome da coleção"
+        confirmLabel="Salvar"
+        onConfirm={handleRename}
+        onCancel={() => setShowRename(false)}
+      />
+
+      <NoteViewerModal
+        open={noteView !== null}
+        reference={noteView?.reference ?? ""}
+        note={noteView?.note ?? ""}
+        onClose={() => setNoteView(null)}
       />
     </div>
   )
