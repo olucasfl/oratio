@@ -561,62 +561,27 @@
 }
 
 
-/* card da busca de palavras/temas — CTA destacado dentro da aba Bíblia */
-.verseSearchCard{
-  width:100%;
-  max-width:500px;
-  display:flex;
+/* link discreto pra busca de palavra/tema — logo abaixo do campo de livro */
+.verseSearchLink{
+  align-self:center;
+  display:inline-flex;
   align-items:center;
-  gap:14px;
-  padding:16px 16px;
-  border-radius:var(--oratio-radius-md);
-  border:1px solid rgba(176,24,26,.15);
-  background:linear-gradient(135deg, rgba(176,24,26,.06), rgba(176,24,26,.02));
+  gap:6px;
+  margin-top:-18px;
+  margin-bottom:26px;
+  padding:7px 12px;
+  border:none;
+  border-radius:999px;
+  background:transparent;
+  color:var(--oratio-text-soft);
+  font-family:var(--oratio-font-text);
+  font-size:13px;
+  font-weight:600;
   cursor:pointer;
-  text-align:left;
   transition:var(--oratio-transition);
 }
 
-.verseSearchCard:hover{
-  transform:translateY(-2px);
-  box-shadow:0 10px 26px rgba(176,24,26,.12);
-}
-
-.verseSearchIcon{
-  flex-shrink:0;
-  width:44px;
-  height:44px;
-  border-radius:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:linear-gradient(135deg,#b0181a,#7f1415);
-  color:#fff;
-}
-
-.verseSearchTexts{
-  display:flex;
-  flex-direction:column;
-  gap:3px;
-  min-width:0;
-}
-
-.verseSearchTexts strong{
-  font-family:var(--oratio-font-text);
-  font-size:16px;
-  font-weight:700;
-  color:#4b1818;
-}
-
-.verseSearchTexts span{
-  font-size:12.5px;
-  line-height:1.4;
-  color:var(--oratio-text-soft);
-}
-
-.verseSearchArrow{
-  flex-shrink:0;
-  margin-left:auto;
+.verseSearchLink:hover{
   color:var(--oratio-primary);
 }
 
