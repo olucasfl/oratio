@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -265,10 +265,12 @@ function ChatSkeleton(){
 export default function Vox(){
 
  const navigate = useNavigate()
+ const location = useLocation()
  const { liturgy } = useLiturgy()
 
  const [messages,setMessages] = useState<Message[]>([])
  const [input,setInput] = useState("")
+
  const [loading,setLoading] = useState(false)
  const [loadingConversation,setLoadingConversation] = useState(false)
  // id da mensagem do assistente que está sendo preenchida aos poucos —
@@ -308,6 +310,31 @@ export default function Vox(){
  const initialized = useRef(false)
  const openConversationRequest = useRef(0)
  const sendingRef = useRef(false)
+
+ /*
+  Rascunho vindo de outra tela (ex.: "Perguntar ao Vox" sobre um
+  versículo, em BibliaChapter). Preenche o campo, JÁ EXPANDE o textarea
+  pra mostrar o texto todo (senão fica cortado até o usuário clicar), e
+  limpa o state da navegação pra não repopular ao voltar.
+ */
+ useEffect(()=>{
+  const draft = (location.state as { draft?: string } | null)?.draft
+  if(!draft) return
+
+  setInput(draft)
+  navigate(location.pathname, { replace:true, state:null })
+
+  // espera o React pintar o valor no textarea antes de medir a altura
+  requestAnimationFrame(()=>{
+   const el = textareaRef.current
+   if(el){
+    growTextarea(el)
+    el.focus()
+    el.setSelectionRange(el.value.length, el.value.length)
+   }
+  })
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ },[])
  const typewriterTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
  const errorCopy = useMemo(()=>resolveErrorCopy(errorCode, error || undefined),[errorCode, error])

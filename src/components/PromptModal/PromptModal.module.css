@@ -1,0 +1,102 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1002;
+  background: rgba(0, 0, 0, .6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn .16s ease;
+}
+
+.modal {
+  background: var(--oratio-card-bg);
+  padding: 28px 26px;
+  border-radius: var(--oratio-radius-lg);
+  width: 100%;
+  max-width: 380px;
+  box-shadow: var(--oratio-shadow-strong);
+  animation: pop .18s cubic-bezier(.22, 1, .36, 1);
+}
+
+.title {
+  margin: 0 0 8px;
+  font-family: var(--oratio-font-title);
+  font-size: 20px;
+  color: var(--oratio-primary);
+}
+
+.description {
+  margin: 0 0 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--oratio-text-soft);
+}
+
+.input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border: 1.5px solid var(--oratio-card-border);
+  border-radius: var(--oratio-radius-sm);
+  background: #fdfaf5;
+  font-family: var(--oratio-font-text);
+  font-size: 16px;
+  color: var(--oratio-text-dark);
+  outline: none;
+  margin-bottom: 20px;
+}
+
+.input:focus {
+  border-color: var(--oratio-primary);
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.cancelButton {
+  flex: 1;
+  background: transparent;
+  border: 1px solid var(--oratio-card-border);
+  color: var(--oratio-text-dark);
+  padding: 12px;
+  border-radius: var(--oratio-radius-sm);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.confirmButton {
+  flex: 1;
+  background: var(--oratio-primary);
+  border: none;
+  color: var(--oratio-text-light);
+  padding: 12px;
+  border-radius: var(--oratio-radius-sm);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.confirmButton:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: scale(.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay, .modal { animation: none; }
+}

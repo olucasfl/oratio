@@ -29,6 +29,8 @@ const Tratado          = lazy(() => import("./pages/Consecration/Tratado"))
 const BibliaHome       = lazy(() => import("./pages/Biblia/BibliaHome"))
 const BibliaBook       = lazy(() => import("./pages/Biblia/BibliaBook"))
 const BibliaChapter    = lazy(() => import("./pages/Biblia/BibliaChapter"))
+const MinhaBiblia      = lazy(() => import("./pages/Biblia/MinhaBiblia"))
+const CollectionDetail = lazy(() => import("./pages/Biblia/CollectionDetail"))
 const Vox              = lazy(() => import("./pages/Vox/Vox"))
 const Profile          = lazy(() => import("./pages/Profile/Profile"))
 const AccountSettings  = lazy(() => import("./pages/Profile/AccountSettings"))
@@ -77,7 +79,7 @@ useEffect(()=>{
   /* 🔥 VERSIONAMENTO DE CACHE */
   /* ============================= */
 
-  const APP_VERSION = "v8"
+  const APP_VERSION = "v9"
 
   const savedVersion = localStorage.getItem("app_version")
 
@@ -321,6 +323,8 @@ element={
 />
 
 <Route path="/oratio/biblia" element={<BibliaHome/>}/>
+<Route path="/oratio/biblia/minha" element={<MinhaBiblia/>}/>
+<Route path="/oratio/biblia/colecao/:id" element={<CollectionDetail/>}/>
 <Route path="/oratio/biblia/:book" element={<BibliaBook/>}/>
 <Route path="/oratio/biblia/:book/:chapter" element={<BibliaChapter/>}/>
 

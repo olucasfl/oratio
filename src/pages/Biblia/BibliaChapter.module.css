@@ -400,13 +400,82 @@
 
   text-align:justify;
 
-  font-size:var(--reading-font, 22px);
-  line-height:2.1;
+  font-size:var(--reading-font, 19px);
+  line-height:var(--reading-line, 2.1);
+  font-family:var(--reading-family, var(--oratio-font-text));
 
   color:#372828;
 
-  transition:font-size .25s;
+  transition:font-size .2s, line-height .2s;
 
+  cursor:pointer;
+}
+
+/* grifo estilo marca-texto: pinta só atrás das palavras e quebra
+   linha a linha (nada de bloco retangular no capítulo inteiro) */
+.hl{
+  background:var(--hl, rgba(245,205,100,.55));
+  border-radius:3px;
+  padding:0.05em 0.06em;
+  -webkit-box-decoration-break:clone;
+  box-decoration-break:clone;
+}
+
+.hl[data-hl-color="amber"]  { --hl:rgba(245,205,100,.55); }
+.hl[data-hl-color="green"]  { --hl:rgba(150,220,140,.50); }
+.hl[data-hl-color="blue"]   { --hl:rgba(140,200,245,.50); }
+.hl[data-hl-color="pink"]   { --hl:rgba(247,170,205,.52); }
+.hl[data-hl-color="purple"] { --hl:rgba(203,175,240,.52); }
+
+/* ícone de "tem anotação" ao lado do versículo */
+.noteFlag{
+  display:inline-block;
+  vertical-align:baseline;
+  margin-left:6px;
+  color:#9a7b3b;
+  cursor:pointer;
+}
+
+/* coração de favoritar (1 toque) no fim do versículo */
+.favBtn{
+  vertical-align:baseline;
+  margin-left:6px;
+  padding:0;
+  border:none;
+  background:none;
+  color:rgba(120,90,60,.35);
+  cursor:pointer;
+  transition:color .15s, transform .1s;
+}
+
+.favBtn:hover{ transform:scale(1.15); }
+
+.favBtnOn{
+  color:var(--oratio-primary);
+}
+
+/* toast simples (mesmo padrão do Quaresma) */
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:calc(96px + env(safe-area-inset-bottom));
+  transform:translateX(-50%);
+  z-index:1001;
+  max-width:88vw;
+  padding:12px 18px;
+  border-radius:14px;
+  background:rgba(30,24,22,.94);
+  color:#fff;
+  font-size:14px;
+  font-weight:600;
+  text-align:center;
+  box-shadow:0 12px 30px rgba(0,0,0,.28);
+  animation:toastIn .2s ease;
+}
+
+@keyframes toastIn{
+  from{ opacity:0; transform:translate(-50%,8px); }
+  to{ opacity:1; transform:translate(-50%,0); }
 }
 
 .number{
@@ -571,43 +640,81 @@
 
 
 /* ========================= */
-/* BOTÕES DE TAMANHO DE FONTE*/
+/* BOTÃO "LEITURA" (abre painel) */
 /* ========================= */
 
-.fontSizeBtns{
+.readingBtn{
   margin-left:auto;
-  display:flex;
+  display:inline-flex;
   align-items:center;
-  gap:4px;
-}
-
-.fontBtn{
-  font-size:13px;
-  font-family:var(--oratio-font-text);
-  width:28px;
-  height:28px;
-  border-radius:6px;
+  gap:6px;
+  padding:7px 12px;
+  border-radius:999px;
   border:1.5px solid var(--oratio-card-border);
   background:transparent;
   color:var(--oratio-text-soft);
+  font-size:13px;
+  font-weight:600;
+  font-family:var(--oratio-font-text);
   cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
   transition:var(--oratio-transition);
-  line-height:1;
 }
 
-.fontBtnMd{
-  font-size:16px;
-}
-
-.fontBtnLg{
-  font-size:19px;
-}
-
-.fontBtnActive{
-  background:var(--oratio-primary);
+.readingBtn:hover{
   border-color:var(--oratio-primary);
-  color:#fff;
+  color:var(--oratio-primary);
+}
+
+/* ========================= */
+/* TEMAS DE LEITURA (só no card de texto) */
+/* ========================= */
+
+.textCard[data-reading-width="largo"]{
+  max-width:920px;
+}
+
+.textCard[data-reading-theme="sepia"]{
+  background:#f4ecd8;
+}
+
+.textCard[data-reading-theme="sepia"] .verse{
+  color:#4b3a26;
+}
+
+.textCard[data-reading-theme="sepia"] .chapterHeader{
+  color:#8a7350;
+}
+
+/* no tema escuro o grifo fica saturado e a letra escura, contrastando
+   com a cor — igual marca-texto no papel */
+.textCard[data-reading-theme="escuro"] .hl{
+  color:#1e1c1a;
+}
+
+.textCard[data-reading-theme="escuro"] .hl[data-hl-color="amber"]  { --hl:rgba(247,206,90,.92); }
+.textCard[data-reading-theme="escuro"] .hl[data-hl-color="green"]  { --hl:rgba(130,222,130,.90); }
+.textCard[data-reading-theme="escuro"] .hl[data-hl-color="blue"]   { --hl:rgba(120,195,245,.90); }
+.textCard[data-reading-theme="escuro"] .hl[data-hl-color="pink"]   { --hl:rgba(247,160,200,.90); }
+.textCard[data-reading-theme="escuro"] .hl[data-hl-color="purple"] { --hl:rgba(202,168,245,.90); }
+
+.textCard[data-reading-theme="escuro"]{
+  background:#1e1c1a;
+  box-shadow:0 18px 45px rgba(0,0,0,.35);
+}
+
+.textCard[data-reading-theme="escuro"] .verse{
+  color:#e8e2d9;
+}
+
+.textCard[data-reading-theme="escuro"] .chapterHeader{
+  color:#a99;
+}
+
+.textCard[data-reading-theme="escuro"] .number{
+  background:rgba(255,255,255,.10);
+  color:#f0c9c9;
+}
+
+.textCard[data-reading-theme="escuro"] .capitular{
+  color:#e8b4b4;
 }

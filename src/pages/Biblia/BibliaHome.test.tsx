@@ -71,10 +71,24 @@ describe("BibliaHome", () => {
     expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia/Gênesis")
   })
 
-  it("gates the verse-search tab for guests", () => {
+  it("navigates to Minha Bíblia when logged in", () => {
+    renderPage()
+    fireEvent.click(screen.getByRole("button", { name: /Minha Bíblia/ }))
+    expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia/minha")
+  })
+
+  it("gates Minha Bíblia for guests", () => {
     isLoggedInMock.mockReturnValue(false)
     renderPage()
-    fireEvent.click(screen.getByRole("button", { name: /Pesquisar/ }))
+    fireEvent.click(screen.getByRole("button", { name: /Minha Bíblia/ }))
+    expect(screen.getByText("guest-gate")).toBeInTheDocument()
+    expect(navigateMock).not.toHaveBeenCalledWith("/oratio/biblia/minha")
+  })
+
+  it("gates the verse-search entry for guests", () => {
+    isLoggedInMock.mockReturnValue(false)
+    renderPage()
+    fireEvent.click(screen.getByRole("button", { name: /Buscar por palavra/ }))
     expect(screen.getByText("guest-gate")).toBeInTheDocument()
     expect(screen.queryByPlaceholderText(/Buscar palavra ou frase/)).not.toBeInTheDocument()
   })
@@ -82,7 +96,7 @@ describe("BibliaHome", () => {
   it("runs a debounced verse search and lists the results", async () => {
     searchVersesMock.mockReturnValue([{ book: "João", chapter: 3, verse: 16, text: "Deus amou o mundo" }])
     renderPage()
-    fireEvent.click(screen.getByRole("button", { name: /Pesquisar/ }))
+    fireEvent.click(screen.getByRole("button", { name: /Buscar por palavra/ }))
     fireEvent.change(screen.getByPlaceholderText(/Buscar palavra ou frase/), { target: { value: "amor" } })
 
     await act(async () => { await vi.advanceTimersByTimeAsync(500) })
