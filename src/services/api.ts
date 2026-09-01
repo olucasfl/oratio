@@ -80,7 +80,13 @@ coberto automaticamente, sem precisar lembrar de somar
 mais um removeItem aqui.
 */
 
-const KEEP_ON_LOGOUT = new Set(["app_version", "last_ping"]);
+const KEEP_ON_LOGOUT = new Set([
+  "app_version",
+  "last_ping",
+  // Preferência de aparelho (tamanho de fonte, tema de leitura da Bíblia),
+  // não é dado de conta — não faz sentido resetar no logout.
+  "bibliaLeituraPrefs",
+]);
 
 export function clearSession(redirectTo: string = "/login") {
   for (let i = localStorage.length - 1; i >= 0; i--) {

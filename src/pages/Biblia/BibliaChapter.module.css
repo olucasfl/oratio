@@ -400,12 +400,13 @@
 
   text-align:justify;
 
-  font-size:var(--reading-font, 22px);
-  line-height:2.1;
+  font-size:var(--reading-font, 19px);
+  line-height:var(--reading-line, 2.1);
+  font-family:var(--reading-family, var(--oratio-font-text));
 
   color:#372828;
 
-  transition:font-size .25s;
+  transition:font-size .2s, line-height .2s;
 
 }
 
@@ -571,43 +572,69 @@
 
 
 /* ========================= */
-/* BOTÕES DE TAMANHO DE FONTE*/
+/* BOTÃO "LEITURA" (abre painel) */
 /* ========================= */
 
-.fontSizeBtns{
+.readingBtn{
   margin-left:auto;
-  display:flex;
+  display:inline-flex;
   align-items:center;
-  gap:4px;
-}
-
-.fontBtn{
-  font-size:13px;
-  font-family:var(--oratio-font-text);
-  width:28px;
-  height:28px;
-  border-radius:6px;
+  gap:6px;
+  padding:7px 12px;
+  border-radius:999px;
   border:1.5px solid var(--oratio-card-border);
   background:transparent;
   color:var(--oratio-text-soft);
+  font-size:13px;
+  font-weight:600;
+  font-family:var(--oratio-font-text);
   cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
   transition:var(--oratio-transition);
-  line-height:1;
 }
 
-.fontBtnMd{
-  font-size:16px;
-}
-
-.fontBtnLg{
-  font-size:19px;
-}
-
-.fontBtnActive{
-  background:var(--oratio-primary);
+.readingBtn:hover{
   border-color:var(--oratio-primary);
-  color:#fff;
+  color:var(--oratio-primary);
+}
+
+/* ========================= */
+/* TEMAS DE LEITURA (só no card de texto) */
+/* ========================= */
+
+.textCard[data-reading-width="largo"]{
+  max-width:920px;
+}
+
+.textCard[data-reading-theme="sepia"]{
+  background:#f4ecd8;
+}
+
+.textCard[data-reading-theme="sepia"] .verse{
+  color:#4b3a26;
+}
+
+.textCard[data-reading-theme="sepia"] .chapterHeader{
+  color:#8a7350;
+}
+
+.textCard[data-reading-theme="escuro"]{
+  background:#1e1c1a;
+  box-shadow:0 18px 45px rgba(0,0,0,.35);
+}
+
+.textCard[data-reading-theme="escuro"] .verse{
+  color:#e8e2d9;
+}
+
+.textCard[data-reading-theme="escuro"] .chapterHeader{
+  color:#a99;
+}
+
+.textCard[data-reading-theme="escuro"] .number{
+  background:rgba(255,255,255,.10);
+  color:#f0c9c9;
+}
+
+.textCard[data-reading-theme="escuro"] .capitular{
+  color:#e8b4b4;
 }

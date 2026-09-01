@@ -11,8 +11,16 @@ vi.mock("react-router-dom", async (importOriginal) => ({
 
 vi.mock("../../services/bibliaService", () => ({ getChapter: vi.fn() }))
 vi.mock("../../services/readingProgressService", () => ({ saveReadingProgress: vi.fn() }))
-vi.mock("../../hooks/useReadingSize", () => ({
-  useReadingSize: () => ({ size: "md", fontSize: 18, setSize: setSizeMock }),
+vi.mock("../../hooks/useReadingPrefs", () => ({
+  useReadingPrefs: () => ({
+    prefs: { fontSize: 19, spacing: "normal", font: "serif", theme: "claro", width: "normal" },
+    update: updateMock,
+    lineHeight: 2,
+    fontFamily: "var(--oratio-font-text)",
+  }),
+  FONT_MIN: 15,
+  FONT_MAX: 30,
+  FONT_STEP: 2,
 }))
 vi.mock("../../components/BottomNavbar/BottomNavbar", () => ({ default: () => null }))
 vi.mock("../../components/ShareReadingButton/ShareReadingButton", () => ({ default: () => <div>share</div> }))
@@ -23,7 +31,7 @@ import BibliaChapter from "./BibliaChapter"
 
 const getChapterMock = getChapter as unknown as ReturnType<typeof vi.fn>
 const saveReadingProgressMock = saveReadingProgress as unknown as ReturnType<typeof vi.fn>
-const setSizeMock = vi.fn()
+const updateMock = vi.fn()
 
 function renderPage(path = "/oratio/biblia/Gênesis/1") {
   return render(
@@ -66,10 +74,11 @@ describe("BibliaChapter", () => {
     )
   })
 
-  it("changes the reading font size", () => {
+  it("opens the reading panel and adjusts the font size", () => {
     renderPage()
-    fireEvent.click(screen.getByRole("button", { name: "Fonte grande" }))
-    expect(setSizeMock).toHaveBeenCalledWith("lg")
+    fireEvent.click(screen.getByRole("button", { name: "Ajustes de leitura" }))
+    fireEvent.click(screen.getByRole("button", { name: "Aumentar fonte" }))
+    expect(updateMock).toHaveBeenCalledWith({ fontSize: 21 })
   })
 
 })

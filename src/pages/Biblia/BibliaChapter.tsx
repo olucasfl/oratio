@@ -6,7 +6,8 @@ import {
  Search,
  BookOpen,
  Cross,
- Sparkles
+ Sparkles,
+ Type
 } from "lucide-react"
 
 import { getChapter }
@@ -15,8 +16,11 @@ from "../../services/bibliaService"
 import { saveReadingProgress }
 from "../../services/readingProgressService"
 
-import { useReadingSize }
-from "../../hooks/useReadingSize"
+import { useReadingPrefs }
+from "../../hooks/useReadingPrefs"
+
+import ReadingPanel
+from "../../components/ReadingPanel/ReadingPanel"
 
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
@@ -44,7 +48,9 @@ export default function BibliaChapter(){
  const [search,setSearch] =
   useState("")
 
- const { size, fontSize, setSize } = useReadingSize()
+ const [panelOpen,setPanelOpen] = useState(false)
+
+ const { prefs, update, lineHeight, fontFamily } = useReadingPrefs()
 
  const verseRefs =
   useRef<Record<number,HTMLParagraphElement | null>>({})
@@ -171,27 +177,14 @@ export default function BibliaChapter(){
         Buscar versículo
       </span>
 
-      <div className={styles.fontSizeBtns}>
-
-       <button
-        className={`${styles.fontBtn} ${size==="sm" ? styles.fontBtnActive : ""}`}
-        onClick={()=>setSize("sm")}
-        aria-label="Fonte pequena"
-       >A</button>
-
-       <button
-        className={`${styles.fontBtn} ${styles.fontBtnMd} ${size==="md" ? styles.fontBtnActive : ""}`}
-        onClick={()=>setSize("md")}
-        aria-label="Fonte média"
-       >A</button>
-
-       <button
-        className={`${styles.fontBtn} ${styles.fontBtnLg} ${size==="lg" ? styles.fontBtnActive : ""}`}
-        onClick={()=>setSize("lg")}
-        aria-label="Fonte grande"
-       >A</button>
-
-      </div>
+      <button
+       className={styles.readingBtn}
+       onClick={()=>setPanelOpen(true)}
+       aria-label="Ajustes de leitura"
+      >
+       <Type size={15}/>
+       Leitura
+      </button>
 
       <ShareReadingButton
        compact
@@ -240,7 +233,16 @@ export default function BibliaChapter(){
 
    {/* TEXTO */}
 
-   <div className={styles.textCard} style={{ "--reading-font": `${fontSize}px` } as React.CSSProperties}>
+   <div
+     className={styles.textCard}
+     data-reading-theme={prefs.theme}
+     data-reading-width={prefs.width}
+     style={{
+       "--reading-font": `${prefs.fontSize}px`,
+       "--reading-line": String(lineHeight),
+       "--reading-family": fontFamily
+     } as React.CSSProperties}
+   >
 
     <div className={styles.chapterHeader}>
 
@@ -305,6 +307,13 @@ export default function BibliaChapter(){
    <div className={styles.pageSpacer}></div>
 
    <BottomNavbar/>
+
+   <ReadingPanel
+     open={panelOpen}
+     onClose={()=>setPanelOpen(false)}
+     prefs={prefs}
+     update={update}
+   />
 
   </div>
 
