@@ -10,6 +10,16 @@ import { isLoggedIn } from "../utils/auth"
  cliente manda (o backend não tem o texto bíblico).
 */
 
+export const HIGHLIGHT_COLORS = [
+  "amber",
+  "green",
+  "blue",
+  "pink",
+  "purple",
+] as const
+
+export type HighlightColor = (typeof HIGHLIGHT_COLORS)[number]
+
 export interface BibleMark {
   id: string
   book: string
@@ -18,6 +28,7 @@ export interface BibleMark {
   reference: string
   text: string
   highlighted: boolean
+  highlightColor: HighlightColor | null
   favorite: boolean
   note: string | null
   createdAt: string
@@ -31,6 +42,7 @@ export interface UpsertMarkInput {
   reference: string
   text: string
   highlighted?: boolean
+  highlightColor?: HighlightColor
   favorite?: boolean
   note?: string
 }

@@ -1,8 +1,12 @@
 import { createPortal } from "react-dom"
-import { Heart, Highlighter, NotebookPen, X, FolderPlus, Sparkles } from "lucide-react"
+import { Heart, NotebookPen, X, FolderPlus, Sparkles } from "lucide-react"
 
 import { useLockBodyScroll } from "../../hooks/useLockBodyScroll"
-import type { BibleMark } from "../../services/bibleMarksService"
+import {
+  HIGHLIGHT_COLORS,
+  type BibleMark,
+  type HighlightColor,
+} from "../../services/bibleMarksService"
 
 import styles from "./VerseActionSheet.module.css"
 
@@ -12,11 +16,19 @@ interface Props {
   reference: string
   text: string
   mark: BibleMark | undefined
-  onToggleHighlight: () => void
+  onSetHighlight: (color: HighlightColor | null) => void
   onToggleFavorite: () => void
   onEditNote: () => void
   onAskVox?: () => void
   onAddToCollection?: () => void
+}
+
+const COLOR_LABEL: Record<HighlightColor, string> = {
+  amber: "amarelo",
+  green: "verde",
+  blue: "azul",
+  pink: "rosa",
+  purple: "roxo",
 }
 
 export default function VerseActionSheet({
@@ -25,7 +37,7 @@ export default function VerseActionSheet({
   reference,
   text,
   mark,
-  onToggleHighlight,
+  onSetHighlight,
   onToggleFavorite,
   onEditNote,
   onAskVox,
@@ -36,9 +48,9 @@ export default function VerseActionSheet({
 
   if (!open) return null
 
-  const highlighted = !!mark?.highlighted
   const favorite = !!mark?.favorite
   const hasNote = !!mark?.note
+  const activeColor = mark?.highlightColor ?? null
 
   return createPortal(
     <div className={styles.overlay} onClick={onClose}>
@@ -59,15 +71,26 @@ export default function VerseActionSheet({
 
         <p className={styles.preview}>{text}</p>
 
-        <div className={styles.actions}>
+        <div className={styles.hlRow}>
+          <span className={styles.hlLabel}>Grifar</span>
+          <div className={styles.swatches}>
+            {HIGHLIGHT_COLORS.map((c) => (
+              <button
+                key={c}
+                className={`${styles.swatch} ${styles["sw_" + c]} ${activeColor === c ? styles.swatchOn : ""}`}
+                onClick={() => onSetHighlight(activeColor === c ? null : c)}
+                aria-label={`Grifar de ${COLOR_LABEL[c]}`}
+              />
+            ))}
+          </div>
+          {activeColor && (
+            <button className={styles.removeHl} onClick={() => onSetHighlight(null)}>
+              Remover
+            </button>
+          )}
+        </div>
 
-          <button
-            className={`${styles.action} ${highlighted ? styles.actionOn : ""}`}
-            onClick={onToggleHighlight}
-          >
-            <Highlighter size={19} />
-            {highlighted ? "Remover grifo" : "Grifar"}
-          </button>
+        <div className={styles.actions}>
 
           <button
             className={`${styles.action} ${favorite ? styles.actionOn : ""}`}
