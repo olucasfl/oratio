@@ -25,6 +25,15 @@ export interface BibleCollection {
   updatedAt: string
   _count?: { items: number }
   items?: BibleCollectionItem[]
+  // presente só quando listCollections é chamado com um versículo:
+  // id do item se o versículo já está na coleção, senão null.
+  containsItemId?: string | null
+}
+
+export interface VerseRef {
+  book: string
+  chapter: number
+  verse: number
 }
 
 export interface AddCollectionItemInput {
@@ -38,10 +47,16 @@ export interface AddCollectionItemInput {
 
 /* Leitura — silenciosa */
 
-export async function listCollections(): Promise<BibleCollection[]> {
+export async function listCollections(
+  verseRef?: VerseRef,
+): Promise<BibleCollection[]> {
   if (!isLoggedIn()) return []
   try {
-    const res = await api.get("/oratio/bible/collections")
+    const res = await api.get("/oratio/bible/collections", {
+      params: verseRef
+        ? { book: verseRef.book, chapter: verseRef.chapter, verse: verseRef.verse }
+        : undefined,
+    })
     return Array.isArray(res.data) ? res.data : []
   } catch {
     return []
