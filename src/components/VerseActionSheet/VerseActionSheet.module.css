@@ -1,0 +1,113 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0, 0, 0, .5);
+  backdrop-filter: blur(5px);
+  animation: fadeIn .18s ease;
+}
+
+.sheet {
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  padding: 10px 20px calc(20px + env(safe-area-inset-bottom));
+  animation: slideUp .22s cubic-bezier(.22, 1, .36, 1);
+}
+
+.handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 99px;
+  background: rgba(0, 0, 0, .15);
+  margin: 4px auto 12px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ref {
+  font-family: var(--oratio-font-title);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--oratio-primary);
+}
+
+.closeBtn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 10px;
+  background: #f5f0e8;
+  color: var(--oratio-text-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.preview {
+  margin: 10px 0 16px;
+  font-family: var(--oratio-font-text);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--oratio-text-soft);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--oratio-card-border);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--oratio-text-dark);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--oratio-font-text);
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.action:hover {
+  border-color: var(--oratio-primary);
+}
+
+.actionOn {
+  background: rgba(176, 24, 26, .08);
+  border-color: var(--oratio-primary);
+  color: var(--oratio-primary);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay, .sheet { animation: none; }
+}
