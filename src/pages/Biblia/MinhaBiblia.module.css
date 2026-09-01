@@ -112,9 +112,24 @@
 
 .stateBox {
   max-width: 520px;
-  margin: 40px auto;
-  text-align: center;
+  margin: 50px auto;
+  display: flex;
+  justify-content: center;
   color: var(--oratio-text-soft);
+}
+
+.spinner {
+  animation: spin .8s linear infinite;
+  color: var(--oratio-primary);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation: none; }
 }
 
 .empty {
@@ -145,17 +160,37 @@
 }
 
 .card {
-  width: 100%;
-  text-align: left;
   border: 1px solid var(--oratio-card-border);
   border-radius: 16px;
   background: rgba(255, 255, 255, .92);
-  padding: 14px 16px;
-  cursor: pointer;
+  overflow: hidden;
   transition: transform .12s;
 }
 
 .card:hover { transform: translateY(-2px); }
+
+.cardMain {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  padding: 14px 16px;
+  cursor: pointer;
+}
+
+.noteMoreBtn {
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  border-top: 1px dashed var(--oratio-card-border);
+  background: rgba(176, 24, 26, .04);
+  color: var(--oratio-primary);
+  font-family: var(--oratio-font-text);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
 
 .cardHead {
   display: flex;

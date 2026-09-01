@@ -11,6 +11,9 @@ vi.mock("react-router-dom", async (importOriginal) => ({
 }))
 
 vi.mock("../../utils/auth", () => ({ isLoggedIn: () => true }))
+vi.mock("../../services/bibleMarksService", () => ({
+  getAllMarks: () => Promise.resolve([]),
+}))
 vi.mock("../../services/bibleCollectionsService", () => ({
   getCollection: (...a: unknown[]) => getMock(...a),
   renameCollection: vi.fn(),
@@ -56,10 +59,14 @@ describe("CollectionDetail", () => {
     expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia/Jo%C3%A3o/3?verse=16")
   })
 
-  it("removes an item", async () => {
+  it("removes an item only after confirming", async () => {
     renderPage()
     await screen.findByText("João 3,16")
+
     fireEvent.click(screen.getByRole("button", { name: "Remover da coleção" }))
+    expect(removeItemMock).not.toHaveBeenCalled()
+
+    fireEvent.click(await screen.findByRole("button", { name: "Remover" }))
     await waitFor(() => expect(removeItemMock).toHaveBeenCalledWith("c1", "i1"))
     expect(screen.queryByText("João 3,16")).not.toBeInTheDocument()
   })

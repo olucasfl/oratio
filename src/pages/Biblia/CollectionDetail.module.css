@@ -83,8 +83,23 @@
 .stateBox {
   max-width: 520px;
   margin: 60px auto;
-  text-align: center;
+  display: flex;
+  justify-content: center;
   color: var(--oratio-text-soft);
+}
+
+.spinner {
+  animation: spin .8s linear infinite;
+  color: var(--oratio-primary);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation: none; }
 }
 
 .empty {
@@ -112,6 +127,7 @@
 
 .card {
   display: flex;
+  flex-wrap: wrap;
   align-items: stretch;
   border: 1px solid var(--oratio-card-border);
   border-radius: 16px;
@@ -121,10 +137,28 @@
 
 .cardMain {
   flex: 1;
+  min-width: 0;
   text-align: left;
   border: none;
   background: none;
   padding: 14px 16px;
+  cursor: pointer;
+}
+
+.noteBtn {
+  order: 3;
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: none;
+  border-top: 1px dashed var(--oratio-card-border);
+  background: rgba(176, 24, 26, .04);
+  color: var(--oratio-primary);
+  font-family: var(--oratio-font-text);
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
 }
 

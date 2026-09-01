@@ -122,7 +122,9 @@ export default function AddToCollectionSheet({
 
         <div className={styles.list}>
           {loading ? (
-            <div className={styles.state}>Carregando…</div>
+            <div className={styles.state}>
+              <Loader2 size={22} className={styles.spin} />
+            </div>
           ) : collections.length === 0 ? (
             <div className={styles.state}>
               Você ainda não tem coleções. Crie uma acima.
