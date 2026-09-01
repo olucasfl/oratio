@@ -8,6 +8,7 @@ import PromptModal from "../../components/PromptModal/PromptModal"
 import NoteViewerModal from "../../components/NoteViewerModal/NoteViewerModal"
 
 import { isLoggedIn } from "../../utils/auth"
+import { useOffline } from "../../hooks/useOffline"
 import { getAllMarks } from "../../services/bibleMarksService"
 import {
   getCollection,
@@ -26,6 +27,7 @@ export default function CollectionDetail() {
 
   const { id } = useParams()
   const navigate = useNavigate()
+  const isOffline = useOffline()
 
   const [collection, setCollection] = useState<BibleCollection | null>(null)
   const [notesByVerse, setNotesByVerse] = useState<Record<string, string>>({})
@@ -108,7 +110,11 @@ export default function CollectionDetail() {
         <button className={styles.backButton} onClick={() => navigate("/oratio/biblia/minha")}>
           <ChevronLeft size={18} /> Voltar
         </button>
-        <div className={styles.stateBox}>Coleção não encontrada.</div>
+        <div className={styles.stateBox}>
+          {isOffline
+            ? "Você está sem conexão. Reconecte para ver esta coleção."
+            : "Coleção não encontrada."}
+        </div>
         <BottomNavbar />
       </div>
     )
