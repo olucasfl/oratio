@@ -259,24 +259,47 @@
 
 .newCollection:disabled { opacity: .5; cursor: not-allowed; }
 
-.collectionRow {
+.collectionCard {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  color: var(--oratio-primary);
+  text-align: left;
+  padding: 16px;
+  border: 1px solid var(--oratio-card-border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .92);
+  cursor: pointer;
+  transition: transform .12s;
+}
+
+.collectionCard:hover { transform: translateY(-2px); }
+
+.collectionText {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .collectionName {
-  display: block;
   font-family: var(--oratio-font-title);
   font-size: 16px;
   color: #4b1818;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .collectionCount {
   font-size: 13px;
   color: var(--oratio-text-soft);
+}
+
+.collectionArrow {
+  flex-shrink: 0;
+  color: var(--oratio-primary);
 }
 
 .pageSpacer { height: 120px; }

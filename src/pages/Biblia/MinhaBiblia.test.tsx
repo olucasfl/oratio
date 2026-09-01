@@ -101,6 +101,21 @@ describe("MinhaBiblia", () => {
     expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia/Jo%C3%A3o/3?verse=16")
   })
 
+  it("lists collections with name, count and a working link", async () => {
+    listCollectionsMock.mockResolvedValue([
+      { id: "c1", name: "Promessas de Deus", _count: { items: 3 } },
+    ])
+    renderPage()
+    await screen.findByText("João 3,16")
+    fireEvent.click(screen.getByRole("button", { name: /Coleções/ }))
+
+    const card = screen.getByRole("button", { name: /Promessas de Deus/ })
+    expect(card).toHaveTextContent("3 versículos")
+
+    fireEvent.click(card)
+    expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia/colecao/c1")
+  })
+
   it("creates a collection through the Oratio modal (no window.prompt)", async () => {
     const promptSpy = vi.spyOn(window, "prompt")
     renderPage()
