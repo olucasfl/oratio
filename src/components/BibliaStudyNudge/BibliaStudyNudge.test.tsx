@@ -30,6 +30,8 @@ beforeEach(() => {
   vi.clearAllMocks()
   localStorage.clear()
   vi.useFakeTimers({ shouldAdvanceTime: true })
+  // dentro da janela de 21 dias do aviso
+  vi.setSystemTime(new Date("2026-09-05T12:00:00Z"))
 })
 
 describe("BibliaStudyNudge", () => {
@@ -48,6 +50,13 @@ describe("BibliaStudyNudge", () => {
     expect(localStorage.getItem(KEY)).toBeTruthy()
 
     unmount()
+    renderNudge()
+    await advance(600)
+    expect(screen.queryByText(/estudar a Bíblia/i)).not.toBeInTheDocument()
+  })
+
+  it("never shows once the 21-day window has passed, even if never seen", async () => {
+    vi.setSystemTime(new Date("2026-10-01T12:00:00Z"))
     renderNudge()
     await advance(600)
     expect(screen.queryByText(/estudar a Bíblia/i)).not.toBeInTheDocument()
