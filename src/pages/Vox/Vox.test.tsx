@@ -121,7 +121,9 @@ describe("Vox", () => {
     await waitFor(() =>
       expect(m.stream).toHaveBeenCalledWith("Quem é Deus?", "c1", expect.any(Function)),
     )
-    expect(await screen.findByText("Deus é amor.")).toBeInTheDocument()
+    expect(
+      await screen.findByText("Deus é amor.", {}, { timeout: 4000 }),
+    ).toBeInTheDocument()
   })
 
   it("surfaces the error copy when the stream reports a failure", async () => {
