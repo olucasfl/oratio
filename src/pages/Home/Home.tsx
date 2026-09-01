@@ -28,6 +28,9 @@ from "../../components/QuaresmaCard/QuaresmaCard"
 import QuaresmaNudge
 from "../../components/QuaresmaNudge/QuaresmaNudge"
 
+import BibliaStudyNudge
+from "../../components/BibliaStudyNudge/BibliaStudyNudge"
+
 import {
  LogOut,
  Loader2,
@@ -426,6 +429,10 @@ export default function Home(){
 
    <QuaresmaNudge
     guest={guest}
+    blocked={showWelcome || gateMessage !== null}
+   />
+
+   <BibliaStudyNudge
     blocked={showWelcome || gateMessage !== null}
    />
 

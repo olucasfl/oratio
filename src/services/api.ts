@@ -86,6 +86,9 @@ const KEEP_ON_LOGOUT = new Set([
   // Preferência de aparelho (tamanho de fonte, tema de leitura da Bíblia),
   // não é dado de conta — não faz sentido resetar no logout.
   "bibliaLeituraPrefs",
+  // Flag de "já vi o aviso das novidades da Bíblia" — é permanente por
+  // natureza, não deve reaparecer só porque a pessoa deslogou.
+  "biblia_estudo_nudge_v1",
 ]);
 
 export function clearSession(redirectTo: string = "/login") {
