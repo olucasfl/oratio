@@ -7,6 +7,7 @@ import {
   listCollections,
   createCollection,
   addCollectionItem,
+  removeCollectionItem,
   type BibleCollection,
   type AddCollectionItemInput,
 } from "../../services/bibleCollectionsService"
@@ -32,34 +33,44 @@ export default function AddToCollectionSheet({
   const [collections, setCollections] = useState<BibleCollection[]>([])
   const [loading, setLoading] = useState(true)
   const [busyId, setBusyId] = useState<string | null>(null)
-  const [addedIds, setAddedIds] = useState<Set<string>>(new Set())
+  // itemId quando o versículo está na coleção, null quando não está
+  const [membership, setMembership] = useState<Record<string, string | null>>({})
   const [newName, setNewName] = useState("")
   const [creating, setCreating] = useState(false)
 
   useLockBodyScroll(open)
 
   useEffect(() => {
-    if (!open) return
-    setAddedIds(new Set())
+    if (!open || !item) return
     setNewName("")
     setLoading(true)
-    listCollections().then((c) => {
+    listCollections({ book: item.book, chapter: item.chapter, verse: item.verse }).then((c) => {
       setCollections(c)
+      const m: Record<string, string | null> = {}
+      for (const col of c) m[col.id] = col.containsItemId ?? null
+      setMembership(m)
       setLoading(false)
     })
-  }, [open])
+  }, [open, item])
 
   if (!open) return null
 
-  async function addTo(collection: BibleCollection) {
+  async function toggle(collection: BibleCollection) {
     if (!item || busyId) return
+    const existingItemId = membership[collection.id]
     setBusyId(collection.id)
     try {
-      await addCollectionItem(collection.id, item)
-      setAddedIds((s) => new Set(s).add(collection.id))
-      onDone(`Adicionado a "${collection.name}"`)
+      if (existingItemId) {
+        await removeCollectionItem(collection.id, existingItemId)
+        setMembership((m) => ({ ...m, [collection.id]: null }))
+        onDone(`Removido de "${collection.name}"`)
+      } else {
+        const created = await addCollectionItem(collection.id, item)
+        setMembership((m) => ({ ...m, [collection.id]: created.id }))
+        onDone(`Adicionado a "${collection.name}"`)
+      }
     } catch {
-      onDone("Não foi possível adicionar. Tente de novo.")
+      onDone("Não foi possível salvar. Tente de novo.")
     } finally {
       setBusyId(null)
     }
@@ -71,9 +82,9 @@ export default function AddToCollectionSheet({
     setCreating(true)
     try {
       const created = await createCollection(name)
-      await addCollectionItem(created.id, item)
+      const addedItem = await addCollectionItem(created.id, item)
       setCollections((c) => [{ ...created, _count: { items: 1 } }, ...c])
-      setAddedIds((s) => new Set(s).add(created.id))
+      setMembership((m) => ({ ...m, [created.id]: addedItem.id }))
       setNewName("")
       onDone(`Adicionado a "${name}"`)
     } catch {
@@ -89,13 +100,13 @@ export default function AddToCollectionSheet({
         className={styles.sheet}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
-        aria-label={`Adicionar ${reference} a uma coleção`}
+        aria-label={`Coleções de ${reference}`}
       >
         <div className={styles.handle} />
 
         <div className={styles.header}>
           <div>
-            <span className={styles.label}>Adicionar à coleção</span>
+            <span className={styles.label}>Coleções</span>
             <span className={styles.ref}>{reference}</span>
           </div>
           <button className={styles.closeBtn} onClick={onClose} aria-label="Fechar">
@@ -131,18 +142,19 @@ export default function AddToCollectionSheet({
             </div>
           ) : (
             collections.map((c) => {
-              const added = addedIds.has(c.id)
+              const inCollection = !!membership[c.id]
               return (
                 <button
                   key={c.id}
-                  className={`${styles.row} ${added ? styles.rowAdded : ""}`}
-                  onClick={() => addTo(c)}
-                  disabled={busyId === c.id || added}
+                  className={`${styles.row} ${inCollection ? styles.rowAdded : ""}`}
+                  onClick={() => toggle(c)}
+                  disabled={busyId === c.id}
+                  aria-pressed={inCollection}
                 >
                   <span className={styles.rowName}>{c.name}</span>
                   {busyId === c.id ? (
                     <Loader2 size={16} className={styles.spin} />
-                  ) : added ? (
+                  ) : inCollection ? (
                     <Check size={16} />
                   ) : (
                     <Plus size={16} />
@@ -152,6 +164,10 @@ export default function AddToCollectionSheet({
             })
           )}
         </div>
+
+        <p className={styles.hint}>
+          Toque para adicionar; toque de novo para tirar desta coleção.
+        </p>
       </div>
     </div>,
     document.body,

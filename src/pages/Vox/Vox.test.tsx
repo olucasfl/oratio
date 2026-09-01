@@ -73,6 +73,28 @@ describe("Vox", () => {
     expect(await screen.findByText("Não foi possível carregar suas conversas.")).toBeInTheDocument()
   })
 
+  it("prefills the input with a draft passed via navigation state and clears that state", async () => {
+    const draft = 'João 3,16 — "Porque Deus amou o mundo…"\n\nO que este versículo quer me dizer?'
+    render(
+      <MemoryRouter initialEntries={[{ pathname: "/oratio/vox", state: { draft } }]}>
+        <Vox />
+      </MemoryRouter>,
+    )
+
+    const box = await screen.findByDisplayValue(/O que este versículo quer me dizer/)
+    expect((box as HTMLTextAreaElement).value).toBe(draft)
+    expect(navigateMock).toHaveBeenCalledWith("/oratio/vox", { replace: true, state: null })
+  })
+
+  it("does not prefill anything when there is no draft", async () => {
+    renderVox()
+    await screen.findByText("O que é a graça?")
+    expect(navigateMock).not.toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ state: null }),
+    )
+  })
+
   it("creates a new conversation", async () => {
     renderVox()
     await screen.findByText("O que é a graça?")
