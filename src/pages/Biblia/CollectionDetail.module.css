@@ -202,3 +202,10 @@
 .removeBtn:hover { color: var(--oratio-primary); background: rgba(176, 24, 26, .05); }
 
 .pageSpacer { height: 120px; }
+
+@media (max-width: 400px) {
+  .container { padding-left: 14px; padding-right: 14px; }
+  .title { font-size: 25px; }
+  .heroActions { flex-wrap: wrap; }
+  .heroBtn, .heroBtnDanger { font-size: 12.5px; padding: 8px 12px; }
+}

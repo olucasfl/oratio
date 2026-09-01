@@ -97,7 +97,7 @@ describe("App boot sequence", () => {
       renderAppAt("/oratio/home")
       await screen.findByText("Home")
 
-      expect(localStorage.getItem("app_version")).toBe("v9")
+      expect(localStorage.getItem("app_version")).toBe("v10")
       expect(localStorage.getItem("oratio_some_cache")).toBeNull()
       expect(localStorage.getItem("stage_progress")).toBeNull()
       expect(localStorage.getItem("consecration_day_3")).toBeNull()
@@ -127,7 +127,7 @@ describe("App boot sequence", () => {
     })
 
     it("does not touch any keys when the app_version already matches", async () => {
-      localStorage.setItem("app_version", "v9")
+      localStorage.setItem("app_version", "v10")
       localStorage.setItem("oratio_some_cache", "still-here")
       localStorage.setItem("access_token", "tok")
 

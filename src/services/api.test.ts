@@ -57,13 +57,13 @@ describe("clearSession", () => {
 
   it("keeps app_version and last_ping through logout", () => {
 
-    localStorage.setItem("app_version", "v9")
+    localStorage.setItem("app_version", "v10")
     localStorage.setItem("last_ping", "123456")
     localStorage.setItem("access_token", "abc")
 
     clearSession()
 
-    expect(localStorage.getItem("app_version")).toBe("v9")
+    expect(localStorage.getItem("app_version")).toBe("v10")
     expect(localStorage.getItem("last_ping")).toBe("123456")
 
   })
