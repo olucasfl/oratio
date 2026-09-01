@@ -1,4 +1,4 @@
-const CACHE_NAME = "oratio-cache-v19"
+const CACHE_NAME = "oratio-cache-v20"
 
 /* ============================= */
 /* APP SHELL */
