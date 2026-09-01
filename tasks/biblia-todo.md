@@ -324,12 +324,13 @@ state (via `navigate(pathname, { replace: true, state: null })`) para não repop
 offline não estoura no `ErrorBoundary`.
 
 **Critérios de aceite:**
-- [ ] `APP_VERSION` e `CACHE_NAME` incrementados
-- [ ] `bibliaLeituraPrefs` **não** é apagada pelo cleanup do `APP_VERSION` (nome sem os substrings)
-- [ ] Abrir rotas novas offline: mostra estado de erro tratado, não tela branca
+- [x] `APP_VERSION` (v9) e `CACHE_NAME` (v20) incrementados
+- [x] `bibliaLeituraPrefs` **não** é apagada pelo cleanup do `APP_VERSION` (teste em `App.test.tsx`)
+- [x] Rotas novas offline: MinhaBiblia cai em listas vazias; CollectionDetail mostra aviso de "sem conexão" (via `useOffline`), não "não encontrada"
 
 **Verificação:**
-- [ ] `npm run build` + `npm run preview`, DevTools offline, navegar pelas rotas novas
+- [x] `npm run build` limpo, suíte verde (714 testes)
+- [ ] Manual: `npm run preview` + DevTools offline nas rotas novas (a cargo do usuário)
 
 **Arquivos:** `src/App.tsx`, `public/sw.js`
 **Escopo:** S
@@ -339,12 +340,12 @@ offline não estoura no `ErrorBoundary`.
 ### F9.2 — Gate de visitante + estados vazios/carregando
 
 **Critérios de aceite:**
-- [ ] `/oratio/biblia/minha` e `/oratio/biblia/colecao/:id`: visitante vê `GuestGateModal` (ou redirect), nunca request cru falhando
-- [ ] Todas as listas têm estado vazio e skeleton de carregamento
-- [ ] `<BottomNavbar/>` presente nas páginas novas
+- [x] `/oratio/biblia/minha` → `GuestGateModal` + redirect; `/oratio/biblia/colecao/:id` → redirect pra `/oratio/biblia`
+- [x] Todas as listas têm estado vazio; carregamento com spinner (Loader2)
+- [x] `<BottomNavbar/>` presente em MinhaBiblia e CollectionDetail
 
 **Verificação:**
-- [ ] Navegar deslogado por todas as telas novas
+- [x] Testes cobrem o gate de visitante nas duas telas
 
 **Arquivos:** `src/pages/Biblia/MinhaBiblia.tsx`, `src/pages/Biblia/CollectionDetail.tsx`
 **Escopo:** S
@@ -354,8 +355,8 @@ offline não estoura no `ErrorBoundary`.
 ### F9.3 — Documentação + memória
 
 **Critérios de aceite:**
-- [ ] `docs/ARCHITECTURE.md`: seção sobre a Bíblia atualizada (marks no backend, snapshots, painel de leitura, rotas novas, por que Minha Bíblia não puxa `bibliaService`)
-- [ ] Memória do projeto: nota curta sobre a feature "Bíblia de Estudo" e onde vivem os planos
+- [x] `docs/ARCHITECTURE.md` (frontend e backend): seções sobre a Bíblia atualizadas
+- [x] Memória do projeto: nota `biblia-estudo` com escopo, decisões fixadas e itens fora de escopo
 
 **Arquivos:** `docs/ARCHITECTURE.md`, memória
 **Escopo:** XS

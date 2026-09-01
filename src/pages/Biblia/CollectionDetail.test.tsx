@@ -11,6 +11,7 @@ vi.mock("react-router-dom", async (importOriginal) => ({
 }))
 
 vi.mock("../../utils/auth", () => ({ isLoggedIn: () => true }))
+vi.mock("../../hooks/useOffline", () => ({ useOffline: () => offline }))
 vi.mock("../../services/bibleMarksService", () => ({
   getAllMarks: () => Promise.resolve([]),
 }))
@@ -27,9 +28,11 @@ import CollectionDetail from "./CollectionDetail"
 const getMock = vi.fn()
 const deleteMock = vi.fn()
 const removeItemMock = vi.fn()
+let offline = false
 
 beforeEach(() => {
   vi.clearAllMocks()
+  offline = false
   getMock.mockResolvedValue({
     id: "c1",
     name: "Promessas de Deus",
@@ -69,6 +72,20 @@ describe("CollectionDetail", () => {
     fireEvent.click(await screen.findByRole("button", { name: "Remover" }))
     await waitFor(() => expect(removeItemMock).toHaveBeenCalledWith("c1", "i1"))
     expect(screen.queryByText("João 3,16")).not.toBeInTheDocument()
+  })
+
+  it("shows an offline message instead of 'not found' when the fetch fails offline", async () => {
+    offline = true
+    getMock.mockResolvedValue(null)
+    renderPage()
+    expect(await screen.findByText(/sem conex/i)).toBeInTheDocument()
+    expect(screen.queryByText(/não encontrada/i)).not.toBeInTheDocument()
+  })
+
+  it("still says 'not found' when online and the collection is missing", async () => {
+    getMock.mockResolvedValue(null)
+    renderPage()
+    expect(await screen.findByText(/não encontrada/i)).toBeInTheDocument()
   })
 
   it("deletes the collection after confirmation and returns to Minha Bíblia", async () => {

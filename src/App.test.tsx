@@ -115,6 +115,17 @@ describe("App boot sequence", () => {
       expect(localStorage.getItem("oratio_quaresma_nudge_2026")).toBe("123456")
     })
 
+    it("keeps the Bible reading preferences through a version bump (key has no swept substring)", async () => {
+      localStorage.setItem("app_version", "v7")
+      localStorage.setItem("bibliaLeituraPrefs", '{"theme":"escuro"}')
+      localStorage.setItem("access_token", "tok")
+
+      renderAppAt("/oratio/home")
+      await screen.findByText("Home")
+
+      expect(localStorage.getItem("bibliaLeituraPrefs")).toBe('{"theme":"escuro"}')
+    })
+
     it("does not touch any keys when the app_version already matches", async () => {
       localStorage.setItem("app_version", "v9")
       localStorage.setItem("oratio_some_cache", "still-here")
