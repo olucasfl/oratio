@@ -130,6 +130,62 @@
   cursor: not-allowed;
 }
 
+.confirmBox {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1.5px solid rgba(176, 24, 26, .25);
+  border-radius: 14px;
+  background: rgba(176, 24, 26, .05);
+}
+
+.confirmText {
+  display: block;
+  font-family: var(--oratio-font-text);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--oratio-text-dark);
+  margin-bottom: 12px;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 10px;
+}
+
+.confirmCancel {
+  flex: 1;
+  padding: 12px;
+  border: 1.5px solid rgba(0, 0, 0, .14);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--oratio-text-dark);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.confirmDelete {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: var(--oratio-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.confirmCancel:disabled,
+.confirmDelete:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
 .spin { animation: spin .8s linear infinite; }
 
 @keyframes slideUp {
