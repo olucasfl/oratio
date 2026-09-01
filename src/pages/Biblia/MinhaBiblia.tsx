@@ -182,19 +182,17 @@ export default function MinhaBiblia() {
             collections.map((c) => (
               <button
                 key={c.id}
-                className={styles.card}
+                className={styles.collectionCard}
                 onClick={() => navigate(`/oratio/biblia/colecao/${c.id}`)}
               >
-                <div className={styles.collectionRow}>
-                  <div>
-                    <strong className={styles.collectionName}>{c.name}</strong>
-                    <span className={styles.collectionCount}>
-                      {c._count?.items ?? 0} versículo
-                      {(c._count?.items ?? 0) === 1 ? "" : "s"}
-                    </span>
-                  </div>
-                  <ChevronRight size={18} />
+                <div className={styles.collectionText}>
+                  <strong className={styles.collectionName}>{c.name}</strong>
+                  <span className={styles.collectionCount}>
+                    {c._count?.items ?? 0} versículo
+                    {(c._count?.items ?? 0) === 1 ? "" : "s"}
+                  </span>
                 </div>
+                <ChevronRight size={18} className={styles.collectionArrow} />
               </button>
             ))
           )}
