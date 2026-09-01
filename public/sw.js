@@ -1,4 +1,4 @@
-const CACHE_NAME = "oratio-cache-v21"
+const CACHE_NAME = "oratio-cache-v22"
 
 /* ============================= */
 /* APP SHELL */
@@ -136,6 +136,24 @@ self.addEventListener("fetch", (event) => {
  /* ignorar protocolos estranhos */
 
  if (url.protocol !== "http:" && url.protocol !== "https:") {
+  return
+ }
+
+ /* ============================= */
+ /* SÓ RECURSOS DO PRÓPRIO APP */
+ /* ============================= */
+
+ /*
+ O SW só gerencia recursos servidos do mesmo origin do app. Qualquer
+ coisa de terceiros (fontes do Google, etc.) passa direto pro navegador.
+
+ Por que: um <link rel="stylesheet"> cross-origin (ex.: fonts.googleapis.com)
+ é buscado em modo "no-cors", então o SW recebe uma resposta OPACA. Servir
+ essa resposta opaca de volta pra página faz o navegador NÃO aplicar o CSS
+ — as fontes Cinzel / Cormorant Garamond sumiam e tudo caía pra serifa do
+ sistema. Deixando o navegador buscar direto, volta a funcionar como antes.
+ */
+ if (url.origin !== self.location.origin) {
   return
  }
 
