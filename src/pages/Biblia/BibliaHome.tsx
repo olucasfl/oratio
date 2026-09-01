@@ -275,17 +275,6 @@ export default function BibliaHome(){
 
    {searchMode === "livros" && (
     <>
-     <button className={styles.verseSearchCard} onClick={handleSearchTabClick}>
-      <div className={styles.verseSearchIcon}>
-       <Sparkles size={20}/>
-      </div>
-      <div className={styles.verseSearchTexts}>
-       <strong>Pesquisar na Bíblia</strong>
-       <span>Encontre qualquer palavra, versículo ou tema — “amor”, “não temas”…</span>
-      </div>
-      <ChevronRight size={18} className={styles.verseSearchArrow}/>
-     </button>
-
      <div className={styles.searchWrapper}>
       <Search size={18} className={styles.searchIcon}/>
       <input
@@ -296,6 +285,12 @@ export default function BibliaHome(){
        className={styles.searchInput}
       />
      </div>
+
+     <button className={styles.verseSearchLink} onClick={handleSearchTabClick}>
+      <Sparkles size={14}/>
+      <span>Buscar por palavra ou tema</span>
+      <ChevronRight size={14}/>
+     </button>
     </>
    )}
 
