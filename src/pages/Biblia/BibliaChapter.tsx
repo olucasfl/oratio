@@ -42,6 +42,9 @@ from "../../components/VerseActionSheet/VerseActionSheet"
 import VerseNoteEditor
 from "../../components/VerseNoteEditor/VerseNoteEditor"
 
+import AddToCollectionSheet
+from "../../components/AddToCollectionSheet/AddToCollectionSheet"
+
 import GuestGateModal
 from "../../components/GuestGateModal/GuestGateModal"
 
@@ -83,6 +86,7 @@ export default function BibliaChapter(){
 
  const [sheetVerse,setSheetVerse] = useState<number | null>(null)
  const [noteVerse,setNoteVerse]   = useState<number | null>(null)
+ const [collVerse,setCollVerse]   = useState<number | null>(null)
  const [noteSaving,setNoteSaving] = useState(false)
  const [toast,setToast]           = useState<string | null>(null)
  const [gateMsg,setGateMsg]       = useState<string | null>(null)
@@ -531,6 +535,43 @@ export default function BibliaChapter(){
        setSheetVerse(null)
        setNoteVerse(v)
      }}
+     onAddToCollection={()=>{
+       const v = sheetVerse
+       setSheetVerse(null)
+       setCollVerse(v)
+     }}
+     onAskVox={()=>{
+       if(sheetVerse === null) return
+       const text = capitulo.versiculos.find((v:Verse)=>v.versiculo === sheetVerse)?.texto ?? ""
+       const ref = buildReference(sheetVerse)
+       setSheetVerse(null)
+       navigate("/oratio/vox", {
+         state: { draft: `${ref} — "${text}"\n\nO que este versículo quer me dizer?` }
+       })
+     }}
+   />
+
+   <AddToCollectionSheet
+     open={collVerse !== null}
+     onClose={()=>setCollVerse(null)}
+     reference={collVerse !== null ? buildReference(collVerse) : ""}
+     item={
+       collVerse !== null
+        ? (()=>{
+            const vv = capitulo.versiculos.find((v:Verse)=>v.versiculo === collVerse)
+            return vv
+             ? {
+                 book: book!,
+                 chapter: chapterNum,
+                 verse: collVerse,
+                 reference: buildReference(collVerse),
+                 text: vv.texto
+               }
+             : null
+          })()
+        : null
+     }
+     onDone={(msg)=>setToast(msg)}
    />
 
    <VerseNoteEditor

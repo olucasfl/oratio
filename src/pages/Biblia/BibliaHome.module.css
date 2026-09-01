@@ -561,6 +561,50 @@
 }
 
 
+/* entrada minimalista da busca de palavras, dentro da aba Bíblia */
+.verseSearchEntry{
+  width:100%;
+  max-width:500px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:13px 16px;
+  border-radius:var(--oratio-radius-sm);
+  border:1.5px dashed var(--oratio-card-border);
+  background:transparent;
+  color:var(--oratio-text-soft);
+  font-family:var(--oratio-font-text);
+  font-size:14.5px;
+  font-weight:600;
+  cursor:pointer;
+  transition:var(--oratio-transition);
+}
+
+.verseSearchEntry:hover{
+  border-color:var(--oratio-primary);
+  color:var(--oratio-primary);
+}
+
+.verseSearchEntry > :last-child{
+  margin-left:auto;
+}
+
+.verseSearchBack{
+  width:100%;
+  max-width:500px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  border:none;
+  background:none;
+  color:var(--oratio-primary);
+  font-family:var(--oratio-font-text);
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  padding:2px 0;
+}
+
 /* ========================= */
 /* RESULTADOS DE VERSÍCULOS  */
 /* ========================= */

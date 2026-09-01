@@ -71,7 +71,21 @@ describe("BibliaHome", () => {
     expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia/Gênesis")
   })
 
-  it("gates the verse-search tab for guests", () => {
+  it("navigates to Minha Bíblia when logged in", () => {
+    renderPage()
+    fireEvent.click(screen.getByRole("button", { name: /Minha Bíblia/ }))
+    expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia/minha")
+  })
+
+  it("gates Minha Bíblia for guests", () => {
+    isLoggedInMock.mockReturnValue(false)
+    renderPage()
+    fireEvent.click(screen.getByRole("button", { name: /Minha Bíblia/ }))
+    expect(screen.getByText("guest-gate")).toBeInTheDocument()
+    expect(navigateMock).not.toHaveBeenCalledWith("/oratio/biblia/minha")
+  })
+
+  it("gates the verse-search entry for guests", () => {
     isLoggedInMock.mockReturnValue(false)
     renderPage()
     fireEvent.click(screen.getByRole("button", { name: /Pesquisar/ }))

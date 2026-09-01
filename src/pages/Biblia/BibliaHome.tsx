@@ -28,6 +28,7 @@ import {
  ChevronRight,
  ChevronLeft,
  BookOpen,
+ Bookmark,
  Cross,
  Clock,
  X,
@@ -124,6 +125,19 @@ export default function BibliaHome(){
   }
 
   setSearchMode("versiculos")
+
+ }
+
+ function handleMinhaBibliaClick(){
+
+  if(!isLoggedIn()){
+   setGateMessage(
+    "Crie uma conta para ter sua área de grifos, favoritos e anotações."
+   )
+   return
+  }
+
+  navigate("/oratio/biblia/minha")
 
  }
 
@@ -238,45 +252,58 @@ export default function BibliaHome(){
 
    </div>
 
-   {/* ABAS DE BUSCA */}
+   {/* ABAS: BÍBLIA | MINHA BÍBLIA */}
 
    <div className={styles.searchTabs}>
 
     <button
-     className={`${styles.searchTab} ${searchMode==="livros" ? styles.searchTabActive : ""}`}
-     onClick={()=>setSearchMode("livros")}
+     className={`${styles.searchTab} ${styles.searchTabActive}`}
     >
-     <BookOpen size={14}/> Livros
+     <BookOpen size={14}/> Bíblia
     </button>
 
     <button
-     className={`${styles.searchTab} ${searchMode==="versiculos" ? styles.searchTabActive : ""}`}
-     onClick={handleSearchTabClick}
+     className={styles.searchTab}
+     onClick={handleMinhaBibliaClick}
     >
-     <Search size={14}/> Pesquisar
+     <Bookmark size={14}/> Minha Bíblia
     </button>
 
    </div>
 
-   {/* SEARCH — LIVROS */}
+   {/* SEARCH — LIVROS + entrada da busca de palavras */}
 
    {searchMode === "livros" && (
-    <div className={styles.searchWrapper}>
-     <Search size={18} className={styles.searchIcon}/>
-     <input
-      type="search"
-      placeholder="Pesquisar livro..."
-      value={search}
-      onChange={(e)=>setSearch(e.target.value)}
-      className={styles.searchInput}
-     />
-    </div>
+    <>
+     <div className={styles.searchWrapper}>
+      <Search size={18} className={styles.searchIcon}/>
+      <input
+       type="search"
+       placeholder="Pesquisar livro..."
+       value={search}
+       onChange={(e)=>setSearch(e.target.value)}
+       className={styles.searchInput}
+      />
+     </div>
+
+     <button className={styles.verseSearchEntry} onClick={handleSearchTabClick}>
+      <Search size={15}/>
+      Pesquisar uma palavra ou tema na Bíblia
+      <ChevronRight size={16}/>
+     </button>
+    </>
    )}
 
    {/* SEARCH — VERSÍCULOS */}
 
    {searchMode === "versiculos" && (
     <>
+    <button
+     className={styles.verseSearchBack}
+     onClick={()=>{ setSearchMode("livros"); clearTopic(); setVerseQuery("") }}
+    >
+     <ChevronLeft size={16}/> Voltar aos livros
+    </button>
     <p className={styles.verseSearchDesc}>
      Digite uma palavra ou frase e encontre tudo sobre ela na Bíblia,
      ou escolha um tema abaixo.
