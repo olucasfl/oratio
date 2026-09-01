@@ -59,9 +59,19 @@ describe("VerseNoteEditor", () => {
     expect(screen.queryByRole("button", { name: /Excluir/ })).not.toBeInTheDocument()
   })
 
-  it("offers Delete for an existing note", () => {
+  it("asks for confirmation before deleting an existing note", () => {
     const { onDelete } = setup({ initialNote: "algo" })
+
     fireEvent.click(screen.getByRole("button", { name: /Excluir/ }))
-    expect(onDelete).toHaveBeenCalled()
+    expect(onDelete).not.toHaveBeenCalled()
+    expect(screen.getByText("Excluir esta anotação?")).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancelar" }))
+    expect(screen.queryByText("Excluir esta anotação?")).not.toBeInTheDocument()
+    expect(onDelete).not.toHaveBeenCalled()
+
+    fireEvent.click(screen.getByRole("button", { name: /Excluir/ }))
+    fireEvent.click(screen.getByRole("button", { name: /Excluir/ }))
+    expect(onDelete).toHaveBeenCalledTimes(1)
   })
 })
