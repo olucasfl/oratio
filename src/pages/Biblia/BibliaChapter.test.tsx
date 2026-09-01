@@ -29,6 +29,7 @@ vi.mock("../../services/bibleMarksService", () => ({
   getChapterMarks: (...a: unknown[]) => getChapterMarksMock(...a),
   upsertMark: (...a: unknown[]) => upsertMarkMock(...a),
   isDeleted: (r: { deleted?: boolean }) => r?.deleted === true,
+  HIGHLIGHT_COLORS: ["amber", "green", "blue", "pink", "purple"],
 }))
 
 import { getChapter } from "../../services/bibliaService"
@@ -56,7 +57,7 @@ beforeEach(() => {
   vi.clearAllMocks()
   isLoggedInReturn = true
   getChapterMarksMock.mockResolvedValue([])
-  upsertMarkMock.mockResolvedValue({ id: "m1", verse: 2, highlighted: true, favorite: false, note: null })
+  upsertMarkMock.mockResolvedValue({ id: "m1", verse: 2, highlighted: true, highlightColor: "green", favorite: false, note: null })
   getChapterMock.mockReturnValue({
     versiculos: [
       { versiculo: 1, texto: "No princípio criou Deus os céus e a terra." },
@@ -93,13 +94,18 @@ describe("BibliaChapter", () => {
     expect(updateMock).toHaveBeenCalledWith({ fontSize: 21 })
   })
 
-  it("highlights a verse through the action sheet", async () => {
+  it("highlights a verse with a chosen colour through the action sheet", async () => {
     renderPage()
     fireEvent.click(screen.getByText(/A terra era sem forma/))
-    fireEvent.click(await screen.findByRole("button", { name: "Grifar" }))
+    fireEvent.click(await screen.findByRole("button", { name: "Grifar de verde" }))
     await waitFor(() =>
       expect(upsertMarkMock).toHaveBeenCalledWith(
-        expect.objectContaining({ verse: 2, reference: "Gênesis 1,2", highlighted: true }),
+        expect.objectContaining({
+          verse: 2,
+          reference: "Gênesis 1,2",
+          highlighted: true,
+          highlightColor: "green",
+        }),
       ),
     )
   })
@@ -118,7 +124,7 @@ describe("BibliaChapter", () => {
     isLoggedInReturn = false
     renderPage()
     fireEvent.click(screen.getByText(/A terra era sem forma/))
-    expect(screen.queryByRole("button", { name: "Grifar" })).not.toBeInTheDocument()
+    expect(screen.queryByRole("button", { name: "Grifar de verde" })).not.toBeInTheDocument()
     expect(upsertMarkMock).not.toHaveBeenCalled()
   })
 

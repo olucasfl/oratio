@@ -406,17 +406,26 @@
 
   color:#372828;
 
-  transition:font-size .2s, line-height .2s, background .15s;
+  transition:font-size .2s, line-height .2s;
 
   cursor:pointer;
-  border-radius:10px;
-  padding:2px 6px;
-  margin-inline:-6px;
 }
 
-.verseHighlighted{
-  background:var(--reading-hl, rgba(214,158,46,.28));
+/* grifo estilo marca-texto: pinta só atrás das palavras e quebra
+   linha a linha (nada de bloco retangular no capítulo inteiro) */
+.hl{
+  background:var(--hl, rgba(245,205,100,.55));
+  border-radius:3px;
+  padding:0.05em 0.06em;
+  -webkit-box-decoration-break:clone;
+  box-decoration-break:clone;
 }
+
+.hl[data-hl-color="amber"]  { --hl:rgba(245,205,100,.55); }
+.hl[data-hl-color="green"]  { --hl:rgba(150,220,140,.50); }
+.hl[data-hl-color="blue"]   { --hl:rgba(140,200,245,.50); }
+.hl[data-hl-color="pink"]   { --hl:rgba(247,170,205,.52); }
+.hl[data-hl-color="purple"] { --hl:rgba(203,175,240,.52); }
 
 /* ícone de "tem anotação" ao lado do versículo */
 .noteFlag{
@@ -672,17 +681,21 @@
   color:#4b3a26;
 }
 
-.textCard[data-reading-theme="sepia"] .verseHighlighted{
-  --reading-hl:rgba(191,132,22,.32);
-}
-
-.textCard[data-reading-theme="escuro"] .verseHighlighted{
-  --reading-hl:rgba(214,158,46,.26);
-}
-
 .textCard[data-reading-theme="sepia"] .chapterHeader{
   color:#8a7350;
 }
+
+/* no tema escuro o grifo fica saturado e a letra escura, contrastando
+   com a cor — igual marca-texto no papel */
+.textCard[data-reading-theme="escuro"] .hl{
+  color:#1e1c1a;
+}
+
+.textCard[data-reading-theme="escuro"] .hl[data-hl-color="amber"]  { --hl:rgba(247,206,90,.92); }
+.textCard[data-reading-theme="escuro"] .hl[data-hl-color="green"]  { --hl:rgba(130,222,130,.90); }
+.textCard[data-reading-theme="escuro"] .hl[data-hl-color="blue"]   { --hl:rgba(120,195,245,.90); }
+.textCard[data-reading-theme="escuro"] .hl[data-hl-color="pink"]   { --hl:rgba(247,160,200,.90); }
+.textCard[data-reading-theme="escuro"] .hl[data-hl-color="purple"] { --hl:rgba(202,168,245,.90); }
 
 .textCard[data-reading-theme="escuro"]{
   background:#1e1c1a;

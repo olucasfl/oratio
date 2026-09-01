@@ -23,10 +23,14 @@ Transformar a Bíblia do Oratio numa ferramenta de leitura + estudo:
 8. **Perguntar ao Vox** — ação no menu do versículo que abre o VoxAI com o versículo
    já escrito como rascunho.
 
+**Grifo tem escolha de cor** (amber/green/blue/pink/purple) — adicionado na Fase 1.
+É só a cor: **sem** legenda/significado/renomear/filtrar por cor (essa parte segue
+fora de escopo).
+
 **Fora de escopo — decisão explícita do usuário, não construir agora nem depois:**
 versículo do dia na Home, plano de leitura / streak, compartilhar como imagem,
 copiar múltiplos versículos, tags nas notas, exportar coleção em PDF, modo foco,
-cores de grifo com legenda. Não reabrir isso em revisão sem o usuário pedir.
+cores de grifo **com legenda/significado**. Não reabrir isso em revisão sem o usuário pedir.
 
 ## Decisões de arquitetura
 

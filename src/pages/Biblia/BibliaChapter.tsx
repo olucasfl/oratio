@@ -23,7 +23,8 @@ import {
  getChapterMarks,
  upsertMark,
  isDeleted,
- type BibleMark
+ type BibleMark,
+ type HighlightColor
 } from "../../services/bibleMarksService"
 
 import { isLoggedIn }
@@ -185,7 +186,7 @@ export default function BibliaChapter(){
  */
  const applyMark = useCallback(async (
   verseNum:number,
-  patch:{ highlighted?:boolean; favorite?:boolean; note?:string }
+  patch:{ highlighted?:boolean; highlightColor?:HighlightColor; favorite?:boolean; note?:string }
  ):Promise<boolean>=>{
 
   if(!isLoggedIn()){
@@ -204,6 +205,9 @@ export default function BibliaChapter(){
     ? (patch.note.trim() || null)
     : (prev?.note ?? null)
 
+  const nextHighlighted =
+   patch.highlighted ?? (patch.highlightColor ? true : (prev?.highlighted ?? false))
+
   const optimistic:BibleMark = {
    id: prev?.id ?? `tmp-${verseNum}`,
    book: book!,
@@ -211,7 +215,10 @@ export default function BibliaChapter(){
    verse: verseNum,
    reference,
    text: verse.texto,
-   highlighted: patch.highlighted ?? prev?.highlighted ?? false,
+   highlighted: nextHighlighted,
+   highlightColor: nextHighlighted
+    ? (patch.highlightColor ?? prev?.highlightColor ?? "amber")
+    : null,
    favorite: patch.favorite ?? prev?.favorite ?? false,
    note: nextNote,
    createdAt: prev?.createdAt ?? new Date().toISOString(),
@@ -439,19 +446,29 @@ export default function BibliaChapter(){
           ref={(el)=>{
             verseRefs.current[v.versiculo] = el
           }}
-          className={`${styles.verse} ${mark?.highlighted ? styles.verseHighlighted : ""}`}
+          className={styles.verse}
           onClick={()=>openSheet(v.versiculo)}
         >
 
           {isDrop ? (
             <>
               <span className={styles.capitular}>{v.texto.charAt(0)}</span>
-              {v.texto.slice(1)}
+              <span
+                className={mark?.highlighted ? styles.hl : undefined}
+                data-hl-color={mark?.highlighted ? (mark.highlightColor ?? "amber") : undefined}
+              >
+                {v.texto.slice(1)}
+              </span>
             </>
           ) : (
             <>
               <span className={styles.number}>{v.versiculo}</span>
-              {v.texto}
+              <span
+                className={mark?.highlighted ? styles.hl : undefined}
+                data-hl-color={mark?.highlighted ? (mark.highlightColor ?? "amber") : undefined}
+              >
+                {v.texto}
+              </span>
             </>
           )}
 
@@ -496,9 +513,12 @@ export default function BibliaChapter(){
      reference={sheetVerse !== null ? buildReference(sheetVerse) : ""}
      text={sheetVerse !== null ? (capitulo.versiculos.find((v:Verse)=>v.versiculo === sheetVerse)?.texto ?? "") : ""}
      mark={sheetMark}
-     onToggleHighlight={()=>{
+     onSetHighlight={(color)=>{
        if(sheetVerse === null) return
-       applyMark(sheetVerse, { highlighted: !sheetMark?.highlighted })
+       applyMark(
+         sheetVerse,
+         color ? { highlighted:true, highlightColor:color } : { highlighted:false }
+       )
        setSheetVerse(null)
      }}
      onToggleFavorite={()=>{
