@@ -18,6 +18,11 @@ const OVERLAY_ID = "biblia-estudo-nudge"
 // dia rolar outra leva grande de novidades na Bíblia.
 const STORAGE_KEY = "biblia_estudo_nudge_v1"
 
+// Aviso de novidade: janela de 21 dias a partir do lançamento (01/09/2026).
+// Depois de 22/09/2026 23:59 (America/Sao_Paulo, UTC-3) ele não aparece
+// mais pra ninguém — mesmo pra quem nunca viu.
+const SHOW_UNTIL = new Date("2026-09-23T02:59:59Z").getTime()
+
 type Props = {
   /**
    * A Home avisa quando já tem um modal dela na tela (boas-vindas, gate).
@@ -28,11 +33,13 @@ type Props = {
 }
 
 /**
- * Aviso único (aparece uma vez e some pra sempre) das novas
- * funcionalidades de estudo da Bíblia: grifar com cores, favoritar,
- * anotar e montar coleções. Mesma lógica do aviso de estreia da
- * Quaresma — espera a tela ficar livre, fechar de qualquer jeito
- * conta como visto.
+ * Aviso das novas funcionalidades de estudo da Bíblia (grifar com cores,
+ * favoritar, anotar, coleções).
+ *
+ * - Aparece no máximo uma vez por pessoa — fechar de qualquer jeito conta
+ *   como visto (flag em localStorage).
+ * - Janela de 21 dias: depois de `SHOW_UNTIL` some de vez pra todo mundo.
+ * - Espera a tela ficar livre (não sobe por cima de outro modal).
  */
 export default function BibliaStudyNudge({ blocked = false }: Props) {
 
@@ -44,6 +51,7 @@ export default function BibliaStudyNudge({ blocked = false }: Props) {
   useEffect(() => {
 
     if (dismissed || blocked) return
+    if (Date.now() > SHOW_UNTIL) return
 
     try {
       if (localStorage.getItem(STORAGE_KEY)) return
