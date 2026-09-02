@@ -3,6 +3,54 @@ import api from "./api"
 const BASE_URL = "/oratio/voxai"
 
 /* =========================
+   PERFIS DE RESPOSTA DO VOX
+========================= */
+
+export interface VoxProfileExample {
+  question: string
+  answer: string
+}
+
+export interface VoxProfileMeta {
+  key: string
+  label: string
+  short: string
+  details: string
+  examples: VoxProfileExample[]
+}
+
+// Catálogo dos perfis (vem do backend, fonte única). Erro → lista vazia:
+// a UI de configurações só mostra "não foi possível carregar" nesse caso.
+export async function getVoxProfiles(): Promise<VoxProfileMeta[]> {
+  try {
+    const res = await api.get(`${BASE_URL}/profiles`)
+    return Array.isArray(res.data) ? res.data : []
+  } catch {
+    return []
+  }
+}
+
+// Grava o perfil escolhido. null = falhou (a tela reverte a seleção).
+export async function setVoxProfile(profile: string) {
+  try {
+    const res = await api.patch(`${BASE_URL}/profile`, { profile })
+    return res.data
+  } catch {
+    return null
+  }
+}
+
+// Dispensa o card de novidade sem escolher perfil (a pessoa fica no Padrão).
+export async function dismissVoxIntro() {
+  try {
+    const res = await api.post(`${BASE_URL}/profile/intro-seen`)
+    return res.data
+  } catch {
+    return null
+  }
+}
+
+/* =========================
    BOOTSTRAP (lista + conversa ativa numa só chamada)
 ========================= */
 

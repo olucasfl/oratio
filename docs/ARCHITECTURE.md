@@ -114,6 +114,8 @@ public/
 
 **`src/data/`** holds content that ships in the JS bundle rather than coming from the API — notably the full Ave Maria Bible text (`bibliaAveMaria.json`) and saint-of-the-day data. This is why `pdf`, `markdown`, and other content-heavy libraries get their own manual Vite chunk (`vite.config.ts`) — keeping them out of the main bundle matters for load time.
 
+**VoxAI response profiles** (2026-09): the Vox chat has a per-user *response profile* (`DEFAULT` "Padrão", `DIRECT`, `STUDY`, `PASTORAL`, `CATECHIST`, `APOLOGETIC`) that changes tone/length/structure, not the assistant's identity or doctrine. `getBootstrap()` returns `profile` (chosen key or `null`) and `showVoxIntro` (booleano — mostrar o card de novidade). The gear in the Vox header opens `VoxSettingsPanel` ("Configurações do Vox"); a first-time `VoxProfilesIntroModal` shows once (dismiss/choose both end it via `dismissVoxIntro()`/`setVoxProfile()`). `VoxProfileList` + `VoxProfileDetailsModal` are shared by both. `VoxMarkdown` is the chat's markdown renderer, extracted so the profile examples render identically. Switching profile mid-conversation drops a local `system-note` message ("Perfil alterado para X") that is never persisted or sent to the model. Backend side: `oratio-api` `docs/tasks/vox-profiles-plan.md`.
+
 ## 7. Naming and things that will confuse you if unexplained
 
 - **Test coverage is minimal** (Vitest is configured — see §1/§2 — but only two spec files exist). Don't assume existing behavior is covered by automated tests — verify manually (dev server, browser) when changing shared code like `api.ts` or `App.tsx`'s boot sequence, in addition to whatever automated tests exist.

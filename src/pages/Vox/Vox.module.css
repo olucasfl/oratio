@@ -338,7 +338,7 @@ duas colunas nunca se sobrepõem, em nenhum zoom.
  padding-left:16px;
  padding-right:16px;
  display:grid;
- grid-template-columns:auto 1fr;
+ grid-template-columns:auto 1fr auto;
  align-items:center;
  gap:8px;
  background:var(--vox-frame);
@@ -394,7 +394,8 @@ duas colunas nunca se sobrepõem, em nenhum zoom.
 }
 
 .backButton,
-.menuButton{
+.menuButton,
+.settingsButton{
  position:relative;
  flex-shrink:0;
  display:flex;
@@ -404,6 +405,31 @@ duas colunas nunca se sobrepõem, em nenhum zoom.
  border:none;
  cursor:pointer;
  transition:background .2s ease, transform .2s ease;
+}
+
+.settingsButton{
+ width:40px;
+ height:40px;
+ border-radius:999px;
+ background:transparent;
+ justify-self:end;
+}
+
+.settingsButton:hover{
+ background:rgba(255,255,255,.14);
+}
+
+/* marcador local no chat: "Perfil alterado para X" */
+.systemNote{
+ align-self:center;
+ max-width:90%;
+ margin:6px auto;
+ padding:5px 12px;
+ font-size:12px;
+ color:var(--oratio-text-soft);
+ background:var(--oratio-secondary);
+ border-radius:999px;
+ text-align:center;
 }
 
 .backButton{

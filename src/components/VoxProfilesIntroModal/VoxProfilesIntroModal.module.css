@@ -1,0 +1,101 @@
+.overlay{
+ position:fixed;
+ inset:0;
+ z-index:1050;
+ background:rgba(0,0,0,0.6);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:18px;
+}
+
+.modal{
+ background:var(--oratio-card-bg);
+ width:100%;
+ max-width:460px;
+ max-height:88vh;
+ overflow-y:auto;
+ border-radius:var(--oratio-radius-lg);
+ box-shadow:var(--oratio-shadow-strong);
+ padding:24px;
+}
+
+.badge{
+ display:inline-block;
+ font-size:11px;
+ font-weight:700;
+ letter-spacing:0.06em;
+ text-transform:uppercase;
+ color:var(--oratio-primary);
+ background:var(--oratio-secondary);
+ padding:4px 10px;
+ border-radius:999px;
+ margin-bottom:10px;
+}
+
+.title{
+ font-family:var(--oratio-font-title);
+ font-size:20px;
+ color:var(--oratio-primary);
+ margin:0 0 8px;
+}
+
+.pitch{
+ font-size:14px;
+ color:var(--oratio-text-soft);
+ line-height:1.5;
+ margin:0 0 18px;
+}
+
+.actions{
+ display:flex;
+ gap:10px;
+ margin-top:20px;
+}
+
+.later{
+ flex:1;
+ background:transparent;
+ border:1px solid var(--oratio-card-border);
+ color:var(--oratio-text-dark);
+ padding:12px;
+ border-radius:var(--oratio-radius-sm);
+ cursor:pointer;
+ font-size:14px;
+}
+
+.choose{
+ flex:2;
+ background:var(--oratio-primary);
+ border:none;
+ color:var(--oratio-text-light);
+ padding:12px;
+ border-radius:var(--oratio-radius-sm);
+ cursor:pointer;
+ font-size:14px;
+ font-weight:600;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+}
+
+.choose:disabled,
+.later:disabled{
+ opacity:0.6;
+ cursor:default;
+}
+
+.error{
+ font-size:13px;
+ color:#b91c1c;
+ margin-top:10px;
+}
+
+.spin{
+ animation:voxIntroSpin 0.9s linear infinite;
+}
+
+@keyframes voxIntroSpin{
+ to{ transform:rotate(360deg); }
+}

@@ -15,6 +15,9 @@ import {
   getMessages,
   deleteConversation,
   renameConversation,
+  getVoxProfiles,
+  setVoxProfile,
+  dismissVoxIntro,
 } from "./voxService"
 
 const mockedApi = api as any // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -95,6 +98,33 @@ describe("simple try/catch wrappers", () => {
 
     mockedApi.patch.mockRejectedValue(new Error("down"))
     await expect(renameConversation("c1", "Nova")).resolves.toBeNull()
+  })
+
+  it("getVoxProfiles returns the catalog on success / an empty list on failure", async () => {
+    mockedApi.get.mockResolvedValue({ data: [{ key: "DEFAULT" }] })
+    await expect(getVoxProfiles()).resolves.toEqual([{ key: "DEFAULT" }])
+    expect(mockedApi.get).toHaveBeenCalledWith("/oratio/voxai/profiles")
+
+    mockedApi.get.mockRejectedValue(new Error("down"))
+    await expect(getVoxProfiles()).resolves.toEqual([])
+  })
+
+  it("setVoxProfile PATCHes the chosen key and returns the response / null on failure", async () => {
+    mockedApi.patch.mockResolvedValue({ data: { profile: "STUDY" } })
+    await expect(setVoxProfile("STUDY")).resolves.toEqual({ profile: "STUDY" })
+    expect(mockedApi.patch).toHaveBeenCalledWith("/oratio/voxai/profile", { profile: "STUDY" })
+
+    mockedApi.patch.mockRejectedValue(new Error("down"))
+    await expect(setVoxProfile("STUDY")).resolves.toBeNull()
+  })
+
+  it("dismissVoxIntro POSTs to intro-seen and returns the response / null on failure", async () => {
+    mockedApi.post.mockResolvedValue({ data: { ok: true } })
+    await expect(dismissVoxIntro()).resolves.toEqual({ ok: true })
+    expect(mockedApi.post).toHaveBeenCalledWith("/oratio/voxai/profile/intro-seen")
+
+    mockedApi.post.mockRejectedValue(new Error("down"))
+    await expect(dismissVoxIntro()).resolves.toBeNull()
   })
 
 })
