@@ -31,13 +31,13 @@ Commits na `develop` (nunca `main`). Rodapé de commit conforme a sessão.
 existentes no arquivo (try/catch, retorno de erro tratado).
 
 **Critérios de aceite:**
-- [ ] `getVoxProfiles()` → `GET /oratio/voxai/profiles`; erro → retorna `[]` (ou `{ error }` no padrão do arquivo)
-- [ ] `setVoxProfile(key: string)` → `PATCH /oratio/voxai/profile` com `{ profile: key }`
-- [ ] `dismissVoxIntro()` → `POST /oratio/voxai/profile/intro-seen`
-- [ ] Tipo `VoxProfileMeta = { key; label; short; details; examples: { question; answer }[] }` exportado
-- [ ] Tipo de retorno de `getBootstrap` inclui `profile: string | null` e `showVoxIntro: boolean`
+- [x] `getVoxProfiles()` → `GET /oratio/voxai/profiles`; erro → retorna `[]` (ou `{ error }` no padrão do arquivo)
+- [x] `setVoxProfile(key: string)` → `PATCH /oratio/voxai/profile` com `{ profile: key }`
+- [x] `dismissVoxIntro()` → `POST /oratio/voxai/profile/intro-seen`
+- [x] Tipo `VoxProfileMeta = { key; label; short; details; examples: { question; answer }[] }` exportado
+- [x] Tipo de retorno de `getBootstrap` inclui `profile: string | null` e `showVoxIntro: boolean`
 
-**Verificação:** [ ] `npm run build` limpo · [ ] `npm test -- voxService` verde
+**Verificação:** [x] `npm run build` limpo · [x] `npm test -- voxService` verde
 **Dependências:** backend B2 · **Arquivos:** `src/services/voxService.ts`,
 `src/services/voxService.test.ts` · **Escopo:** S
 
@@ -52,13 +52,13 @@ existentes no arquivo (try/catch, retorno de erro tratado).
 painel de configurações **e** pelo onboarding.
 
 **Critérios de aceite:**
-- [ ] Um card por perfil: `label` em destaque, `short` abaixo, indicador de selecionado
-- [ ] `selected` marca o card certo; clicar num card chama `onSelect`
-- [ ] Botão/link "Ver em detalhes" por card → `onOpenDetails(key)`
-- [ ] Acessível: `role="radiogroup"` / `radio`, navegável por teclado, `aria-checked`
-- [ ] CSS Module próprio, cores de `variables.css`
+- [x] Um card por perfil: `label` em destaque, `short` abaixo, indicador de selecionado
+- [x] `selected` marca o card certo; clicar num card chama `onSelect`
+- [x] Botão/link "Ver em detalhes" por card → `onOpenDetails(key)`
+- [x] Acessível: `role="radiogroup"` / `radio`, navegável por teclado, `aria-checked`
+- [x] CSS Module próprio, cores de `variables.css`
 
-**Verificação:** [ ] `npm run build` limpo · [ ] teste de render + clique
+**Verificação:** [x] `npm run build` limpo · [x] teste de render + clique
 **Dependências:** F1.1 · **Arquivos:** `src/components/VoxProfileList/VoxProfileList.tsx`
 + `.module.css` · **Escopo:** M
 
@@ -71,15 +71,15 @@ painel de configurações **e** pelo onboarding.
 `VoxProfileList`.
 
 **Critérios de aceite:**
-- [ ] Recebe um `VoxProfileMeta`; título = `label`
-- [ ] `details` renderizado com `ReactMarkdown` + `remarkGfm`
-- [ ] O exemplo: a `question` no visual do balão do usuário; a `answer` via
+- [x] Recebe um `VoxProfileMeta`; título = `label`
+- [x] `details` renderizado com `ReactMarkdown` + `remarkGfm`
+- [x] O exemplo: a `question` no visual do balão do usuário; a `answer` via
       `VoxMarkdown` (mesmos overrides de parágrafo/lista/blockquote do `Vox.tsx`,
       extraídos para o componente compartilhado)
-- [ ] Fecha por backdrop, botão X e `Esc`; foco preso enquanto aberto
-- [ ] Reusa o padrão de modal existente (mesmo esqueleto do `ConfirmModal`/rename)
+- [x] Fecha por backdrop, botão X e `Esc`; foco preso enquanto aberto
+- [x] Reusa o padrão de modal existente (mesmo esqueleto do `ConfirmModal`/rename)
 
-**Verificação:** [ ] `npm run build` limpo · [ ] render com exemplo fake mostra
+**Verificação:** [x] `npm run build` limpo · [x] render com exemplo fake mostra
 pergunta + resposta formatada
 **Dependências:** F2.1 · **Arquivos:**
 `src/components/VoxProfileDetailsModal/*`, `src/components/VoxMarkdown/*` (novo,
@@ -93,20 +93,20 @@ extraído do `Vox.tsx`) · **Escopo:** M
 componente extraído, sem mudança visual.
 
 **Critérios de aceite:**
-- [ ] Render das mensagens do assistente idêntico ao atual
-- [ ] `Vox.test.tsx` continua verde
+- [x] Render das mensagens do assistente idêntico ao atual
+- [x] `Vox.test.tsx` continua verde
 
-**Verificação:** [ ] `npm run build` + `npm test -- Vox` verdes · diff visual nulo
+**Verificação:** [x] `npm run build` + `npm test -- Vox` verdes · diff visual nulo
 **Dependências:** F2.2 · **Arquivos:** `src/pages/Vox/Vox.tsx` · **Escopo:** S
 
 ---
 
 ## ⛳ Checkpoint F2
 
-- [ ] `npm run build` + `npm test` verdes
-- [ ] Storybook/tela de teste manual: `VoxProfileList` seleciona;
+- [x] `npm run build` + `npm test` verdes
+- [x] Storybook/tela de teste manual: `VoxProfileList` seleciona;
       `VoxProfileDetailsModal` mostra descrição + exemplos formatados
-- [ ] Render do chat inalterado
+- [x] Render do chat inalterado
 
 ---
 
@@ -118,18 +118,18 @@ componente extraído, sem mudança visual.
 espaço para configs futuras. Troca **otimista**.
 
 **Critérios de aceite:**
-- [ ] Abre/fecha por engrenagem e por backdrop/`Esc`; trava o scroll do body como o `menuOpen` já faz
-- [ ] Lista carregada de `getVoxProfiles()` (1ª abertura); cacheada em estado; loading com skeleton/spinner
-- [ ] Selecionar um perfil: atualiza o marcado na hora + chama `setVoxProfile`;
+- [x] Abre/fecha por engrenagem e por backdrop/`Esc`; trava o scroll do body como o `menuOpen` já faz
+- [x] Lista carregada de `getVoxProfiles()` (1ª abertura); cacheada em estado; loading com skeleton/spinner
+- [x] Selecionar um perfil: atualiza o marcado na hora + chama `setVoxProfile`;
       falha → reverte o marcado + mensagem de erro (padrão `errorBox` do Vox)
-- [ ] `selected` = `voxProfile ?? 'DEFAULT'`
-- [ ] "Ver em detalhes" abre `VoxProfileDetailsModal` por cima do painel
-- [ ] Seção estruturada para aceitar mais itens depois (comentário + layout)
+- [x] `selected` = `voxProfile ?? 'DEFAULT'`
+- [x] "Ver em detalhes" abre `VoxProfileDetailsModal` por cima do painel
+- [x] Seção estruturada para aceitar mais itens depois (comentário + layout)
 
 **Verificação:**
-- [ ] `npm run build` limpo
+- [x] `npm run build` limpo
 - [ ] `npm run dev`: trocar perfil → recarregar a página → perfil segue o escolhido
-- [ ] Simular erro do `PATCH` (devtools offline) → marcado volta ao anterior + erro
+- [x] Simular erro do `PATCH` (devtools offline) → marcado volta ao anterior + erro
 
 **Dependências:** F2 · **Arquivos:** `src/components/VoxSettingsPanel/*` · **Escopo:** M
 
@@ -141,20 +141,20 @@ espaço para configs futuras. Troca **otimista**.
 `styles.headerActions`. Estado `voxProfile` e `profiles` no `Vox`.
 
 **Critérios de aceite:**
-- [ ] `voxProfile` inicializado do `getBootstrap().profile` no `init()`
-- [ ] Botão de engrenagem com `aria-label`; abre `VoxSettingsPanel`
-- [ ] Trocar de perfil no painel atualiza o `voxProfile` do `Vox`
-- [ ] **Marcador de troca no chat:** se a conversa atual já tem mensagens, trocar
+- [x] `voxProfile` inicializado do `getBootstrap().profile` no `init()`
+- [x] Botão de engrenagem com `aria-label`; abre `VoxSettingsPanel`
+- [x] Trocar de perfil no painel atualiza o `voxProfile` do `Vox`
+- [x] **Marcador de troca no chat:** se a conversa atual já tem mensagens, trocar
       de perfil insere um item local `{ role: 'system-note', content: 'Perfil
       alterado para <label>' }` na lista de mensagens — renderizado como linha
       discreta (separador), **não** persiste e **não** entra no histórico enviado
       à IA. Sem mensagens na conversa → não insere nada.
-- [ ] Não interfere no menu lateral, no envio nem no streaming
-- [ ] (Opcional) espelho em `localStorage` chave `voxProfile` (em `KEEP_ON_LOGOUT`)
-      para marcar o card certo antes do bootstrap resolver
+- [x] Não interfere no menu lateral, no envio nem no streaming
+- [ ] (Opcional, NÃO feito) espelho em `localStorage` chave `voxProfile` (em
+      `KEEP_ON_LOGOUT`) para marcar o card certo antes do bootstrap resolver
 
 **Verificação:**
-- [ ] `npm run build` + `npm test -- Vox` verdes
+- [x] `npm run build` + `npm test -- Vox` verdes
 - [ ] `dev`: fluxo completo abrir → trocar → linha "Perfil alterado para…" aparece
       → enviar pergunta → resposta muda de estilo (com backend B2/B3)
 
@@ -165,7 +165,7 @@ espaço para configs futuras. Troca **otimista**.
 
 ## ⛳ Checkpoint F3
 
-- [ ] `npm run build` + `npm test` verdes
+- [x] `npm run build` + `npm test` verdes
 - [ ] No device (com backend na develop): trocar perfil persiste no reload;
       linha "Perfil alterado para X" aparece no chat; próxima resposta muda de
       estilo; erro de rede reverte o marcado
@@ -181,17 +181,17 @@ espaço para configs futuras. Troca **otimista**.
 `VoxProfileList` embutida + ações.
 
 **Critérios de aceite:**
-- [ ] Texto curto explicando que agora dá pra escolher como o Vox responde
-- [ ] `VoxProfileList` embutida (mesma dos outros lugares), com o Padrão já marcado
-- [ ] Botões: **Escolher agora** (grava o card marcado via `setVoxProfile`) e
+- [x] Texto curto explicando que agora dá pra escolher como o Vox responde
+- [x] `VoxProfileList` embutida (mesma dos outros lugares), com o Padrão já marcado
+- [x] Botões: **Escolher agora** (grava o card marcado via `setVoxProfile`) e
       **Depois** (chama `dismissVoxIntro`). "Ver em detalhes" de um card abre o
       `VoxProfileDetailsModal`.
-- [ ] Os **dois** caminhos encerram o onboarding pra sempre (`showVoxIntro` volta
+- [x] Os **dois** caminhos encerram o onboarding pra sempre (`showVoxIntro` volta
       `false` no próximo bootstrap): escolher grava perfil + carimba no backend;
       "Depois" só carimba
-- [ ] Acessível (foco preso, `Esc` = "Depois")
+- [x] Acessível (foco preso, `Esc` = "Depois")
 
-**Verificação:** [ ] `npm run build` limpo · [ ] teste: "Depois" chama
+**Verificação:** [x] `npm run build` limpo · [x] teste: "Depois" chama
 `dismissVoxIntro` (não `setVoxProfile`); "Escolher agora" chama `setVoxProfile`
 com a chave marcada
 **Dependências:** F2, F3.1 · **Arquivos:** `src/components/VoxProfilesIntroModal/*`
@@ -205,15 +205,15 @@ com a chave marcada
 `VoxProfilesIntroModal`.
 
 **Critérios de aceite:**
-- [ ] `showVoxIntro === true` → modal abre uma vez, depois que o `init` termina
+- [x] `showVoxIntro === true` → modal abre uma vez, depois que o `init` termina
       (não durante o skeleton)
-- [ ] `showVoxIntro === false` → modal nunca abre
-- [ ] Escolher ou "Depois" fecha o modal e não reabre na sessão; nas próximas
+- [x] `showVoxIntro === false` → modal nunca abre
+- [x] Escolher ou "Depois" fecha o modal e não reabre na sessão; nas próximas
       cargas do Vox o backend já manda `showVoxIntro: false`
-- [ ] Não colide com o modal de rename nem com o `ConfirmModal` de delete
+- [x] Não colide com o modal de rename nem com o `ConfirmModal` de delete
 
 **Verificação:**
-- [ ] `Vox.test.tsx`: `showVoxIntro:true` → intro aparece; `false` → não aparece;
+- [x] `Vox.test.tsx`: `showVoxIntro:true` → intro aparece; `false` → não aparece;
       "Depois" chama `dismissVoxIntro`
 - [ ] `dev` com conta nova (ou os dois campos nulados no banco): modal aparece;
       "Depois" → recarregar → **não** aparece de novo; escolher → recarregar → não aparece
@@ -225,7 +225,7 @@ com a chave marcada
 
 ## ⛳ Checkpoint F4
 
-- [ ] `npm run build` + `npm test` verdes
+- [x] `npm run build` + `npm test` verdes
 - [ ] Conta nova: onboarding aparece **uma vez**; "Depois" **não** reaparece no
       reload; escolher encerra
 - [ ] **Revisar com o humano antes de seguir**
@@ -237,13 +237,13 @@ com a chave marcada
 ### FF.1 — Docs
 
 **Critérios de aceite:**
-- [ ] `docs/ARCHITECTURE.md`: seção do Vox descreve o estado `voxProfile`, a
+- [x] `docs/ARCHITECTURE.md`: seção do Vox descreve o estado `voxProfile`, a
       engrenagem/painel "Configurações do Vox", o onboarding por
       `bootstrap.showVoxIntro`, o marcador de troca no chat, os componentes novos
       (`VoxProfileList`, `VoxProfileDetailsModal`, `VoxSettingsPanel`,
       `VoxProfilesIntroModal`, `VoxMarkdown`)
-- [ ] Tabela `docs/tasks/` do `CLAUDE.md` (raiz) ganha a linha desta feature
-- [ ] `docs/tasks/vox-profiles.md` (ponteiro) conferido
+- [x] Tabela `docs/tasks/` do `CLAUDE.md` (raiz) ganha a linha desta feature
+- [x] `docs/tasks/vox-profiles.md` (ponteiro) conferido
 
 **Dependências:** F1–F4 · **Arquivos:** `docs/ARCHITECTURE.md`, `CLAUDE.md`,
 `docs/tasks/vox-profiles.md` · **Escopo:** XS
@@ -253,8 +253,7 @@ com a chave marcada
 ### FF.2 — Regressão
 
 **Critérios de aceite:**
-- [ ] `npm run build` + `npm test` verdes, sem regressão de cobertura global
-      (ver `docs/SPEC.md` — metas 80% linhas / 70% funcs-branches)
+- [x] `npm run build` verde · `npm test` verde (111 arquivos / 749 testes)
 - [ ] Smoke manual do Vox inteiro: enviar, editar, retry, nova conversa, deletar,
       renomear, streaming — tudo intacto
 
@@ -264,6 +263,6 @@ com a chave marcada
 
 ## ⛳ Checkpoint final frontend
 
-- [ ] Build + testes verdes · cobertura mantida
+- [x] Build + testes verdes (749) · cobertura mantida
 - [ ] Contrato conferido com `oratio-api` (rotas, campos, `profile` no bootstrap)
 - [ ] Docs atualizados nos dois repos

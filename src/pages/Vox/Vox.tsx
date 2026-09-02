@@ -1,9 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 
-import ReactMarkdown from "react-markdown"
-import remarkGfm from "remark-gfm"
-
 import styles from "./Vox.module.css"
 
 import type { LucideIcon } from "lucide-react"
@@ -50,7 +47,8 @@ import {
  CloudRain,
  Infinity as InfinityIcon,
  BookOpenCheck,
- HeartCrack
+ HeartCrack,
+ Settings
 } from "lucide-react"
 
 import {
@@ -60,16 +58,25 @@ import {
  createConversation,
  getConversations,
  getMessages,
- getBootstrap
+ getBootstrap,
+ getVoxProfiles,
+ setVoxProfile,
+ dismissVoxIntro
 } from "../../services/voxService"
+import type { VoxProfileMeta } from "../../services/voxService"
 
 import { useLiturgy } from "../../hooks/useLiturgy"
 
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
+import VoxMarkdown from "../../components/VoxMarkdown/VoxMarkdown"
+import VoxSettingsPanel from "../../components/VoxSettingsPanel/VoxSettingsPanel"
+import VoxProfilesIntroModal from "../../components/VoxProfilesIntroModal/VoxProfilesIntroModal"
 
 interface Message{
  id:string
- role:"user" | "assistant"
+ // "system-note" = marcador local (ex.: "Perfil alterado para X"); não é
+ // persistido nem enviado à IA, só aparece na tela.
+ role:"user" | "assistant" | "system-note"
  content:string
  createdAt?:string
  status?:"sending" | "sent" | "failed"
@@ -301,6 +308,14 @@ export default function Vox(){
 
  const [randomSuggestions,setRandomSuggestions] = useState<Suggestion[]>(()=>pickRandom(SUGGESTION_POOL, RANDOM_SUGGESTIONS_COUNT))
 
+ // Perfis de resposta do Vox
+ const [voxProfile,setVoxProfileState] = useState<string | null>(null)
+ const [showVoxIntro,setShowVoxIntro] = useState(false)
+ const [settingsOpen,setSettingsOpen] = useState(false)
+ const [voxProfiles,setVoxProfiles] = useState<VoxProfileMeta[]>([])
+ const [voxProfilesLoaded,setVoxProfilesLoaded] = useState(false)
+ const [loadingVoxProfiles,setLoadingVoxProfiles] = useState(false)
+
  const bottomRef = useRef<HTMLDivElement | null>(null)
  const chatAreaRef = useRef<HTMLElement | null>(null)
  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
@@ -480,6 +495,12 @@ useEffect(()=>{
   }
  },[])
 
+ // Onboarding aberto → já busca o catálogo de perfis
+ useEffect(()=>{
+  if(showVoxIntro) ensureVoxProfilesLoaded()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+ },[showVoxIntro])
+
  async function init(){
 
     try{
@@ -497,6 +518,9 @@ useEffect(()=>{
         setConversations(bootstrap.conversations)
       }
 
+      setVoxProfileState(bootstrap.profile ?? null)
+      setShowVoxIntro(bootstrap.showVoxIntro === true)
+
       await openConversation(bootstrap.active.id)
 
     }catch{
@@ -505,6 +529,71 @@ useEffect(()=>{
       setLoadingConversation(false)
     }
   }
+
+ /* =========================
+    PERFIS DE RESPOSTA DO VOX
+ ========================= */
+
+ // Catálogo carregado sob demanda (1ª abertura do painel ou do onboarding).
+ async function ensureVoxProfilesLoaded(){
+  if(voxProfilesLoaded || loadingVoxProfiles) return
+  setLoadingVoxProfiles(true)
+  const list = await getVoxProfiles()
+  setVoxProfiles(list)
+  setVoxProfilesLoaded(true)
+  setLoadingVoxProfiles(false)
+ }
+
+ function openSettings(){
+  setSettingsOpen(true)
+  ensureVoxProfilesLoaded()
+ }
+
+ function labelForProfile(key: string){
+  return voxProfiles.find(p => p.key === key)?.label
+   || (key === "DEFAULT" ? "Padrão" : key)
+ }
+
+ // Troca de perfil (painel de configurações). Otimista: marca na hora,
+ // reverte se a API falhar. Com mensagens na conversa, deixa um marcador
+ // local no chat (não persiste, não vai pro histórico da IA).
+ async function handleSelectProfile(key: string): Promise<boolean>{
+  const previous = voxProfile
+  setVoxProfileState(key)
+
+  const res = await setVoxProfile(key)
+
+  if(!res){
+   setVoxProfileState(previous)
+   return false
+  }
+
+  setMessages(prev =>
+   prev.length === 0 ? prev : [
+    ...prev,
+    {
+     id: crypto.randomUUID(),
+     role: "system-note" as const,
+     content: `Perfil alterado para ${labelForProfile(key)}`
+    }
+   ]
+  )
+
+  return true
+ }
+
+ async function handleChooseIntroProfile(key: string): Promise<boolean>{
+  const res = await setVoxProfile(key)
+  if(!res) return false
+  setVoxProfileState(key)
+  setShowVoxIntro(false)
+  return true
+ }
+
+ async function handleDismissIntro(){
+  setShowVoxIntro(false)
+  await dismissVoxIntro()
+ }
 
  /* =========================
     ABRIR CONVERSA
@@ -1085,6 +1174,14 @@ useEffect(()=>{
      <span className={styles.titleText}>VoxAI</span>
     </h1>
 
+    <button
+     className={styles.settingsButton}
+     onClick={openSettings}
+     aria-label="Configurações do Vox"
+    >
+     <Settings size={22} />
+    </button>
+
    </header>
 
    {error && (
@@ -1158,6 +1255,14 @@ useEffect(()=>{
       )}
 
     {messages.map((msg) => {
+
+     if(msg.role === "system-note"){
+      return (
+       <div key={msg.id} className={styles.systemNote} role="status">
+        <span>{msg.content}</span>
+       </div>
+      )
+     }
 
      const isUser = msg.role === "user"
      const isLastUserMessage = isUser && msg.id === lastUserMessageId
@@ -1284,40 +1389,7 @@ useEffect(()=>{
 
           </div>
 
-          <div className={styles.markdownContent}>
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              components={{
-
-                p({children}){
-                  return <p className={styles.markdownParagraph}>{children}</p>
-                },
-
-                ul({children}){
-                  return <ul className={styles.markdownList}>{children}</ul>
-                },
-
-                ol({children}){
-                  return <ol className={styles.markdownList}>{children}</ol>
-                },
-
-                li({children}){
-                  return <li className={styles.markdownListItem}>{children}</li>
-                },
-
-                blockquote({children}){
-                  return (
-                    <blockquote className={styles.markdownQuote}>
-                      {children}
-                    </blockquote>
-                  )
-                }
-
-              }}
-            >
-              {msg.content}
-            </ReactMarkdown>
-          </div>
+          <VoxMarkdown>{msg.content}</VoxMarkdown>
 
           <small className={styles.messageTime}>
             {formatTime(msg.createdAt)}
@@ -1440,6 +1512,23 @@ useEffect(()=>{
       }}
       onCancel={()=>setConfirmDeleteId(null)}
       danger
+    />
+
+    <VoxSettingsPanel
+      open={settingsOpen}
+      onClose={()=>setSettingsOpen(false)}
+      profiles={voxProfiles}
+      loadingProfiles={loadingVoxProfiles}
+      selected={voxProfile}
+      onSelectProfile={handleSelectProfile}
+    />
+
+    <VoxProfilesIntroModal
+      open={showVoxIntro && !loadingConversation}
+      profiles={voxProfiles}
+      loadingProfiles={loadingVoxProfiles}
+      onChoose={handleChooseIntroProfile}
+      onDismiss={handleDismissIntro}
     />
   </div>
 

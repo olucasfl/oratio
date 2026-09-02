@@ -17,6 +17,9 @@ vi.mock("../../services/voxService", () => ({
   getConversations: vi.fn(),
   getMessages: vi.fn(),
   getBootstrap: vi.fn(),
+  getVoxProfiles: vi.fn(),
+  setVoxProfile: vi.fn(),
+  dismissVoxIntro: vi.fn(),
 }))
 
 vi.mock("../../hooks/useLiturgy", () => ({
@@ -26,6 +29,7 @@ vi.mock("../../hooks/useLiturgy", () => ({
 import {
   getBootstrap, getMessages, getConversations, createConversation,
   askVoxStream, deleteConversation,
+  getVoxProfiles, setVoxProfile, dismissVoxIntro,
 } from "../../services/voxService"
 import Vox from "./Vox"
 
@@ -36,7 +40,15 @@ const m = {
   create: createConversation as unknown as ReturnType<typeof vi.fn>,
   stream: askVoxStream as unknown as ReturnType<typeof vi.fn>,
   del: deleteConversation as unknown as ReturnType<typeof vi.fn>,
+  profiles: getVoxProfiles as unknown as ReturnType<typeof vi.fn>,
+  setProfile: setVoxProfile as unknown as ReturnType<typeof vi.fn>,
+  dismissIntro: dismissVoxIntro as unknown as ReturnType<typeof vi.fn>,
 }
+
+const PROFILES = [
+  { key: "DEFAULT", label: "Padrão", short: "Equilibrado.", details: "", examples: [] },
+  { key: "DIRECT", label: "Direto ao ponto", short: "Curto.", details: "", examples: [] },
+]
 
 const CONV = {
   id: "c1", title: "Sobre a fé", hasMessages: true,
@@ -57,6 +69,9 @@ beforeEach(() => {
   m.conversations.mockResolvedValue([CONV])
   m.create.mockResolvedValue({ id: "c2" })
   m.del.mockResolvedValue(undefined)
+  m.profiles.mockResolvedValue(PROFILES)
+  m.setProfile.mockResolvedValue({ profile: "DIRECT" })
+  m.dismissIntro.mockResolvedValue({ ok: true })
 })
 
 describe("Vox", () => {
@@ -146,6 +161,70 @@ describe("Vox", () => {
     fireEvent.click(screen.getByRole("button", { name: /Apagar conversa/ }))
     fireEvent.click(await screen.findByRole("button", { name: "Confirmar" }))
     await waitFor(() => expect(m.del).toHaveBeenCalledWith("c1"))
+  })
+
+  describe("perfis de resposta", () => {
+
+    it("opens the settings panel from the gear and switches profile (with a chat marker)", async () => {
+      renderVox()
+      await screen.findByText("O que é a graça?")
+
+      fireEvent.click(screen.getByRole("button", { name: "Configurações do Vox" }))
+
+      const directCard = await screen.findByText("Direto ao ponto")
+      fireEvent.click(directCard)
+
+      await waitFor(() => expect(m.setProfile).toHaveBeenCalledWith("DIRECT"))
+      expect(await screen.findByText("Perfil alterado para Direto ao ponto")).toBeInTheDocument()
+    })
+
+    it("reverts the selection when the profile switch fails", async () => {
+      m.setProfile.mockResolvedValue(null)
+      renderVox()
+      await screen.findByText("O que é a graça?")
+
+      fireEvent.click(screen.getByRole("button", { name: "Configurações do Vox" }))
+      fireEvent.click(await screen.findByText("Direto ao ponto"))
+
+      expect(await screen.findByRole("alert")).toHaveTextContent(/não foi possível trocar/i)
+      expect(screen.queryByText(/Perfil alterado para/)).not.toBeInTheDocument()
+    })
+
+    it("shows the intro modal only when bootstrap says so", async () => {
+      m.bootstrap.mockResolvedValue({
+        active: { id: "c1" }, conversations: [CONV],
+        profile: null, showVoxIntro: true,
+      })
+      renderVox()
+
+      expect(await screen.findByText("Escolha como o Vox responde")).toBeInTheDocument()
+    })
+
+    it("does not show the intro modal when a profile is already set", async () => {
+      m.bootstrap.mockResolvedValue({
+        active: { id: "c1" }, conversations: [CONV],
+        profile: "STUDY", showVoxIntro: false,
+      })
+      renderVox()
+      await screen.findByText("O que é a graça?")
+
+      expect(screen.queryByText("Escolha como o Vox responde")).not.toBeInTheDocument()
+    })
+
+    it("'Depois' dismisses the intro via the API without choosing a profile", async () => {
+      m.bootstrap.mockResolvedValue({
+        active: { id: "c1" }, conversations: [CONV],
+        profile: null, showVoxIntro: true,
+      })
+      renderVox()
+
+      fireEvent.click(await screen.findByRole("button", { name: "Depois" }))
+
+      await waitFor(() => expect(m.dismissIntro).toHaveBeenCalled())
+      expect(m.setProfile).not.toHaveBeenCalled()
+      expect(screen.queryByText("Escolha como o Vox responde")).not.toBeInTheDocument()
+    })
+
   })
 
 })
