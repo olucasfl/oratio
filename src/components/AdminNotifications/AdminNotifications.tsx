@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { Send, Users, Search, Check, Bell, Clock, Trash2 } from "lucide-react"
+import { Send, Users, Search, Check, Bell, Clock, Trash2, SlidersHorizontal } from "lucide-react"
 
 import styles from "./AdminNotifications.module.css"
 import {
@@ -9,9 +9,11 @@ import {
   getRules,
   updateRule,
   deleteCampaign,
-  deleteAllCampaigns
+  deleteAllCampaigns,
+  getSettings,
+  updateSettings
 } from "../../services/adminNotificationsService"
-import type { Campaign, Rule } from "../../services/adminNotificationsService"
+import type { Campaign, Rule, NotificationSettings } from "../../services/adminNotificationsService"
 import { getAllUsers } from "../../services/adminService"
 
 const RULE_LABELS: Record<string, string> = {
@@ -86,11 +88,36 @@ export default function AdminNotifications(){
   const [rules, setRules] = useState<Rule[]>([])
   const [savingKey, setSavingKey] = useState<string | null>(null)
 
+  const [settings, setSettings] = useState<NotificationSettings | null>(null)
+  const [savingSettings, setSavingSettings] = useState(false)
+  const [settingsMsg, setSettingsMsg] = useState<string | null>(null)
+
   useEffect(()=>{
     listCampaigns().then(setCampaigns).catch(()=>{})
     getSubscribers().then(setSubs).catch(()=>{})
     getRules().then(setRules).catch(()=>{})
+    getSettings().then(setSettings).catch(()=>{})
   },[])
+
+  function patchSettings(patch: Partial<NotificationSettings>){
+    setSettings(prev => prev ? { ...prev, ...patch } : prev)
+    setSettingsMsg(null)
+  }
+
+  async function handleSaveSettings(){
+    if(!settings) return
+    setSavingSettings(true)
+    setSettingsMsg(null)
+    try{
+      const saved = await updateSettings(settings)
+      setSettings(saved)
+      setSettingsMsg("Ajustes salvos.")
+    }catch{
+      setSettingsMsg("Não foi possível salvar. Confira os valores (horas 0–23, tetos 0–10).")
+    }finally{
+      setSavingSettings(false)
+    }
+  }
 
   function patchRuleLocal(key: string, patch: Partial<Rule>){
     setRules(prev => prev.map(r => r.key === key ? { ...r, ...patch } : r))
@@ -276,9 +303,93 @@ export default function AdminNotifications(){
         </div>
       </div>
 
+      {settings && (
+        <div className={styles.card}>
+          <h3 className={styles.cardTitle}><SlidersHorizontal size={15}/> Ajustes de frequência</h3>
+          <p className={styles.muted}>Valem para todas as automáticas. Os valores padrão reproduzem o comportamento de antes — mexa com calma.</p>
+
+          <div className={styles.setGrid}>
+            <div className={styles.setField}>
+              <label className={styles.label}>Máx. por dia
+                <input className={styles.input} type="number" min={0} max={10}
+                  value={settings.maxPerDay}
+                  onChange={e=>patchSettings({ maxPerDay: Number(e.target.value) })}/>
+              </label>
+              <span className={styles.setHint}>Teto de automáticas por pessoa por dia.</span>
+            </div>
+
+            <div className={styles.setField}>
+              <label className={styles.label}>Máx. convites por dia
+                <input className={styles.input} type="number" min={0} max={10}
+                  value={settings.maxNudgesPerDay}
+                  onChange={e=>patchSettings({ maxNudgesPerDay: Number(e.target.value) })}/>
+              </label>
+              <span className={styles.setHint}>Quantas não-urgentes por dia. O resto do teto fica reservado para as urgentes.</span>
+            </div>
+
+            <div className={styles.setField}>
+              <label className={styles.label}>Início do silêncio
+                <input className={styles.input} type="number" min={0} max={23}
+                  value={settings.quietStart}
+                  onChange={e=>patchSettings({ quietStart: Number(e.target.value) })}/>
+              </label>
+              <span className={styles.setHint}>Hora local a partir da qual não notificar.</span>
+            </div>
+
+            <div className={styles.setField}>
+              <label className={styles.label}>Fim do silêncio
+                <input className={styles.input} type="number" min={0} max={23}
+                  value={settings.quietEnd}
+                  onChange={e=>patchSettings({ quietEnd: Number(e.target.value) })}/>
+              </label>
+              <span className={styles.setHint}>Hora local antes da qual não notificar.</span>
+            </div>
+
+            <div className={styles.setField}>
+              <label className={styles.label}>Intervalo mínimo (h)
+                <input className={styles.input} type="number" min={0} max={24}
+                  value={settings.spacingHours}
+                  onChange={e=>patchSettings({ spacingHours: Number(e.target.value) })}/>
+              </label>
+              <span className={styles.setHint}>Horas de espera entre duas automáticas.</span>
+            </div>
+
+            <div className={styles.setField}>
+              <label className={styles.label}>Limiar de urgência
+                <input className={styles.input} type="number" min={0} max={100}
+                  value={settings.urgentThreshold}
+                  onChange={e=>patchSettings({ urgentThreshold: Number(e.target.value) })}/>
+              </label>
+              <span className={styles.setHint}>Prioridade ≥ isso conta como urgente: passa na frente e ignora o descanso.</span>
+            </div>
+          </div>
+
+          <div className={styles.setToggleRow}>
+            <button
+              type="button"
+              className={`${styles.ruleSwitch} ${settings.restGapEnabled ? styles.ruleSwitchOn : ""}`}
+              onClick={()=>patchSettings({ restGapEnabled: !settings.restGapEnabled })}
+              role="switch"
+              aria-checked={settings.restGapEnabled}
+              aria-label="Gap de descanso"
+            ><span className={styles.ruleKnob}/></button>
+            <span className={styles.setToggleText}>
+              <strong>Gap de descanso</strong>
+              <span className={styles.setHint}>Cria dias vazios: uma notificação não-urgente só dispara se não houve nenhuma ontem nem hoje. Urgentes passam mesmo assim.</span>
+            </span>
+          </div>
+
+          {settingsMsg && <p className={styles.feedback}>{settingsMsg}</p>}
+
+          <button className={styles.sendBtn} onClick={handleSaveSettings} disabled={savingSettings}>
+            <Check size={16}/> {savingSettings ? "Salvando…" : "Salvar ajustes"}
+          </button>
+        </div>
+      )}
+
       <div className={styles.card}>
         <h3 className={styles.cardTitle}><Clock size={15}/> Automáticas</h3>
-        <p className={styles.muted}>Enviadas sozinhas para quem ativou o push — <strong>no máx. 2 por dia</strong> por pessoa (6h de intervalo; as urgentes têm prioridade e nada repete todo dia). Gatilho fixo em cada regra; você edita <strong>texto e hora</strong> e liga/desliga. Use {"{count}"} e {"{label}"} pra interpolar.</p>
+        <p className={styles.muted}>Enviadas sozinhas para quem ativou o push, respeitando os <strong>ajustes de frequência</strong> acima (as urgentes têm prioridade). Gatilho fixo em cada regra; você edita <strong>texto e hora</strong> e liga/desliga. Use {"{count}"} e {"{label}"} pra interpolar.</p>
         <div className={styles.campList}>
           {rules.map((rule)=>(
             <div key={rule.key} className={styles.rule}>
