@@ -62,6 +62,20 @@ const RULE = {
   url: "/oratio/rosary",
   hour: 18,
   condition: "ROSARY_UNFINISHED",
+  thresholdDays: null,
+  band: "AFTERNOON",
+}
+
+const BIBLE_RULE = {
+  key: "BIBLE_RESUME",
+  enabled: true,
+  title: "Continue sua leitura",
+  body: "Você parou em {label}.",
+  url: "/oratio/biblia",
+  hour: 9,
+  condition: "BIBLE_RESUME",
+  thresholdDays: 3,
+  band: "MORNING",
 }
 
 function setupDefaults() {
@@ -272,6 +286,41 @@ describe("AdminNotifications", () => {
     const ruleCard = (await screen.findByText("Terço não terminado")).closest("div")!
     expect(within(ruleCard.parentElement as HTMLElement).getByText(/só quem começou um terço e não terminou/))
       .toBeInTheDocument()
+  })
+
+  it("shows the band select for every rule and the day-threshold field only for window conditions", async () => {
+    getRulesMock.mockResolvedValue([RULE, BIBLE_RULE])
+    render(<AdminNotifications />)
+    await screen.findByText("Voltar à Bíblia")
+
+    // faixa aparece pras duas
+    expect(screen.getByLabelText("Faixa de horário — Terço não terminado")).toHaveValue("AFTERNOON")
+    expect(screen.getByLabelText("Faixa de horário — Voltar à Bíblia")).toHaveValue("MORNING")
+
+    // limiar só pra BIBLE_RESUME (condição de janela), não pra ROSARY_UNFINISHED
+    expect(screen.getByLabelText("Limiar em dias — Voltar à Bíblia")).toHaveValue(3)
+    expect(screen.queryByLabelText("Limiar em dias — Terço não terminado")).not.toBeInTheDocument()
+
+    // a descrição do gatilho reflete o valor real
+    expect(screen.getByText(/parou a leitura da Bíblia há 3 dias/)).toBeInTheDocument()
+  })
+
+  it("saves band and thresholdDays via updateRule", async () => {
+    getRulesMock.mockResolvedValue([BIBLE_RULE])
+    updateRuleMock.mockResolvedValue({ ...BIBLE_RULE, band: "EVENING", thresholdDays: 5 })
+    render(<AdminNotifications />)
+    await screen.findByText("Voltar à Bíblia")
+
+    fireEvent.change(screen.getByLabelText("Faixa de horário — Voltar à Bíblia"), { target: { value: "EVENING" } })
+    fireEvent.change(screen.getByLabelText("Limiar em dias — Voltar à Bíblia"), { target: { value: "5" } })
+    fireEvent.click(screen.getByText("Salvar"))
+
+    await waitFor(() =>
+      expect(updateRuleMock).toHaveBeenCalledWith(
+        "BIBLE_RESUME",
+        expect.objectContaining({ band: "EVENING", thresholdDays: 5 }),
+      ),
+    )
   })
 
 })

@@ -157,3 +157,17 @@
 .setToggleRow{ display:flex; align-items:flex-start; gap:10px; margin-top:10px; }
 .setToggleText{ display:flex; flex-direction:column; gap:2px; }
 .setToggleText strong{ font-size:13px; color:var(--oratio-text-dark); }
+
+/* Knobs por regra: faixa de horário + limiar em dias */
+.ruleKnobs{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+.knob{ display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--oratio-text-soft); }
+.knobSelect{
+  font-family:inherit; font-size:13px; padding:7px 9px; border-radius:9px;
+  border:1px solid var(--oratio-card-border); background:#fff; color:var(--oratio-text-dark);
+}
+.knobSelect:focus{ outline:none; border-color:var(--oratio-primary); }
+.knobNum{
+  width:56px; font-family:inherit; font-size:13px; padding:7px 8px; border-radius:9px;
+  border:1px solid var(--oratio-card-border); background:#fff; color:var(--oratio-text-dark);
+}
+.knobNum:focus{ outline:none; border-color:var(--oratio-primary); }

@@ -29,24 +29,47 @@ const RULE_LABELS: Record<string, string> = {
 }
 
 // Regra do sistema = uma das pré-definidas (chave conhecida). Só edita
-// texto/hora/liga-desliga; a lógica de PRA QUEM enviar é código e não
-// pode ser apagada pelo painel.
+// texto/hora/faixa/limiar/liga-desliga; a lógica de PRA QUEM enviar é
+// código e não pode ser apagada pelo painel.
 function isSystemRule(rule: Rule): boolean {
   return !!RULE_LABELS[rule.key]
 }
 
-// Explica o gatilho de cada regra em linguagem clara — quando dispara e
-// pra quem. As condições são fixas em código; o painel só ajusta texto/hora.
+const BAND_OPTIONS: { value: string; label: string }[] = [
+  { value: "MORNING", label: "Manhã" },
+  { value: "AFTERNOON", label: "Tarde" },
+  { value: "EVENING", label: "Noite" },
+  { value: "ANY", label: "Qualquer" },
+]
+
+// Condições que usam janela de "parado há N dias" — só nelas o campo de
+// limiar faz sentido.
+const THRESHOLD_CONDITIONS = new Set([
+  "BIBLE_RESUME", "CATECHISM_RESUME", "ROSARY_LAPSE", "COMEBACK",
+])
+function usesThreshold(condition: string | null): boolean {
+  return !!condition && THRESHOLD_CONDITIONS.has(condition)
+}
+
+function dias(n: number | null, fallback: number): string {
+  const v = n ?? fallback
+  return `${v} dia${v === 1 ? "" : "s"}`
+}
+
+// Explica o gatilho de cada regra em linguagem clara, já com os valores
+// reais de limiar. As condições são fixas em código; o painel ajusta
+// texto/hora/faixa/limiar.
 function ruleTrigger(rule: Rule): string {
   const h = rule.hour ?? 0
   const from = `A partir das ${h}h`
+  const d = rule.thresholdDays
   switch (rule.condition) {
     case "ROSARY_UNFINISHED": return `${from} · só quem começou um terço e não terminou`
     case "STREAK_AT_RISK":    return `${from} · só quem pode perder a sequência de oração`
-    case "BIBLE_RESUME":      return `${from} · só quem parou a leitura da Bíblia há dias`
-    case "CATECHISM_RESUME":  return `${from} · só quem parou o Catecismo há dias`
-    case "ROSARY_LAPSE":      return `${from} · só quem não reza o terço há um tempo`
-    case "COMEBACK":          return `${from} · só quem está há dias sem abrir o app`
+    case "BIBLE_RESUME":      return `${from} · só quem parou a leitura da Bíblia há ${dias(d, 3)}`
+    case "CATECHISM_RESUME":  return `${from} · só quem parou o Catecismo há ${dias(d, 4)}`
+    case "ROSARY_LAPSE":      return `${from} · só quem não completa um terço há ${dias(d, 7)}`
+    case "COMEBACK":          return `${from} · só quem está há ${dias(d, 3)}–14 sem abrir o app`
     case "SUNDAY":            return `Domingo, a partir das ${h}h · para quem ativou o push`
     case "VOX_INTRO":         return `${from} · só quem nunca usou o VoxAI`
     default:                  return `À noite (a partir das ${h}h) · lembrete de reflexão`
@@ -126,7 +149,10 @@ export default function AdminNotifications(){
   async function saveRule(rule: Rule){
     setSavingKey(rule.key)
     try{
-      await updateRule(rule.key, { enabled: rule.enabled, title: rule.title, body: rule.body, url: rule.url, hour: rule.hour })
+      await updateRule(rule.key, {
+        enabled: rule.enabled, title: rule.title, body: rule.body, url: rule.url,
+        hour: rule.hour, band: rule.band, thresholdDays: rule.thresholdDays,
+      })
     }catch{ /* noop */ }finally{ setSavingKey(null) }
   }
 
@@ -389,7 +415,7 @@ export default function AdminNotifications(){
 
       <div className={styles.card}>
         <h3 className={styles.cardTitle}><Clock size={15}/> Automáticas</h3>
-        <p className={styles.muted}>Enviadas sozinhas para quem ativou o push, respeitando os <strong>ajustes de frequência</strong> acima (as urgentes têm prioridade). Gatilho fixo em cada regra; você edita <strong>texto e hora</strong> e liga/desliga. Use {"{count}"} e {"{label}"} pra interpolar.</p>
+        <p className={styles.muted}>Enviadas sozinhas para quem ativou o push, respeitando os <strong>ajustes de frequência</strong> acima (as urgentes têm prioridade). Gatilho fixo em cada regra; você edita <strong>texto, hora, faixa e limiar</strong> e liga/desliga. Use {"{count}"} e {"{label}"} pra interpolar.</p>
         <div className={styles.campList}>
           {rules.map((rule)=>(
             <div key={rule.key} className={styles.rule}>
@@ -411,6 +437,32 @@ export default function AdminNotifications(){
               <span className={styles.ruleTrigger}><Clock size={12}/> {ruleTrigger(rule)}</span>
               <input className={styles.input} value={rule.title} onChange={e=>patchRuleLocal(rule.key,{title:e.target.value})} placeholder="Título"/>
               <textarea className={styles.textarea} rows={2} maxLength={500} value={rule.body ?? ""} onChange={e=>patchRuleLocal(rule.key,{body:e.target.value})} placeholder="Descrição"/>
+              <div className={styles.ruleKnobs}>
+                <label className={styles.knob}>
+                  <span>Faixa</span>
+                  <select
+                    className={styles.knobSelect}
+                    value={rule.band ?? "ANY"}
+                    onChange={e=>patchRuleLocal(rule.key,{band: e.target.value as Rule["band"]})}
+                    aria-label={`Faixa de horário — ${RULE_LABELS[rule.key] || rule.key}`}
+                  >
+                    {BAND_OPTIONS.map(o=>(<option key={o.value} value={o.value}>{o.label}</option>))}
+                  </select>
+                </label>
+                {usesThreshold(rule.condition) && (
+                  <label className={styles.knob}>
+                    <span>Parado há</span>
+                    <input
+                      className={styles.knobNum}
+                      type="number" min={0} max={90}
+                      value={rule.thresholdDays ?? ""}
+                      onChange={e=>patchRuleLocal(rule.key,{ thresholdDays: e.target.value === "" ? null : Number(e.target.value) })}
+                      aria-label={`Limiar em dias — ${RULE_LABELS[rule.key] || rule.key}`}
+                    />
+                    <span>dias</span>
+                  </label>
+                )}
+              </div>
               <div className={styles.ruleFoot}>
                 <input className={styles.input} value={rule.url ?? ""} onChange={e=>patchRuleLocal(rule.key,{url:e.target.value})} placeholder="/oratio/…"/>
                 <span className={styles.hourWrap}>
