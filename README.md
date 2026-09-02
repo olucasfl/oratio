@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="../public/banner-oratio.png" alt="Oratio" width="100%" />
+  <img src="./public/banner-oratio.png" alt="Oratio" width="100%" />
 </p>
 
 <h1 align="center">Oratio</h1>
@@ -136,7 +136,7 @@ notificação (rotas `/oratio/admin`).
 
 O guia técnico completo — sequência de boot, fluxo de auth/refresh, comportamento
 PWA/offline, convenções e as “pegadinhas” não óbvias — está em
-**[`docs/ARCHITECTURE.md`](./ARCHITECTURE.md)**. **Leia antes de mexer no código.**
+**[`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md)**. **Leia antes de mexer no código.**
 
 Em resumo:
 
@@ -251,7 +251,7 @@ npm run test:cov   # cobertura com thresholds
 - **Excluídos** da cobertura: `src/data/**` (conteúdo estático, sem lógica) e
   `src/main.tsx` (boot puro).
 - A limpeza do backlog de **lint** está em andamento — ver
-  [`docs/SPEC.md`](./SPEC.md) e `docs/tasks/plan.md`.
+  [`docs/SPEC.md`](./docs/SPEC.md) e `docs/tasks/plan.md`.
 
 O build (`npm run build`) roda `tsc -b` primeiro, então um erro de tipo já falha
 antes do empacotamento.
@@ -290,7 +290,7 @@ URL de produção: **https://oratio-phi.vercel.app/**
 
 ## Contribuindo
 
-1. **Leia [`docs/ARCHITECTURE.md`](./ARCHITECTURE.md) primeiro** — ele explica
+1. **Leia [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) primeiro** — ele explica
    as decisões não óbvias e onde estão os riscos.
 2. Trabalhe a partir de `develop`; abra PR para `main`.
 3. Antes de commitar: `npm test` (suíte completa) + `npm run build`.

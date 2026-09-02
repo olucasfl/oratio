@@ -2,9 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-This is the **only** Markdown file at the repo root. Everything else lives under
-`docs/`. **There is important context there — do not start work without reading
-the relevant pieces below.**
+The repo root holds only this file and `README.md` (project overview / GitHub
+landing page). **Everything else — the technical guide and every work plan —
+lives under `docs/`, and there is important context there. Do not start work
+without reading the relevant pieces below.**
 
 ## `docs/ARCHITECTURE.md` — read this before ANY code change
 
@@ -19,7 +20,7 @@ this file stays a thin pointer so it can't drift.
 | Path | What it is | Read it when |
 |---|---|---|
 | `docs/ARCHITECTURE.md` | The technical guide (§1–§10). | Always, before touching code. Update the affected §§ when you change behavior. |
-| `docs/README.md` | Project overview, stack, scripts, deploy, contributing. | You need the high-level picture or setup steps. |
+| `README.md` (root) | Project overview, stack, scripts, deploy, contributing, GitHub landing page. | You need the high-level picture or setup steps. |
 | `docs/SPEC.md` | The spec for the test-coverage (→80%) + lint-cleanup effort. | Before working on tests or lint — it records every decision already made (coverage exclusions, thresholds, bug-fix policy). |
 | `docs/tasks/` | Work plans, each a `*-plan.md` (design + phases) plus a `*-todo.md` (executable checklist). | Before starting or continuing any multi-step feature — check for an existing plan first. |
 
