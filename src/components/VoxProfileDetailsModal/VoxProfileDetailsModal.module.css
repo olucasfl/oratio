@@ -1,0 +1,90 @@
+.overlay{
+ position:fixed;
+ inset:0;
+ z-index:1100;
+ background:rgba(0,0,0,0.6);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+}
+
+.modal{
+ background:var(--oratio-card-bg);
+ border-radius:var(--oratio-radius-lg);
+ width:100%;
+ max-width:440px;
+ max-height:85vh;
+ overflow-y:auto;
+ box-shadow:var(--oratio-shadow-strong);
+ padding:24px;
+}
+
+.header{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:12px;
+ margin-bottom:14px;
+}
+
+.title{
+ font-family:var(--oratio-font-title);
+ font-size:19px;
+ color:var(--oratio-primary);
+ margin:0;
+}
+
+.close{
+ flex-shrink:0;
+ background:none;
+ border:none;
+ cursor:pointer;
+ color:var(--oratio-text-soft);
+ padding:4px;
+ display:flex;
+}
+
+.sectionLabel{
+ font-size:12px;
+ font-weight:700;
+ letter-spacing:0.04em;
+ text-transform:uppercase;
+ color:var(--oratio-text-soft);
+ margin:18px 0 8px;
+}
+
+.details{
+ font-size:14px;
+ color:var(--oratio-text-dark);
+ line-height:1.55;
+}
+
+.detailsEmpty{
+ font-size:13.5px;
+ color:var(--oratio-text-soft);
+ font-style:italic;
+}
+
+.example{
+ border:1px solid var(--oratio-card-border);
+ border-radius:var(--oratio-radius-md);
+ padding:14px;
+ background:var(--oratio-background);
+}
+
+.exampleQuestion{
+ display:inline-block;
+ background:var(--oratio-primary);
+ color:var(--oratio-text-light);
+ font-size:13.5px;
+ padding:8px 12px;
+ border-radius:12px 12px 12px 4px;
+ margin-bottom:12px;
+ line-height:1.4;
+}
+
+.exampleAnswer{
+ border-top:1px dashed var(--oratio-card-border);
+ padding-top:12px;
+}

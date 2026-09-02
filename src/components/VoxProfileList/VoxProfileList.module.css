@@ -1,0 +1,102 @@
+/* Grade 2×2×2 — nunca empilhado. Mantém 2 colunas mesmo no celular. */
+.list{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:8px;
+}
+
+.card{
+ display:flex;
+ flex-direction:column;
+ gap:5px;
+ width:100%;
+ min-width:0;
+ text-align:left;
+ padding:11px 11px 10px;
+ border:1.5px solid var(--oratio-card-border);
+ border-radius:var(--oratio-radius-md);
+ background:var(--oratio-card-bg);
+ cursor:pointer;
+ transition:var(--oratio-transition);
+}
+
+.card:hover{
+ border-color:var(--oratio-primary-light);
+}
+
+.cardSelected{
+ border-color:var(--oratio-primary);
+ background:var(--oratio-secondary);
+}
+
+.cardHead{
+ display:flex;
+ align-items:center;
+ gap:7px;
+ min-width:0;
+}
+
+.radio{
+ flex-shrink:0;
+ width:15px;
+ height:15px;
+ border-radius:50%;
+ border:2px solid var(--oratio-card-border);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+
+.radioOn{
+ border-color:var(--oratio-primary);
+}
+
+.radioDot{
+ width:7px;
+ height:7px;
+ border-radius:50%;
+ background:var(--oratio-primary);
+}
+
+.label{
+ font-family:var(--oratio-font-title);
+ font-size:13.5px;
+ line-height:1.15;
+ color:var(--oratio-text-dark);
+ margin:0;
+ min-width:0;
+ overflow-wrap:break-word;
+}
+
+.short{
+ font-size:11.5px;
+ color:var(--oratio-text-soft);
+ margin:0;
+ line-height:1.35;
+ display:-webkit-box;
+ -webkit-line-clamp:3;
+ -webkit-box-orient:vertical;
+ overflow:hidden;
+}
+
+.detailsLink{
+ align-self:flex-start;
+ background:none;
+ border:none;
+ padding:2px 0 0;
+ font-size:11.5px;
+ font-weight:700;
+ color:var(--oratio-primary);
+ cursor:pointer;
+}
+
+.detailsLink:hover{
+ text-decoration:underline;
+}
+
+@media (min-width:520px){
+ .list{ gap:10px; }
+ .card{ padding:13px; }
+ .label{ font-size:14.5px; }
+ .short{ font-size:12.5px; }
+}

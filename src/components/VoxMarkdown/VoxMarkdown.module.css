@@ -1,0 +1,105 @@
+/* Renderização de markdown das respostas do Vox — mesmos estilos usados no
+   chat (Vox.module.css), aqui isolados para reuso nos cards de exemplo dos
+   perfis. */
+
+.content{
+ font-size:15.5px;
+ line-height:1.58;
+ color:var(--oratio-text-dark);
+ white-space:pre-wrap;
+ word-break:break-word;
+}
+
+.content h1{
+ margin:14px 0 5px;
+ font-size:22px;
+ line-height:1.2;
+ color:var(--oratio-primary);
+ font-family:var(--oratio-font-title);
+}
+
+.content h2{
+ margin:12px 0 4px;
+ font-size:19px;
+ line-height:1.3;
+ color:var(--oratio-secondary-dark);
+}
+
+.content h3{
+ margin:10px 0 4px;
+ font-size:17px;
+ color:var(--oratio-primary);
+}
+
+.content strong{
+ color:var(--oratio-primary);
+ font-weight:700;
+}
+
+.content > *:first-child{
+ margin-top:0 !important;
+}
+
+.content > *:last-child{
+ margin-bottom:0 !important;
+}
+
+.paragraph{
+ margin:0;
+ line-height:1.65;
+}
+
+.paragraph + .paragraph{
+ margin-top:7px;
+}
+
+.list{
+ margin:6px 0;
+ padding-left:20px;
+ display:flex;
+ flex-direction:column;
+ gap:4px;
+}
+
+.listItem{
+ margin:0;
+ padding:0;
+ line-height:1.6;
+}
+
+.listItem p{
+ margin:0;
+}
+
+.quote{
+ margin:12px 0;
+ padding:14px 18px;
+ border-left:4px solid var(--oratio-primary);
+ background:var(--oratio-secondary);
+ border-radius:0 10px 10px 0;
+ font-family:var(--oratio-font-text);
+ font-size:16.5px;
+ font-style:italic;
+ color:var(--oratio-secondary-dark);
+ line-height:1.75;
+}
+
+.quote p{
+ margin:0;
+ line-height:1.75;
+}
+
+.quote strong{
+ font-style:normal;
+ color:var(--oratio-primary);
+ font-size:14px;
+ font-family:var(--oratio-font-title);
+ letter-spacing:0.03em;
+}
+
+@media (max-width:600px){
+ .content{
+  font-size:15px;
+  line-height:1.62;
+ }
+}
