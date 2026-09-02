@@ -315,6 +315,9 @@ export default function Vox(){
  const [voxProfiles,setVoxProfiles] = useState<VoxProfileMeta[]>([])
  const [voxProfilesLoaded,setVoxProfilesLoaded] = useState(false)
  const [loadingVoxProfiles,setLoadingVoxProfiles] = useState(false)
+ // dica que ilumina a engrenagem logo depois de fechar o onboarding
+ const [gearHint,setGearHint] = useState(false)
+ const gearHintShown = useRef(false)
 
  const bottomRef = useRef<HTMLDivElement | null>(null)
  const chatAreaRef = useRef<HTMLElement | null>(null)
@@ -501,6 +504,13 @@ useEffect(()=>{
   // eslint-disable-next-line react-hooks/exhaustive-deps
  },[showVoxIntro])
 
+ // dica da engrenagem some sozinha depois de alguns segundos
+ useEffect(()=>{
+  if(!gearHint) return
+  const t = setTimeout(()=>setGearHint(false), 7000)
+  return ()=> clearTimeout(t)
+ },[gearHint])
+
  async function init(){
 
     try{
@@ -546,7 +556,15 @@ useEffect(()=>{
 
  function openSettings(){
   setSettingsOpen(true)
+  setGearHint(false)
   ensureVoxProfilesLoaded()
+ }
+
+ // dispara a dica da engrenagem uma única vez, ao sair do onboarding
+ function triggerGearHint(){
+  if(gearHintShown.current) return
+  gearHintShown.current = true
+  setGearHint(true)
  }
 
  function labelForProfile(key: string){
@@ -587,11 +605,13 @@ useEffect(()=>{
   if(!res) return false
   setVoxProfileState(key)
   setShowVoxIntro(false)
+  triggerGearHint()
   return true
  }
 
  async function handleDismissIntro(){
   setShowVoxIntro(false)
+  triggerGearHint()
   await dismissVoxIntro()
  }
 
@@ -1175,7 +1195,7 @@ useEffect(()=>{
     </h1>
 
     <button
-     className={styles.settingsButton}
+     className={`${styles.settingsButton} ${gearHint ? styles.settingsButtonPulse : ""}`}
      onClick={openSettings}
      aria-label="Configurações do Vox"
     >
@@ -1183,6 +1203,16 @@ useEffect(()=>{
     </button>
 
    </header>
+
+   {gearHint && (
+    <>
+     <div className={styles.gearHintBackdrop} onClick={()=>setGearHint(false)} />
+     <div className={styles.gearHint} role="status">
+      <p>Aqui você troca o estilo de resposta do Vox quando quiser.</p>
+      <button type="button" onClick={()=>setGearHint(false)}>Entendi</button>
+     </div>
+    </>
+   )}
 
    {error && (
     <div className={styles.errorBox} role="status" aria-live="polite">

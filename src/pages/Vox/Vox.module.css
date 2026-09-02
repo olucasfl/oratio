@@ -419,6 +419,70 @@ duas colunas nunca se sobrepõem, em nenhum zoom.
  background:rgba(255,255,255,.14);
 }
 
+/* engrenagem iluminada logo depois do onboarding */
+.settingsButtonPulse{
+ background:rgba(255,255,255,.28);
+ box-shadow:0 0 0 0 rgba(255,255,255,.6);
+ animation:voxGearPulse 1.4s ease-out infinite;
+ z-index:41;
+}
+
+@keyframes voxGearPulse{
+ 0%{ box-shadow:0 0 0 0 rgba(255,255,255,.55); }
+ 70%{ box-shadow:0 0 0 14px rgba(255,255,255,0); }
+ 100%{ box-shadow:0 0 0 0 rgba(255,255,255,0); }
+}
+
+.gearHintBackdrop{
+ position:fixed;
+ inset:0;
+ z-index:39;
+}
+
+.gearHint{
+ position:fixed;
+ top:calc(var(--vox-header-height, 60px) + env(safe-area-inset-top) + 6px);
+ right:10px;
+ z-index:40;
+ max-width:230px;
+ background:var(--oratio-card-bg);
+ color:var(--oratio-text-dark);
+ border:1px solid var(--oratio-card-border);
+ border-radius:var(--oratio-radius-md);
+ box-shadow:var(--oratio-shadow-medium);
+ padding:12px 13px;
+}
+
+.gearHint::before{
+ content:"";
+ position:absolute;
+ top:-7px;
+ right:14px;
+ width:12px;
+ height:12px;
+ background:var(--oratio-card-bg);
+ border-left:1px solid var(--oratio-card-border);
+ border-top:1px solid var(--oratio-card-border);
+ transform:rotate(45deg);
+}
+
+.gearHint p{
+ margin:0 0 9px;
+ font-size:13px;
+ line-height:1.4;
+}
+
+.gearHint button{
+ background:var(--oratio-primary);
+ color:var(--oratio-text-light);
+ border:none;
+ border-radius:var(--oratio-radius-sm);
+ padding:6px 12px;
+ font-size:12.5px;
+ font-weight:600;
+ cursor:pointer;
+}
+
 /* marcador local no chat: "Perfil alterado para X" */
 .systemNote{
  align-self:center;

@@ -225,6 +225,21 @@ describe("Vox", () => {
       expect(screen.queryByText("Escolha como o Vox responde")).not.toBeInTheDocument()
     })
 
+    it("points at the gear right after the intro is dismissed", async () => {
+      m.bootstrap.mockResolvedValue({
+        active: { id: "c1" }, conversations: [CONV],
+        profile: null, showVoxIntro: true,
+      })
+      renderVox()
+
+      fireEvent.click(await screen.findByRole("button", { name: "Depois" }))
+
+      expect(await screen.findByText(/Aqui você troca o estilo de resposta/)).toBeInTheDocument()
+
+      fireEvent.click(screen.getByRole("button", { name: "Entendi" }))
+      expect(screen.queryByText(/Aqui você troca o estilo de resposta/)).not.toBeInTheDocument()
+    })
+
   })
 
 })
