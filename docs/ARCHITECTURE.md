@@ -84,7 +84,11 @@ src/
   App.tsx, main.tsx        boot, routing, SW registration — see §3
   components/               shared UI: modals, cards, nav, admin widgets (AdminChart/AdminHeatmap/AdminFilterSheet
                              mirror the backend's admin/stats endpoints, AdminNotifications drives campaign/rule
-                             management against the backend's admin notification endpoints), ProtectedRoute/
+                             management against the backend's admin notification endpoints — including the
+                             "Ajustes de frequência" funnel config, per-rule band/threshold knobs, and the
+                             per-rule text-variant editor, `RuleVariants` (2026-09 overhaul; the backend
+                             enforces the "≥1 active variant" floor and the UI just reflects its 400)),
+                             ProtectedRoute/
                              AdminRoute/ErrorBoundary. `BottomNavbar` and `MenuDrawer` are the nav shell — there is
                              no shared page layout wrapping the routes in App.tsx, so **each page imports and
                              renders both itself** (15 pages do this as of this writing); a new authenticated page
