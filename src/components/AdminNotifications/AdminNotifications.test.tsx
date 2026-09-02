@@ -11,6 +11,8 @@ vi.mock("../../services/adminNotificationsService", () => ({
   deleteRule: vi.fn(),
   deleteCampaign: vi.fn(),
   deleteAllCampaigns: vi.fn(),
+  getSettings: vi.fn(),
+  updateSettings: vi.fn(),
 }))
 
 vi.mock("../../services/adminService", () => ({
@@ -25,6 +27,8 @@ import {
   updateRule,
   deleteCampaign,
   deleteAllCampaigns,
+  getSettings,
+  updateSettings,
 } from "../../services/adminNotificationsService"
 import { getAllUsers } from "../../services/adminService"
 import AdminNotifications from "./AdminNotifications"
@@ -36,7 +40,19 @@ const getRulesMock = getRules as unknown as ReturnType<typeof vi.fn>
 const updateRuleMock = updateRule as unknown as ReturnType<typeof vi.fn>
 const deleteCampaignMock = deleteCampaign as unknown as ReturnType<typeof vi.fn>
 const deleteAllCampaignsMock = deleteAllCampaigns as unknown as ReturnType<typeof vi.fn>
+const getSettingsMock = getSettings as unknown as ReturnType<typeof vi.fn>
+const updateSettingsMock = updateSettings as unknown as ReturnType<typeof vi.fn>
 const getAllUsersMock = getAllUsers as unknown as ReturnType<typeof vi.fn>
+
+const SETTINGS = {
+  maxPerDay: 2,
+  maxNudgesPerDay: 1,
+  quietStart: 22,
+  quietEnd: 7,
+  spacingHours: 6,
+  restGapEnabled: true,
+  urgentThreshold: 80,
+}
 
 const RULE = {
   key: "ROSARY_UNFINISHED",
@@ -52,6 +68,7 @@ function setupDefaults() {
   listCampaignsMock.mockResolvedValue([])
   getSubscribersMock.mockResolvedValue({ totalUsers: 10, subscribedUsers: 4 })
   getRulesMock.mockResolvedValue([RULE])
+  getSettingsMock.mockResolvedValue({ ...SETTINGS })
   getAllUsersMock.mockResolvedValue([
     { id: "u1", name: "Ana", email: "ana@example.com" },
     { id: "u2", name: "Beto", email: "beto@example.com" },
@@ -209,6 +226,44 @@ describe("AdminNotifications", () => {
     fireEvent.click(toggle)
 
     await waitFor(() => expect(toggle).toHaveAttribute("aria-checked", "true"))
+  })
+
+  it("loads the frequency settings and renders the editable knobs", async () => {
+    render(<AdminNotifications />)
+
+    expect(await screen.findByText("Ajustes de frequência")).toBeInTheDocument()
+    const maxPerDay = screen.getByLabelText("Máx. por dia") as HTMLInputElement
+    expect(maxPerDay.value).toBe("2")
+    expect((screen.getByLabelText("Início do silêncio") as HTMLInputElement).value).toBe("22")
+    expect(screen.getByRole("switch", { name: "Gap de descanso" })).toHaveAttribute("aria-checked", "true")
+  })
+
+  it("edits a knob and persists the full settings object on save", async () => {
+    updateSettingsMock.mockResolvedValue({ ...SETTINGS, maxPerDay: 3, restGapEnabled: false })
+    render(<AdminNotifications />)
+    await screen.findByText("Ajustes de frequência")
+
+    fireEvent.change(screen.getByLabelText("Máx. por dia"), { target: { value: "3" } })
+    fireEvent.click(screen.getByRole("switch", { name: "Gap de descanso" }))
+    fireEvent.click(screen.getByText("Salvar ajustes"))
+
+    await waitFor(() =>
+      expect(updateSettingsMock).toHaveBeenCalledWith(
+        expect.objectContaining({ maxPerDay: 3, restGapEnabled: false, quietStart: 22 }),
+      ),
+    )
+    expect(await screen.findByText("Ajustes salvos.")).toBeInTheDocument()
+  })
+
+  it("shows an error message when saving the settings fails", async () => {
+    updateSettingsMock.mockRejectedValue(new Error("400"))
+    render(<AdminNotifications />)
+    await screen.findByText("Ajustes de frequência")
+
+    fireEvent.change(screen.getByLabelText("Fim do silêncio"), { target: { value: "40" } })
+    fireEvent.click(screen.getByText("Salvar ajustes"))
+
+    expect(await screen.findByText(/Não foi possível salvar/)).toBeInTheDocument()
   })
 
   it("shows the plain-language trigger description for a known rule condition", async () => {

@@ -78,3 +78,27 @@ export async function deleteAllCampaigns(): Promise<void> {
   await api.delete("/oratio/admin/notifications/all")
 }
 
+// Bloco de config do funil anti-spam — linha única no backend. Todos os
+// campos reproduzem o comportamento antigo por default.
+export type NotificationSettings = {
+  maxPerDay: number
+  maxNudgesPerDay: number
+  quietStart: number
+  quietEnd: number
+  spacingHours: number
+  restGapEnabled: boolean
+  urgentThreshold: number
+}
+
+export async function getSettings(): Promise<NotificationSettings> {
+  const { data } = await api.get("/oratio/admin/notifications/settings")
+  return data
+}
+
+export async function updateSettings(
+  patch: Partial<NotificationSettings>,
+): Promise<NotificationSettings> {
+  const { data } = await api.patch("/oratio/admin/notifications/settings", patch)
+  return data
+}
+
