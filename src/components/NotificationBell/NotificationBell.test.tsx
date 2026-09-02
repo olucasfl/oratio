@@ -22,10 +22,12 @@ const NOW = new Date(2026, 0, 15, 12, 0, 0)
 const TODAY_ITEM = {
   id: "n1", title: "Aviso de hoje", body: "Corpo do aviso", url: "/oratio/rosary",
   createdAt: new Date(2026, 0, 15, 8, 0, 0).toISOString(), seenAt: null, source: "RULE",
+  ruleKey: "ROSARY_UNFINISHED",
 }
 const YESTERDAY_ITEM = {
   id: "n2", title: "Aviso de ontem", body: null, url: null,
   createdAt: new Date(2026, 0, 14, 20, 0, 0).toISOString(), seenAt: "2026-01-14T21:00:00.000Z", source: "CAMPAIGN",
+  ruleKey: null,
 }
 
 function LocationDisplay() {
@@ -152,6 +154,28 @@ describe("NotificationBell", () => {
 
     expect(screen.getByTestId("location").textContent).toBe("/oratio/rosary")
     expect(screen.queryByText("Notificações")).not.toBeInTheDocument()
+  })
+
+  it("shows a category label per notification (from the ruleKey)", async () => {
+    renderBell()
+    fireEvent.click(screen.getByLabelText("Notificações"))
+    await screen.findByText("Aviso de hoje")
+
+    expect(screen.getByText("Terço")).toBeInTheDocument()      // ROSARY_UNFINISHED
+    expect(screen.getByText("Novidade")).toBeInTheDocument()   // CAMPAIGN, no ruleKey
+  })
+
+  it("the 'Não lidas' tab filters out already-seen notifications", async () => {
+    renderBell()
+    fireEvent.click(screen.getByLabelText("Notificações"))
+    await screen.findByText("Aviso de hoje")
+    // ambas visíveis na aba "Todas"
+    expect(screen.getByText("Aviso de ontem")).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole("tab", { name: /Não lidas/ }))
+
+    expect(screen.getByText("Aviso de hoje")).toBeInTheDocument()      // não lida
+    expect(screen.queryByText("Aviso de ontem")).not.toBeInTheDocument() // já vista
   })
 
   it("closes the panel on backdrop click but not on panel content click", async () => {
