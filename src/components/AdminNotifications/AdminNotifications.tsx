@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { Send, Users, Search, Check, Bell, Clock, Trash2, SlidersHorizontal } from "lucide-react"
+import { Send, Users, Search, Check, Bell, Clock, Trash2, SlidersHorizontal, Plus } from "lucide-react"
 
 import styles from "./AdminNotifications.module.css"
 import {
@@ -11,9 +11,13 @@ import {
   deleteCampaign,
   deleteAllCampaigns,
   getSettings,
-  updateSettings
+  updateSettings,
+  getVariants,
+  createVariant,
+  updateVariant,
+  deleteVariant
 } from "../../services/adminNotificationsService"
-import type { Campaign, Rule, NotificationSettings } from "../../services/adminNotificationsService"
+import type { Campaign, Rule, NotificationSettings, Variant } from "../../services/adminNotificationsService"
 import { getAllUsers } from "../../services/adminService"
 
 const RULE_LABELS: Record<string, string> = {
@@ -92,6 +96,120 @@ const APP_LOCATIONS: { label: string; path: string }[] = [
   { label: "Perfil", path: "/oratio/profile" },
 ]
 
+// Editor do pool de variantes de texto de uma regra. Cada disparo usa a
+// que aquele usuário recebeu há mais tempo. O piso de "1 variante ativa"
+// é garantido pelo backend — aqui só refletimos o erro.
+function RuleVariants({ ruleKey }: { ruleKey: string }){
+  const [variants, setVariants] = useState<Variant[] | null>(null)
+  const [dirty, setDirty] = useState<Set<string>>(new Set())
+  const [savingId, setSavingId] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(()=>{
+    getVariants(ruleKey).then(setVariants).catch(()=> setVariants([]))
+  },[ruleKey])
+
+  function patchLocal(id: string, patch: Partial<Variant>){
+    setVariants(prev => prev ? prev.map(v => v.id === id ? { ...v, ...patch } : v) : prev)
+    setDirty(prev => new Set(prev).add(id))
+    setError(null)
+  }
+
+  async function save(v: Variant){
+    setSavingId(v.id)
+    setError(null)
+    try{
+      await updateVariant(v.id, { title: v.title, body: v.body })
+      setDirty(prev => { const n = new Set(prev); n.delete(v.id); return n })
+    }catch{ setError("Não foi possível salvar a variante.") }
+    finally{ setSavingId(null) }
+  }
+
+  async function toggle(v: Variant){
+    const next = !v.enabled
+    setVariants(prev => prev ? prev.map(x => x.id === v.id ? { ...x, enabled: next } : x) : prev)
+    setError(null)
+    try{ await updateVariant(v.id, { enabled: next }) }
+    catch{
+      setVariants(prev => prev ? prev.map(x => x.id === v.id ? { ...x, enabled: v.enabled } : x) : prev)
+      setError("A regra precisa de pelo menos uma variante ativa.")
+    }
+  }
+
+  async function remove(v: Variant){
+    if(!window.confirm("Remover esta variante?")) return
+    setError(null)
+    try{
+      await deleteVariant(v.id)
+      setVariants(prev => prev ? prev.filter(x => x.id !== v.id) : prev)
+    }catch{ setError("Não foi possível remover (a regra precisa de uma variante ativa).") }
+  }
+
+  async function add(){
+    setError(null)
+    try{
+      const created = await createVariant(ruleKey, { body: "" })
+      setVariants(prev => prev ? [...prev, created] : [created])
+    }catch{ setError("Não foi possível adicionar a variante.") }
+  }
+
+  if(variants === null) return <p className={styles.muted}>Carregando variantes…</p>
+
+  return(
+    <div className={styles.variants}>
+      <span className={styles.variantsHead}>Variantes ({variants.length}) — o disparo alterna entre as ativas</span>
+      {variants.map((v)=>(
+        <div key={v.id} className={`${styles.variant} ${v.enabled ? "" : styles.variantOff}`}>
+          <div className={styles.variantTop}>
+            <button
+              type="button"
+              className={`${styles.ruleSwitch} ${v.enabled ? styles.ruleSwitchOn : ""}`}
+              onClick={()=>toggle(v)}
+              role="switch"
+              aria-checked={v.enabled}
+              aria-label={`Ativar variante ${v.order + 1}`}
+            ><span className={styles.ruleKnob}/></button>
+            <div className={styles.variantActions}>
+              {dirty.has(v.id) && (
+                <button
+                  className={styles.saveMini}
+                  onClick={()=>save(v)}
+                  disabled={savingId===v.id}
+                  aria-label={`Salvar variante ${v.order + 1}`}
+                >
+                  {savingId===v.id ? "…" : "Salvar"}
+                </button>
+              )}
+              <button className={styles.iconDel} onClick={()=>remove(v)} aria-label={`Remover variante ${v.order + 1}`}>
+                <Trash2 size={15}/>
+              </button>
+            </div>
+          </div>
+          <input
+            className={styles.input}
+            value={v.title ?? ""}
+            onChange={e=>patchLocal(v.id, { title: e.target.value })}
+            placeholder="Título (vazio = usa o título da regra)"
+            maxLength={120}
+          />
+          <textarea
+            className={styles.textarea}
+            rows={2}
+            maxLength={500}
+            value={v.body ?? ""}
+            onChange={e=>patchLocal(v.id, { body: e.target.value })}
+            placeholder="Texto da notificação"
+          />
+        </div>
+      ))}
+      {error && <p className={styles.feedback}>{error}</p>}
+      <button className={styles.addVariant} onClick={add} type="button">
+        <Plus size={14}/> Adicionar variante
+      </button>
+    </div>
+  )
+}
+
 export default function AdminNotifications(){
 
   const [title, setTitle] = useState("")
@@ -149,8 +267,10 @@ export default function AdminNotifications(){
   async function saveRule(rule: Rule){
     setSavingKey(rule.key)
     try{
+      // título/corpo agora vivem nas variantes (RuleVariants) — aqui só os
+      // parâmetros da regra
       await updateRule(rule.key, {
-        enabled: rule.enabled, title: rule.title, body: rule.body, url: rule.url,
+        enabled: rule.enabled, url: rule.url,
         hour: rule.hour, band: rule.band, thresholdDays: rule.thresholdDays,
       })
     }catch{ /* noop */ }finally{ setSavingKey(null) }
@@ -415,7 +535,7 @@ export default function AdminNotifications(){
 
       <div className={styles.card}>
         <h3 className={styles.cardTitle}><Clock size={15}/> Automáticas</h3>
-        <p className={styles.muted}>Enviadas sozinhas para quem ativou o push, respeitando os <strong>ajustes de frequência</strong> acima (as urgentes têm prioridade). Gatilho fixo em cada regra; você edita <strong>texto, hora, faixa e limiar</strong> e liga/desliga. Use {"{count}"} e {"{label}"} pra interpolar.</p>
+        <p className={styles.muted}>Enviadas sozinhas para quem ativou o push, respeitando os <strong>ajustes de frequência</strong> acima (as urgentes têm prioridade). Gatilho fixo em cada regra; você edita as <strong>variantes de texto, hora, faixa e limiar</strong> e liga/desliga. Use {"{count}"} e {"{label}"} pra interpolar.</p>
         <div className={styles.campList}>
           {rules.map((rule)=>(
             <div key={rule.key} className={styles.rule}>
@@ -435,8 +555,7 @@ export default function AdminNotifications(){
                 </div>
               </div>
               <span className={styles.ruleTrigger}><Clock size={12}/> {ruleTrigger(rule)}</span>
-              <input className={styles.input} value={rule.title} onChange={e=>patchRuleLocal(rule.key,{title:e.target.value})} placeholder="Título"/>
-              <textarea className={styles.textarea} rows={2} maxLength={500} value={rule.body ?? ""} onChange={e=>patchRuleLocal(rule.key,{body:e.target.value})} placeholder="Descrição"/>
+              <RuleVariants ruleKey={rule.key} />
               <div className={styles.ruleKnobs}>
                 <label className={styles.knob}>
                   <span>Faixa</span>

@@ -13,6 +13,10 @@ vi.mock("../../services/adminNotificationsService", () => ({
   deleteAllCampaigns: vi.fn(),
   getSettings: vi.fn(),
   updateSettings: vi.fn(),
+  getVariants: vi.fn(),
+  createVariant: vi.fn(),
+  updateVariant: vi.fn(),
+  deleteVariant: vi.fn(),
 }))
 
 vi.mock("../../services/adminService", () => ({
@@ -29,6 +33,10 @@ import {
   deleteAllCampaigns,
   getSettings,
   updateSettings,
+  getVariants,
+  createVariant,
+  updateVariant,
+  deleteVariant,
 } from "../../services/adminNotificationsService"
 import { getAllUsers } from "../../services/adminService"
 import AdminNotifications from "./AdminNotifications"
@@ -42,7 +50,16 @@ const deleteCampaignMock = deleteCampaign as unknown as ReturnType<typeof vi.fn>
 const deleteAllCampaignsMock = deleteAllCampaigns as unknown as ReturnType<typeof vi.fn>
 const getSettingsMock = getSettings as unknown as ReturnType<typeof vi.fn>
 const updateSettingsMock = updateSettings as unknown as ReturnType<typeof vi.fn>
+const getVariantsMock = getVariants as unknown as ReturnType<typeof vi.fn>
+const createVariantMock = createVariant as unknown as ReturnType<typeof vi.fn>
+const updateVariantMock = updateVariant as unknown as ReturnType<typeof vi.fn>
+const deleteVariantMock = deleteVariant as unknown as ReturnType<typeof vi.fn>
 const getAllUsersMock = getAllUsers as unknown as ReturnType<typeof vi.fn>
+
+const VARIANT = (over = {}) => ({
+  id: "vt1", ruleKey: "ROSARY_UNFINISHED", title: "Volte para terminar seu Terço",
+  body: "Você começou um terço e não terminou.", url: null, enabled: true, order: 0, ...over,
+})
 
 const SETTINGS = {
   maxPerDay: 2,
@@ -83,6 +100,7 @@ function setupDefaults() {
   getSubscribersMock.mockResolvedValue({ totalUsers: 10, subscribedUsers: 4 })
   getRulesMock.mockResolvedValue([RULE])
   getSettingsMock.mockResolvedValue({ ...SETTINGS })
+  getVariantsMock.mockResolvedValue([VARIANT()])
   getAllUsersMock.mockResolvedValue([
     { id: "u1", name: "Ana", email: "ana@example.com" },
     { id: "u2", name: "Beto", email: "beto@example.com" },
@@ -303,6 +321,80 @@ describe("AdminNotifications", () => {
 
     // a descrição do gatilho reflete o valor real
     expect(screen.getByText(/parou a leitura da Bíblia há 3 dias/)).toBeInTheDocument()
+  })
+
+  it("loads and lists a rule's text variants", async () => {
+    getRulesMock.mockResolvedValue([RULE])
+    getVariantsMock.mockResolvedValue([
+      VARIANT({ id: "a", body: "Texto A" }),
+      VARIANT({ id: "b", body: "Texto B", order: 1 }),
+    ])
+    render(<AdminNotifications />)
+
+    await screen.findByText(/Variantes \(2\)/)
+    expect(screen.getByDisplayValue("Texto A")).toBeInTheDocument()
+    expect(screen.getByDisplayValue("Texto B")).toBeInTheDocument()
+    expect(getVariantsMock).toHaveBeenCalledWith("ROSARY_UNFINISHED")
+  })
+
+  it("adds a variant via createVariant and appends it to the list", async () => {
+    getRulesMock.mockResolvedValue([RULE])
+    getVariantsMock.mockResolvedValue([VARIANT({ id: "a", body: "Texto A" })])
+    createVariantMock.mockResolvedValue(VARIANT({ id: "new", body: "", order: 1 }))
+    render(<AdminNotifications />)
+    await screen.findByText(/Variantes \(1\)/)
+
+    fireEvent.click(screen.getByText("Adicionar variante"))
+
+    await waitFor(() => expect(createVariantMock).toHaveBeenCalledWith("ROSARY_UNFINISHED", { body: "" }))
+    await screen.findByText(/Variantes \(2\)/)
+  })
+
+  it("edits a variant's body and saves it via updateVariant", async () => {
+    getRulesMock.mockResolvedValue([RULE])
+    getVariantsMock.mockResolvedValue([VARIANT({ id: "a", body: "Antigo" })])
+    updateVariantMock.mockResolvedValue(VARIANT({ id: "a", body: "Novo" }))
+    render(<AdminNotifications />)
+    await screen.findByDisplayValue("Antigo")
+
+    fireEvent.change(screen.getByDisplayValue("Antigo"), { target: { value: "Novo" } })
+    fireEvent.click(screen.getByLabelText("Salvar variante 1"))
+
+    await waitFor(() =>
+      expect(updateVariantMock).toHaveBeenCalledWith("a", expect.objectContaining({ body: "Novo" })),
+    )
+  })
+
+  it("reverts the optimistic variant toggle and shows an error when the API rejects (last active)", async () => {
+    getRulesMock.mockResolvedValue([RULE])
+    getVariantsMock.mockResolvedValue([VARIANT({ id: "a" })])
+    updateVariantMock.mockRejectedValue(new Error("400"))
+    render(<AdminNotifications />)
+
+    const toggle = await screen.findByRole("switch", { name: "Ativar variante 1" })
+    expect(toggle).toHaveAttribute("aria-checked", "true")
+
+    fireEvent.click(toggle)
+
+    await waitFor(() => expect(toggle).toHaveAttribute("aria-checked", "true"))
+    expect(screen.getByText(/pelo menos uma variante ativa/)).toBeInTheDocument()
+  })
+
+  it("deletes a variant after confirmation via deleteVariant", async () => {
+    getRulesMock.mockResolvedValue([RULE])
+    getVariantsMock.mockResolvedValue([
+      VARIANT({ id: "a", body: "A" }),
+      VARIANT({ id: "b", body: "B", order: 1 }),
+    ])
+    deleteVariantMock.mockResolvedValue(undefined)
+    vi.spyOn(window, "confirm").mockReturnValue(true)
+    render(<AdminNotifications />)
+    await screen.findByText(/Variantes \(2\)/)
+
+    fireEvent.click(screen.getByLabelText("Remover variante 2"))
+
+    await waitFor(() => expect(deleteVariantMock).toHaveBeenCalledWith("b"))
+    await screen.findByText(/Variantes \(1\)/)
   })
 
   it("saves band and thresholdDays via updateRule", async () => {
