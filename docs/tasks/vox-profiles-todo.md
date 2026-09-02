@@ -253,9 +253,9 @@ com a chave marcada
 ### FF.2 — Regressão
 
 **Critérios de aceite:**
-- [x] `npm run build` verde · `npm test` verde (111 arquivos / 749 testes)
-- [ ] Smoke manual do Vox inteiro: enviar, editar, retry, nova conversa, deletar,
-      renomear, streaming — tudo intacto
+- [x] `npm run build` verde · `npm test` verde (111 arquivos / 749 testes) — a
+      suíte cobre enviar/editar/retry/nova conversa/deletar/renomear/streaming
+- [ ] Smoke em device (com backend no ar + `prisma db push` aplicado)
 
 **Dependências:** tudo · **Escopo:** S
 
@@ -263,6 +263,8 @@ com a chave marcada
 
 ## ⛳ Checkpoint final frontend
 
-- [x] Build + testes verdes (749) · cobertura mantida
-- [ ] Contrato conferido com `oratio-api` (rotas, campos, `profile` no bootstrap)
-- [ ] Docs atualizados nos dois repos
+- [x] Build verde · testes verdes (749) · cobertura mantida
+- [x] Contrato conferido com `oratio-api` (`GET /profiles`, `PATCH /profile`,
+      `POST /profile/intro-seen`, `bootstrap.profile` + `showVoxIntro`)
+- [x] Docs atualizados nos dois repos
+- [ ] Smoke em device
