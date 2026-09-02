@@ -74,6 +74,43 @@ export async function deleteRule(key: string): Promise<void> {
   await api.delete(`/oratio/admin/notifications/rules/${key}`)
 }
 
+// Pool de textos de uma regra (Fase 4). A cada disparo o backend escolhe
+// a variante que aquele usuário recebeu há mais tempo.
+export type Variant = {
+  id: string
+  ruleKey: string
+  title: string | null
+  body: string | null
+  url: string | null
+  enabled: boolean
+  order: number
+}
+
+export async function getVariants(ruleKey: string): Promise<Variant[]> {
+  const { data } = await api.get(`/oratio/admin/notifications/rules/${ruleKey}/variants`)
+  return data
+}
+
+export async function createVariant(
+  ruleKey: string,
+  input: { title?: string | null; body?: string | null; url?: string | null },
+): Promise<Variant> {
+  const { data } = await api.post(`/oratio/admin/notifications/rules/${ruleKey}/variants`, input)
+  return data
+}
+
+export async function updateVariant(
+  id: string,
+  patch: Partial<Pick<Variant, "title" | "body" | "url" | "enabled" | "order">>,
+): Promise<Variant> {
+  const { data } = await api.patch(`/oratio/admin/notifications/variants/${id}`, patch)
+  return data
+}
+
+export async function deleteVariant(id: string): Promise<void> {
+  await api.delete(`/oratio/admin/notifications/variants/${id}`)
+}
+
 export async function deleteCampaign(id: string): Promise<void> {
   await api.delete(`/oratio/admin/notifications/${id}`)
 }
