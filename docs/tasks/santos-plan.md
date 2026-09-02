@@ -136,9 +136,9 @@ cada dia (bio nova ou correção do índice + fonte). Parar e perguntar ao usuá
   adicionar `bioId` nas 47 datas novas.
 - `src/data/saintBios.ts` — ~47 entradas novas em `SAINT_BIOS`, em ordem de data, após
   `"sao-paulo-cruz"`.
-- `tasks/santos-plan.md` — este plano (o `tasks/plan.md` atual é o de cobertura de testes,
-  já concluído — **não sobrescrever**).
-- `tasks/santos-todo.md` — checklist dia a dia (50 linhas), marcada conforme avança, com a
+- `docs/tasks/santos-plan.md` — este plano (o `docs/tasks/plan.md` atual é o de cobertura de
+  testes, já concluído — **não sobrescrever**).
+- `docs/tasks/santos-todo.md` — checklist dia a dia (50 linhas), marcada conforme avança, com a
   fonte usada e qualquer correção anotada.
 
 ## Verificação (por lote, antes do commit)

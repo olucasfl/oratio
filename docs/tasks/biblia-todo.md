@@ -1,6 +1,6 @@
 # TODO — Bíblia de Estudo (Frontend / oratio)
 
-Plano completo: `tasks/biblia-plan.md`. Backend: `oratio-api/tasks/biblia-todo.md`.
+Plano completo: `docs/tasks/biblia-plan.md`. Backend: `oratio-api/docs/tasks/biblia-todo.md`.
 Ler `docs/ARCHITECTURE.md` antes de codar.
 
 Comandos: `npm run dev` · `npm run build` (tsc -b + vite — erro de tipo quebra o build)

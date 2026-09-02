@@ -1,6 +1,6 @@
 # Plano de Implementação — Bíblia de Estudo (Frontend / oratio)
 
-> Parte **frontend** da feature. Backend em `oratio-api/tasks/biblia-plan.md`.
+> Parte **frontend** da feature. Backend em `oratio-api/docs/tasks/biblia-plan.md`.
 > Ler `docs/ARCHITECTURE.md` antes de tocar no código (regra do repo).
 
 ## Visão geral
