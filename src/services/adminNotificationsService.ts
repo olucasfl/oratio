@@ -33,6 +33,8 @@ export async function getSubscribers(): Promise<{ totalUsers: number; subscribed
   return data
 }
 
+export type RuleBand = "MORNING" | "AFTERNOON" | "EVENING" | "ANY"
+
 export type Rule = {
   key: string
   enabled: boolean
@@ -41,6 +43,8 @@ export type Rule = {
   url: string | null
   hour: number | null
   condition: string | null
+  thresholdDays: number | null
+  band: RuleBand | null
 }
 
 export async function getRules(): Promise<Rule[]> {
@@ -50,7 +54,7 @@ export async function getRules(): Promise<Rule[]> {
 
 export async function updateRule(
   key: string,
-  patch: Partial<Pick<Rule, "enabled" | "title" | "body" | "url" | "hour">>,
+  patch: Partial<Pick<Rule, "enabled" | "title" | "body" | "url" | "hour" | "thresholdDays" | "band">>,
 ): Promise<Rule> {
   const { data } = await api.patch(`/oratio/admin/notifications/rules/${key}`, patch)
   return data
