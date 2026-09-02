@@ -8,6 +8,8 @@ export type InboxItem = {
   createdAt: string
   seenAt: string | null
   source: string
+  /** regra que disparou (BIBLE_RESUME, STREAK_AT_RISK, ...); null em campanhas */
+  ruleKey?: string | null
 }
 
 export async function getInbox(

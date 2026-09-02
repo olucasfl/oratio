@@ -81,13 +81,15 @@
 .head{
  flex:none;
  display:flex;
- align-items:center;
+ align-items:flex-start;
  justify-content:space-between;
- padding:8px 16px 14px;
- border-bottom:1px solid var(--oratio-card-border);
+ gap:10px;
+ padding:8px 16px 12px;
 }
+.headTitle{ display:flex; flex-direction:column; gap:1px; min-width:0; }
 .head h3{ margin:0; font-size:17px; font-weight:800; color:var(--oratio-primary); letter-spacing:.2px; }
-.headActions{ display:flex; align-items:center; gap:8px; }
+.headSub{ font-size:12px; color:var(--oratio-text-soft); font-weight:600; }
+.headActions{ display:flex; align-items:center; gap:8px; flex:none; }
 
 .markAll{
  border:none;
@@ -117,6 +119,51 @@
  transition:transform .15s ease, background .15s ease;
 }
 .close:active{ transform:scale(.9); background:#f4ede2; }
+
+/* ===== Abas ===== */
+.tabs{
+ flex:none;
+ display:flex;
+ gap:6px;
+ padding:2px 14px 12px;
+ border-bottom:1px solid var(--oratio-card-border);
+}
+.tab{
+ display:inline-flex;
+ align-items:center;
+ gap:6px;
+ border:1px solid var(--oratio-card-border);
+ background:#fff;
+ color:var(--oratio-text-soft);
+ font-family:inherit;
+ font-size:12.5px;
+ font-weight:700;
+ padding:7px 13px;
+ border-radius:999px;
+ cursor:pointer;
+ transition:background .15s ease, color .15s ease, border-color .15s ease;
+}
+.tab:active{ transform:scale(.96); }
+.tabActive{
+ background:var(--oratio-primary);
+ border-color:var(--oratio-primary);
+ color:#fff;
+}
+.tabCount{
+ min-width:17px;
+ height:17px;
+ padding:0 4px;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ border-radius:999px;
+ background:rgba(176,24,26,.14);
+ color:var(--oratio-primary);
+ font-size:11px;
+ font-weight:800;
+ line-height:1;
+}
+.tabActive .tabCount{ background:rgba(255,255,255,.22); color:#fff; }
 
 .list{
  flex:1;
@@ -153,9 +200,8 @@
 
 /* ===== Item ===== */
 .item{
- flex:none;   /* item tem overflow:hidden → sem isso o flexbox usa min-height:0
-                 automático e ESPREME os cards pra caber, cortando o texto,
-                 em vez de deixar a .list rolar */
+ flex:none;
+ position:relative;
  border:1px solid var(--oratio-card-border);
  border-radius:17px;
  background:#fff;
@@ -165,18 +211,26 @@
  transition:border-color .2s ease, box-shadow .2s ease, transform .15s ease;
 }
 .item[data-open="true"]{
- border-color:rgba(176,24,26,.3);
+ border-color:var(--soft, rgba(176,24,26,.3));
  box-shadow:0 10px 26px -14px rgba(80,50,20,.4);
 }
 .item.unread{
- border-color:rgba(176,24,26,.28);
- background:linear-gradient(90deg,rgba(176,24,26,.06),#fff 60%);
+ border-color:var(--soft, rgba(176,24,26,.28));
+ background:linear-gradient(90deg,var(--tile, rgba(176,24,26,.06)),#fff 62%);
+}
+/* barra lateral colorida nas não-lidas */
+.item.unread::before{
+ content:"";
+ position:absolute;
+ left:0; top:0; bottom:0;
+ width:3px;
+ background:var(--accent, var(--oratio-primary));
 }
 
 .itemHead{
  width:100%;
  display:flex;
- align-items:center;
+ align-items:flex-start;
  gap:11px;
  padding:13px;
  border:none;
@@ -197,16 +251,9 @@
  align-items:center;
  justify-content:center;
  border-radius:12px;
-}
-.iconRule{
- background:linear-gradient(150deg,rgba(176,24,26,.14),rgba(176,24,26,.05));
- border:1px solid rgba(176,24,26,.16);
- color:var(--oratio-primary);
-}
-.iconCampaign{
- background:linear-gradient(150deg,rgba(198,160,74,.18),rgba(198,160,74,.06));
- border:1px solid rgba(198,160,74,.35);
- color:#9a7d2e;
+ background:var(--tile, rgba(176,24,26,.1));
+ border:1px solid var(--soft, rgba(176,24,26,.16));
+ color:var(--accent, var(--oratio-primary));
 }
 
 .itemMain{
@@ -215,6 +262,14 @@
  flex-direction:column;
  gap:2px;
  min-width:0;
+ padding-top:1px;
+}
+.itemCat{
+ font-size:10.5px;
+ font-weight:800;
+ letter-spacing:.06em;
+ text-transform:uppercase;
+ color:var(--accent, var(--oratio-primary));
 }
 .itemTitle{
  font-size:14.5px;
@@ -227,15 +282,17 @@
 
 .dot{
  flex:none;
+ margin-top:4px;
  width:9px;
  height:9px;
  border-radius:50%;
- background:linear-gradient(135deg,#b0181a,#7d1113);
- box-shadow:0 0 0 3px rgba(176,24,26,.12);
+ background:var(--accent, var(--oratio-primary));
+ box-shadow:0 0 0 3px var(--tile, rgba(176,24,26,.12));
 }
 
 .chev{
  flex:none;
+ margin-top:2px;
  color:var(--oratio-text-soft);
  transition:transform .25s ease;
 }
@@ -256,7 +313,7 @@
  font-size:14px;
  line-height:1.6;
  color:var(--oratio-text-dark);
- white-space:pre-wrap;   /* preserva quebras, tópicos e emojis */
+ white-space:pre-wrap;
 }
 
 .goBtn{
@@ -267,16 +324,16 @@
  padding:9px 16px;
  border:none;
  border-radius:12px;
- background:linear-gradient(135deg,#b0181a,#861214);
+ background:var(--accent, var(--oratio-primary));
  color:#fff;
  font-size:13px;
  font-weight:700;
  cursor:pointer;
  font-family:inherit;
- box-shadow:0 6px 16px -8px rgba(176,24,26,.6);
- transition:transform .15s ease;
+ box-shadow:0 6px 16px -8px var(--accent, rgba(176,24,26,.6));
+ transition:transform .15s ease, filter .15s ease;
 }
-.goBtn:active{ transform:scale(.96); }
+.goBtn:active{ transform:scale(.96); filter:brightness(.94); }
 
 .more{
  margin:6px auto 4px;
