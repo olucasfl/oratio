@@ -2,4 +2,41 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Read `docs/ARCHITECTURE.md` before making any change.** It is the full guide to this frontend — the app boot sequence, the API/auth flow, PWA/offline behavior, project structure, known quirks, and conventions. This file is intentionally just a pointer so it stays in sync with one source of truth instead of drifting out of date.
+This is the **only** Markdown file at the repo root. Everything else lives under
+`docs/`. **There is important context there — do not start work without reading
+the relevant pieces below.**
+
+## `docs/ARCHITECTURE.md` — read this before ANY code change
+
+The full guide to this frontend: the app boot sequence (`src/App.tsx`), the
+API/auth refresh flow (`src/services/api.ts`), PWA/offline behavior (the
+hand-written `public/sw.js`, the `CACHE_NAME`/`APP_VERSION` pair), project
+structure, known quirks, and conventions. It is the single source of truth —
+this file stays a thin pointer so it can't drift.
+
+## `docs/` — what's there and when to open it
+
+| Path | What it is | Read it when |
+|---|---|---|
+| `docs/ARCHITECTURE.md` | The technical guide (§1–§10). | Always, before touching code. Update the affected §§ when you change behavior. |
+| `docs/README.md` | Project overview, stack, scripts, deploy, contributing. | You need the high-level picture or setup steps. |
+| `docs/SPEC.md` | The spec for the test-coverage (→80%) + lint-cleanup effort. | Before working on tests or lint — it records every decision already made (coverage exclusions, thresholds, bug-fix policy). |
+| `docs/tasks/` | Work plans, each a `*-plan.md` (design + phases) plus a `*-todo.md` (executable checklist). | Before starting or continuing any multi-step feature — check for an existing plan first. |
+
+## `docs/tasks/` — current plans
+
+| Feature | Files | Status |
+|---|---|---|
+| **Cobertura de testes do frontend** (→80% lines, →70% funcs/branches) + limpeza de lint | `docs/tasks/plan.md` (pareado com `docs/SPEC.md`) | Fases 1–6 + Fase Lint. Check it before choosing what to test next; it also lists files deliberately skipped and why. |
+| **Biografias do Santo do Dia** (20/out → 08/dez) | `docs/tasks/santos-plan.md` · `docs/tasks/santos-todo.md` | Conteúdo devocional; protocolo de fontes no plano. |
+| **Bíblia de Estudo** (frontend: leitura + estudo) | `docs/tasks/biblia-plan.md` · `docs/tasks/biblia-todo.md` | Backend em `oratio-api/docs/tasks/biblia-*.md` — ler os dois juntos. |
+| **Reformulação das notificações** | `docs/tasks/notifications.md` (ponteiro) | Plano-mestre no backend: `oratio-api/docs/tasks/notifications-plan.md`. Aqui só muda o painel `AdminNotifications`. |
+
+When you finish a task, tick it in its `*-todo.md`/`*-plan.md` and, if behavior
+changed, update `docs/ARCHITECTURE.md` in the same commit.
+
+## Sibling repo
+
+The backend is **`oratio-api`** (NestJS), a sibling folder. Any backend route,
+DTO, or header change (see `oratio-api/docs/ARCHITECTURE.md`) needs a matching
+change in the relevant `src/services/*Service.ts` here.

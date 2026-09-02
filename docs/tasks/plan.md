@@ -95,7 +95,7 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       `getEasterSunday` conferido contra datas reais conhecidas de 2024/2025, `getFerialColor`
       em cada estação), `saintOfDay.ts` (`resolveSaintOfDay`, com `../data/saintsOfTheDay` e
       `../data/saintBios` mockados). **Bug real encontrado e corrigido** (não crítico pela
-      política do SPEC.md — precisão de conteúdo devocional, não dado do usuário/segurança;
+      política do docs/SPEC.md — precisão de conteúdo devocional, não dado do usuário/segurança;
       correção mínima e óbvia): quando a data tinha entrada no índice local de santos mas o nome
       NÃO batia com o que a API da liturgia confirmava pra aquele dia (celebração suprimida/
       transferida naquele ano), o código mantinha o título local não confirmado em vez de cair

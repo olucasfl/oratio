@@ -67,7 +67,7 @@ it("returns the response body on success", async () => {
 
 ## Estratégia de testes
 
-**Cobertura** (`tasks/plan.md`, Fases 1-6): ordem de prioridade já em andamento —
+**Cobertura** (`docs/tasks/plan.md`, Fases 1-6): ordem de prioridade já em andamento —
 services (concluída) → utils → hooks → contexts/guards → componentes com lógica real →
 páginas com lógica real. Cada arquivo ganha teste só se tiver comportamento verificável; arquivo
 puramente apresentacional (markup sem branch) ganha `/* v8 ignore file */` em vez de teste forçado,
@@ -77,7 +77,7 @@ Denominador dos 80% exclui (`vitest.config.ts`): `src/data/**` (conteúdo estát
 `src/main.tsx` (boot puro), `*.d.ts`. `coverage.all: true` garante que todo `src/**/*.{ts,tsx}`
 conta, tocado por teste ou não — sem isso o número seria fácil de enganar.
 
-**Lint** (`tasks/plan.md`, Fase Lint): backlog já triado e ordenado por risco (L1 concluída —
+**Lint** (`docs/tasks/plan.md`, Fase Lint): backlog já triado e ordenado por risco (L1 concluída —
 reordenações puras + catches vazios documentados, ambos zero-mudança-de-comportamento). L2
 (`react-hooks/set-state-in-effect`, 6 arquivos) exige a técnica certa por caso — estado inicial
 preguiçoso via `useState(() => ...)` quando não depende de nada assíncrono externo, ou manter o
@@ -95,7 +95,7 @@ mais cautela, não em lote com L3-L9).
 - Rodar a suíte completa + typecheck + lint dos arquivos tocados + `npm run build` antes de cada
   commit.
 - Um commit por tarefa concluída (mensagem explicando o quê + por quê + progresso de cobertura).
-- Marcar a tarefa como `[x]` em `tasks/plan.md` no mesmo commit que a implementa.
+- Marcar a tarefa como `[x]` em `docs/tasks/plan.md` no mesmo commit que a implementa.
 - Se um teste revelar um bug real no código de produção: se for **crítico** (afeta dado do
   usuário, segurança, ou repete um comportamento já reportado por ele), **parar e perguntar antes
   de corrigir** — não corrigir silenciosamente dentro de uma tarefa de cobertura/lint. Se for
@@ -123,12 +123,12 @@ mais cautela, não em lote com L3-L9).
   threshold. (A meta de functions foi ajustada de 80 → 70 ao fechar a Fase 6: o gap residual era
   quase todo handler secundário do `Vox.tsx` e handlers pontuais, cujo teste profundo não cabia
   no escopo "simples" desta rodada — mesmo racional de "branches ficam atrás" já aceito aqui.)
-- `npm run lint` reporta 0 erros (avisos residuais documentados no `tasks/plan.md` são aceitáveis
+- `npm run lint` reporta 0 erros (avisos residuais documentados no `docs/tasks/plan.md` são aceitáveis
   se cada um tiver uma razão registrada — ex.: `react-refresh/only-export-components` avaliado e
   considerado aceitável como está).
 - `npm run build` e `npx tsc -b --noEmit` passam limpos.
 - Todo teste novo verifica comportamento real (nenhum "smoke test" vazio).
-- `tasks/plan.md` com todas as tarefas de Fase 1-6 e Fase Lint marcadas `[x]`.
+- `docs/tasks/plan.md` com todas as tarefas de Fase 1-6 e Fase Lint marcadas `[x]`.
 
 ## Questões em aberto
 

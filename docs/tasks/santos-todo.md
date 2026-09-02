@@ -1,6 +1,6 @@
 # Santo do Dia — checklist 20/out → 08/dez (50 dias)
 
-Plano: `tasks/santos-plan.md`. Protocolo por dia: (1) celebração oficial da data
+Plano: `docs/tasks/santos-plan.md`. Protocolo por dia: (1) celebração oficial da data
 (gcatholic BR 2026 + Romano Geral + Martirológio) → (2) comparar/corrigir o índice
 `saintsOfTheDay.ts` → (3) história cruzada em ≥2 fontes → (4) bio em `saintBios.ts` +
 `bioId` → (5) verificar → próximo.
