@@ -42,24 +42,25 @@ export default function VoxProfileList({
               }
             }}
           >
-            <span className={`${styles.radio} ${isSelected ? styles.radioOn : ""}`}>
-              {isSelected && <span className={styles.radioDot} />}
-            </span>
-
-            <div className={styles.body}>
+            <div className={styles.cardHead}>
+              <span className={`${styles.radio} ${isSelected ? styles.radioOn : ""}`}>
+                {isSelected && <span className={styles.radioDot} />}
+              </span>
               <p className={styles.label}>{profile.label}</p>
-              <p className={styles.short}>{profile.short}</p>
-              <button
-                type="button"
-                className={styles.detailsLink}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onOpenDetails(profile.key)
-                }}
-              >
-                Ver em detalhes
-              </button>
             </div>
+
+            <p className={styles.short}>{profile.short}</p>
+
+            <button
+              type="button"
+              className={styles.detailsLink}
+              onClick={(e) => {
+                e.stopPropagation()
+                onOpenDetails(profile.key)
+              }}
+            >
+              Ver detalhes
+            </button>
           </div>
         )
       })}

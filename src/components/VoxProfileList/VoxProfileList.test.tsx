@@ -40,7 +40,7 @@ describe("VoxProfileList", () => {
       />,
     )
 
-    fireEvent.click(screen.getAllByRole("button", { name: "Ver em detalhes" })[1])
+    fireEvent.click(screen.getAllByRole("button", { name: "Ver detalhes" })[1])
     expect(onOpenDetails).toHaveBeenCalledWith("STUDY")
     expect(onSelect).not.toHaveBeenCalled()
   })
