@@ -150,6 +150,7 @@
 
 .backButton{
 
+  min-height:44px;
   align-self:flex-start;
 
   display:flex;
