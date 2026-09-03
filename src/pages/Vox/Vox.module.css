@@ -145,7 +145,7 @@
  background:transparent;
  outline:none;
  color:#fff;
- font-size:13.5px;
+ font-size:16px;
  font-family:var(--oratio-font-text);
  padding:9px 32px 9px 32px;
 }
@@ -743,7 +743,7 @@ em vez de cair sozinho colado à esquerda da 2ª linha.
  border:1px solid #f0c7c8;
  background:#fff;
  color:#a61a1d;
- font-size:13.5px;
+ font-size:16px;
  text-align:left;
  box-shadow:var(--oratio-shadow-medium);
  z-index:40;
