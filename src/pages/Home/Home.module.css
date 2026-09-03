@@ -38,10 +38,17 @@
 
  position:relative;
 
- overflow:hidden;
+ /* overflow-x:clip (não "hidden"): contém os círculos decorativos
+    ::before/::after sem virar container de scroll nem cortar conteúdo
+    que cresça na vertical (fonte grande, títulos longos). */
+ overflow-x:clip;
 
  animation:fadePage .6s ease;
 
+}
+
+@media (prefers-reduced-motion:reduce){
+ .container{ animation:none; }
 }
 
 
@@ -444,9 +451,7 @@ LITURGY CARD
  max-width:var(--home-content-max);
 
  background:
- rgba(255,255,255,.82);
-
- backdrop-filter:blur(16px);
+ rgba(255,255,255,.92);
 
  border:
  1px solid rgba(255,255,255,.6);
@@ -651,9 +656,7 @@ FEATURES GRID
  position:relative;
 
  background:
- rgba(255,255,255,.82);
-
- backdrop-filter:blur(16px);
+ rgba(255,255,255,.92);
 
  border:
  1px solid rgba(255,255,255,.6);
@@ -1331,6 +1334,7 @@ ANIMATIONS
 }
 
 .liturgyNavBtn{
+ position:relative;
  display:flex;
  align-items:center;
  justify-content:center;
@@ -1343,6 +1347,13 @@ ANIMATIONS
  cursor:pointer;
  transition:var(--oratio-transition);
  flex-shrink:0;
+}
+
+/* área de toque de 44px (círculo visível fica 32) */
+.liturgyNavBtn::after{
+ content:"";
+ position:absolute;
+ inset:-6px;
 }
 
 .liturgyNavBtn:active{
@@ -1826,8 +1837,7 @@ CONTINUAR DE ONDE PAROU
  padding:16px;
  border:1px solid var(--oratio-card-border);
  border-radius:22px;
- background:rgba(255,255,255,.82);
- backdrop-filter:blur(16px);
+ background:rgba(255,255,255,.92);
  box-shadow:0 12px 40px rgba(0,0,0,.08);
  cursor:pointer;
  text-align:left;
@@ -1929,8 +1939,7 @@ PARA VOCÊ HOJE (sugestões dinâmicas)
  padding:13px 14px;
  border:1px solid var(--oratio-card-border);
  border-radius:18px;
- background:rgba(255,255,255,.82);
- backdrop-filter:blur(12px);
+ background:rgba(255,255,255,.92);
  cursor:pointer;
  text-align:left;
  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
@@ -2038,8 +2047,7 @@ ATALHOS
  padding:15px 6px;
  border:1px solid var(--oratio-card-border);
  border-radius:18px;
- background:rgba(255,255,255,.82);
- backdrop-filter:blur(12px);
+ background:rgba(255,255,255,.92);
  cursor:pointer;
  transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
 }
@@ -2129,7 +2137,9 @@ ATALHOS
  line-height:1.2;
 }
 
-@media(max-width:420px){
+/* 3 colunas já a partir de 480px (não 420): entre 421 e 480 os 4 tiles
+   ficavam apertados (< 76px) em vários Androids. */
+@media(max-width:480px){
  .shortcutsGrid{
   grid-template-columns:repeat(3,minmax(0,1fr));
   gap:10px;
