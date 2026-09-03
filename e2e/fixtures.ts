@@ -49,6 +49,7 @@ export const test = base.extend<AuditFixtures>({
   },
 
   setFontScale: async ({ page }, use) => {
+    // só registra o initScript — chame ANTES de navegar pra tela.
     await use(async (scale: number) => {
       await page.addInitScript((s) => {
         try {
@@ -57,7 +58,6 @@ export const test = base.extend<AuditFixtures>({
           /* ignore */
         }
       }, scale)
-      await page.reload()
     })
   },
 })
