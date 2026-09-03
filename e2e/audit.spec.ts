@@ -165,17 +165,32 @@ test("navbar aparece em modo standalone e some com o teclado", async ({ page, st
 })
 
 test.describe("fonte grande (escala 1.15)", () => {
-  test("home aguenta a fonte grande sem quebrar o layout", async ({ page, setFontScale }) => {
-    await setFontScale(1.15)
-    await goToAndSettle(page, "/oratio/home")
-    await expectNoHorizontalScroll(page, "home @ fonte grande")
-    await snap(page, "home-fonte-grande")
-  })
+  for (const route of ROUTES) {
+    test(`${route.name} @ fonte grande`, async ({ page, setFontScale }) => {
+      await setFontScale(1.15)
+      await goToAndSettle(page, route.path)
+      await expectNoHorizontalScroll(page, `${route.name} @ fonte grande`)
 
-  test("vox aguenta a fonte grande", async ({ page, setFontScale }) => {
-    await setFontScale(1.15)
-    await goToAndSettle(page, "/oratio/vox")
-    await expectNoHorizontalScroll(page, "vox @ fonte grande")
-    await snap(page, "vox-fonte-grande")
-  })
+      // elementos que vazam pra baixo/pros lados do próprio container
+      const clipped = await page.evaluate(() => {
+        const bad: string[] = []
+        for (const el of Array.from(document.querySelectorAll<HTMLElement>("main *, [class*='container'] *"))) {
+          const s = getComputedStyle(el)
+          if (s.overflow === "hidden" || s.overflowX === "hidden") continue
+          if (el.scrollWidth - el.clientWidth > 2) {
+            bad.push(`${el.tagName.toLowerCase()}.${String(el.className).slice(0, 40)} (scrollW ${el.scrollWidth} > ${el.clientWidth})`)
+          }
+        }
+        return bad.slice(0, 10)
+      })
+      if (clipped.length) {
+        await test.info().attach(`${route.name}-fg-vazamento.json`, {
+          body: JSON.stringify(clipped, null, 2),
+          contentType: "application/json",
+        })
+      }
+
+      await snap(page, `${route.name}-fonte-grande`)
+    })
+  }
 })
