@@ -6,7 +6,7 @@
   min-height:100dvh;  display:flex;
   flex-direction:column;
   align-items:center;
-  padding:60px 20px calc(120px + env(safe-area-inset-bottom));
+  padding:60px 20px calc(24px + var(--navbar-space));
   background:radial-gradient(circle at top,#ffffff55,transparent 65%),var(--oratio-background);
   position:relative;
 }

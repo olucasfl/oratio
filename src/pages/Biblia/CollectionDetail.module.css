@@ -1,6 +1,6 @@
 .container {
   min-height:100vh;
-  min-height:100dvh;  padding: 34px 18px calc(130px + env(safe-area-inset-bottom));
+  min-height:100dvh;  padding: 34px 18px 24px;
   background: linear-gradient(180deg, #f7f2eb 0%, #efe6da 100%);
   position: relative;
   overflow: hidden;
@@ -202,7 +202,7 @@
 
 .removeBtn:hover { color: var(--oratio-primary); background: rgba(176, 24, 26, .05); }
 
-.pageSpacer { height: 120px; }
+.pageSpacer { height: var(--navbar-space); }
 
 @media (max-width: 400px) {
   .container { padding-left: 14px; padding-right: 14px; }
