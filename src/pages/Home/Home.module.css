@@ -12,10 +12,12 @@
 
  min-height:100dvh;
 
+ /* rodapé: só reserva espaço pra navbar quando ela existe (PWA
+    standalone). No navegador não há navbar — era ~500px de vazio. */
  padding:
   78px
   20px
-  calc(130px + env(safe-area-inset-bottom));
+  40px;
 
  display:flex;
  flex-direction:column;
@@ -49,6 +51,13 @@
 
 @media (prefers-reduced-motion:reduce){
  .container{ animation:none; }
+}
+
+/* PWA instalado: a navbar existe, reserva espaço pra ela */
+@media (display-mode:standalone){
+ .container{
+  padding-bottom:calc(120px + env(safe-area-inset-bottom));
+ }
 }
 
 
@@ -1081,7 +1090,7 @@ MOBILE
   padding:
    56px
    14px
-   calc(128px + env(safe-area-inset-bottom));
+   40px;
 
  }
 
@@ -2018,6 +2027,13 @@ ATALHOS
  max-width:var(--home-content-max);
  position:relative;
  z-index:2;
+}
+
+/* Desktop: 3 colunas (9 atalhos = 3x3 certinho, sem card órfão sozinho
+   na última linha) e largura contida pros cards não esparramarem. */
+@media (min-width:769px){
+ .shortcutsWrap{ max-width:760px; }
+ .shortcutsGrid{ grid-template-columns:repeat(3,minmax(0,1fr)); }
 }
 
 .shortcutsHead{
