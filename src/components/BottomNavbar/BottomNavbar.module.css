@@ -1,24 +1,24 @@
 .navbar{
   position:fixed;
   /*
-  --vv-bottom-offset é mantido ao vivo por useVisualViewportOffset
-  (App.tsx) a partir de window.visualViewport — a diferença entre a
-  altura da janela e a altura realmente visível no momento. Em telas
-  normais isso é 0px (bottom:0 de sempre); quando o navegador ainda
-  não voltou a reportar o viewport certo depois de fechar a folha de
-  compartilhamento nativa, esse valor compensa a diferença até o
-  navegador se corrigir sozinho.
+  Colada no rodapé real da viewport, sem offset nenhum. O composer está
+  em portal fora do #root (imune à armadilha de containing-block) e não
+  há mais nada perseguindo o visualViewport. Quando o teclado abre, a
+  regra .keyboardOpen tira a navbar de cena — ver useKeyboardOpen.
   */
-  bottom:var(--vv-bottom-offset, 0px);
+  bottom:0;
   left:0;
   right:0;
 
   height:88px;
 
   padding-top:10px;
-  padding-bottom:calc(env(safe-area-inset-bottom) + 6px);
+  padding-bottom:max(env(safe-area-inset-bottom), 6px);
   padding-left:12px;
   padding-right:12px;
+
+  transform:translateY(0);
+  transition:transform .25s cubic-bezier(.4,0,.2,1);
 
   display:flex;
   justify-content:space-between;
@@ -30,7 +30,17 @@
   backdrop-filter:blur(8px);
   box-shadow:0 -10px 35px rgba(0,0,0,0.08);
 
-  z-index:1000;
+  z-index:var(--z-navbar);
+}
+
+/* teclado aberto: navbar desliza pra fora em vez de flutuar */
+.keyboardOpen{
+  transform:translateY(100%);
+  pointer-events:none;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .navbar{ transition:none; }
 }
 
 

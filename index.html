@@ -5,9 +5,20 @@
 
 <meta charset="UTF-8" />
 
+<!--
+ Zoom travado de propósito (decisão do produto): o app é de leitura/oração
+ com muito scroll e o zoom acidental atrapalhava. Para ampliar texto há os
+ controles internos (Perfil > tamanho da letra, e o painel da Bíblia).
+ Zoom que "volta ao soltar o dedo" não existe como recurso de navegador.
+ Obs.: o Safari fora do PWA instalado ignora user-scalable=no desde o iOS 10.
+ O zoom acidental por toque-duplo é evitado via touch-action:manipulation
+ (global.css) e o zoom-ao-focar do iOS, garantindo campos com fonte >= 16px.
+ interactive-widget=resizes-content: encolhe o layout viewport com o teclado
+ aberto (melhora o composer do Vox).
+-->
 <meta
  name="viewport"
- content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+ content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content"
 />
 
 <title>Oratio</title>
@@ -19,7 +30,13 @@
 
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<!--
+ "default" (não "black-translucent"): a status bar do iOS volta a ser uma
+ faixa própria do sistema, com a hora/bateria sempre legível no tema claro.
+ O webview passa a começar ABAIXO dela, então env(safe-area-inset-top) fica
+ ~0 em standalone e o padding-top das telas para de precisar somá-lo.
+-->
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Oratio">
 
 <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
@@ -63,6 +80,14 @@
 <body>
 
 <div id="root"></div>
+
+<!--
+ Alvo dos overlays fixos (navbar, composer do Vox, modais, sheets,
+ drawers). Fica FORA do #root de propósito: nada de transform/zoom/
+ backdrop-filter de um ancestral pode transformá-lo em containing block
+ e "prender" um position:fixed. Ver src/components/Portal/Portal.tsx.
+-->
+<div id="overlay-root"></div>
 
 <noscript>
  Este aplicativo requer JavaScript para funcionar.

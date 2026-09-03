@@ -50,6 +50,7 @@
 .shareBtnCompact{
 
  flex:none;
+ position:relative;
 
  width:34px;
  height:34px;
@@ -73,6 +74,13 @@
 
  -webkit-tap-highlight-color:transparent;
 
+}
+
+/* área de toque de 44px sem crescer o círculo visível (34px) */
+.shareBtnCompact::after{
+ content:"";
+ position:absolute;
+ inset:-5px;
 }
 
 .shareBtnCompact:active{

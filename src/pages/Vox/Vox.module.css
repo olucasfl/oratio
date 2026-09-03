@@ -145,7 +145,7 @@
  background:transparent;
  outline:none;
  color:#fff;
- font-size:13.5px;
+ font-size:16px;
  font-family:var(--oratio-font-text);
  padding:9px 32px 9px 32px;
 }
@@ -743,7 +743,7 @@ em vez de cair sozinho colado à esquerda da 2ª linha.
  border:1px solid #f0c7c8;
  background:#fff;
  color:#a61a1d;
- font-size:13.5px;
+ font-size:16px;
  text-align:left;
  box-shadow:var(--oratio-shadow-medium);
  z-index:40;
@@ -815,7 +815,14 @@ em vez de cair sozinho colado à esquerda da 2ª linha.
  right:0;
  bottom:0;
  z-index:20;
- padding:12px 16px calc(env(safe-area-inset-bottom) + 12px);
+ /*
+ max() em vez de env(...) + 12px: no iPhone sem botão o inset já é ~34px
+ (a folga certa acima do home indicator) e somar +12 dava uma faixa
+ branca "morta" de ~46px, que parecia área de botão fantasma. Com max(),
+ telas com botão físico (inset 0) ganham os 12px de respiro e as sem
+ botão ficam rentes ao home indicator, sem soma.
+ */
+ padding:12px 16px max(env(safe-area-inset-bottom), 12px);
  background:linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.95) 38%);
 }
 
@@ -1273,7 +1280,7 @@ em vez de cair sozinho colado à esquerda da 2ª linha.
  }
 
  .inputWrapper{
-  padding:10px 12px calc(env(safe-area-inset-bottom) + 10px);
+  padding:10px 12px max(env(safe-area-inset-bottom), 10px);
  }
 
  .inputBox{

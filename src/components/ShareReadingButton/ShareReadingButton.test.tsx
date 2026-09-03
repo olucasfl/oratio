@@ -1,8 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react"
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 
-vi.mock("../../hooks/useVisualViewportOffset", () => ({ resyncViewport: vi.fn() }))
-
 import ShareReadingButton from "./ShareReadingButton"
 
 const origShare = Object.getOwnPropertyDescriptor(navigator, "share")

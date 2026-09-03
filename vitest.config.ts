@@ -7,6 +7,10 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
     globals: false,
+    // e2e/ é a auditoria visual do Playwright — suíte à parte, roda com
+    // `npm run e2e`, nunca pelo vitest.
+    include: ["src/**/*.{test,spec}.{ts,tsx}"],
+    exclude: ["e2e/**", "node_modules/**", "dist/**"],
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "json-summary"],

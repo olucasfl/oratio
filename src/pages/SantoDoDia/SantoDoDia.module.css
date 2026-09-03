@@ -52,6 +52,7 @@
 
 .backButton{
 
+  min-height:44px;
   border:none;
 
   background:transparent;

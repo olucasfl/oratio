@@ -1,6 +1,6 @@
 .container {
-  min-height: 100vh;
-  padding: 34px 18px calc(130px + env(safe-area-inset-bottom));
+  min-height:100vh;
+  min-height:100dvh;  padding: 34px 18px calc(130px + env(safe-area-inset-bottom));
   background: linear-gradient(180deg, #f7f2eb 0%, #efe6da 100%);
   position: relative;
   overflow: hidden;
@@ -20,6 +20,7 @@
 }
 
 .backButton {
+  min-height:44px;
   display: flex;
   align-items: center;
   gap: 6px;

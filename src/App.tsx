@@ -13,7 +13,6 @@ import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary"
 import { preloadConsecration, getProgress } from "./services/consecrationService"
 import { sendActivityPing } from "./services/activityService"
 import { syncPushTimezone } from "./services/pushService"
-import { useVisualViewportOffset } from "./hooks/useVisualViewportOffset"
 
 /* Páginas carregadas sob demanda */
 const Login            = lazy(() => import("./pages/Login/Login"))
@@ -70,8 +69,6 @@ function App(){
 const [loading,setLoading] = useState(true)
 const location = useLocation()
 const navigate = useNavigate()
-
-useVisualViewportOffset()
 
 useEffect(()=>{
 

@@ -12,7 +12,7 @@
   gap:20px;
 
   min-height:100vh;
-
+  min-height:100dvh;
   background:
     radial-gradient(circle at top,#ffffff60,transparent 60%),
     var(--oratio-background);
@@ -367,6 +367,7 @@
   align-items:center;
   justify-content:center;
   height:100vh;
+  height:100dvh;
 
   font-size:18px;
   color:var(--oratio-text-soft);

@@ -25,3 +25,11 @@ coverage
 *.sw?
 
 .env
+
+# Playwright (auditoria visual)
+/e2e/output
+/e2e/.auth
+/test-results
+/playwright-report
+/blob-report
+/playwright/.cache
