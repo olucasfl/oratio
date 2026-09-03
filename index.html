@@ -6,14 +6,19 @@
 <meta charset="UTF-8" />
 
 <!--
- Sem maximum-scale / user-scalable=no: travar o zoom viola WCAG 1.4.4 e,
- num PWA standalone no iOS, impede o usuário de ampliar versículo/oração.
- interactive-widget=resizes-content: pede ao navegador para encolher o
- layout viewport quando o teclado abre (melhora o composer do Vox).
+ Zoom travado de propósito (decisão do produto): o app é de leitura/oração
+ com muito scroll e o zoom acidental atrapalhava. Para ampliar texto há os
+ controles internos (Perfil > tamanho da letra, e o painel da Bíblia).
+ Zoom que "volta ao soltar o dedo" não existe como recurso de navegador.
+ Obs.: o Safari fora do PWA instalado ignora user-scalable=no desde o iOS 10.
+ O zoom acidental por toque-duplo é evitado via touch-action:manipulation
+ (global.css) e o zoom-ao-focar do iOS, garantindo campos com fonte >= 16px.
+ interactive-widget=resizes-content: encolhe o layout viewport com o teclado
+ aberto (melhora o composer do Vox).
 -->
 <meta
  name="viewport"
- content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content"
+ content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content"
 />
 
 <title>Oratio</title>

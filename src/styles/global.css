@@ -84,6 +84,17 @@ font-family:var(--oratio-font-text);
 
 transition:var(--oratio-transition);
 
+/* mata o "toque duplo dá zoom" (e o atraso de 300ms de clique) nos
+   controles. Reforço além do user-scalable=no do viewport. */
+touch-action:manipulation;
+
+}
+
+a,
+[role="button"],
+label,
+summary{
+touch-action:manipulation;
 }
 
 
@@ -110,14 +121,25 @@ border-radius:4px;
 INPUT PADRÃO
 ========================= */
 
-input{
+input,
+textarea,
+select{
 
 font-family:var(--oratio-font-text);
 
-border:1px solid var(--oratio-card-border);
-
 outline:none;
 
+/* campos com fonte < 16px fazem o iOS dar zoom sozinho ao focar (mesmo
+   com user-scalable=no) e não desfaz. Piso de 16px; componentes podem
+   subir daqui. */
+font-size:16px;
+
+touch-action:manipulation;
+
+}
+
+input{
+border:1px solid var(--oratio-card-border);
 }
 
 

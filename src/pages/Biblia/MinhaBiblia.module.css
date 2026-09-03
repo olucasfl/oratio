@@ -27,7 +27,7 @@
   border: none;
   background: none;
   color: var(--oratio-primary);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   margin-bottom: 20px;
   cursor: pointer;
@@ -126,7 +126,7 @@
   border: none;
   border-radius: 14px;
   background: rgba(255, 255, 255, .9);
-  font-size: 15px;
+  font-size: 16px;
   color: #3b2b2b;
   outline: none;
 }
@@ -219,7 +219,7 @@
   gap: 8px;
   color: var(--oratio-primary);
   font-family: var(--oratio-font-title);
-  font-size: 15px;
+  font-size: 16px;
   margin-bottom: 6px;
 }
 
