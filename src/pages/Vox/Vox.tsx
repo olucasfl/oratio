@@ -66,6 +66,7 @@ import {
 import type { VoxProfileMeta } from "../../services/voxService"
 
 import { useLiturgy } from "../../hooks/useLiturgy"
+import { useLockBodyScroll } from "../../hooks/useLockBodyScroll"
 
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
 import VoxMarkdown from "../../components/VoxMarkdown/VoxMarkdown"
@@ -419,9 +420,21 @@ export default function Vox(){
  ========================= */
 
  function scrollToBottom(){
-  setTimeout(()=>{
-    bottomRef.current?.scrollIntoView({ behavior:"auto" })
-  },50)
+  /*
+  Rola SÓ o container do chat, mexendo no scrollTop dele direto.
+  element.scrollIntoView() rolava também qualquer ancestral rolável —
+  inclusive o documento, quando ele tinha uma folga de scroll (safe-area
+  + elementos fixos no iOS PWA). Aí o cabeçalho fixo subia pra fora da
+  tela e "passava do limite". scrollTop no próprio container nunca toca
+  no documento.
+  */
+  const run = ()=>{
+    const el = chatAreaRef.current
+    if(el) el.scrollTop = el.scrollHeight
+  }
+  requestAnimationFrame(run)
+  // 2ª passada: cobre o caso da última mensagem ainda estar crescendo
+  setTimeout(run, 50)
  }
 
  useEffect(()=>{
@@ -459,20 +472,16 @@ export default function Vox(){
   return ()=> observer.disconnect()
  },[])
 
- useEffect(() => {
-  if (menuOpen) {
-    document.body.style.overflow = "hidden"
-    document.body.style.touchAction = "none"
-  } else {
-    document.body.style.overflow = ""
-    document.body.style.touchAction = ""
-  }
-
-  return () => {
-    document.body.style.overflow = ""
-    document.body.style.touchAction = ""
-  }
-}, [menuOpen])
+ /*
+ Trava a rolagem do documento enquanto o Vox está aberto. A tela é
+ 100dvh com header/composer fixos e a rolagem acontece só dentro do
+ <main>; o documento nunca deveria rolar. No iPhone em PWA, porém, uma
+ folga mínima de scroll (safe-area, teclado) somada a um scroll
+ disparado no meio (foco, scrollToBottom) fazia a "página" inteira
+ subir e o header sumir pra cima. Travado, isso não acontece — e
+ substitui o toggle manual que só valia com a sidebar aberta.
+ */
+ useLockBodyScroll(true)
 
 useEffect(()=>{
   if(initialized.current) return
