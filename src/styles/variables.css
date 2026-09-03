@@ -11,7 +11,12 @@
 --oratio-secondary:#F2E6D8;
 --oratio-secondary-dark:#4e3316;
 
---oratio-background:#eedbc15e;
+/*
+ Cor de fundo sólida. Era #eedbc15e (um hex de 8 dígitos = #eedbc1 a ~37%
+ de opacidade); compunha sobre o branco/preto do host e mudava de tom
+ entre contextos. Este é o tom que aquilo renderizava sobre branco.
+*/
+--oratio-background:#f5eede;
 
 
 /* =========================
@@ -63,5 +68,57 @@
 ========================= */
 
 --oratio-transition:all 0.2s ease;
+
+
+/* =========================
+   ESCALA DE Z-INDEX  (auditoria UX — Fase 0)
+   Camadas de nível-app. Valores locais de empilhamento dentro de um
+   componente (z-index:1/2/3 pra sobrepor um ::before decorativo) NÃO
+   usam estes tokens — eles são só pras camadas que "escapam" do
+   componente e disputam espaço entre si.
+========================= */
+
+--z-content:1;        /* conteúdo acima de um ::before/::after decorativo */
+--z-sticky:100;       /* cabeçalhos sticky dentro de uma página */
+--z-fab:200;          /* botões flutuantes (menu, perfil) */
+--z-banner:300;       /* faixas contextuais (guest, quaresma) */
+--z-navbar:400;       /* barra de navegação inferior */
+--z-overlay:1000;     /* fundo escuro atrás de drawer/sheet/modal */
+--z-drawer:1100;      /* gaveta lateral / bottom sheet / painel */
+--z-modal:1200;       /* diálogos centrais */
+--z-toast:1300;       /* notificações efêmeras */
+--z-max:2000;         /* offline banner e afins — sempre no topo */
+
+
+/* =========================
+   ESCALA DE ESPAÇAMENTO  (auditoria UX — Fase 0)
+   Adoção incremental: cada arquivo tocado numa fase troca seus px
+   "mágicos" por estes tokens. Sem big-bang.
+========================= */
+
+--space-1:4px;
+--space-2:8px;
+--space-3:12px;
+--space-4:16px;
+--space-5:24px;
+--space-6:32px;
+--space-7:48px;
+--space-8:64px;
+
+
+/* =========================
+   ESCALA TIPOGRÁFICA  (auditoria UX — base da Fase 2, abordagem B)
+   rem, para responder à preferência de tamanho de fonte do usuário
+   (font-size no :root) em vez do zoom no #root. Ainda não adotada —
+   a virada acontece na Fase 2.
+========================= */
+
+--step--1:0.83rem;    /* ~13.3px  legendas, metadados */
+--step-0:1rem;        /* ~16px    corpo base */
+--step-1:1.2rem;      /* ~19px    corpo de leitura / destaque */
+--step-2:1.44rem;     /* ~23px    h3 */
+--step-3:1.73rem;     /* ~28px    h2 */
+--step-4:2.07rem;     /* ~33px    h1 */
+--step-5:2.49rem;     /* ~40px    display */
 
 }

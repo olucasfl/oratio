@@ -5,9 +5,15 @@
 
 <meta charset="UTF-8" />
 
+<!--
+ Sem maximum-scale / user-scalable=no: travar o zoom viola WCAG 1.4.4 e,
+ num PWA standalone no iOS, impede o usuário de ampliar versículo/oração.
+ interactive-widget=resizes-content: pede ao navegador para encolher o
+ layout viewport quando o teclado abre (melhora o composer do Vox).
+-->
 <meta
  name="viewport"
- content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+ content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content"
 />
 
 <title>Oratio</title>
@@ -19,7 +25,13 @@
 
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<!--
+ "default" (não "black-translucent"): a status bar do iOS volta a ser uma
+ faixa própria do sistema, com a hora/bateria sempre legível no tema claro.
+ O webview passa a começar ABAIXO dela, então env(safe-area-inset-top) fica
+ ~0 em standalone e o padding-top das telas para de precisar somá-lo.
+-->
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Oratio">
 
 <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
@@ -63,6 +75,14 @@
 <body>
 
 <div id="root"></div>
+
+<!--
+ Alvo dos overlays fixos (navbar, composer do Vox, modais, sheets,
+ drawers). Fica FORA do #root de propósito: nada de transform/zoom/
+ backdrop-filter de um ancestral pode transformá-lo em containing block
+ e "prender" um position:fixed. Ver src/components/Portal/Portal.tsx.
+-->
+<div id="overlay-root"></div>
 
 <noscript>
  Este aplicativo requer JavaScript para funcionar.
