@@ -32,8 +32,9 @@ export default defineConfig<AuditOptions>({
   forbidOnly: !!process.env.CI,
   retries: 0,
   workers: process.env.CI ? 2 : 4,
-  // backend em cold-start no Render + chunk grande da Bíblia: dá folga.
-  timeout: 45_000,
+  // backend em cold-start no Render + chunk grande da Bíblia + o teardown
+  // do contexto espera as requisições lentas terminarem: dá folga.
+  timeout: 70_000,
   reporter: [
     ["list"],
     ["html", { outputFolder: "e2e/output/report", open: "never" }],
