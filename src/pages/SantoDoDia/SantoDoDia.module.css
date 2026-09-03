@@ -335,7 +335,7 @@
 
 .pageSpacer{
 
-  height:110px;
+  height:var(--navbar-space);
 
   flex-shrink:0;
 

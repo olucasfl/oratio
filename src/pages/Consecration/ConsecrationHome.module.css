@@ -22,7 +22,7 @@ daquela devoção.
  padding:
   calc(16px + env(safe-area-inset-top))
   18px
-  calc(130px + env(safe-area-inset-bottom));
+  calc(24px + var(--navbar-space));
 
  display:flex;
  flex-direction:column;
