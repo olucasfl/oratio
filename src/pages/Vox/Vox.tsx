@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from "react"
+import { useState, useRef, useEffect, useLayoutEffect, useMemo } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 
 import styles from "./Vox.module.css"
@@ -455,7 +455,9 @@ export default function Vox(){
  // Medindo a altura real do composer e publicando em
  // --vox-input-actual-height (consumida no padding-bottom do
  // .chatArea) o espaço reservado sempre acompanha o composer de verdade.
- useEffect(()=>{
+ // useLayoutEffect (não useEffect): a 1ª medição acontece ANTES do paint,
+ // então a primeira mensagem nunca nasce coberta pelo composer.
+ useLayoutEffect(()=>{
   const wrapper = inputWrapperRef.current
   const chat = chatAreaRef.current
   if(!wrapper || !chat) return
