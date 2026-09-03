@@ -555,5 +555,5 @@
 }
 
 .pageSpacer{
-  height:96px;
+  height:var(--navbar-space);
 }

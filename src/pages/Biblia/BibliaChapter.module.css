@@ -8,7 +8,7 @@
   min-height:100dvh;
   padding:
     34px 18px
-    calc(130px + env(safe-area-inset-bottom));
+    24px;
 
   background:
     linear-gradient(
@@ -573,7 +573,7 @@
 /* ========================= */
 
 .pageSpacer{
-  height:120px;
+  height:var(--navbar-space);
 }
 
 /* ========================= */

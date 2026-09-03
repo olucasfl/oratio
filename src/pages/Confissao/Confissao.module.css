@@ -4,7 +4,7 @@
 
 .container {
   min-height:100vh;
-  min-height:100dvh;  padding: 60px 20px calc(130px + env(safe-area-inset-bottom));
+  min-height:100dvh;  padding: 60px 20px calc(24px + var(--navbar-space));
   display: flex;
   flex-direction: column;
   align-items: center;

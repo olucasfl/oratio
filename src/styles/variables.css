@@ -91,6 +91,17 @@
 
 
 /* =========================
+   ESPAÇO DA NAVBAR INFERIOR
+   0 no navegador (não há navbar); a altura real dela só no PWA
+   instalado. As páginas reservam este espaço no fim do conteúdo
+   (via .pageSpacer ou padding-bottom do container) em vez de um valor
+   fixo que sobrava ~120px de vazio pra quem abre pelo link.
+========================= */
+
+--navbar-space:0px;
+
+
+/* =========================
    ESCALA DE ESPAÇAMENTO  (auditoria UX — Fase 0)
    Adoção incremental: cada arquivo tocado numa fase troca seus px
    "mágicos" por estes tokens. Sem big-bang.
@@ -121,4 +132,11 @@
 --step-4:2.07rem;     /* ~33px    h1 */
 --step-5:2.49rem;     /* ~40px    display */
 
+}
+
+/* PWA instalado: a navbar inferior existe — reserva a altura dela */
+@media (display-mode:standalone){
+  :root{
+    --navbar-space:calc(92px + env(safe-area-inset-bottom));
+  }
 }

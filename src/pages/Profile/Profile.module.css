@@ -5,7 +5,7 @@
  min-height:100dvh;
 
  padding-bottom:
- calc(130px + env(safe-area-inset-bottom));
+ calc(24px + var(--navbar-space));
 
  background:
  linear-gradient(
