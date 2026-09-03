@@ -32,12 +32,23 @@ export default defineConfig<AuditOptions>({
   forbidOnly: !!process.env.CI,
   retries: 0,
   workers: process.env.CI ? 2 : 4,
-  reporter: [["list"], ["html", { outputFolder: "e2e/output/report", open: "never" }]],
+  // backend em cold-start no Render + chunk grande da Bíblia: dá folga.
+  timeout: 45_000,
+  reporter: [
+    ["list"],
+    ["html", { outputFolder: "e2e/output/report", open: "never" }],
+    ["json", { outputFile: "e2e/output/results.json" }],
+  ],
 
   use: {
     baseURL: BASE_URL,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
+    // O app registra um Service Worker que dá window.location.reload() ao
+    // detectar uma nova versão (controllerchange). Isso destruía o
+    // contexto no meio de page.evaluate() de forma aleatória. Bloqueado
+    // no teste — não é o que estamos auditando.
+    serviceWorkers: "block",
   },
 
   webServer: {
@@ -52,14 +63,33 @@ export default defineConfig<AuditOptions>({
     { name: "setup", testMatch: /auth\.setup\.ts/ },
 
     // 2. Projetos de device. standalone:true finge o PWA instalado.
+    // Os "iphone-*" usam viewport de iPhone mas engine Chromium — o
+    // WebKit headless renderizava telas em branco de forma intermitente.
+    // Fidelidade Safari de verdade = device real do usuário.
     {
       name: "iphone-se",
-      use: { ...devices["iPhone SE"], storageState: "e2e/.auth/user.json", standalone: true },
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 375, height: 667 },
+        deviceScaleFactor: 2,
+        isMobile: true,
+        hasTouch: true,
+        storageState: "e2e/.auth/user.json",
+        standalone: true,
+      },
       dependencies: ["setup"],
     },
     {
       name: "iphone-14",
-      use: { ...devices["iPhone 14"], storageState: "e2e/.auth/user.json", standalone: true },
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 390, height: 844 },
+        deviceScaleFactor: 3,
+        isMobile: true,
+        hasTouch: true,
+        storageState: "e2e/.auth/user.json",
+        standalone: true,
+      },
       dependencies: ["setup"],
     },
     {
@@ -79,7 +109,15 @@ export default defineConfig<AuditOptions>({
     },
     {
       name: "ipad",
-      use: { ...devices["iPad Mini"], storageState: "e2e/.auth/user.json", standalone: true },
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 768, height: 1024 },
+        deviceScaleFactor: 2,
+        isMobile: true,
+        hasTouch: true,
+        storageState: "e2e/.auth/user.json",
+        standalone: true,
+      },
       dependencies: ["setup"],
     },
     {
