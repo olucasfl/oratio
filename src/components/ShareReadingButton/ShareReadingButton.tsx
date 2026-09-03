@@ -2,7 +2,6 @@ import { useState } from "react"
 import type { MouseEvent as ReactMouseEvent } from "react"
 import { Share2, Check } from "lucide-react"
 import styles from "./ShareReadingButton.module.css"
-import { resyncViewport } from "../../hooks/useVisualViewportOffset"
 
 interface Props {
   label: string
@@ -37,14 +36,10 @@ export default function ShareReadingButton({
       try {
         await navigator.share({ text })
         return
-      } catch (err: any) {
-        if (err?.name === "AbortError") return // usuário cancelou a folha — não é erro
+      } catch (err) {
+        // usuário cancelou a folha — não é erro
+        if (err instanceof Error && err.name === "AbortError") return
         // qualquer outro erro (ex: share não suportado nesse contexto) cai no fallback abaixo
-      } finally {
-        // A folha nativa deixa o viewport "preso" por um tempo (navbar
-        // bugando). Releitura em rajada pra ela reassentar sem esperar
-        // fechar/abrir o app.
-        resyncViewport()
       }
     }
 

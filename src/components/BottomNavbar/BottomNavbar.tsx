@@ -1,5 +1,4 @@
 import { useNavigate, useLocation } from "react-router-dom"
-import { createPortal } from "react-dom"
 import { useState } from "react"
 import type { ComponentType } from "react"
 
@@ -15,6 +14,8 @@ import styles from "./BottomNavbar.module.css"
 
 import { isPWA } from "../../utils/isPwa"
 import { isLoggedIn } from "../../utils/auth"
+import { useKeyboardOpen } from "../../hooks/useKeyboardOpen"
+import Portal from "../Portal/Portal"
 import GuestGateModal from "../GuestGateModal/GuestGateModal"
 
 type NavItem = {
@@ -33,11 +34,12 @@ export default function BottomNavbar(){
  const [gateMessage,setGateMessage] = useState<string | null>(null)
 
  /*
- O offset que compensa o bug do viewport preso após o
- navigator.share() fechar é aplicado globalmente via CSS (ver
- useVisualViewportOffset em App.tsx e a variável --vv-bottom-offset
- usada no bottom da .navbar em BottomNavbar.module.css).
+ Quando o teclado do celular abre, a navbar sai de cena (translateY)
+ em vez de tentar flutuar acima dele — ver useKeyboardOpen. É o único
+ caso em que o viewport visível encolhe num PWA standalone; não há mais
+ nenhum offset perseguindo o visualViewport.
  */
+ const keyboardOpen = useKeyboardOpen()
 
  if(!isPWA()){
   return null
@@ -103,10 +105,14 @@ export default function BottomNavbar(){
   )
  }
 
- return createPortal(
-  <>
+ return (
+  <Portal>
 
-  <nav className={styles.navbar} aria-label="Navegação inferior">
+  <nav
+   className={`${styles.navbar} ${keyboardOpen ? styles.keyboardOpen : ""}`}
+   aria-label="Navegação inferior"
+   aria-hidden={keyboardOpen}
+  >
     <div className={styles.side}>
       {leftItems.map(renderItem)}
     </div>
@@ -131,9 +137,6 @@ export default function BottomNavbar(){
     onClose={()=>setGateMessage(null)}
    />
 
-  </>,
-
-  document.body
-
+  </Portal>
  )
 }
