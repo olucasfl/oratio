@@ -214,25 +214,26 @@ ANIMAÇÃO DE ENTRADA DE PÁGINA
 @keyframes pageEnter{
 from{
  opacity:0;
- transform:translateY(10px);
 }
 to{
  opacity:1;
- transform:translateY(0);
 }
 }
 
 .page-enter{
 /*
-"backwards" (não "both"): aplica o estado inicial antes da animação
-começar (evita flash), mas NÃO deixa o transform final grudado depois
-que a animação termina. Se ficasse ("both"), o elemento manteria
-transform:translateY(0) pra sempre — e qualquer valor de transform
-diferente de "none", mesmo um translateY(0) "neutro", vira containing
-block pros descendentes position:fixed, fazendo eles se posicionarem
-relativos à altura da página inteira em vez do viewport real.
+SÓ opacity, sem transform. Um transform (mesmo um translateY(0) "neutro",
+mesmo durante os 0,28s da animação) transforma o elemento em containing
+block dos descendentes position:fixed — a navbar e o composer do Vox
+passavam a se posicionar relativos à página inteira, não à viewport, e
+davam um solavanco a cada troca de rota. O fade puro é indistinguível
+na prática e não tem esse efeito colateral.
 */
 animation:pageEnter 0.28s ease backwards;
+}
+
+@media (prefers-reduced-motion:reduce){
+ .page-enter{ animation:none; }
 }
 
 
