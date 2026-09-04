@@ -26,6 +26,16 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
 
 ## Fase 1 — Services (maior densidade de lógica, melhor ROI)
 
+- [x] **Tarefa 1-bis** *(aberta e fechada em 2026-09-04, pela auditoria de docs)* —
+      `bibleMarksService.ts` estava em **0%** e `bibleCollectionsService.ts` em **57,69%**. Os
+      dois nasceram com a Bíblia de Estudo, **depois** desta fase ter sido fechada, e nunca
+      entraram na fila — a cobertura global passava mesmo assim, que é justamente o buraco que a
+      média esconde. 29 testes novos (14 + 15); os dois foram a **100%** em statements, branches,
+      functions e lines. Global subiu de 80,22→80,86 st e 82,59→83,22 lines. Cobre: filtro por
+      capítulo vs. todos os marks, o gate de `isLoggedIn` na leitura (visitante nunca chama a
+      API), leitura silenciosa que devolve `[]` em falha, payload não-array, escrita que **lança**
+      de propósito (o chamador é otimista e precisa desfazer), o marcador `{ deleted: true }`
+      quando os três flags zeram, e o `getCollection` devolvendo `null` em coleção alheia.
 - [x] **Tarefa 1** — `src/services/api.ts`: interceptors (request auth header, 401→refresh→retry,
       fila de requisições concorrentes, guest-401-passthrough, `PUBLIC_AUTH_PATHS`,
       `_retry` já setado, erro sem `config`, não-401). 14 testes novos em `api.test.ts`, direto
@@ -95,7 +105,7 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       `getEasterSunday` conferido contra datas reais conhecidas de 2024/2025, `getFerialColor`
       em cada estação), `saintOfDay.ts` (`resolveSaintOfDay`, com `../data/saintsOfTheDay` e
       `../data/saintBios` mockados). **Bug real encontrado e corrigido** (não crítico pela
-      política do docs/SPEC.md — precisão de conteúdo devocional, não dado do usuário/segurança;
+      política do docs/specs/cobertura-testes.md — precisão de conteúdo devocional, não dado do usuário/segurança;
       correção mínima e óbvia): quando a data tinha entrada no índice local de santos mas o nome
       NÃO batia com o que a API da liturgia confirmava pra aquele dia (celebração suprimida/
       transferida naquele ano), o código mantinha o título local não confirmado em vez de cair

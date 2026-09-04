@@ -10,7 +10,7 @@ vi.mock("react-router-dom", async (importOriginal) => ({
   useParams: () => ({ id: "c1" }),
 }))
 
-vi.mock("../../utils/auth", () => ({ isLoggedIn: () => true }))
+vi.mock("../../utils/auth", () => ({ isLoggedIn: () => isLoggedInReturn }))
 vi.mock("../../hooks/useOffline", () => ({ useOffline: () => offline }))
 vi.mock("../../services/bibleMarksService", () => ({
   getAllMarks: () => Promise.resolve([]),
@@ -29,10 +29,12 @@ const getMock = vi.fn()
 const deleteMock = vi.fn()
 const removeItemMock = vi.fn()
 let offline = false
+let isLoggedInReturn = true
 
 beforeEach(() => {
   vi.clearAllMocks()
   offline = false
+  isLoggedInReturn = true
   getMock.mockResolvedValue({
     id: "c1",
     name: "Promessas de Deus",
@@ -96,5 +98,21 @@ describe("CollectionDetail", () => {
     fireEvent.click(confirmBtns[confirmBtns.length - 1])
     await waitFor(() => expect(deleteMock).toHaveBeenCalledWith("c1"))
     expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia/minha")
+  })
+
+  /*
+   Esta tela trata visitante de forma diferente da MinhaBiblia: em vez de abrir
+   o GuestGateModal, ela redireciona pra /oratio/biblia — uma coleção é sempre
+   de alguém, então não há nada pra mostrar a quem não está logado. O que não
+   pode acontecer é a página pedir a coleção antes de redirecionar.
+  */
+  it("sends a visitor back to the bible home without ever asking the backend for the collection", async () => {
+    isLoggedInReturn = false
+
+    renderPage()
+
+    await waitFor(() => expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia"))
+    expect(getMock).not.toHaveBeenCalled()
+    expect(screen.queryByText("Promessas de Deus")).not.toBeInTheDocument()
   })
 })

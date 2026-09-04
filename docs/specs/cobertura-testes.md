@@ -1,5 +1,19 @@
 # Spec: Cobertura de testes do frontend (80%) + limpeza do backlog de lint
 
+> Status: **parcial** — a metade de cobertura está atingida, a de lint não.
+>
+> **Cobertura: ✅ atingida** (medido em 2026-09-04, `npx vitest run --coverage`, exit 0):
+> statements 80,22% · lines 82,59% · branches 71,98% · functions 72,4% — todos acima dos
+> thresholds de `vitest.config.ts` (80/80/70/70). Fases 1–6 fechadas.
+>
+> **Lint: ❌ em aberto.** `npx eslint .` reporta **143 problemas (122 erros, 21 avisos)**. A
+> baseline desta spec era 148 (128/20): só a Tarefa L1 foi feita. As tarefas **L2–L11 seguem
+> pendentes** em `docs/tasks/plan.md`, e o critério de sucesso "0 erros" não está cumprido.
+>
+> Plano/checklist: `docs/tasks/plan.md`
+> As regras permanentes que nasceram aqui (a seção **Boundaries**) foram promovidas para
+> `.claude/rules/RULES.md` — esta spec mantém só o que é específico desta iniciativa.
+
 ## Objetivo
 
 Levar o frontend (`oratio/`) de cobertura de teste real a um mínimo de 80% (lines/statements) /

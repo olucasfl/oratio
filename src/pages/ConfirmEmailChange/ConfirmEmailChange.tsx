@@ -37,7 +37,7 @@ export default function ConfirmEmailChange(){
     setNewEmail(data.email)
     setStatus("success")
    })
-   .catch((err:any)=>{
+   .catch((err:unknown)=>{
     setStatus("error")
     setErrorMessage(getAuthErrorMessage(err, "Esse link não é mais válido. Peça uma nova troca de email no seu perfil."))
    })

@@ -1,6 +1,28 @@
 import bibleData from "../data/bibliaAveMaria.json"
 
-const bible:any = bibleData
+/*
+ O JSON da Bíblia Ave-Maria tem ~5MB e o TS infere dele um tipo literal gigante,
+ que trava o editor e o typecheck. Declarar o shape que de fato usamos e afirmar
+ uma vez sai muito mais barato — e documenta o formato do arquivo, que é o
+ contrário do que um `any` fazia aqui.
+*/
+export interface BibleChapter {
+ capitulo: number
+ versiculos: { versiculo: number; texto: string }[]
+}
+
+export interface BibleBook {
+ nome: string
+ abrev?: string
+ capitulos: BibleChapter[]
+}
+
+interface BibleData {
+ antigoTestamento: BibleBook[]
+ novoTestamento: BibleBook[]
+}
+
+const bible = bibleData as unknown as BibleData
 
 export function getOldTestament(){
  return bible.antigoTestamento
@@ -17,7 +39,7 @@ export function getBook(bookName:string){
   ...bible.novoTestamento
  ]
 
- return allBooks.find((b:any)=>b.nome === bookName)
+ return allBooks.find(b=>b.nome === bookName)
 
 }
 
@@ -28,7 +50,7 @@ export function getChapter(bookName:string, chapterNumber:number){
  if(!book) return null
 
  return book.capitulos.find(
-  (c:any)=>c.capitulo === chapterNumber
+  c=>c.capitulo === chapterNumber
  )
 
 }

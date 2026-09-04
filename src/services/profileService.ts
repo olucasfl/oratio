@@ -1,5 +1,31 @@
 import api from "./api"
 
+/*
+ Espelha o `return` de `UsersService.getProfile` no oratio-api. Note que
+ `spiritualProgress` é montado lá — não é a relação `spiritualStats` crua do
+ Prisma — e que `prayerStreak` conta dias de oração, não um recorde de
+ sequência (nome enganoso herdado, documentado no ARCHITECTURE do backend).
+*/
+export interface SpiritualProgress {
+  consecrationStarted: boolean
+  daysCompleted: number
+  prayersPrayed: number
+  rosariesPrayed: number
+  lastPrayerDate: string | null
+  prayerStreak: number
+}
+
+export interface UserProfile {
+  id: string
+  name: string
+  email: string
+  pendingEmail: string | null
+  createdAt: string
+  emailVerified: boolean
+  isAdmin: boolean
+  spiritualProgress: SpiritualProgress
+}
+
 export async function getProfile(){
 
  const res = await api.get("/users/me")

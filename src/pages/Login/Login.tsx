@@ -62,7 +62,7 @@ export default function Login() {
 
       navigate(destination);
 
-    } catch (err: any) {
+    } catch (err) {
 
       setError(getAuthErrorMessage(err, "Não foi possível entrar. Tente novamente."));
 
@@ -89,7 +89,7 @@ export default function Login() {
       setForgotSuccess(true);
       setForgotOpen(false);
 
-    }catch(err:any){
+    }catch(err){
 
       setError(getAuthErrorMessage(err, "Não foi possível enviar o email. Tente novamente."));
 

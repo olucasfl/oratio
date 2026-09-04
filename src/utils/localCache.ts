@@ -1,4 +1,4 @@
-export function saveLocal(key: string, data: any, ttlMinutes = 10) {
+export function saveLocal(key: string, data: unknown, ttlMinutes = 10) {
   const now = Date.now()
 
   const item = {

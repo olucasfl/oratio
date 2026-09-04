@@ -1,5 +1,5 @@
 /* v8 ignore file -- conteúdo estático (textos de oração), sem lógica pra testar */
-export const rosaryPrayers:any = {
+export const rosaryPrayers: Record<string, string> = {
 
     "Sinal da Santa Cruz": `Pelo sinal da Santa Cruz, 
     (†) livrai-nos Deus, nosso Senhor, 

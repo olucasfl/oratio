@@ -4,7 +4,8 @@ export function isPWA(){
   return true
  }
 
- if ((window.navigator as any).standalone === true) {
+ /* `standalone` é uma extensão do Safari no iOS, fora da tipagem padrão de Navigator. */
+ if ((window.navigator as Navigator & { standalone?: boolean }).standalone === true) {
   return true
  }
 

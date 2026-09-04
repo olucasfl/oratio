@@ -8,12 +8,32 @@ registrada direto de `handlers[0]` (InterceptorManager interno do axios,
 ver node_modules/axios/lib/core/InterceptorManager.js). Evita adicionar
 uma lib de mock de HTTP só pra isso; a estrutura {fulfilled, rejected} é
 estável há várias major versions do axios.
+
+Os dois tipos abaixo descrevem o mínimo que este teste alcança por dentro do
+axios. Declarados com nome em vez de `any` espalhado pelo arquivo: se a
+estrutura interna do InterceptorManager mudar numa major futura, o erro aparece
+num lugar só e diz o que quebrou.
 */
+
+/* Config de request como o teste monta: só o que os interceptors leem. */
+type TestConfig = {
+  url?: string
+  headers: Record<string, string>
+  _retry?: boolean
+}
+
+type InterceptorManagerInternal = {
+  handlers: {
+    fulfilled: (config: TestConfig) => TestConfig
+    rejected: (error: unknown) => Promise<unknown>
+  }[]
+}
+
 function getRequestFulfilled() {
-  return (api.interceptors.request as any).handlers[0].fulfilled
+  return (api.interceptors.request as unknown as InterceptorManagerInternal).handlers[0].fulfilled
 }
 function getResponseRejected() {
-  return (api.interceptors.response as any).handlers[0].rejected
+  return (api.interceptors.response as unknown as InterceptorManagerInternal).handlers[0].rejected
 }
 
 /*
@@ -90,7 +110,7 @@ describe("request interceptor", () => {
     localStorage.setItem("access_token", "tok-123")
     const fulfilled = getRequestFulfilled()
 
-    const config: any = { headers: {} }
+    const config: TestConfig = { headers: {} }
     const result = fulfilled(config)
 
     expect(result.headers.Authorization).toBe("Bearer tok-123")
@@ -99,7 +119,7 @@ describe("request interceptor", () => {
   it("leaves Authorization unset when there is no access_token (guest request)", () => {
     const fulfilled = getRequestFulfilled()
 
-    const config: any = { headers: {} }
+    const config: TestConfig = { headers: {} }
     const result = fulfilled(config)
 
     expect(result.headers.Authorization).toBeUndefined()
@@ -191,14 +211,14 @@ describe("response interceptor — 401 refresh flow", () => {
 
     vi.spyOn(axios, "post").mockResolvedValue({
       data: { access_token: "new-access", refresh_token: "new-refresh" },
-    } as any)
+    } as never)
 
     const fakeResponse = { data: { ok: true } }
     const adapter = vi.fn().mockResolvedValue(fakeResponse)
-    api.defaults.adapter = adapter as any
+    api.defaults.adapter = adapter as never
 
     const rejected = getResponseRejected()
-    const originalRequest: any = { url: "/oratio/rosary", headers: {} }
+    const originalRequest: TestConfig = { url: "/oratio/rosary", headers: {} }
     const err = { response: { status: 401 }, config: originalRequest }
 
     const result = await rejected(err)
@@ -215,9 +235,9 @@ describe("response interceptor — 401 refresh flow", () => {
     localStorage.setItem("access_token", "old-access")
     localStorage.setItem("refresh_token", "old-refresh")
 
-    let resolveRefresh!: (v: any) => void
+    let resolveRefresh!: (v: unknown) => void
     const refreshPromise = new Promise((resolve) => { resolveRefresh = resolve })
-    vi.spyOn(axios, "post").mockReturnValue(refreshPromise as any)
+    vi.spyOn(axios, "post").mockReturnValue(refreshPromise as never)
 
     // Responde por URL, não por ordem de chamada: quem dispara o refresh
     // (req1) e quem fica na fila (req2) são retentados em ordens diferentes
@@ -225,16 +245,16 @@ describe("response interceptor — 401 refresh flow", () => {
     // retry do próprio req1) — não é contrato que valha travar aqui.
     const fakeResponse1 = { data: "first" }
     const fakeResponse2 = { data: "second" }
-    const adapter = vi.fn((config: any) => {
+    const adapter = vi.fn((config: TestConfig) => {
       if (config.url === "/a") return Promise.resolve(fakeResponse1)
       if (config.url === "/b") return Promise.resolve(fakeResponse2)
       return Promise.reject(new Error(`unexpected adapter call: ${config.url}`))
     })
-    api.defaults.adapter = adapter as any
+    api.defaults.adapter = adapter as never
 
     const rejected = getResponseRejected()
-    const req1: any = { url: "/a", headers: {} }
-    const req2: any = { url: "/b", headers: {} }
+    const req1: TestConfig = { url: "/a", headers: {} }
+    const req2: TestConfig = { url: "/b", headers: {} }
 
     const p1 = rejected({ response: { status: 401 }, config: req1 })
     const p2 = rejected({ response: { status: 401 }, config: req2 })
@@ -262,7 +282,7 @@ describe("response interceptor — 401 refresh flow", () => {
     vi.spyOn(axios, "post").mockRejectedValue(refreshErr)
 
     const rejected = getResponseRejected()
-    const originalRequest: any = { url: "/oratio/rosary", headers: {} }
+    const originalRequest: TestConfig = { url: "/oratio/rosary", headers: {} }
     const err = { response: { status: 401 }, config: originalRequest }
 
     await expect(rejected(err)).rejects.toBe(refreshErr)

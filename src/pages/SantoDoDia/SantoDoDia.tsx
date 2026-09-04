@@ -6,6 +6,7 @@ import styles from "./SantoDoDia.module.css"
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 
 import { useLiturgy } from "../../hooks/useLiturgy"
+import type { LiturgyData } from "../../hooks/useLiturgy"
 import { resolveSaintOfDay } from "../../utils/saintOfDay"
 
 export default function SantoDoDia(){
@@ -13,8 +14,9 @@ export default function SantoDoDia(){
   const navigate = useNavigate()
   const location = useLocation()
 
-  const stateLiturgy = (location.state as any)?.liturgy
-  const stateOffset = (location.state as any)?.dateOffset
+  const navState = location.state as { liturgy?: LiturgyData; dateOffset?: number } | null
+  const stateLiturgy = navState?.liturgy
+  const stateOffset = navState?.dateOffset
 
   // fallback: se a página for aberta direto (sem vir do Home),
   // busca a liturgia de hoje do zero

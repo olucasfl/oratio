@@ -37,7 +37,7 @@ export default function ResetPasswordModal({ token }:{ token:string }){
    setRedirectOnClose(true);
    setAlertMessage("Senha alterada com sucesso!");
 
-  }catch(err:any){
+  }catch(err){
 
    setAlertMessage(getAuthErrorMessage(err, "Não foi possível redefinir sua senha. Tente novamente."));
 
