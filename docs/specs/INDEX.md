@@ -8,7 +8,7 @@ no mesmo commit — e `/docs-sync` confere se ela bate com a realidade.
 |---|---|---|---|---|---|
 | Cobertura de testes + lint | `specs/cobertura-testes.md` | `tasks/plan.md` | (no próprio plano) | n/a | ⚠️ **parcial** — cobertura ✅, lint ❌ (143 problemas, L2–L11 abertas) |
 | Bíblia de Estudo | — *(não precisa: já entregue)* | `tasks/biblia-plan.md` | `tasks/biblia-todo.md` | `oratio-api/docs/tasks/biblia-*.md` | ✅ **em produção** (F1–F9 na `main`) |
-| Perfis de resposta do VoxAI | — *(não precisa: já entregue)* | `tasks/vox-profiles.md` (ponteiro) | `tasks/vox-profiles-todo.md` | `oratio-api/docs/tasks/vox-profiles-plan.md` (mestre) | 🚧 código entregue; falta smoke em device |
+| Perfis de resposta do VoxAI | — *(não precisa: já entregue)* | `tasks/vox-profiles.md` (ponteiro) | `tasks/vox-profiles-todo.md` | `oratio-api/docs/tasks/vox-profiles-plan.md` (mestre) | ✅ **em produção** (F1–F4 na `main`; backend idem) |
 | Reformulação das notificações | — | `tasks/notifications.md` (ponteiro) | — | `oratio-api/docs/tasks/notifications-*.md` (mestre) | ✅ concluída |
 | Biografias do Santo do Dia | — | `tasks/santos-plan.md` | `tasks/santos-todo.md` | n/a | ✅ concluída (20/out–13/dez) |
 
