@@ -18,11 +18,13 @@ Não são specs; são gaps reais que a auditoria encontrou e que precisam de don
 
 - **Fase Lint parada.** `npx eslint .` → 143 problemas (122 erros / 21 avisos). A baseline da
   spec era 148 (128/20): só a Tarefa L1 foi feita. `tasks/plan.md` L2–L11 seguem abertas.
-- **Serviços da Bíblia sem cobertura.** `bibleMarksService.ts` está em **0%** e
-  `bibleCollectionsService.ts` em **57,69%**. Os dois nasceram depois da Fase 1 (Services) do
-  `plan.md`, que já estava fechada, e nunca entraram na fila. A cobertura global passa mesmo
-  assim, o que é exatamente o tipo de buraco que a média esconde.
-- **`CollectionDetail.test.tsx` sem asserção de visitante** — ver `tasks/biblia-todo.md`, F5.1.
+- ~~**Serviços da Bíblia sem cobertura.**~~ ✅ Resolvido em 2026-09-04: os dois foram a **100%**
+  (29 testes novos). Ver `tasks/plan.md`, Tarefa 1-bis.
+- ~~**`CollectionDetail.test.tsx` sem asserção de visitante.**~~ ✅ Resolvido em 2026-09-04. A
+  tela redireciona visitante para `/oratio/biblia` em vez de abrir o `GuestGateModal` — o teste
+  agora prova o redirect **e** que a coleção nunca é pedida ao backend antes dele.
+- ~~**`useLiturgy.ts` com URL de produção hardcodada.**~~ ✅ Resolvido em 2026-09-04: passa pelo
+  `liturgiaService` → `api.ts` → `VITE_API_URL`. Dev local deixa de bater em produção.
 
 ## Legenda de status
 
