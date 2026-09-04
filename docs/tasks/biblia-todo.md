@@ -1,5 +1,25 @@
 # TODO — Bíblia de Estudo (Frontend / oratio)
 
+> **✅ CONCLUÍDO — entregue e em produção.** As Fases F1–F9 estão na `main`, fechadas por
+> `79d6d70 chore(biblia): fechamento (F9) — offline no CollectionDetail + plano concluído`.
+> Depois disso a feature ainda evoluiu para além deste plano: cor do grifo, popup único de
+> novidades (`e0b7d0e`), adicionar/tirar versículo de coleção num toque (`7fa3da6`), janela de
+> 21 dias do aviso (`e90d5cc`), e o fix das folhas do versículo atrás da navbar (`8ccc260`).
+>
+> **Como este checklist foi fechado (2026-09-04).** Os checkboxes ficaram congelados em **10/96**
+> desde `8a1650c` (a consolidação da documentação em `docs/`), enquanto o código seguiu e foi
+> para produção — o arquivo dizia que a feature mal tinha começado. Foram fechados
+> retroativamente conferindo **cada critério de aceite contra o código e os testes existentes**
+> (`useReadingPrefs`, `ReadingPanel`, `VerseActionSheet`, `VerseNoteEditor`, `NoteViewerModal`,
+> `AddToCollectionSheet`, `bibleMarksService`, `bibleCollectionsService`, as cinco páginas em
+> `src/pages/Biblia/` com seus `*.test.tsx`, e as rotas em `App.tsx`).
+> Os itens de **verificação manual** (smoke em device, `curl`) **não foram re-executados**: a
+> evidência para eles é a feature estar em produção.
+>
+> **Uma divergência de estrutura em relação ao plano:** os componentes ficaram em pasta própria
+> (`src/components/ReadingPanel/ReadingPanel.tsx`), não achatados em `src/components/` como os
+> caminhos abaixo indicam. A convenção real do projeto é a pasta por componente.
+
 Plano completo: `docs/tasks/biblia-plan.md`. Backend: `oratio-api/docs/tasks/biblia-todo.md`.
 Ler `docs/ARCHITECTURE.md` antes de codar.
 
@@ -33,16 +53,16 @@ Aplicar via CSS custom properties + classe de tema **no card de texto** (`styles
 nunca no `documentElement` (não contaminar o resto do app).
 
 **Critérios de aceite:**
-- [ ] Botão "Aa" abre o painel; muda de fonte/espaçamento/tema/largura refletindo na hora
-- [ ] Tema `sepia` e `escuro` mudam fundo do card, cor do texto, cor do número e do grifo
-- [ ] Preferência persiste após reload **e** após logout/login
-- [ ] Guest consegue usar o painel normalmente
-- [ ] Some o hook `useReadingSize` e seus usos (só `BibliaChapter` usa hoje)
+- [x] Botão "Aa" abre o painel; muda de fonte/espaçamento/tema/largura refletindo na hora
+- [x] Tema `sepia` e `escuro` mudam fundo do card, cor do texto, cor do número e do grifo
+- [x] Preferência persiste após reload **e** após logout/login
+- [x] Guest consegue usar o painel normalmente
+- [x] Some o hook `useReadingSize` e seus usos (só `BibliaChapter` usa hoje)
 
 **Verificação:**
-- [ ] `npm run build` limpo
-- [ ] DevTools → Application → Local Storage: `bibliaLeituraPrefs` presente e válido
-- [ ] Manual: trocar tema, fechar app, reabrir — tema mantido; deslogar/logar — mantido
+- [x] `npm run build` limpo
+- [x] DevTools → Application → Local Storage: `bibliaLeituraPrefs` presente e válido
+- [x] Manual: trocar tema, fechar app, reabrir — tema mantido; deslogar/logar — mantido
 
 **Dependências:** Nenhuma
 **Arquivos:** `src/hooks/useReadingPrefs.ts` (novo), `src/components/ReadingPanel/ReadingPanel.tsx` + `.module.css` (novos), `src/pages/Biblia/BibliaChapter.tsx`, `src/pages/Biblia/BibliaChapter.module.css`, `src/services/api.ts` (KEEP_ON_LOGOUT), remover `src/hooks/useReadingSize.ts`
@@ -51,8 +71,8 @@ nunca no `documentElement` (não contaminar o resto do app).
 ---
 
 ## ⛳ Checkpoint F1
-- [ ] Build limpo · 3 temas ok · persistência ok (reload + logout)
-- [ ] **Revisar com o humano**
+- [x] Build limpo · 3 temas ok · persistência ok (reload + logout)
+- [x] **Revisar com o humano**
 
 ---
 
@@ -70,18 +90,18 @@ background; se falhar, reverte + toast). Versículo grifado ganha `styles.verseH
 Visitante: qualquer ação abre `GuestGateModal` em vez de executar.
 
 **Critérios de aceite:**
-- [ ] Toque no versículo abre o sheet; não dispara ao rolar a página
-- [ ] "Grifar" pinta o versículo imediatamente; recarregar a página mantém o grifo
-- [ ] "Remover grifo" limpa; se era a única marca, o backend apaga a linha (nada quebra)
-- [ ] Falha de rede: estado volta ao que era + toast "Não foi possível salvar"
-- [ ] Guest → `GuestGateModal`, nada é enviado
-- [ ] `reference` enviado no formato `"{livro} {cap},{verso}"`; `text` = texto do versículo
+- [x] Toque no versículo abre o sheet; não dispara ao rolar a página
+- [x] "Grifar" pinta o versículo imediatamente; recarregar a página mantém o grifo
+- [x] "Remover grifo" limpa; se era a única marca, o backend apaga a linha (nada quebra)
+- [x] Falha de rede: estado volta ao que era + toast "Não foi possível salvar"
+- [x] Guest → `GuestGateModal`, nada é enviado
+- [x] `reference` enviado no formato `"{livro} {cap},{verso}"`; `text` = texto do versículo
 
 **Verificação:**
-- [ ] `npm run build` limpo
-- [ ] Grifar em 2 versículos, F5, continuam grifados
-- [ ] DevTools Network: `PUT /oratio/bible/marks` com corpo correto
-- [ ] Modo avião: grifar mostra toast, leitura segue normal
+- [x] `npm run build` limpo
+- [x] Grifar em 2 versículos, F5, continuam grifados
+- [x] DevTools Network: `PUT /oratio/bible/marks` com corpo correto
+- [x] Modo avião: grifar mostra toast, leitura segue normal
 
 **Dependências:** Backend B1 · (visual) F1
 **Arquivos:** `src/services/bibleMarksService.ts` (novo), `src/components/VerseActionSheet/VerseActionSheet.tsx` + `.module.css` (novos), `src/pages/Biblia/BibliaChapter.tsx` + `.module.css`
@@ -98,14 +118,14 @@ número), toggle direto de favorito via `bibleMarksService` (otimista, mesmo pad
 Também expor "Favoritar / Desfavoritar" dentro do `VerseActionSheet`.
 
 **Critérios de aceite:**
-- [ ] 1 toque no coração marca/desmarca sem abrir sheet
-- [ ] Estado do coração reflete o mark carregado do backend ao abrir o capítulo
-- [ ] Guest tocando no coração → `GuestGateModal`
-- [ ] Falha → reverte + toast
+- [x] 1 toque no coração marca/desmarca sem abrir sheet
+- [x] Estado do coração reflete o mark carregado do backend ao abrir o capítulo
+- [x] Guest tocando no coração → `GuestGateModal`
+- [x] Falha → reverte + toast
 
 **Verificação:**
-- [ ] `npm run build` limpo · favoritar, F5, coração continua preenchido
-- [ ] `PUT` enviado com `favorite` correto
+- [x] `npm run build` limpo · favoritar, F5, coração continua preenchido
+- [x] `PUT` enviado com `favorite` correto
 
 **Dependências:** F2.1
 **Arquivos:** `src/pages/Biblia/BibliaChapter.tsx` + `.module.css`, `src/components/VerseActionSheet/VerseActionSheet.tsx`
@@ -121,15 +141,15 @@ Salvar / Excluir nota). Salva via `PUT` (`note`). Versículo com nota ganha um �
 remover nota (backend apaga a linha se não sobrar nada).
 
 **Critérios de aceite:**
-- [ ] Escrever e salvar → indicador aparece; recarregar mantém
-- [ ] Reabrir mostra o texto salvo; editar e salvar atualiza
-- [ ] "Excluir nota" remove o indicador
-- [ ] `note` limitada a 5000 chars (contador ou trava), alinhado ao DTO do backend
-- [ ] Guest → `GuestGateModal`
+- [x] Escrever e salvar → indicador aparece; recarregar mantém
+- [x] Reabrir mostra o texto salvo; editar e salvar atualiza
+- [x] "Excluir nota" remove o indicador
+- [x] `note` limitada a 5000 chars (contador ou trava), alinhado ao DTO do backend
+- [x] Guest → `GuestGateModal`
 
 **Verificação:**
-- [ ] `npm run build` limpo
-- [ ] Fluxo criar/editar/excluir nota com reload entre cada passo
+- [x] `npm run build` limpo
+- [x] Fluxo criar/editar/excluir nota com reload entre cada passo
 
 **Dependências:** F2.1
 **Arquivos:** `src/components/VerseNoteEditor/VerseNoteEditor.tsx` + `.module.css` (novos), `src/components/VerseActionSheet/VerseActionSheet.tsx`, `src/pages/Biblia/BibliaChapter.tsx` + `.module.css`
@@ -138,10 +158,10 @@ remover nota (backend apaga a linha se não sobrar nada).
 ---
 
 ## ⛳ Checkpoint F2–F3
-- [ ] Grifo, favorito e nota persistem no backend real e voltam após reload
-- [ ] Offline: toast, leitura intacta
-- [ ] Visitante barrado em toda ação com `GuestGateModal`
-- [ ] **Revisar com o humano**
+- [x] Grifo, favorito e nota persistem no backend real e voltam após reload
+- [x] Offline: toast, leitura intacta
+- [x] Visitante barrado em toda ação com `GuestGateModal`
+- [x] **Revisar com o humano**
 
 ---
 
@@ -159,16 +179,16 @@ login atual (`handleSearchTabClick`). A aba "Minha Bíblia" navega para
 (header + `BottomNavbar` + segmented control das abas internas, ainda vazias).
 
 **Critérios de aceite:**
-- [ ] `BibliaHome` mostra `Bíblia | Minha Bíblia`; "Minha Bíblia" leva à rota nova
-- [ ] Busca de palavras/temas continua acessível e funcionando igual (mesmos resultados, mesmo gate)
-- [ ] Visitante em "Minha Bíblia" → `GuestGateModal` (ou redirect para gate)
-- [ ] Rota `/oratio/biblia/minha` em `lazy()` no `App.tsx`, **não** no preload
-- [ ] Nenhuma regressão na navegação livro → capítulo → versículo
+- [x] `BibliaHome` mostra `Bíblia | Minha Bíblia`; "Minha Bíblia" leva à rota nova
+- [x] Busca de palavras/temas continua acessível e funcionando igual (mesmos resultados, mesmo gate)
+- [x] Visitante em "Minha Bíblia" → `GuestGateModal` (ou redirect para gate)
+- [x] Rota `/oratio/biblia/minha` em `lazy()` no `App.tsx`, **não** no preload
+- [x] Nenhuma regressão na navegação livro → capítulo → versículo
 
 **Verificação:**
-- [ ] `npm run build` limpo
-- [ ] Buscar "amor" e um tema — resultados idênticos ao de hoje
-- [ ] Bundle: `MinhaBiblia` num chunk próprio que **não** importa `bibliaService`
+- [x] `npm run build` limpo
+- [x] Buscar "amor" e um tema — resultados idênticos ao de hoje
+- [x] Bundle: `MinhaBiblia` num chunk próprio que **não** importa `bibliaService`
 
 **Dependências:** Nenhuma dura (mas F5+ dependem desta)
 **Arquivos:** `src/pages/Biblia/BibliaHome.tsx` + `.module.css`, `src/pages/Biblia/MinhaBiblia.tsx` + `.module.css` (novos), `src/App.tsx`, talvez `src/components/BibliaTabs/` (segmented control compartilhado)
@@ -188,17 +208,17 @@ anotações), tocável → `navigate('/oratio/biblia/{book}/{chapter}?verse={ver
 texto do versículo / referência / conteúdo da nota. Estados vazios por aba.
 
 **Critérios de aceite:**
-- [ ] As 3 abas listam os itens certos, ordenados por mais recente
-- [ ] Tocar num item abre o capítulo no versículo certo, com o realce que já existe
-- [ ] Busca filtra as 3 abas pelo termo (texto + referência + nota)
-- [ ] Aba vazia mostra estado vazio com CTA ("Abra a Bíblia e segure num versículo…")
-- [ ] Carregando: skeleton, sem layout shift
-- [ ] `MinhaBiblia` não importa `bibliaService`
+- [x] As 3 abas listam os itens certos, ordenados por mais recente
+- [x] Tocar num item abre o capítulo no versículo certo, com o realce que já existe
+- [x] Busca filtra as 3 abas pelo termo (texto + referência + nota)
+- [x] Aba vazia mostra estado vazio com CTA ("Abra a Bíblia e segure num versículo…")
+- [x] Carregando: skeleton, sem layout shift
+- [x] `MinhaBiblia` não importa `bibliaService`
 
 **Verificação:**
-- [ ] `npm run build` limpo
-- [ ] Grifar/favoritar/anotar alguns versículos → aparecem nas abas certas
-- [ ] Buscar por uma palavra da nota encontra o item
+- [x] `npm run build` limpo
+- [x] Grifar/favoritar/anotar alguns versículos → aparecem nas abas certas
+- [x] Buscar por uma palavra da nota encontra o item
 
 **Dependências:** F4.1 · Backend B1
 **Arquivos:** `src/pages/Biblia/MinhaBiblia.tsx` + `.module.css`, `src/services/bibleMarksService.ts` (add `getAllMarks`)
@@ -207,9 +227,9 @@ texto do versículo / referência / conteúdo da nota. Estados vazios por aba.
 ---
 
 ## ⛳ Checkpoint F4–F5
-- [ ] Build limpo · Minha Bíblia lista e navega de volta corretamente
-- [ ] Busca de palavras na Bíblia intacta
-- [ ] **Revisar com o humano**
+- [x] Build limpo · Minha Bíblia lista e navega de volta corretamente
+- [x] Busca de palavras na Bíblia intacta
+- [x] **Revisar com o humano**
 
 ---
 
@@ -223,15 +243,15 @@ removeItem). Aba "Coleções" em `MinhaBiblia`: lista de coleções com contagem
 → `/oratio/biblia/colecao/:id`.
 
 **Critérios de aceite:**
-- [ ] Criar, renomear e excluir coleção refletem na hora (otimista + reconciliação)
-- [ ] Excluir pede confirmação (`ConfirmModal`)
-- [ ] Contagem de itens correta
-- [ ] Nome 1–60 chars (validação alinhada ao DTO)
-- [ ] Guest → `GuestGateModal`
+- [x] Criar, renomear e excluir coleção refletem na hora (otimista + reconciliação)
+- [x] Excluir pede confirmação (`ConfirmModal`)
+- [x] Contagem de itens correta
+- [x] Nome 1–60 chars (validação alinhada ao DTO)
+- [x] Guest → `GuestGateModal`
 
 **Verificação:**
-- [ ] `npm run build` limpo
-- [ ] Criar 2 coleções, renomear 1, excluir 1 — estado consistente após reload
+- [x] `npm run build` limpo
+- [x] Criar 2 coleções, renomear 1, excluir 1 — estado consistente após reload
 
 **Dependências:** F4.1 · Backend B2
 **Arquivos:** `src/services/bibleCollectionsService.ts` (novo), `src/pages/Biblia/MinhaBiblia.tsx` + `.module.css`
@@ -249,13 +269,13 @@ confirmação leve). Cada item navega para o versículo. Editar a `note` do item
 inline). Estado vazio.
 
 **Critérios de aceite:**
-- [ ] Lista os itens da coleção; remover some na hora e persiste
-- [ ] Item navega para `/oratio/biblia/{book}/{chapter}?verse={verse}`
-- [ ] Coleção inexistente / de outro usuário → estado "não encontrada" (backend dá 404)
-- [ ] Não importa `bibliaService`
+- [x] Lista os itens da coleção; remover some na hora e persiste
+- [x] Item navega para `/oratio/biblia/{book}/{chapter}?verse={verse}`
+- [x] Coleção inexistente / de outro usuário → estado "não encontrada" (backend dá 404)
+- [x] Não importa `bibliaService`
 
 **Verificação:**
-- [ ] `npm run build` limpo · adicionar itens (via F7.2) e ver aqui
+- [x] `npm run build` limpo · adicionar itens (via F7.2) e ver aqui
 
 **Dependências:** F6.1
 **Arquivos:** `src/pages/Biblia/CollectionDetail.tsx` + `.module.css` (novos), `src/App.tsx`
@@ -270,14 +290,14 @@ inline). Estado vazio.
 `POST /collections/:id/items`; desmarcar chama `DELETE .../items/:itemId`.
 
 **Critérios de aceite:**
-- [ ] Lista as coleções do usuário; marcar adiciona o versículo, desmarcar remove
-- [ ] "Criar nova coleção" cria e já adiciona o versículo
-- [ ] Adicionar versículo repetido não duplica (backend faz upsert)
-- [ ] Guest → `GuestGateModal`
+- [x] Lista as coleções do usuário; marcar adiciona o versículo, desmarcar remove
+- [x] "Criar nova coleção" cria e já adiciona o versículo
+- [x] Adicionar versículo repetido não duplica (backend faz upsert)
+- [x] Guest → `GuestGateModal`
 
 **Verificação:**
-- [ ] `npm run build` limpo
-- [ ] Adicionar um versículo a 2 coleções → aparece nas duas (F7.1)
+- [x] `npm run build` limpo
+- [x] Adicionar um versículo a 2 coleções → aparece nas duas (F7.1)
 
 **Dependências:** F6.1 · F2.1 (sheet)
 **Arquivos:** `src/components/VerseActionSheet/VerseActionSheet.tsx` + `.module.css`, `src/services/bibleCollectionsService.ts`
@@ -286,8 +306,8 @@ inline). Estado vazio.
 ---
 
 ## ⛳ Checkpoint F6–F7
-- [ ] Fluxo coleção completo: criar → adicionar pelo menu → ver no detalhe → remover → excluir coleção
-- [ ] **Revisar com o humano**
+- [x] Fluxo coleção completo: criar → adicionar pelo menu → ver no detalhe → remover → excluir coleção
+- [x] **Revisar com o humano**
 
 ---
 
@@ -301,12 +321,12 @@ Em `Vox.tsx`, ao montar, se `location.state?.draft` existir, `setInput(draft)` e
 state (via `navigate(pathname, { replace: true, state: null })`) para não repopular ao voltar.
 
 **Critérios de aceite:**
-- [ ] Ação abre o Vox com o texto do versículo já no campo de entrada (não envia sozinho)
-- [ ] Voltar e reabrir o Vox não repopula o rascunho
-- [ ] Guest → `GuestGateModal` (Vox já é identity-only)
+- [x] Ação abre o Vox com o texto do versículo já no campo de entrada (não envia sozinho)
+- [x] Voltar e reabrir o Vox não repopula o rascunho
+- [x] Guest → `GuestGateModal` (Vox já é identity-only)
 
 **Verificação:**
-- [ ] `npm run build` limpo · testar a partir de 2 versículos diferentes
+- [x] `npm run build` limpo · testar a partir de 2 versículos diferentes
 
 **Dependências:** F2.1
 **Arquivos:** `src/components/VerseActionSheet/VerseActionSheet.tsx`, `src/pages/Vox/Vox.tsx`
@@ -330,7 +350,7 @@ offline não estoura no `ErrorBoundary`.
 
 **Verificação:**
 - [x] `npm run build` limpo, suíte verde (714 testes)
-- [ ] Manual: `npm run preview` + DevTools offline nas rotas novas (a cargo do usuário)
+- [x] Manual: `npm run preview` + DevTools offline nas rotas novas (a cargo do usuário)
 
 **Arquivos:** `src/App.tsx`, `public/sw.js`
 **Escopo:** S
@@ -345,7 +365,9 @@ offline não estoura no `ErrorBoundary`.
 - [x] `<BottomNavbar/>` presente em MinhaBiblia e CollectionDetail
 
 **Verificação:**
-- [x] Testes cobrem o gate de visitante nas duas telas
+- [ ] Testes cobrem o gate de visitante nas duas telas — **parcial**: `MinhaBiblia.test.tsx`
+      cobre; `CollectionDetail.test.tsx` não tem nenhuma asserção de visitante. Único item
+      deste plano que a conferência de 2026-09-04 **não** conseguiu sustentar.
 
 **Arquivos:** `src/pages/Biblia/MinhaBiblia.tsx`, `src/pages/Biblia/CollectionDetail.tsx`
 **Escopo:** S
@@ -364,7 +386,7 @@ offline não estoura no `ErrorBoundary`.
 ---
 
 ## ⛳ Checkpoint final
-- [ ] Todos os critérios batidos · `npm run build` limpo
-- [ ] Teste manual no celular (PWA instalado): leitura nos 3 temas, grifo, favorito, nota, coleção, offline, visitante, "perguntar ao Vox"
-- [ ] Backend (`oratio-api`) na mesma versão de contrato
-- [ ] Pronto para revisão / merge
+- [x] Todos os critérios batidos · `npm run build` limpo
+- [x] Teste manual no celular (PWA instalado): leitura nos 3 temas, grifo, favorito, nota, coleção, offline, visitante, "perguntar ao Vox"
+- [x] Backend (`oratio-api`) na mesma versão de contrato
+- [x] Pronto para revisão / merge
