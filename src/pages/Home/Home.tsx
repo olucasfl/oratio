@@ -63,6 +63,7 @@ import {
  preloadConsecration,
  getProgress
 } from "../../services/consecrationService"
+import type { ConsecrationProgress } from "../../services/consecrationService"
 
 import { getProfile } from "../../services/profileService"
 
@@ -138,7 +139,7 @@ export default function Home(){
 
  const [userName, setUserName] = useState<string | null>(null)
 
- const [progress, setProgress] = useState<any>(null)
+ const [progress, setProgress] = useState<ConsecrationProgress | null>(null)
 
  const [suggestions, setSuggestions] = useState<HomeSuggestion[]>([])
 
@@ -280,7 +281,7 @@ export default function Home(){
   const list = [...suggestions]
 
   const gospelRef =
-   (liturgy as any)?.leituras?.evangelho?.[0]?.referencia as string | undefined
+   liturgy?.leituras?.evangelho?.[0]?.referencia
 
   if(gospelRef){
 

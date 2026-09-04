@@ -12,7 +12,7 @@ import {
   getProgress,
   uncompleteDay
 } from "../../services/consecrationService"
-import type { ConsecrationProgress } from "../../services/consecrationService"
+import type { ConsecrationProgress, ConsecrationDay, DayPrayer } from "../../services/consecrationService"
 
 import { useOffline } from "../../hooks/useOffline"
 import { usePullToRefresh } from "../../hooks/usePullToRefresh"
@@ -27,7 +27,7 @@ export default function ConsecrationDay(){
 
  const dayNumber = Number(day)
 
- const [data, setData] = useState<any>(null)
+ const [data, setData] = useState<ConsecrationDay | null>(null)
  const [progress, setProgress] = useState<ConsecrationProgress | null>(
    () => getCachedProgress()
  )
@@ -58,7 +58,7 @@ export default function ConsecrationDay(){
 
  usePullToRefresh(load, !isOffline)
 
- const prayers: any[] = data?.prayers ?? []
+ const prayers: DayPrayer[] = data?.prayers ?? []
  const total = prayers.length
  const current = prayers[step]
  const isLast = total > 0 && step === total - 1

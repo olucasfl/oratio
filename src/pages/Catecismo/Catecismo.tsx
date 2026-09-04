@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import styles from "./Catecismo.module.css"
 import { Document, Page } from "react-pdf"
+import type { DocumentProps, TextItem } from "react-pdf"
 import "../../utils/pdfConfig"
 import "react-pdf/dist/Page/TextLayer.css"
 import "react-pdf/dist/Page/AnnotationLayer.css"
@@ -12,6 +13,18 @@ import { saveReadingProgress } from "../../services/readingProgressService"
 
 const PAGE_KEY  = "catecismo_page"
 const ZOOM_KEY  = "catecismo_zoom"
+
+/*
+ O documento vem tipado pelo próprio react-pdf, via o `onLoadSuccess` do
+ `<Document>` — derivar daqui em vez de importar de `pdfjs-dist` é de propósito:
+ uma dependência direta ao `pdfjs-dist` é exatamente o que já causou o bug de
+ "API version does not match Worker version" e obrigou o pin sem `^`
+ (ver ARCHITECTURE §7).
+*/
+type PdfDocument = Parameters<NonNullable<DocumentProps["onLoadSuccess"]>>[0]
+
+/* Resultado da busca por número de artigo do Catecismo. */
+type ArtigoResultado = { pagina: number; preview: string }
 
 export default function Catecismo() {
 
@@ -32,14 +45,14 @@ export default function Catecismo() {
   const [numPages,     setNumPages]     = useState(0)
   const [baseWidth,    setBaseWidth]    = useState<number | undefined>(undefined)
   const [zoomLevel,    setZoomLevel]    = useState(1.0)
-  const [pdf,          setPdf]          = useState<any>(null)
+  const [pdf,          setPdf]          = useState<PdfDocument | null>(null)
   const [loaded,       setLoaded]       = useState(false)
   const [pdfLoading,   setPdfLoading]   = useState(true)
 
   const [inputPagina,  setInputPagina]  = useState("")
   const [inputArtigo,  setInputArtigo]  = useState("")
   const [searchLoading,setSearchLoading]= useState(false)
-  const [resultados,   setResultados]   = useState<any[]>([])
+  const [resultados,   setResultados]   = useState<ArtigoResultado[]>([])
   const [showResults,  setShowResults]  = useState(false)
 
   /* ── mede largura do wrapper ── */
@@ -58,7 +71,7 @@ export default function Catecismo() {
   const pageWidth = baseWidth ? Math.round(baseWidth * zoomLevel) : undefined
 
   /* ── restaura estado salvo ── */
-  function restoreState(doc: any) {
+  function restoreState(doc: PdfDocument) {
     const savedZoom = localStorage.getItem(ZOOM_KEY)
     if (savedZoom) setZoomLevel(Number(savedZoom))
 
@@ -98,7 +111,7 @@ export default function Catecismo() {
   }, [page])
 
   /* ── callbacks PDF ── */
-  function onLoadSuccess(doc: any) {
+  function onLoadSuccess(doc: PdfDocument) {
     setNumPages(doc.numPages)
     setPdf(doc)
     setPdfLoading(false)
@@ -122,14 +135,15 @@ export default function Catecismo() {
     setResultados([])
 
     try {
-      const encontrados: any[] = []
+      const encontrados: ArtigoResultado[] = []
       const regex = new RegExp(`${artigo}\\s*\\.`)
 
       for (let i = 1; i <= numPages; i++) {
         const p    = await pdf.getPage(i)
         const text = await p.getTextContent()
         const pageText = text.items
-          .map((item: any) => item.str)
+          /* items traz TextItem e TextMarkedContent misturados; só o primeiro tem `str`. */
+          .map(item => ("str" in item ? (item as TextItem).str : ""))
           .join("")
           .replace(/\s+/g, " ")
 

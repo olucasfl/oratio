@@ -67,7 +67,7 @@ before touching `APP_VERSION`, `CACHE_NAME`, `KEEP_ON_LOGOUT`, or adding a route
 | **Biografias do Santo do Dia** (20/out → 08/dez) | `docs/tasks/santos-plan.md` · `docs/tasks/santos-todo.md` | Conteúdo devocional; protocolo de fontes no plano. |
 | **Bíblia de Estudo** (frontend: leitura + estudo) | `docs/tasks/biblia-plan.md` · `docs/tasks/biblia-todo.md` | ✅ **Concluída e em produção** (F1–F9 na `main`). Os dois arquivos são registro histórico, não trabalho pendente — o comportamento vivo está em `ARCHITECTURE.md` §7. Dívida aberta: `bibleMarksService`/`bibleCollectionsService` sem cobertura (ver `docs/tasks/plan.md`). |
 | **Reformulação das notificações** | `docs/tasks/notifications.md` (ponteiro) | Plano-mestre no backend: `oratio-api/docs/tasks/notifications-plan.md`. Aqui só muda o painel `AdminNotifications`. |
-| **Perfis de resposta do VoxAI** (engrenagem + painel + onboarding no Vox) | `docs/tasks/vox-profiles-todo.md` · `docs/tasks/vox-profiles.md` (ponteiro) | Plano-mestre: `oratio-api/docs/tasks/vox-profiles-plan.md`. Fases F1–F4 concluídas; falta conteúdo dos 5 perfis (backend B3) e smoke em device. |
+| **Perfis de resposta do VoxAI** (engrenagem + painel + onboarding no Vox) | `docs/tasks/vox-profiles-todo.md` · `docs/tasks/vox-profiles.md` (ponteiro) | Plano-mestre: `oratio-api/docs/tasks/vox-profiles-plan.md`. ✅ **Concluída e em produção** — F1–F4 na `main`, backend idem. O checklist é registro histórico. |
 
 When you finish a task, tick it in its `*-todo.md`/`*-plan.md` and, if behavior
 changed, update `docs/ARCHITECTURE.md` in the same commit.

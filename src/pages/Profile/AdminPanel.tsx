@@ -1,3 +1,4 @@
+import { apiErrorMessage } from "../../utils/authErrors"
 import { useEffect, useMemo, useState } from "react"
 import AdminNotifications from "../../components/AdminNotifications/AdminNotifications"
 import { createPortal } from "react-dom"
@@ -12,7 +13,7 @@ import {
   BarChart3, Terminal, Cpu, Database, Clock, AlertTriangle, Bell
 } from "lucide-react"
 
-import type { AdminFilters, AdminTimeseriesMetric, AdminTimeseriesRange } from "../../services/adminService"
+import type { AdminFilters, AdminTimeseriesMetric, AdminTimeseriesRange, AdminUser, AdminStats, AdminSystemStatus, AdminActivity, AdminHeatmapData } from "../../services/adminService"
 import {
   getAdminStats, getAllUsers, setAdminStatus,
   getUserDetail, deleteUser, getUserActivity, getAdminTimeseries,
@@ -22,6 +23,7 @@ import { getProfile } from "../../services/profileService"
 import { usePullToRefresh } from "../../hooks/usePullToRefresh"
 import Skeleton from "../../components/Skeleton/Skeleton"
 import AdminChart from "../../components/AdminChart/AdminChart"
+import type { AdminChartPoint } from "../../components/AdminChart/AdminChart"
 import AdminHeatmap from "../../components/AdminHeatmap/AdminHeatmap"
 import AdminFilterSheet from "../../components/AdminFilterSheet/AdminFilterSheet"
 import styles from "./AdminPanel.module.css"
@@ -117,8 +119,8 @@ export default function AdminPanel() {
   const [initialLoading, setInitialLoading] = useState(true)
   const [usersLoading,   setUsersLoading]   = useState(false)
   const [error,          setError]          = useState<string | null>(null)
-  const [stats,          setStats]          = useState<any>(null)
-  const [users,          setUsers]          = useState<any[]>([])
+  const [stats,          setStats]          = useState<AdminStats | null>(null)
+  const [users,          setUsers]          = useState<AdminUser[]>([])
   const [currentUserId,  setCurrentUserId]  = useState<string | null>(null)
   const [updateId,       setUpdateId]       = useState<string | null>(null)
   const [loadingDetailId,setLoadingDetailId]= useState<string | null>(null)
@@ -135,25 +137,25 @@ export default function AdminPanel() {
   const [chartMetric, setChartMetric] = useState<AdminTimeseriesMetric>("users")
   const [chartRange,  setChartRange]  = useState<AdminTimeseriesRange>("6m")
   const [chartView,   setChartView]   = useState<"evolution" | "heatmap">("evolution")
-  const [chartData,    setChartData]    = useState<any>(null)
+  const [chartData,    setChartData]    = useState<{ data: AdminChartPoint[] } | null>(null)
   const [chartLoading, setChartLoading] = useState(false)
 
-  const [heatmapData,    setHeatmapData]    = useState<any>(null)
+  const [heatmapData,    setHeatmapData]    = useState<AdminHeatmapData | null>(null)
   const [heatmapLoading, setHeatmapLoading] = useState(false)
 
   const [health, setHealth] = useState<{ status: string; database: string } | null>(null)
 
-  const [systemStatus,  setSystemStatus]  = useState<any>(null)
+  const [systemStatus,  setSystemStatus]  = useState<AdminSystemStatus | null>(null)
   const [systemLoading, setSystemLoading] = useState(false)
 
   // Snapshot sem filtro pra alimentar os Destaques — não pode usar o
   // `users` da aba Usuários porque aquele reflete o filtro ativo, e um
   // "top engajamento" calculado em cima de uma lista filtrada mentiria.
-  const [allUsersSnapshot, setAllUsersSnapshot] = useState<any[]>([])
+  const [allUsersSnapshot, setAllUsersSnapshot] = useState<AdminUser[]>([])
 
-  const [detailModal,     setDetailModal]     = useState<{ show: boolean; user: any }>({ show: false, user: null })
+  const [detailModal,     setDetailModal]     = useState<{ show: boolean; user: AdminUser | null }>({ show: false, user: null })
   const [detailLoading,   setDetailLoading]   = useState(false)
-  const [activityData,    setActivityData]    = useState<any>(null)
+  const [activityData,    setActivityData]    = useState<{ activities?: AdminActivity[] } | null>(null)
   const [activityLoading, setActivityLoading] = useState(false)
   const [activityPage,    setActivityPage]    = useState(1)
   const ITEMS_PER_PAGE = 20
@@ -211,8 +213,8 @@ export default function AdminPanel() {
       }
       setUsers(await getAllUsers(filters))
       setError(null)
-    } catch (e: any) {
-      setError(e?.response?.data?.message || "Erro ao carregar usuários")
+    } catch (err) {
+      setError(apiErrorMessage(err, "Erro ao carregar usuários"))
     } finally {
       setUsersLoading(false)
     }
@@ -356,22 +358,22 @@ export default function AdminPanel() {
       setAdminPassword("")
       setPwdModal({ show: false, userId: null, current: false })
       if (userId === currentUserId && current) setTimeout(() => navigate("/oratio/profile"), 500)
-    } catch (e: any) {
-      setError(e?.response?.data?.message || "Erro ao alterar admin")
+    } catch (err) {
+      setError(apiErrorMessage(err, "Erro ao alterar admin"))
     } finally {
       setAdminLoading(false); setUpdateId(null)
     }
   }
 
-  async function openDetail(user: any) {
+  async function openDetail(user: AdminUser) {
     setLoadingDetailId(user.id)
     try {
       setDetailLoading(true); setActivityLoading(true); setActivityPage(1)
       const [detail, activity] = await Promise.all([getUserDetail(user.id), getUserActivity(user.id)])
       setDetailModal({ show: true, user: detail })
       setActivityData(activity)
-    } catch (e: any) {
-      setError(e?.response?.data?.message || "Erro ao carregar detalhes")
+    } catch (err) {
+      setError(apiErrorMessage(err, "Erro ao carregar detalhes"))
     } finally {
       setDetailLoading(false); setActivityLoading(false)
       setLoadingDetailId(null)
@@ -384,8 +386,8 @@ export default function AdminPanel() {
       await deleteUser(userId)
       setUsers(prev => prev.filter(u => u.id !== userId))
       setDeleteModal({ show: false, userId: null })
-    } catch (e: any) {
-      setError(e?.response?.data?.message || "Erro ao deletar usuário")
+    } catch (err) {
+      setError(apiErrorMessage(err, "Erro ao deletar usuário"))
     } finally {
       setDeleteLoading(false)
     }
@@ -435,7 +437,7 @@ export default function AdminPanel() {
     )
   }
 
-  function renderActions(user: any, isLoadingThis: boolean, isUpdatingAdmin: boolean, size = 15) {
+  function renderActions(user: AdminUser, isLoadingThis: boolean, isUpdatingAdmin: boolean, size = 15) {
     return (
       <div className={styles.userActions}>
         <button
@@ -467,7 +469,7 @@ export default function AdminPanel() {
     )
   }
 
-  function renderCard(user: any) {
+  function renderCard(user: AdminUser) {
     const isLoadingThis = loadingDetailId === user.id
     const isUpdatingAdmin = adminLoading && updateId === user.id
     const streak = user.spiritualStats?.prayerStreak || 0
@@ -518,7 +520,7 @@ export default function AdminPanel() {
     )
   }
 
-  function renderCompactRow(user: any) {
+  function renderCompactRow(user: AdminUser) {
     const isLoadingThis = loadingDetailId === user.id
     const isUpdatingAdmin = adminLoading && updateId === user.id
     const streak = user.spiritualStats?.prayerStreak || 0
@@ -1030,7 +1032,7 @@ export default function AdminPanel() {
                   </div>
                 ) : (
                   <div className={styles.errorLogList}>
-                    {systemStatus.recentErrors.map((e: any, i: number) => (
+                    {systemStatus.recentErrors.map((e, i) => (
                       <div key={i} className={styles.errorLogItem}>
                         <div className={styles.errorLogTop}>
                           <span className={styles.errorLogStatus}>{e.statusCode}</span>
@@ -1157,7 +1159,7 @@ export default function AdminPanel() {
                   ) : paginatedActivities.length > 0 ? (
                     <>
                       <div className={styles.activityList}>
-                        {paginatedActivities.map((a: any, i: number) => (
+                        {paginatedActivities.map((a, i) => (
                           <div key={i} className={styles.activityItem}>
                             <div className={styles.activityIcon}>{getActivityIcon(a.type)}</div>
                             <div className={styles.activityInfo}>

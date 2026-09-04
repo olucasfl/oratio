@@ -12,6 +12,7 @@ import {
  clearRecentSearches,
  type VerseResult
 } from "../../services/bibliaService"
+import type { BibleBook } from "../../services/bibliaService"
 
 import { BIBLE_TOPICS, type BibleTopic } from "../../data/bibleTopics"
 
@@ -163,9 +164,9 @@ export default function BibliaHome(){
   return text.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()
  }
 
- function filterBooks(books:any[]){
+ function filterBooks(books:BibleBook[]){
   const q = removeAccents(search)
-  return books.filter((book:any)=>removeAccents(book.nome).includes(q))
+  return books.filter(book=>removeAccents(book.nome).includes(q))
  }
 
  const antigoFiltrado = filterBooks(antigo)
@@ -491,7 +492,7 @@ export default function BibliaHome(){
 
       <div className={styles.booksGrid}>
 
-        {antigoFiltrado.map((book:any)=>(
+        {antigoFiltrado.map(book=>(
 
           <button
             key={book.nome}
@@ -546,7 +547,7 @@ export default function BibliaHome(){
 
       <div className={styles.booksGrid}>
 
-        {novoFiltrado.map((book:any)=>(
+        {novoFiltrado.map(book=>(
 
           <button
             key={book.nome}

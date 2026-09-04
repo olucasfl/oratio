@@ -7,6 +7,90 @@ export interface AdminFilters {
   activeLastDays?: number
 }
 
+/*
+ Shape do que `GET /users/admin/users` devolve. Espelha o `select` de
+ `UsersService.getAllUsers` no oratio-api — se aquele select mudar, este tipo
+ muda junto. `spiritualStats` é opcional porque a relação pode não existir numa
+ conta que nunca rezou.
+
+ Cuidado com o nome: `prayerStreak` conta dias de oração, não um recorde de
+ sequência — é o nome enganoso já documentado no ARCHITECTURE do backend.
+*/
+export interface AdminSpiritualStats {
+  prayersPrayed?: number
+  rosariesPrayed?: number
+  prayerStreak?: number
+  lastPrayerDate?: string | null
+}
+
+export interface AdminUser {
+  id: string
+  name: string
+  email: string
+  createdAt: string
+  emailVerified: boolean
+  isAdmin: boolean
+  spiritualStats?: AdminSpiritualStats | null
+}
+
+/* Painel do admin — cada tipo cobre o que a tela realmente lê da resposta. */
+
+/* Espelha o `return` de `UsersService.getAdminStats`. */
+export interface AdminStats {
+  totalUsers: number
+  totalVerified: number
+  consecrationStarted: number
+  consecrationCompleted: number
+  prayersPrayed: number
+  rosariesPrayed: number
+  thisWeek: {
+    newUsers: number
+    prayers: number
+    rosaries: number
+    consecrations: number
+    logins: number
+  }
+}
+
+/*
+ Espelha `SystemLogEntry` do backend. É um buffer em memória dos últimos 5xx,
+ que reseta a cada deploy — não é log de auditoria.
+*/
+export interface AdminErrorLog {
+  timestamp: string
+  method: string
+  path: string
+  statusCode: number
+  message: string
+  errorName?: string
+  stack?: string
+}
+
+/* Espelha o `return` de `AppController.getSystemStatus`. */
+export interface AdminSystemStatus {
+  database: "up" | "down"
+  uptimeSeconds: number
+  nodeVersion: string
+  environment: string
+  memory: {
+    rssMB: number
+    heapUsedMB: number
+    heapTotalMB: number
+  }
+  recentErrors: AdminErrorLog[]
+}
+
+export interface AdminActivity {
+  type: string
+  action: string
+  timestamp: string
+}
+
+export interface AdminHeatmapData {
+  matrix: number[][]
+  maxCount: number
+}
+
 export async function getAdminStats() {
   const res = await api.get("/users/admin/stats")
   return res.data

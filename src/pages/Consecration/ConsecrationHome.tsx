@@ -33,7 +33,7 @@ import {
   resetConsecration,
   apiErrorMessage
 } from "../../services/consecrationService"
-import type { ConsecrationProgress } from "../../services/consecrationService"
+import type { ConsecrationProgress, ConsecrationStage, ConsecrationDay } from "../../services/consecrationService"
 
 import {
   CONSECRACAO_ABOUT,
@@ -86,7 +86,7 @@ export default function ConsecrationHome() {
   const [progress, setProgress] = useState<ConsecrationProgress | null>(
     () => getCachedProgress()
   )
-  const [allDays, setAllDays]   = useState<any[]>([])
+  const [allDays, setAllDays]   = useState<ConsecrationDay[]>([])
   const [consecrationDate, setConsecrationDate] = useState("")
   const [loading, setLoading]             = useState(true)
   const [actionLoading, setActionLoading] = useState(false)
@@ -164,7 +164,7 @@ export default function ConsecrationHome() {
   /* ─── derivados ─── */
   const started   = !!progress?.started
   const finished  = !!progress?.finished
-  const stages: any[] = progress?.stages ?? []
+  const stages: ConsecrationStage[] = progress?.stages ?? []
   const completedDays = useMemo(() => progress?.completedDays ?? [], [progress])
   const completedCount = completedDays.length
   const currentDay = progress?.currentDay ?? 0
@@ -205,7 +205,7 @@ export default function ConsecrationHome() {
   }, [stages])
 
   const stageDays = useMemo(() => {
-    const byStage: Record<string, any[]> = {}
+    const byStage: Record<string, ConsecrationDay[]> = {}
     allDays.forEach((d) => {
       if (!byStage[d.stageId]) byStage[d.stageId] = []
       byStage[d.stageId].push(d)
@@ -618,7 +618,7 @@ export default function ConsecrationHome() {
                   ) : (
 
                     <div className={styles.grid}>
-                      {days.map((day: any, index: number) => {
+                      {days.map((day: ConsecrationDay, index: number) => {
                         const state = stateOf(day.dayNumber)
                         return (
                           <button

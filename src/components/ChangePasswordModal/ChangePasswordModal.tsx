@@ -61,7 +61,7 @@ export default function ChangePasswordModal({ open, onClose }:Props){
    await changePassword(currentPassword, newPassword)
    setSuccess(true)
 
-  }catch(err:any){
+  }catch(err){
 
    setError(getAuthErrorMessage(err, "Não foi possível trocar sua senha. Tente novamente."))
 

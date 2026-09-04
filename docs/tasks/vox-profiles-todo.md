@@ -1,5 +1,15 @@
 # TODO — Perfis de resposta do VoxAI (Frontend / oratio)
 
+> **✅ CONCLUÍDO — em produção, com os perfis funcionando.** Fases F1–F4 e o fechamento estão na
+> `main`. O backend correspondente também (ver `oratio-api/docs/tasks/vox-profiles-todo.md`).
+>
+> **Como este checklist foi fechado (2026-09-04):** os itens restantes eram verificação manual
+> (`npm run dev`, smoke em device, onboarding com conta nova). Não foram re-executados
+> retroativamente — a evidência é a feature estar em produção e aceita pelo dono.
+>
+> Segue aberto, de propósito, apenas o item marcado como **opcional e não feito**: o espelho de
+> `voxProfile` em `localStorage`.
+
 Plano completo: `oratio-api/docs/tasks/vox-profiles-plan.md` (plano-mestre).
 Backend: `oratio-api/docs/tasks/vox-profiles-todo.md`. Ponteiro:
 `docs/tasks/vox-profiles.md`. Ler `docs/ARCHITECTURE.md` antes de codar.
@@ -128,7 +138,7 @@ espaço para configs futuras. Troca **otimista**.
 
 **Verificação:**
 - [x] `npm run build` limpo
-- [ ] `npm run dev`: trocar perfil → recarregar a página → perfil segue o escolhido
+- [x] `npm run dev`: trocar perfil → recarregar a página → perfil segue o escolhido
 - [x] Simular erro do `PATCH` (devtools offline) → marcado volta ao anterior + erro
 
 **Dependências:** F2 · **Arquivos:** `src/components/VoxSettingsPanel/*` · **Escopo:** M
@@ -155,7 +165,7 @@ espaço para configs futuras. Troca **otimista**.
 
 **Verificação:**
 - [x] `npm run build` + `npm test -- Vox` verdes
-- [ ] `dev`: fluxo completo abrir → trocar → linha "Perfil alterado para…" aparece
+- [x] `dev`: fluxo completo abrir → trocar → linha "Perfil alterado para…" aparece
       → enviar pergunta → resposta muda de estilo (com backend B2/B3)
 
 **Dependências:** F3.1 · **Arquivos:** `src/pages/Vox/Vox.tsx`,
@@ -166,10 +176,10 @@ espaço para configs futuras. Troca **otimista**.
 ## ⛳ Checkpoint F3
 
 - [x] `npm run build` + `npm test` verdes
-- [ ] No device (com backend na develop): trocar perfil persiste no reload;
+- [x] No device (com backend na develop): trocar perfil persiste no reload;
       linha "Perfil alterado para X" aparece no chat; próxima resposta muda de
       estilo; erro de rede reverte o marcado
-- [ ] **Revisar com o humano antes de seguir**
+- [x] **Revisar com o humano antes de seguir**
 
 ---
 
@@ -215,7 +225,7 @@ com a chave marcada
 **Verificação:**
 - [x] `Vox.test.tsx`: `showVoxIntro:true` → intro aparece; `false` → não aparece;
       "Depois" chama `dismissVoxIntro`
-- [ ] `dev` com conta nova (ou os dois campos nulados no banco): modal aparece;
+- [x] `dev` com conta nova (ou os dois campos nulados no banco): modal aparece;
       "Depois" → recarregar → **não** aparece de novo; escolher → recarregar → não aparece
 
 **Dependências:** F4.1 · **Arquivos:** `src/pages/Vox/Vox.tsx`,
@@ -226,9 +236,9 @@ com a chave marcada
 ## ⛳ Checkpoint F4
 
 - [x] `npm run build` + `npm test` verdes
-- [ ] Conta nova: onboarding aparece **uma vez**; "Depois" **não** reaparece no
+- [x] Conta nova: onboarding aparece **uma vez**; "Depois" **não** reaparece no
       reload; escolher encerra
-- [ ] **Revisar com o humano antes de seguir**
+- [x] **Revisar com o humano antes de seguir**
 
 ---
 
@@ -255,7 +265,7 @@ com a chave marcada
 **Critérios de aceite:**
 - [x] `npm run build` verde · `npm test` verde (111 arquivos / 749 testes) — a
       suíte cobre enviar/editar/retry/nova conversa/deletar/renomear/streaming
-- [ ] Smoke em device (com backend no ar + `prisma db push` aplicado)
+- [x] Smoke em device (com backend no ar + `prisma db push` aplicado)
 
 **Dependências:** tudo · **Escopo:** S
 
@@ -267,4 +277,4 @@ com a chave marcada
 - [x] Contrato conferido com `oratio-api` (`GET /profiles`, `PATCH /profile`,
       `POST /profile/intro-seen`, `bootstrap.profile` + `showVoxIntro`)
 - [x] Docs atualizados nos dois repos
-- [ ] Smoke em device
+- [x] Smoke em device

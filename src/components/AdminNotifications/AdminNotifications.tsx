@@ -19,6 +19,7 @@ import {
 } from "../../services/adminNotificationsService"
 import type { Campaign, Rule, NotificationSettings, Variant } from "../../services/adminNotificationsService"
 import { getAllUsers } from "../../services/adminService"
+import type { AdminUser } from "../../services/adminService"
 
 const RULE_LABELS: Record<string, string> = {
   ROSARY_UNFINISHED: "Terço não terminado",
@@ -217,7 +218,7 @@ export default function AdminNotifications(){
   const [url, setUrl] = useState("")
   const [audience, setAudience] = useState<"ALL" | "SPECIFIC">("ALL")
 
-  const [users, setUsers] = useState<any[]>([])
+  const [users, setUsers] = useState<AdminUser[]>([])
   const [selected, setSelected] = useState<string[]>([])
   const [userSearch, setUserSearch] = useState("")
 
@@ -299,14 +300,14 @@ export default function AdminNotifications(){
 
   useEffect(()=>{
     if(audience === "SPECIFIC" && users.length === 0){
-      getAllUsers().then((u:any)=> setUsers(Array.isArray(u) ? u : (u?.users ?? []))).catch(()=>{})
+      getAllUsers().then((u:AdminUser[] | { users?: AdminUser[] })=> setUsers(Array.isArray(u) ? u : (u?.users ?? []))).catch(()=>{})
     }
   },[audience, users.length])
 
   const filteredUsers = useMemo(()=>{
     const q = userSearch.trim().toLowerCase()
     if(!q) return users.slice(0, 40)
-    return users.filter((u:any)=>
+    return users.filter(u=>
       (u.name || "").toLowerCase().includes(q) || (u.email || "").toLowerCase().includes(q)
     ).slice(0, 40)
   },[users, userSearch])
@@ -394,7 +395,7 @@ export default function AdminNotifications(){
               {selected.length > 0 && <span className={styles.selCount}>{selected.length}</span>}
             </div>
             <div className={styles.userList}>
-              {filteredUsers.map((u:any)=>{
+              {filteredUsers.map(u=>{
                 const on = selected.includes(u.id)
                 return(
                   <button key={u.id} className={`${styles.userRow} ${on?styles.userRowOn:""}`} onClick={()=>toggleUser(u.id)}>

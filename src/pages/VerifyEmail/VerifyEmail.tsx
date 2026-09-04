@@ -40,7 +40,7 @@ export default function VerifyEmail(){
    .then(()=>{
     setStatus("success")
    })
-   .catch((err:any)=>{
+   .catch((err:unknown)=>{
     setStatus("error")
     setErrorMessage(getAuthErrorMessage(err, "Esse link não é mais válido. Peça um novo email de verificação."))
    })
