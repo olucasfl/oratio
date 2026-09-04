@@ -1,9 +1,31 @@
-import { asApiError } from "../utils/authErrors"
 import api from "./api"
 import { saveLocal, getLocal } from "../utils/localCache"
 
 const DAYS_KEY = "oratio_consecration_days"
 const ALL_DAYS_KEY = "oratio_consecration_all_days"
+
+/*
+ Espelha os models `ConsecrationStage` e `ConsecrationDay` do backend.
+ `start`/`end`/`icon` NÃO vêm da API: são calculados no `ConsecrationHome` a
+ partir de `order` e `days`, de propósito — assim mudar a duração de uma etapa
+ no admin não exige mexer numa faixa fixa no front.
+*/
+export type ConsecrationStage = {
+  id: string
+  title: string
+  description?: string | null
+  order: number
+  days: number
+}
+
+export type ConsecrationDay = {
+  id: string
+  dayNumber: number
+  title?: string | null
+  stageId: string
+  stage?: ConsecrationStage
+  prayers?: unknown[]
+}
 
 export type ConsecrationProgress = {
   started: boolean
@@ -16,7 +38,7 @@ export type ConsecrationProgress = {
   progress?: number
   finished?: boolean
   completedAt?: string | null
-  stages?: any[]
+  stages?: ConsecrationStage[]
 }
 
 /**
@@ -66,7 +88,7 @@ export async function preloadConsecration(){
 
         saveLocal(ALL_DAYS_KEY, days, 60)
 
-        days.forEach((day:any)=>{
+        days.forEach((day:ConsecrationDay)=>{
           saveLocal(`${DAYS_KEY}_${day.dayNumber}`, day, 60)
         })
 
@@ -89,7 +111,7 @@ export async function preloadConsecration(){
 
     saveLocal(ALL_DAYS_KEY, days, 60)
 
-    days.forEach((day:any)=>{
+    days.forEach((day:ConsecrationDay)=>{
       saveLocal(`${DAYS_KEY}_${day.dayNumber}`, day, 60)
     })
 
@@ -98,7 +120,7 @@ export async function preloadConsecration(){
 }
 
 /** Todos os dias (com orações), já agrupados por etapa. Usa cache. */
-export async function getAllDays(): Promise<any[]> {
+export async function getAllDays(): Promise<ConsecrationDay[]> {
 
   const cached = getLocal(ALL_DAYS_KEY)
   if (cached) return cached
@@ -227,9 +249,8 @@ function removeLocalProgress(){
 }
 
 /** Mensagem de erro que o backend mandou, se houver — senão o fallback. */
-export function apiErrorMessage(err: unknown, fallback: string) {
-  const message = asApiError(err).response?.data?.message
-  if (Array.isArray(message)) return message[0] ?? fallback
-  if (typeof message === "string") return message
-  return fallback
-}
+/*
+ Reexportado de utils/authErrors: o corpo era identico nos dois services.
+ Mantido o nome exportado daqui porque as telas ja importam por este caminho.
+*/
+export { apiErrorMessage } from "../utils/authErrors"

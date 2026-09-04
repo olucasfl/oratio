@@ -1,4 +1,3 @@
-import { asApiError } from "../utils/authErrors"
 import api from "./api"
 import { saveLocal, getLocal } from "../utils/localCache"
 
@@ -62,9 +61,8 @@ export async function savePenance(content: string) {
 }
 
 /** Mensagem de erro que o backend mandou, se houver. */
-export function apiErrorMessage(err: unknown, fallback: string) {
-  const message = asApiError(err).response?.data?.message
-  if (Array.isArray(message)) return message[0] ?? fallback
-  if (typeof message === "string") return message
-  return fallback
-}
+/*
+ Reexportado de utils/authErrors: o corpo era identico nos dois services.
+ Mantido o nome exportado daqui porque as telas ja importam por este caminho.
+*/
+export { apiErrorMessage } from "../utils/authErrors"

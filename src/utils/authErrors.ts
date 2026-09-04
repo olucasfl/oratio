@@ -57,6 +57,20 @@ export function asApiError(err:unknown): ApiErrorLike {
  return typeof err === "object" && err !== null ? (err as ApiErrorLike) : {}
 }
 
+/*
+ Mensagem crua da API, sem a tradução de `getAuthErrorMessage`. Serve pra tela
+ que só quer mostrar o que o backend disse (painel admin, consagração,
+ quaresma). O `message` pode vir como string ou como array — o
+ `class-validator` do NestJS devolve array quando falha mais de uma regra do
+ DTO — e nesse caso mostramos o primeiro.
+*/
+export function apiErrorMessage(err:unknown, fallback: string): string {
+ const message = asApiError(err).response?.data?.message
+ if(Array.isArray(message)) return message[0] ?? fallback
+ if(typeof message === "string") return message
+ return fallback
+}
+
 export function getAuthErrorMessage(err:unknown, fallback = "Algo deu errado. Tente novamente."): string {
 
  const { response } = asApiError(err)
