@@ -54,13 +54,18 @@ given before, it belongs in one of the files above, not in the prompt.
 `/review-pr` · `/nova-branch` · `/docs-sync` · `/bump-version`.
 Definitions in `.claude/commands/`; agents in `.claude/agents/`.
 
+Skills in `.claude/skills/` — `bug-research`, `oratio-testing`, and two guardrails
+that are **mandatory preflights**, not suggestions: `doutrina-guardrail` before
+touching `src/data/**` (saint bios, prayers, bible text) and `pwa-cache-guardrail`
+before touching `APP_VERSION`, `CACHE_NAME`, `KEEP_ON_LOGOUT`, or adding a route.
+
 ## `docs/tasks/` — current plans
 
 | Feature | Files | Status |
 |---|---|---|
-| **Cobertura de testes do frontend** (→80% lines, →70% funcs/branches) + limpeza de lint | `docs/tasks/plan.md` (pareado com `docs/specs/cobertura-testes.md`) | Fases 1–6 + Fase Lint concluídas. Check it before choosing what to test next; it also lists files deliberately skipped and why. |
+| **Cobertura de testes do frontend** (→80% lines, →70% funcs/branches) + limpeza de lint | `docs/tasks/plan.md` (pareado com `docs/specs/cobertura-testes.md`) | Fases 1–6 (cobertura) **concluídas** — thresholds passam. **Fase Lint em aberto**: `npx eslint .` = 143 problemas (122 erros); só L1 foi feita, L2–L11 pendentes. Check it before choosing what to test or lint next; it also lists files deliberately skipped and why. |
 | **Biografias do Santo do Dia** (20/out → 08/dez) | `docs/tasks/santos-plan.md` · `docs/tasks/santos-todo.md` | Conteúdo devocional; protocolo de fontes no plano. |
-| **Bíblia de Estudo** (frontend: leitura + estudo) | `docs/tasks/biblia-plan.md` · `docs/tasks/biblia-todo.md` | Backend em `oratio-api/docs/tasks/biblia-*.md` — ler os dois juntos. |
+| **Bíblia de Estudo** (frontend: leitura + estudo) | `docs/tasks/biblia-plan.md` · `docs/tasks/biblia-todo.md` | ✅ **Concluída e em produção** (F1–F9 na `main`). Os dois arquivos são registro histórico, não trabalho pendente — o comportamento vivo está em `ARCHITECTURE.md` §7. Dívida aberta: `bibleMarksService`/`bibleCollectionsService` sem cobertura (ver `docs/tasks/plan.md`). |
 | **Reformulação das notificações** | `docs/tasks/notifications.md` (ponteiro) | Plano-mestre no backend: `oratio-api/docs/tasks/notifications-plan.md`. Aqui só muda o painel `AdminNotifications`. |
 | **Perfis de resposta do VoxAI** (engrenagem + painel + onboarding no Vox) | `docs/tasks/vox-profiles-todo.md` · `docs/tasks/vox-profiles.md` (ponteiro) | Plano-mestre: `oratio-api/docs/tasks/vox-profiles-plan.md`. Fases F1–F4 concluídas; falta conteúdo dos 5 perfis (backend B3) e smoke em device. |
 

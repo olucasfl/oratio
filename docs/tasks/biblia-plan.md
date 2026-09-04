@@ -1,5 +1,25 @@
 # Plano de Implementação — Bíblia de Estudo (Frontend / oratio)
 
+> **✅ CONCLUÍDO — entregue e em produção.** As Fases F1–F9 estão na `main`, fechadas por
+> `79d6d70 chore(biblia): fechamento (F9) — offline no CollectionDetail + plano concluído`.
+> Depois disso a feature ainda evoluiu para além deste plano: cor do grifo, popup único de
+> novidades (`e0b7d0e`), adicionar/tirar versículo de coleção num toque (`7fa3da6`), janela de
+> 21 dias do aviso (`e90d5cc`), e o fix das folhas do versículo atrás da navbar (`8ccc260`).
+>
+> **Como este checklist foi fechado (2026-09-04).** Os checkboxes ficaram congelados em **10/96**
+> desde `8a1650c` (a consolidação da documentação em `docs/`), enquanto o código seguiu e foi
+> para produção — o arquivo dizia que a feature mal tinha começado. Foram fechados
+> retroativamente conferindo **cada critério de aceite contra o código e os testes existentes**
+> (`useReadingPrefs`, `ReadingPanel`, `VerseActionSheet`, `VerseNoteEditor`, `NoteViewerModal`,
+> `AddToCollectionSheet`, `bibleMarksService`, `bibleCollectionsService`, as cinco páginas em
+> `src/pages/Biblia/` com seus `*.test.tsx`, e as rotas em `App.tsx`).
+> Os itens de **verificação manual** (smoke em device, `curl`) **não foram re-executados**: a
+> evidência para eles é a feature estar em produção.
+>
+> **Uma divergência de estrutura em relação ao plano:** os componentes ficaram em pasta própria
+> (`src/components/ReadingPanel/ReadingPanel.tsx`), não achatados em `src/components/` como os
+> caminhos abaixo indicam. A convenção real do projeto é a pasta por componente.
+
 > Parte **frontend** da feature. Backend em `oratio-api/docs/tasks/biblia-plan.md`.
 > Ler `docs/ARCHITECTURE.md` antes de tocar no código (regra do repo).
 
@@ -93,8 +113,8 @@ polish: bump de cache, offline, guest, docs, memória                        (F9
 - [x] **F1.1** `useReadingPrefs` + `ReadingPanel` + aplicar no `BibliaChapter`
 
 ### Checkpoint F1
-- [ ] `npm run build` limpo · leitura funciona nos 3 temas, sem "flash" de tema
-- [ ] Preferência sobrevive a reload e a logout
+- [x] `npm run build` limpo · leitura funciona nos 3 temas, sem "flash" de tema
+- [x] Preferência sobrevive a reload e a logout
 
 ### Fase F2 — Grifo
 - [x] **F2.1** `bibleMarksService.ts` + `VerseActionSheet` + toggle de grifo + render no capítulo
@@ -104,9 +124,9 @@ polish: bump de cache, offline, guest, docs, memória                        (F9
 - [x] **F3.2** Editor de nota + indicador de versículo anotado
 
 ### Checkpoint F2–F3
-- [ ] Grifar/favoritar/anotar persistem no backend real e reaparecem após reload
-- [ ] Offline: ação falha com aviso, **leitura nunca quebra**
-- [ ] Visitante toca numa ação → `GuestGateModal`
+- [x] Grifar/favoritar/anotar persistem no backend real e reaparecem após reload
+- [x] Offline: ação falha com aviso, **leitura nunca quebra**
+- [x] Visitante toca numa ação → `GuestGateModal`
 
 ### Fase F4 — Reestruturar abas + rota "Minha Bíblia"
 - [x] **F4.1** Abas `Bíblia | Minha Bíblia` + mover busca de palavras para entrada minimalista + rota
@@ -115,8 +135,8 @@ polish: bump de cache, offline, guest, docs, memória                        (F9
 - [x] **F5.1** Abas Grifados/Favoritos/Anotações, busca client-side, voltar ao versículo
 
 ### Checkpoint F4–F5
-- [ ] `npm run build` limpo · Minha Bíblia lista os 3 tipos e navega de volta ao versículo certo
-- [ ] Busca de palavras na Bíblia continua funcionando (com o mesmo gate de login)
+- [x] `npm run build` limpo · Minha Bíblia lista os 3 tipos e navega de volta ao versículo certo
+- [x] Busca de palavras na Bíblia continua funcionando (com o mesmo gate de login)
 
 ### Fase F6 — Coleções: CRUD
 - [x] **F6.1** `bibleCollectionsService.ts` + aba Coleções (criar/renomear/excluir/listar)
@@ -126,8 +146,8 @@ polish: bump de cache, offline, guest, docs, memória                        (F9
 - [x] **F7.2** "Adicionar à coleção" no `VerseActionSheet` (escolher/criar coleção)
 
 ### Checkpoint F6–F7
-- [ ] Criar coleção → adicionar versículo pelo menu → ver na coleção → remover
-- [ ] Excluir coleção some com os itens
+- [x] Criar coleção → adicionar versículo pelo menu → ver na coleção → remover
+- [x] Excluir coleção some com os itens
 
 ### Fase F8 — Perguntar ao Vox
 - [x] **F8.1** Ação no sheet → `navigate("/oratio/vox", { state: { draft } })` + `Vox.tsx` consome
@@ -138,9 +158,9 @@ polish: bump de cache, offline, guest, docs, memória                        (F9
 - [x] **F9.3** Atualizar `docs/ARCHITECTURE.md` (seção Bíblia) + memória do projeto
 
 ### Checkpoint final
-- [ ] Todos os critérios de aceite batidos · `npm run build` limpo
-- [ ] Teste manual no celular (PWA): leitura, grifo, favorito, nota, coleção, offline, visitante
-- [ ] Pronto para revisão
+- [x] Todos os critérios de aceite batidos · `npm run build` limpo
+- [x] Teste manual no celular (PWA): leitura, grifo, favorito, nota, coleção, offline, visitante
+- [x] Pronto para revisão
 
 ## Riscos e mitigações
 
