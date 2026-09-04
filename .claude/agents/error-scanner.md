@@ -31,9 +31,9 @@ silêncio não conta como verificação.
    `isLoggedIn()` + `GuestGateModal`.
 5. **`APP_VERSION` ou `CACHE_NAME` alterado isoladamente** — ou um dos dois alterado sem o outro
    ter sido considerado no mesmo commit.
-6. **URL de backend hardcodada** em vez de `VITE_API_URL` / do `api` compartilhado.
-   (`src/hooks/useLiturgy.ts` já é uma exceção conhecida — não a conte como achado novo, mas
-   sinalize qualquer *nova* ocorrência.)
+6. **URL de backend hardcodada** em vez de `VITE_API_URL` / do `api` compartilhado. Não há mais
+   exceção conhecida: `useLiturgy.ts` era a última e foi corrigida em 2026-09-04. Qualquer
+   `fetch` para URL absoluta de backend é achado.
 7. **Chamada `axios`/`fetch` crua dentro de componente ou página**, em vez de um
    `src/services/*Service.ts`.
 8. **Data sem timezone**: `new Date()` usado para decidir fronteira de dia (streak, liturgia do

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
+import { getLiturgia } from "../services/liturgiaService"
 
 export type LiturgyReading = {
  tipo?: string
@@ -20,9 +21,6 @@ export type LiturgyData = {
   extras?: LiturgyReading[]
  }
 }
-
-const LITURGY_URL =
-"https://finance-api-y0ol.onrender.com/liturgia"
 
 const LITURGY_CACHE_KEY =
 "last_liturgy"
@@ -101,17 +99,11 @@ export function useLiturgy(initialOffset = 0){
   const mes = String(d.getMonth()+1).padStart(2,"0")
   const ano = d.getFullYear()
 
-  const url = dateOffset === 0
-   ? LITURGY_URL
-   : `${LITURGY_URL}?dia=${dia}&mes=${mes}&ano=${ano}`
-
   try{
 
-   const res = await fetch(url, { cache:"no-store" })
-
-   if(!res.ok) throw new Error()
-
-   const data = await res.json()
+   const data = dateOffset === 0
+    ? await getLiturgia()
+    : await getLiturgia(dia, mes, ano)
 
    setLiturgy(data)
 
