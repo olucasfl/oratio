@@ -33,3 +33,6 @@ coverage
 /playwright-report
 /blob-report
 /playwright/.cache
+
+# Claude Code — config pessoal (o versionado e .claude/settings.json)
+.claude/settings.local.json

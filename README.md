@@ -251,7 +251,7 @@ npm run test:cov   # cobertura com thresholds
 - **Excluídos** da cobertura: `src/data/**` (conteúdo estático, sem lógica) e
   `src/main.tsx` (boot puro).
 - A limpeza do backlog de **lint** está em andamento — ver
-  [`docs/SPEC.md`](./docs/SPEC.md) e `docs/tasks/plan.md`.
+  [`docs/specs/cobertura-testes.md`](./docs/specs/cobertura-testes.md) e `docs/tasks/plan.md`.
 
 O build (`npm run build`) roda `tsc -b` primeiro, então um erro de tipo já falha
 antes do empacotamento.
@@ -313,7 +313,7 @@ URL de produção: **https://oratio-phi.vercel.app/**
 - ✅ Núcleo funcional em produção (liturgia, orações, terço, consagração, Bíblia,
   Catecismo, VoxAI, perfil, notificações, admin).
 - 🚧 Cobertura de testes do frontend subindo em direção a 80% (`docs/tasks/plan.md`).
-- 🚧 Limpeza do backlog de lint (`docs/SPEC.md`).
+- 🚧 Limpeza do backlog de lint (`docs/specs/cobertura-testes.md`).
 - 📿 Biografias do “Santo do Dia” com cobertura contínua até dezembro
   (`docs/tasks/santos-plan.md`).
 - 🔔 Reformulação do sistema de notificações — ver `docs/tasks/notifications.md`
