@@ -1,5 +1,10 @@
 # Spec: Cobertura de testes do frontend (80%) + limpeza do backlog de lint
 
+> Status: **implementada** (Fases 1–6 e Fase Lint concluídas; avisos residuais documentados)
+> Plano/checklist: `docs/tasks/plan.md`
+> As regras permanentes que nasceram aqui (a seção **Boundaries**) foram promovidas para
+> `.claude/rules/RULES.md` — esta spec mantém só o que é específico desta iniciativa.
+
 ## Objetivo
 
 Levar o frontend (`oratio/`) de cobertura de teste real a um mínimo de 80% (lines/statements) /
