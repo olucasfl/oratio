@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import styles from "../Catecismo/Catecismo.module.css"
 import { Document, Page } from "react-pdf"
+import type { DocumentProps } from "react-pdf"
 import "react-pdf/dist/Page/TextLayer.css"
 import "react-pdf/dist/Page/AnnotationLayer.css"
 import "../../utils/pdfConfig"
@@ -11,6 +12,9 @@ import { usePublishHeightVar } from "../../hooks/usePublishHeightVar"
 
 const PAGE_KEY = "tratado_page"
 const ZOOM_KEY = "tratado_zoom"
+/* Mesmo racional do Catecismo: o tipo vem do react-pdf, nao do pdfjs-dist. */
+type PdfDocument = Parameters<NonNullable<DocumentProps["onLoadSuccess"]>>[0]
+
 
 export default function Tratado() {
 
@@ -47,7 +51,7 @@ export default function Tratado() {
   const pageWidth = baseWidth ? Math.round(baseWidth * zoomLevel) : undefined
 
   /* ── restaura estado salvo ── */
-  function restoreState(doc: any) {
+  function restoreState(doc: PdfDocument) {
     const savedPage = localStorage.getItem(PAGE_KEY)
     const savedZoom = localStorage.getItem(ZOOM_KEY)
     if (savedPage) {
@@ -66,7 +70,7 @@ export default function Tratado() {
     viewerRef.current?.scrollTo({ top: 0, behavior: "smooth" })
   }, [page])
 
-  function onLoadSuccess(doc: any) {
+  function onLoadSuccess(doc: PdfDocument) {
     setNumPages(doc.numPages)
     setPdfLoading(false)
     restoreState(doc)

@@ -7,6 +7,7 @@ import { usePullToRefresh } from "../../hooks/usePullToRefresh"
 import styles from "./Profile.module.css"
 
 import { getProfile, cancelEmailChange } from "../../services/profileService"
+import type { UserProfile } from "../../services/profileService"
 import { logout as authLogout } from "../../services/authService"
 import { FONT_SCALE_OPTIONS, getStoredFontScale, setFontScale } from "../../utils/fontScale"
 
@@ -42,7 +43,7 @@ export default function Profile(){
 
  const navigate = useNavigate()
 
- const [profile,setProfile] = useState<any>(null)
+ const [profile,setProfile] = useState<UserProfile | null>(null)
  const [loading,setLoading] = useState(true)
 
  const [deleteAccountOpen,setDeleteAccountOpen] = useState(false)
@@ -222,7 +223,7 @@ export default function Profile(){
   try{
 
    await cancelEmailChange()
-   setProfile((prev:any)=> prev ? { ...prev, pendingEmail:null } : prev)
+   setProfile(prev=> prev ? { ...prev, pendingEmail:null } : prev)
 
   }catch{
 

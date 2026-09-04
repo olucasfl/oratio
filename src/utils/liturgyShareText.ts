@@ -18,14 +18,17 @@ function limparTexto(texto?: string){
     .trim()
 }
 
-function linhasFinal(final?: { padre?: string; assembleia?: string; todos?: string }[]){
+/* Resposta final da leitura: "Palavra do Senhor" / "Graças a Deus". */
+type LinhaFinal = { padre?: string; assembleia?: string; todos?: string }
+
+function linhasFinal(final?: LinhaFinal[]){
   if(!final?.length) return []
   return final.map(item => item.padre || item.assembleia || item.todos || "").filter(Boolean)
 }
 
 export function buildLeituraShareText(
   heading: string,
-  leitura: { titulo?: string; referencia?: string; texto?: string; final?: any[] }
+  leitura: { titulo?: string; referencia?: string; texto?: string; final?: LinhaFinal[] }
 ){
   const linhas = [heading]
 
@@ -96,7 +99,7 @@ export function buildEvangelhoShareText(
     abertura?: { padre?: string; assembleia?: string }[]
     referencia?: string
     texto?: string
-    final?: any[]
+    final?: LinhaFinal[]
   }
 ){
   const linhas = ["Evangelho"]

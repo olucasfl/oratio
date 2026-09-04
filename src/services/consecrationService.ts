@@ -18,13 +18,24 @@ export type ConsecrationStage = {
   days: number
 }
 
+/* `DayPrayer` é a tabela de junção: liga o dia à oração e guarda a ordem. */
+export type DayPrayer = {
+  id: string
+  order?: number
+  prayer: {
+    id: string
+    title: string
+    content: string
+  }
+}
+
 export type ConsecrationDay = {
   id: string
   dayNumber: number
   title?: string | null
   stageId: string
   stage?: ConsecrationStage
-  prayers?: unknown[]
+  prayers?: DayPrayer[]
 }
 
 export type ConsecrationProgress = {

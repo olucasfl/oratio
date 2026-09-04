@@ -13,6 +13,7 @@ import {
 import {
  getBook
 } from "../../services/bibliaService"
+import type { BibleChapter } from "../../services/bibliaService"
 
 import BottomNavbar
 from "../../components/BottomNavbar/BottomNavbar"
@@ -55,7 +56,7 @@ export default function BibliaBook(){
  }
 
  const capitulosFiltrados =
-  livro.capitulos.filter((cap:any)=>{
+  livro.capitulos.filter((cap:BibleChapter)=>{
 
     if(!search) return true
 
@@ -167,7 +168,7 @@ export default function BibliaBook(){
 
       <div className={styles.chapterGrid}>
 
-        {capitulosFiltrados.map((cap:any,index:number)=>(
+        {capitulosFiltrados.map((cap:BibleChapter,index:number)=>(
 
           <button
             key={cap.capitulo}
