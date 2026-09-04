@@ -45,7 +45,7 @@ export default function DeleteAccountModal({ open, userEmail, onClose }:Props){
    await deleteAccount(password)
    clearSession()
 
-  }catch(err:any){
+  }catch(err){
 
    setError(getAuthErrorMessage(err, "Não foi possível excluir sua conta. Tente novamente."))
    setLoading(false)

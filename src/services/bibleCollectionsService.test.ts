@@ -40,7 +40,7 @@ describe("listCollections", () => {
   it("filters by verse when one is given — this is what powers 'add to collection'", async () => {
     mockedApi.get.mockResolvedValue({ data: [] })
 
-    await listCollections({ ...verseRef, reference: "João 3:16", text: "…" })
+    await listCollections(verseRef)
 
     expect(mockedApi.get).toHaveBeenCalledWith("/oratio/bible/collections", {
       params: { book: "Jo", chapter: 3, verse: 16 },

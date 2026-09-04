@@ -43,7 +43,7 @@ export default function ChangeEmailModal({ open, onClose, onRequested }:Props){
    onRequested(data.pendingEmail)
    setEmail("")
 
-  }catch(err:any){
+  }catch(err){
 
    setError(getAuthErrorMessage(err, "Não foi possível iniciar a troca de email. Tente novamente."))
 

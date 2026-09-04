@@ -1,3 +1,4 @@
+import { asApiError } from "../utils/authErrors"
 import api from "./api"
 
 const BASE_URL = "/oratio/voxai"
@@ -111,7 +112,10 @@ export async function askVox(message:string, conversationId:string){
 
     return res.data
 
-  } catch (error:any) {
+  } catch (err) {
+
+    const error = asApiError(err)
+
 
     if (error.response?.status === 429) {
       return {
@@ -215,8 +219,15 @@ export async function askVoxStream(
 
     const res = await api.post(`${BASE_URL}/chat/stream`, { message, conversationId }, {
       responseType: "text",
-      onDownloadProgress: (progressEvent: any) => {
-        const fullText: string = progressEvent?.event?.target?.responseText ?? ""
+      /*
+       O streaming é lido do `responseText` que vai crescendo no XHR por baixo do
+       axios. O tipo do axios (`AxiosProgressEvent`) declara `event` como
+       `unknown`, então o caminho até o XHR precisa ser afirmado aqui — é o
+       formato real do evento no navegador, não uma fuga da tipagem.
+      */
+      onDownloadProgress: (progressEvent) => {
+        const target = (progressEvent.event as { target?: { responseText?: string } } | undefined)?.target
+        const fullText: string = target?.responseText ?? ""
         if(fullText) consume(fullText, false)
       }
     })
@@ -237,7 +248,10 @@ export async function askVoxStream(
 
     return { success:true }
 
-  }catch(error:any){
+  }catch(err){
+
+    const error = asApiError(err)
+
 
     if(error.response?.status === 429){
       return {

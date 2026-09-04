@@ -44,7 +44,7 @@ if(data?.emailSent === false){
  setVerifyOpen(true);
 }
 
-}catch(err:any){
+}catch(err){
 
 setAlertMessage(getAuthErrorMessage(err, "Não foi possível criar sua conta. Tente novamente."));
 

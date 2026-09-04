@@ -23,10 +23,10 @@ CONTROLE DE REFRESH (ANTI-BUG)
 let isRefreshing = false;
 let failedQueue: {
   resolve: (token: string) => void;
-  reject: (err: any) => void;
+  reject: (err: unknown) => void;
 }[] = [];
 
-function processQueue(error: any, token: string | null = null) {
+function processQueue(error: unknown, token: string | null = null) {
   failedQueue.forEach(prom => {
     if (error) {
       prom.reject(error);
@@ -134,7 +134,13 @@ api.interceptors.response.use(
 
   async (error: AxiosError) => {
 
-    const originalRequest: any = error.config;
+    /*
+     `_retry` é nosso, não do axios: marca a requisição que já passou por um
+     refresh, pra um 401 na retentativa não disparar outro refresh em loop.
+    */
+    const originalRequest = error.config as
+      | (InternalAxiosRequestConfig & { _retry?: boolean })
+      | undefined;
 
     /*
     Se não tem config, só retorna erro
@@ -162,7 +168,7 @@ api.interceptors.response.use(
               originalRequest.headers.Authorization = `Bearer ${token}`;
               resolve(api(originalRequest));
             },
-            reject: (err: any) => reject(err),
+            reject: (err: unknown) => reject(err),
           });
         });
       }

@@ -146,7 +146,7 @@ describe("Profile", () => {
   })
 
   it("shows an error message when enabling push is denied", async () => {
-    enablePushMock.mockRejectedValue({ message: "denied" })
+    enablePushMock.mockRejectedValue(new Error("denied"))
     renderProfile()
     await screen.findByText("Ana Maria")
     fireEvent.click(screen.getByRole("switch", { name: /Ativar notificações/ }))

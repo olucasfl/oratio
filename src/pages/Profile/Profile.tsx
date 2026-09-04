@@ -1,3 +1,4 @@
+import { asApiError } from "../../utils/authErrors"
 import { useEffect,useState,useRef } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { useOffline } from "../../hooks/useOffline"
@@ -108,10 +109,16 @@ export default function Profile(){
   try{
    await enablePush()
    setPushEnabled(true)
-  }catch(err:any){
-   if(err?.message === "denied")
+  }catch(err){
+   /*
+    `enablePush()` sinaliza o motivo pelo `message` do Error ("denied" quando o
+    usuário recusou a permissão, "unsupported" quando o aparelho não tem Web
+    Push). Qualquer outra coisa cai no genérico.
+   */
+   const reason = err instanceof Error ? err.message : ""
+   if(reason === "denied")
     setPushError("Permissão negada. Ative as notificações nas configurações do aparelho.")
-   else if(err?.message === "unsupported")
+   else if(reason === "unsupported")
     setPushError("Seu aparelho não suporta notificações aqui.")
    else
     setPushError("Não foi possível ativar agora. Tente novamente.")
@@ -171,9 +178,9 @@ export default function Profile(){
     JSON.stringify(data)
    )
 
-  }catch(err:any){
+  }catch(err){
 
-   if(err?.response?.status === 401){
+   if(asApiError(err).response?.status === 401){
 
     navigate("/login")
 

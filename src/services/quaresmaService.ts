@@ -1,3 +1,4 @@
+import { asApiError } from "../utils/authErrors"
 import api from "./api"
 import { saveLocal, getLocal } from "../utils/localCache"
 
@@ -61,8 +62,8 @@ export async function savePenance(content: string) {
 }
 
 /** Mensagem de erro que o backend mandou, se houver. */
-export function apiErrorMessage(err: any, fallback: string) {
-  const message = err?.response?.data?.message
+export function apiErrorMessage(err: unknown, fallback: string) {
+  const message = asApiError(err).response?.data?.message
   if (Array.isArray(message)) return message[0] ?? fallback
   if (typeof message === "string") return message
   return fallback
