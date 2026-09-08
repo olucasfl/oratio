@@ -11,6 +11,7 @@ vi.mock("react-router-dom", async (importOriginal) => ({
 
 vi.mock("../../services/authService", () => ({
   login: vi.fn(),
+  loginWithGoogle: vi.fn(),
   forgotPassword: vi.fn(),
 }))
 
@@ -19,10 +20,19 @@ vi.mock("../../components/ResetPasswordModal/ResetPasswordModal", () => ({
   default: ({ token }: { token: string }) => <div>reset-modal:{token}</div>,
 }))
 
-import { login, forgotPassword } from "../../services/authService"
+// Test double do botão do Google: um <button> que dispara onCredential.
+// O componente real carrega o script do GIS e tem teste próprio.
+vi.mock("../../components/GoogleSignInButton/GoogleSignInButton", () => ({
+  default: ({ onCredential }: { onCredential: (c: string) => void }) => (
+    <button onClick={() => onCredential("fake-google-credential")}>google-signin</button>
+  ),
+}))
+
+import { login, loginWithGoogle, forgotPassword } from "../../services/authService"
 import Login from "./Login"
 
 const loginMock = login as unknown as ReturnType<typeof vi.fn>
+const loginWithGoogleMock = loginWithGoogle as unknown as ReturnType<typeof vi.fn>
 const forgotPasswordMock = forgotPassword as unknown as ReturnType<typeof vi.fn>
 
 function renderLogin(path = "/login") {
@@ -93,6 +103,38 @@ describe("Login", () => {
     renderLogin("/login?redirect=/oratio/prayers")
     fireEvent.click(screen.getByText("Criar conta"))
     expect(navigateMock).toHaveBeenCalledWith("/register?redirect=%2Foratio%2Fprayers")
+  })
+
+  it("always shows the fixed Google hint text, with no error on screen", () => {
+    renderLogin()
+    expect(
+      screen.getByText("Já entrou com Google antes? Experimente o botão Entrar com Google."),
+    ).toBeInTheDocument()
+    expect(screen.queryByText(/incorret/i)).not.toBeInTheDocument()
+  })
+
+  it("signs in with a Google credential and navigates to the destination", async () => {
+    loginWithGoogleMock.mockResolvedValue({})
+    renderLogin("/login?redirect=/oratio/vox")
+
+    fireEvent.click(screen.getByText("google-signin"))
+
+    await waitFor(() =>
+      expect(loginWithGoogleMock).toHaveBeenCalledWith("fake-google-credential"),
+    )
+    expect(navigateMock).toHaveBeenCalledWith("/oratio/vox")
+  })
+
+  it("shows a friendly error and does not navigate when the Google sign-in fails", async () => {
+    loginWithGoogleMock.mockRejectedValue({
+      response: { status: 401, data: { message: "Seu e-mail no Google não está verificado. ..." } },
+    })
+    renderLogin()
+
+    fireEvent.click(screen.getByText("google-signin"))
+
+    expect(await screen.findByText(/e-mail no Google não está verificado/i)).toBeInTheDocument()
+    expect(navigateMock).not.toHaveBeenCalled()
   })
 
 })

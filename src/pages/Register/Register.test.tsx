@@ -9,7 +9,7 @@ vi.mock("react-router-dom", async (importOriginal) => ({
   useNavigate: () => navigateMock,
 }))
 
-vi.mock("../../services/authService", () => ({ register: vi.fn() }))
+vi.mock("../../services/authService", () => ({ register: vi.fn(), loginWithGoogle: vi.fn() }))
 
 // O modal de verificação faz polling contra a API — stub aqui.
 vi.mock("../../components/VerifyEmailModal/VerifyEmailModal", () => ({
@@ -17,10 +17,17 @@ vi.mock("../../components/VerifyEmailModal/VerifyEmailModal", () => ({
     open ? <div>verify-modal:{email}</div> : null,
 }))
 
-import { register } from "../../services/authService"
+vi.mock("../../components/GoogleSignInButton/GoogleSignInButton", () => ({
+  default: ({ onCredential }: { onCredential: (c: string) => void }) => (
+    <button onClick={() => onCredential("fake-google-credential")}>google-signin</button>
+  ),
+}))
+
+import { register, loginWithGoogle } from "../../services/authService"
 import Register from "./Register"
 
 const registerMock = register as unknown as ReturnType<typeof vi.fn>
+const loginWithGoogleMock = loginWithGoogle as unknown as ReturnType<typeof vi.fn>
 
 function fillForm() {
   fireEvent.change(screen.getByPlaceholderText("Nome"), { target: { value: "Ana" } })
@@ -71,6 +78,28 @@ describe("Register", () => {
     renderRegister("/register?redirect=/oratio/prayers")
     fireEvent.click(screen.getByText("Entrar"))
     expect(navigateMock).toHaveBeenCalledWith("/login?redirect=%2Foratio%2Fprayers")
+  })
+
+  it("signs up with a Google credential and goes straight to home (no verify step)", async () => {
+    loginWithGoogleMock.mockResolvedValue({})
+    renderRegister("/register?redirect=/oratio/biblia")
+
+    fireEvent.click(screen.getByText("google-signin"))
+
+    await waitFor(() =>
+      expect(loginWithGoogleMock).toHaveBeenCalledWith("fake-google-credential"),
+    )
+    expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia")
+    expect(screen.queryByText(/verify-modal/)).not.toBeInTheDocument()
+  })
+
+  it("shows an alert when the Google sign-up fails", async () => {
+    loginWithGoogleMock.mockRejectedValue({ response: { status: 503 } })
+    renderRegister()
+
+    fireEvent.click(screen.getByText("google-signin"))
+
+    expect(await screen.findByText(/Não foi possível entrar com o Google/i)).toBeInTheDocument()
   })
 
 })

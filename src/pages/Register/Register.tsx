@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
-import { register } from "../../services/authService";
+import { register, loginWithGoogle } from "../../services/authService";
 import { getAuthErrorMessage } from "../../utils/authErrors";
 import { withRedirect } from "../../utils/authRedirect";
 import VerifyEmailModal from "../../components/VerifyEmailModal/VerifyEmailModal";
 import AlertModal from "../../components/AlertModal/AlertModal";
+import GoogleSignInButton from "../../components/GoogleSignInButton/GoogleSignInButton";
 import styles from "./Register.module.css";
 
 export default function Register(){
@@ -14,6 +15,7 @@ const navigate = useNavigate();
 const [searchParams] = useSearchParams();
 const redirect = searchParams.get("redirect");
 const loginDestination = redirect ? withRedirect("/login", redirect) : "/login";
+const homeDestination = redirect || "/oratio/home";
 
 const [name,setName] = useState("");
 const [email,setEmail] = useState("");
@@ -25,6 +27,28 @@ const [verifyOpen,setVerifyOpen] = useState(false);
 const [registeredEmail,setRegisteredEmail] = useState("");
 const [alertMessage,setAlertMessage] = useState<string | null>(null);
 const [openVerifyAfterAlert,setOpenVerifyAfterAlert] = useState(false);
+
+async function handleGoogleCredential(credential:string){
+
+setLoading(true);
+
+try{
+
+await loginWithGoogle(credential);
+
+navigate(homeDestination);
+
+}catch(err){
+
+setAlertMessage(getAuthErrorMessage(err, "Não foi possível entrar com o Google. Tente novamente."));
+
+}finally{
+
+setLoading(false);
+
+}
+
+}
 
 async function handleSubmit(e:React.FormEvent){
 
@@ -116,6 +140,10 @@ required
 </button>
 
 </form>
+
+<div className={styles.divider}><span>ou</span></div>
+
+<GoogleSignInButton onCredential={handleGoogleCredential} text="signup_with" />
 
 <p className={styles.switch}>
 Já possui conta?

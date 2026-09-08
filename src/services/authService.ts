@@ -25,6 +25,28 @@ export async function login(
   return response.data;
 }
 
+/*
+Login com Google. Recebe o `credential` (id_token JWT) que o Google Identity
+Services entrega no callback do botão e troca por um par de tokens do Oratio.
+Path relativo (via `api`, com `baseURL` + `x-app`) — NÃO copiar a URL absoluta
+do `login()` acima, que é uma inconsistência antiga (ARCHITECTURE §4).
+Um 401 aqui é resposta de negócio (credential inválido, e-mail Google não
+verificado) e está em PUBLIC_AUTH_PATHS pra não disparar refresh+logout.
+*/
+export async function loginWithGoogle(credential: string): Promise<AuthResponse> {
+
+  const response = await api.post<AuthResponse>("/auth/google", { credential });
+
+  const { access_token, refresh_token } = response.data;
+
+  localStorage.setItem("access_token", access_token);
+  localStorage.setItem("refresh_token", refresh_token);
+
+  api.defaults.headers.Authorization = `Bearer ${access_token}`;
+
+  return response.data;
+}
+
 export async function register(
   name: string,
   email: string,

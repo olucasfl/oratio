@@ -1,0 +1,11 @@
+/*
+O botão em si é um iframe renderizado pelo Google Identity Services dentro
+deste container — o estilo dele não é controlável por CSS nosso (vem das
+opções passadas em renderButton). Este container só centraliza e dá o
+respiro vertical.
+*/
+.container {
+  display: flex;
+  justify-content: center;
+  min-height: 40px;
+}
