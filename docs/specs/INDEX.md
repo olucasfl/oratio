@@ -6,7 +6,7 @@ no mesmo commit — e `/docs-sync` confere se ela bate com a realidade.
 
 | Feature | Spec | Plano | Checklist | Backend pareado | Status |
 |---|---|---|---|---|---|
-| Cobertura de testes + lint | `specs/cobertura-testes.md` | `tasks/plan.md` | (no próprio plano) | n/a | ⚠️ **parcial** — cobertura ✅, lint ❌ (143 problemas, L2–L11 abertas) |
+| Cobertura de testes + lint | `specs/cobertura-testes.md` | `tasks/plan.md` | (no próprio plano) | n/a | ⚠️ **parcial** — cobertura ✅, lint ❌ (47 problemas / 26 erros, medido 2026-09-08) |
 | Bíblia de Estudo | — *(não precisa: já entregue)* | `tasks/biblia-plan.md` | `tasks/biblia-todo.md` | `oratio-api/docs/tasks/biblia-*.md` | ✅ **em produção** (F1–F9 na `main`) |
 | Perfis de resposta do VoxAI | — *(não precisa: já entregue)* | `tasks/vox-profiles.md` (ponteiro) | `tasks/vox-profiles-todo.md` | `oratio-api/docs/tasks/vox-profiles-plan.md` (mestre) | ✅ **em produção** (F1–F4 na `main`; backend idem) |
 | Reformulação das notificações | — | `tasks/notifications.md` (ponteiro) | — | `oratio-api/docs/tasks/notifications-*.md` (mestre) | ✅ concluída |
@@ -16,8 +16,9 @@ no mesmo commit — e `/docs-sync` confere se ela bate com a realidade.
 
 Não são specs; são gaps reais que a auditoria encontrou e que precisam de dono.
 
-- **Fase Lint parada.** `npx eslint .` → 143 problemas (122 erros / 21 avisos). A baseline da
-  spec era 148 (128/20): só a Tarefa L1 foi feita. `tasks/plan.md` L2–L11 seguem abertas.
+- **Fase Lint em aberto.** `npx eslint .` → 47 problemas (26 erros / 21 avisos), medido em
+  2026-09-08 (baseline da spec: 148 = 128/20). O backlog recuou bastante, mas "0 erros" ainda não
+  foi atingido. `tasks/plan.md` L2–L11 registram o que falta.
 - ~~**Serviços da Bíblia sem cobertura.**~~ ✅ Resolvido em 2026-09-04: os dois foram a **100%**
   (29 testes novos). Ver `tasks/plan.md`, Tarefa 1-bis.
 - ~~**`CollectionDetail.test.tsx` sem asserção de visitante.**~~ ✅ Resolvido em 2026-09-04. A
