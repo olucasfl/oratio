@@ -3,12 +3,13 @@ import type { FormEvent } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 
-import { login, forgotPassword } from "../../services/authService";
+import { login, loginWithGoogle, forgotPassword } from "../../services/authService";
 import { getAuthErrorMessage } from "../../utils/authErrors";
 import { withRedirect } from "../../utils/authRedirect";
 
 import ForgotPasswordModal from "../../components/ForgotPasswordModal/ForgotPasswordModal";
 import ResetPasswordModal from "../../components/ResetPasswordModal/ResetPasswordModal";
+import GoogleSignInButton from "../../components/GoogleSignInButton/GoogleSignInButton";
 
 import styles from "./Login.module.css";
 
@@ -79,6 +80,29 @@ export default function Login() {
   FORGOT PASSWORD
   ============================
   */
+
+  async function handleGoogleCredential(credential: string) {
+
+    setLoading(true);
+    setError(null);
+
+    try {
+
+      await loginWithGoogle(credential);
+
+      navigate(destination);
+
+    } catch (err) {
+
+      setError(getAuthErrorMessage(err, "Não foi possível entrar com o Google. Tente novamente."));
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  }
 
   async function handleForgotPassword(email: string){
 
@@ -157,6 +181,18 @@ export default function Login() {
           </button>
 
         </form>
+
+        <div className={styles.divider}><span>ou</span></div>
+
+        <GoogleSignInButton onCredential={handleGoogleCredential} text="signin_with" />
+
+        {/*
+          Texto fixo e incondicional — aparece SEMPRE, não só em erro e nunca
+          condicionado ao tipo da conta (senão vazaria que a conta é só-Google).
+        */}
+        <p className={styles.googleHint}>
+          Já entrou com Google antes? Experimente o botão Entrar com Google.
+        </p>
 
         <div
           className={styles.forgot}

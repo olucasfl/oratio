@@ -167,6 +167,37 @@ transform:scale(.98);
 
 }
 
+/* DIVISOR "ou" */
+
+.divider{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+margin:18px 0 14px;
+
+color:var(--oratio-text-soft);
+
+font-size:12px;
+
+}
+
+.divider::before,
+.divider::after{
+
+content:"";
+
+flex:1;
+
+height:1px;
+
+background:var(--oratio-card-border);
+
+}
+
 /* SWITCH */
 
 .switch{

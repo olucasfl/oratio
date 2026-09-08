@@ -53,6 +53,7 @@ na tela.
 
 const PUBLIC_AUTH_PATHS = [
   "/auth/login",
+  "/auth/google",
   "/auth/refresh",
   "/auth/logout",
   "/auth/forgot-password",

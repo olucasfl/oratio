@@ -23,22 +23,28 @@ Comandos: `npm run dev` · `npm run build` (tsc -b + vite — erro de tipo quebr
 
 | Fase | O que muda aqui | Status |
 |---|---|---|
-| **B** | Script GIS (`https://accounts.google.com/gsi/client`) em `/login` e `/register`; `google.accounts.id.initialize({ client_id: VITE_GOOGLE_CLIENT_ID, callback, use_fedcm_for_button: true, itp_support: true, ux_mode: "popup" })` + `renderButton`. **Nunca** `ux_mode: "redirect"`/`login_uri` (PWA iOS). `authService.loginWithGoogle(credential)` → `POST /auth/google` (path relativo via `services/api.ts`, `x-app` já embutido); no 200 grava `access_token`/`refresh_token` e navega `/oratio/home`. Texto fixo e incondicional abaixo da área de erro do login: *"Já entrou com Google antes? Experimente o botão Entrar com Google."* | ⏳ |
+| **B** | Script GIS (`https://accounts.google.com/gsi/client`) em `/login` e `/register`; `google.accounts.id.initialize({ client_id: VITE_GOOGLE_CLIENT_ID, callback, use_fedcm_for_button: true, itp_support: true, ux_mode: "popup" })` + `renderButton`. **Nunca** `ux_mode: "redirect"`/`login_uri` (PWA iOS). `authService.loginWithGoogle(credential)` → `POST /auth/google` (path relativo via `services/api.ts`, `x-app` já embutido); no 200 grava `access_token`/`refresh_token` e navega `/oratio/home`. Texto fixo e incondicional abaixo da área de erro do login: *"Já entrou com Google antes? Experimente o botão Entrar com Google."* | ✅ código na `develop` (branch `feat/login-google-fase-b`). Falta o **teste manual no navegador** (precisa do cliente OAuth + `VITE_GOOGLE_CLIENT_ID`). |
 | **C** | "Definir senha" nas configurações (só quando a conta não tem senha) → `POST /users/me/set-password`; mensagens acionáveis do backend renderizadas; `forgot`→`reset` acessível para quem entrou só com Google. | ⏳ |
 | **D** | `vercel.json` bloco `headers` — adicionar aos directives da CSP: `script-src https://accounts.google.com/gsi/client` · `style-src https://accounts.google.com/gsi/style` · `frame-src https://accounts.google.com/gsi/` · `connect-src https://accounts.google.com/gsi/`. **Plano de verificação pós-deploy obrigatório na tarefa** (CSP falha fechada, `vite preview` não aplica — `RULES.md` §4). `VITE_GOOGLE_CLIENT_ID` na Vercel (humano). Smoke iPhone PWA instalado (humano). Confirmar `ALLOWED_ORIGINS` do backend inalterado (nenhuma origem nova). | ⏳ |
 
 ## Critérios de aceite (frontend — BDD)
 
-- [ ] **Dado** `/login` carregada, **então** o botão "Entrar com Google" renderiza e o texto
-      fixo aparece abaixo da área de erro (sempre, mesmo sem erro).
-- [ ] **Dado** o callback do GIS entrega um `credential`, **quando** conclui, **então**
+- [x] **Dado** `/login` carregada, **então** o texto fixo *"Já entrou com Google antes? ..."*
+      aparece sempre (mesmo sem erro), e o botão do Google renderiza quando há
+      `VITE_GOOGLE_CLIENT_ID` (`GoogleSignInButton` — teste próprio + `Login.test.tsx`).
+- [x] **Dado** o callback do GIS entrega um `credential`, **quando** conclui, **então**
       `authService.loginWithGoogle` faz `POST /auth/google` com `{ credential }` (`./api`
-      mockado, asserção do corpo), e no 200 os tokens são gravados e navega `/oratio/home`.
-- [ ] **Dado** `POST /auth/google` responde 401, **quando** o usuário tenta, **então** mensagem
-      legível aparece e **nenhum** token é gravado.
+      mockado, asserção do corpo), grava os tokens e navega pro destino (`authService.test.ts`,
+      `Login.test.tsx`, `Register.test.tsx`).
+- [x] **Dado** `POST /auth/google` responde 401/503, **quando** o usuário tenta, **então**
+      mensagem legível aparece e **nenhum** token é gravado, sem navegação.
+- [x] **Dado** um 401 de `/auth/google`, **então** o interceptor do `api.ts` **não** dispara
+      refresh+logout (`/auth/google` em `PUBLIC_AUTH_PATHS` — `api.test.ts`).
+- [ ] **Manual (humano):** clicar o botão real no navegador (`npm run dev`) e completar o login.
+      Precisa do cliente OAuth criado + `VITE_GOOGLE_CLIENT_ID` no `.env` + backend Fase A no ar.
 
-Testes: Vitest + RTL, `./api` sempre mockado, toda asserção com corpo verificado.
+Testes: Vitest + RTL, `./api`/`loadGsi` mockados, toda asserção com corpo verificado.
 
-Arquivos prováveis: `src/services/authService.ts` (ou `api.ts`), `src/pages/Login/*`,
-`src/pages/Register/*`, um `GoogleSignInButton` em `src/components/`, `vercel.json` (Fase D),
-`.env`/`.env_example` (`VITE_GOOGLE_CLIENT_ID`).
+Arquivos: `src/services/api.ts`, `src/services/authService.ts`, `src/utils/loadGsi.ts`,
+`src/components/GoogleSignInButton/*`, `src/pages/Login/*`, `src/pages/Register/*`,
+`.env_example` (`VITE_GOOGLE_CLIENT_ID`). Fase D: `vercel.json` (CSP).

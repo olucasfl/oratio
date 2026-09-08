@@ -11,6 +11,7 @@ vi.mock("./api", () => ({
 import api, { clearSession } from "./api"
 import {
   login,
+  loginWithGoogle,
   register,
   logout,
   forgotPassword,
@@ -54,6 +55,40 @@ describe("authService", () => {
 
       const [, body] = postMock.mock.calls[0]
       expect(body).toEqual({ email: "user@example.com", password: "hunter2" })
+    })
+
+  })
+
+  describe("loginWithGoogle", () => {
+
+    it("posts the credential to the relative /auth/google path", async () => {
+      postMock.mockResolvedValue({ data: { access_token: "a", refresh_token: "r" } })
+
+      await loginWithGoogle("google.id.token")
+
+      expect(postMock).toHaveBeenCalledWith("/auth/google", { credential: "google.id.token" })
+    })
+
+    it("stores the token pair and sets the default Authorization header", async () => {
+      postMock.mockResolvedValue({
+        data: { access_token: "acc-g", refresh_token: "ref-g" },
+      })
+
+      const result = await loginWithGoogle("google.id.token")
+
+      expect(localStorage.getItem("access_token")).toBe("acc-g")
+      expect(localStorage.getItem("refresh_token")).toBe("ref-g")
+      expect(mockedApi.defaults.headers.Authorization).toBe("Bearer acc-g")
+      expect(result).toEqual({ access_token: "acc-g", refresh_token: "ref-g" })
+    })
+
+    it("does not store anything when the request fails", async () => {
+      postMock.mockRejectedValue({ response: { status: 401 } })
+
+      await expect(loginWithGoogle("bad")).rejects.toBeTruthy()
+
+      expect(localStorage.getItem("access_token")).toBeNull()
+      expect(localStorage.getItem("refresh_token")).toBeNull()
     })
 
   })
