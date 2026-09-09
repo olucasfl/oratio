@@ -105,12 +105,32 @@ describe("Login", () => {
     expect(navigateMock).toHaveBeenCalledWith("/register?redirect=%2Foratio%2Fprayers")
   })
 
-  it("always shows the fixed Google hint text, with no error on screen", () => {
+  it("no longer shows the fixed Google hint text (E1a)", () => {
     renderLogin()
     expect(
-      screen.getByText("Já entrou com Google antes? Experimente o botão Entrar com Google."),
+      screen.queryByText(/Já entrou com Google antes/i),
+    ).not.toBeInTheDocument()
+  })
+
+  it("displays the backend's Google-specific 401 message verbatim (E1)", async () => {
+    // conta só-Google tentando login por senha — a mensagem não está no
+    // dicionário de getAuthErrorMessage, então é repassada como veio.
+    loginMock.mockRejectedValue({
+      response: {
+        status: 401,
+        data: {
+          message:
+            'Esta conta entra com o Google. Use o botão "Continuar com o Google" abaixo.',
+        },
+      },
+    })
+    renderLogin()
+    fireEvent.change(screen.getByPlaceholderText("Email"), { target: { value: "g@b.com" } })
+    fireEvent.change(screen.getByPlaceholderText("Senha"), { target: { value: "x" } })
+    fireEvent.click(screen.getByRole("button", { name: "Entrar" }))
+    expect(
+      await screen.findByText(/Esta conta entra com o Google/i),
     ).toBeInTheDocument()
-    expect(screen.queryByText(/incorret/i)).not.toBeInTheDocument()
   })
 
   it("signs in with a Google credential and navigates to the destination", async () => {

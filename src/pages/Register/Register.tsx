@@ -143,7 +143,7 @@ required
 
 <div className={styles.divider}><span>ou</span></div>
 
-<GoogleSignInButton onCredential={handleGoogleCredential} text="signup_with" />
+<GoogleSignInButton onCredential={handleGoogleCredential} />
 
 <p className={styles.switch}>
 Já possui conta?

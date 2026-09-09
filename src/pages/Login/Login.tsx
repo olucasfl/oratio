@@ -184,15 +184,7 @@ export default function Login() {
 
         <div className={styles.divider}><span>ou</span></div>
 
-        <GoogleSignInButton onCredential={handleGoogleCredential} text="signin_with" />
-
-        {/*
-          Texto fixo e incondicional — aparece SEMPRE, não só em erro e nunca
-          condicionado ao tipo da conta (senão vazaria que a conta é só-Google).
-        */}
-        <p className={styles.googleHint}>
-          Já entrou com Google antes? Experimente o botão Entrar com Google.
-        </p>
+        <GoogleSignInButton onCredential={handleGoogleCredential} />
 
         <div
           className={styles.forgot}
