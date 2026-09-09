@@ -49,6 +49,25 @@ describe("GoogleSignInButton", () => {
     expect(screen.getByText("google-btn")).toBeInTheDocument()
   })
 
+  it("uses the 'continue_with' label by default (E5)", async () => {
+    render(<GoogleSignInButton onCredential={vi.fn()} />)
+    await waitFor(() => expect(renderButton).toHaveBeenCalledTimes(1))
+    expect(renderButton.mock.calls[0][1]).toMatchObject({ text: "continue_with" })
+  })
+
+  it("blocks the button with a spinner while disabled (E6)", async () => {
+    const { container, rerender } = render(
+      <GoogleSignInButton onCredential={vi.fn()} disabled={false} />,
+    )
+    await waitFor(() => expect(renderButton).toHaveBeenCalledTimes(1))
+
+    // sem disabled: nenhum bloqueador
+    expect(container.querySelector('[aria-hidden="true"]')).toBeNull()
+
+    rerender(<GoogleSignInButton onCredential={vi.fn()} disabled={true} />)
+    expect(container.querySelector('[aria-hidden="true"]')).not.toBeNull()
+  })
+
   it("calls onCredential with the JWT when the GIS callback fires", async () => {
     const onCredential = vi.fn()
     render(<GoogleSignInButton onCredential={onCredential} />)

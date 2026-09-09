@@ -26,8 +26,10 @@ vi.mock("../../components/ResetPasswordModal/ResetPasswordModal", () => ({
 // Test double do botão do Google: um <button> que dispara onCredential.
 // O componente real carrega o script do GIS e tem teste próprio.
 vi.mock("../../components/GoogleSignInButton/GoogleSignInButton", () => ({
-  default: ({ onCredential }: { onCredential: (c: string) => void }) => (
-    <button onClick={() => onCredential("fake-google-credential")}>google-signin</button>
+  default: ({ onCredential, disabled }: { onCredential: (c: string) => void; disabled?: boolean }) => (
+    <button disabled={disabled} onClick={() => onCredential("fake-google-credential")}>
+      google-signin
+    </button>
   ),
 }))
 
@@ -171,6 +173,22 @@ describe("Login", () => {
     )
     expect(persistSessionMock).toHaveBeenCalledWith("a", "r")
     expect(navigateMock).toHaveBeenCalledWith("/oratio/home")
+  })
+
+  it("disables the Google button while a Google sign-in is in flight (E6)", async () => {
+    let resolveLogin: (v: unknown) => void = () => {}
+    loginWithGoogleMock.mockImplementation(
+      () => new Promise((r) => { resolveLogin = r }),
+    )
+    renderLogin()
+
+    const btn = screen.getByText("google-signin")
+    expect(btn).not.toBeDisabled()
+
+    fireEvent.click(btn)
+    await waitFor(() => expect(btn).toBeDisabled())
+
+    resolveLogin({ access_token: "a", refresh_token: "r", isNewUser: false, googleLinkedNow: false })
   })
 
   it("shows a friendly error and does not navigate when the Google sign-in fails", async () => {

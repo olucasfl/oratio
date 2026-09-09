@@ -198,7 +198,7 @@ export default function Login() {
 
         <div className={styles.divider}><span>ou</span></div>
 
-        <GoogleSignInButton onCredential={handleGoogleCredential} />
+        <GoogleSignInButton onCredential={handleGoogleCredential} disabled={loading} />
 
         <div
           className={styles.forgot}

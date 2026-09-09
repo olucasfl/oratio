@@ -167,7 +167,7 @@ required
 
 <div className={styles.divider}><span>ou</span></div>
 
-<GoogleSignInButton onCredential={handleGoogleCredential} />
+<GoogleSignInButton onCredential={handleGoogleCredential} disabled={loading} />
 
 <p className={styles.switch}>
 Já possui conta?

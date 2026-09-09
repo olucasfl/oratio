@@ -4,8 +4,46 @@ deste container — o estilo dele não é controlável por CSS nosso (vem das
 opções passadas em renderButton). Este container só centraliza e dá o
 respiro vertical.
 */
+.wrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
 .container {
   display: flex;
   justify-content: center;
   min-height: 40px;
+}
+
+/*
+O botão do GIS é um iframe — não dá pra desabilitar "por dentro". Enquanto
+o fluxo está em andamento, esta camada cobre o container, intercepta o
+clique (a corrida de duplo clique é o que o P2002 do backend existe pra
+segurar — não pode ser a única linha de defesa) e mostra um spinner.
+*/
+.blocker {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(16, 28, 51, 0.45);
+  cursor: progress;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(244, 239, 228, 0.35);
+  border-top-color: #f4efe4;
+  border-radius: 50%;
+  animation: gsiSpin 0.7s linear infinite;
+}
+
+@keyframes gsiSpin {
+  to {
+    transform: rotate(360deg);
+  }
 }

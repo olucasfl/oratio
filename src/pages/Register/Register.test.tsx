@@ -24,8 +24,10 @@ vi.mock("../../components/VerifyEmailModal/VerifyEmailModal", () => ({
 }))
 
 vi.mock("../../components/GoogleSignInButton/GoogleSignInButton", () => ({
-  default: ({ onCredential }: { onCredential: (c: string) => void }) => (
-    <button onClick={() => onCredential("fake-google-credential")}>google-signin</button>
+  default: ({ onCredential, disabled }: { onCredential: (c: string) => void; disabled?: boolean }) => (
+    <button disabled={disabled} onClick={() => onCredential("fake-google-credential")}>
+      google-signin
+    </button>
   ),
 }))
 
