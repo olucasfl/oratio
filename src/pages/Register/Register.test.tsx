@@ -40,6 +40,7 @@ const persistSessionMock = persistSession as unknown as ReturnType<typeof vi.fn>
 
 const NEW_USER = { access_token: "a", refresh_token: "r", isNewUser: true, googleLinkedNow: false }
 const EXISTING = { access_token: "a", refresh_token: "r", isNewUser: false, googleLinkedNow: false }
+const AUTO_LINKED = { access_token: "a", refresh_token: "r", isNewUser: false, googleLinkedNow: true }
 
 function fillForm() {
   fireEvent.change(screen.getByPlaceholderText("Nome"), { target: { value: "Ana" } })
@@ -125,6 +126,22 @@ describe("Register", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "OK" }))
     expect(navigateMock).toHaveBeenCalledWith("/login?redirect=%2Foratio%2Fbiblia")
+  })
+
+  it("E3+E4 — auto-link via /register: tells the user it linked, then routes to login", async () => {
+    loginWithGoogleMock.mockResolvedValue(AUTO_LINKED)
+    renderRegister()
+
+    fireEvent.click(screen.getByText("google-signin"))
+
+    await waitFor(() => expect(discardGoogleSessionMock).toHaveBeenCalledWith("r"))
+    expect(persistSessionMock).not.toHaveBeenCalled()
+    expect(
+      await screen.findByText(/Conectamos sua conta Google à sua conta Oratio/i),
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole("button", { name: "OK" }))
+    expect(navigateMock).toHaveBeenCalledWith("/login")
   })
 
   it("shows an alert when the Google sign-up fails", async () => {

@@ -6,6 +6,7 @@ import { ChevronLeft } from "lucide-react";
 import { login, loginWithGoogle, forgotPassword } from "../../services/authService";
 import { persistSession } from "../../services/api";
 import { getAuthErrorMessage } from "../../utils/authErrors";
+import { setFlash } from "../../utils/flash";
 import { withRedirect } from "../../utils/authRedirect";
 
 import ForgotPasswordModal from "../../components/ForgotPasswordModal/ForgotPasswordModal";
@@ -95,6 +96,13 @@ export default function Login() {
       const result = await loginWithGoogle(credential);
 
       persistSession(result.access_token, result.refresh_token);
+
+      if (result.googleLinkedNow) {
+        // auto-ligação silenciosa: a ÚNICA vez que a pessoa é avisada que a
+        // identidade Google foi ligada à conta dela (não há tela de
+        // desvincular no v1) — spec login-google §"Fase E → E4".
+        setFlash("Sua conta Google foi conectada à sua conta Oratio.");
+      }
 
       navigate(destination);
 

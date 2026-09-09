@@ -47,7 +47,13 @@ if(!result.isNewUser){
  */
  await discardGoogleSession(result.refresh_token);
  setGoToLoginAfterAlert(true);
- setAlertMessage("Você já tem conta no Oratio. Entre pela tela de login.");
+ setAlertMessage(
+  result.googleLinkedNow
+   // auto-ligação aconteceu agora, pela tela de cadastro: avisa que ligou
+   // (E4 — única chance) E manda pro login (E3).
+   ? "Conectamos sua conta Google à sua conta Oratio. Agora entre pela tela de login."
+   : "Você já tem conta no Oratio. Entre pela tela de login."
+ );
  return;
 }
 

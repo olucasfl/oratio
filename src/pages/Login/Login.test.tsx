@@ -16,6 +16,7 @@ vi.mock("../../services/authService", () => ({
 }))
 
 vi.mock("../../services/api", () => ({ persistSession: vi.fn() }))
+vi.mock("../../utils/flash", () => ({ setFlash: vi.fn() }))
 
 // Isola o Login — o modal de reset tem teste próprio e fala com a API.
 vi.mock("../../components/ResetPasswordModal/ResetPasswordModal", () => ({
@@ -32,12 +33,14 @@ vi.mock("../../components/GoogleSignInButton/GoogleSignInButton", () => ({
 
 import { login, loginWithGoogle, forgotPassword } from "../../services/authService"
 import { persistSession } from "../../services/api"
+import { setFlash } from "../../utils/flash"
 import Login from "./Login"
 
 const loginMock = login as unknown as ReturnType<typeof vi.fn>
 const loginWithGoogleMock = loginWithGoogle as unknown as ReturnType<typeof vi.fn>
 const forgotPasswordMock = forgotPassword as unknown as ReturnType<typeof vi.fn>
 const persistSessionMock = persistSession as unknown as ReturnType<typeof vi.fn>
+const setFlashMock = setFlash as unknown as ReturnType<typeof vi.fn>
 
 function renderLogin(path = "/login") {
   return render(<MemoryRouter initialEntries={[path]}><Login /></MemoryRouter>)
@@ -149,7 +152,25 @@ describe("Login", () => {
       expect(loginWithGoogleMock).toHaveBeenCalledWith("fake-google-credential"),
     )
     expect(persistSessionMock).toHaveBeenCalledWith("a", "r")
+    expect(setFlashMock).not.toHaveBeenCalled()
     expect(navigateMock).toHaveBeenCalledWith("/oratio/vox")
+  })
+
+  it("flashes the auto-link toast when googleLinkedNow is true (E4)", async () => {
+    loginWithGoogleMock.mockResolvedValue({
+      access_token: "a", refresh_token: "r", isNewUser: false, googleLinkedNow: true,
+    })
+    renderLogin()
+
+    fireEvent.click(screen.getByText("google-signin"))
+
+    await waitFor(() =>
+      expect(setFlashMock).toHaveBeenCalledWith(
+        "Sua conta Google foi conectada à sua conta Oratio.",
+      ),
+    )
+    expect(persistSessionMock).toHaveBeenCalledWith("a", "r")
+    expect(navigateMock).toHaveBeenCalledWith("/oratio/home")
   })
 
   it("shows a friendly error and does not navigate when the Google sign-in fails", async () => {
