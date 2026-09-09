@@ -144,9 +144,12 @@ Spec: `oratio-api/docs/specs/login-google.md` → "## Fase E". Backend pareado:
 - [x] **E4** — `utils/flash.ts` + `<FlashToast/>` (montado no App, sobrevive ao `navigate`).
       `googleLinkedNow` → toast "Sua conta Google foi conectada à sua conta Oratio." (na
       `/register`, vira a mensagem do `AlertModal` do ramo E3).
-- [x] **E1b** — `<SetPasswordNudge/>` (barra fina no topo, dispensável por sessão via
-      `sessionStorage`, nunca modal): conta autenticada com `hasPassword: false` →
-      "Defina uma senha para também entrar sem o Google" → Configurações da conta.
+- [x] **E1b** — aviso "Defina uma senha" **no Perfil**, de vez em quando (cooldown de 7 dias,
+      `localStorage set_password_hint_last`), quando a pessoa abre o Perfil e `hasPassword:
+      false`: a engrenagem de **Configurações da conta** pulsa e um balão aponta pra ela
+      ("Definir senha" leva a `/oratio/profile/settings?senha=1`; "Agora não" fecha). Chegando
+      em Configurações com `?senha=1`, o botão **"Definir senha"** rola até a vista e pulsa.
+      Não é modal. (Substitui o `<SetPasswordNudge/>` app-level da 1ª versão.)
 - [x] **E5 + E6** — `GoogleSignInButton`: prop `disabled` (camada que intercepta clique +
       spinner). `Login.tsx`/`Register.tsx` removem `text=` (default `continue_with`) e passam
       `disabled={loading}`.

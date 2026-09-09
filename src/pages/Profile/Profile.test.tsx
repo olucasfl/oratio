@@ -192,4 +192,40 @@ describe("Profile", () => {
     await waitFor(() => expect(authLogoutMock).toHaveBeenCalledWith("/oratio/home"))
   })
 
+  // ---- aviso "Defina uma senha" (conta só-Google, E1b) ----
+
+  it("shows the set-password hint for a Google-only account and routes to settings", async () => {
+    getProfileMock.mockResolvedValue({ ...BASE_PROFILE, hasPassword: false })
+    renderProfile()
+
+    expect(await screen.findByText(/Defina uma senha em/i)).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole("button", { name: "Definir senha" }))
+    expect(navigateMock).toHaveBeenCalledWith("/oratio/profile/settings?senha=1")
+    expect(localStorage.getItem("set_password_hint_last")).not.toBeNull()
+  })
+
+  it("dismisses the hint with 'Agora não' and stamps the cooldown", async () => {
+    getProfileMock.mockResolvedValue({ ...BASE_PROFILE, hasPassword: false })
+    renderProfile()
+    fireEvent.click(await screen.findByRole("button", { name: "Agora não" }))
+    expect(screen.queryByText(/Defina uma senha em/i)).not.toBeInTheDocument()
+    expect(localStorage.getItem("set_password_hint_last")).not.toBeNull()
+  })
+
+  it("does not show the hint again within 7 days", async () => {
+    localStorage.setItem("set_password_hint_last", String(Date.now() - 60_000))
+    getProfileMock.mockResolvedValue({ ...BASE_PROFILE, hasPassword: false })
+    renderProfile()
+    await screen.findByText("Ana Maria")
+    expect(screen.queryByText(/Defina uma senha em/i)).not.toBeInTheDocument()
+  })
+
+  it("does not show the hint for an account that has a password", async () => {
+    getProfileMock.mockResolvedValue({ ...BASE_PROFILE, hasPassword: true })
+    renderProfile()
+    await screen.findByText("Ana Maria")
+    expect(screen.queryByText(/Defina uma senha em/i)).not.toBeInTheDocument()
+  })
+
 })

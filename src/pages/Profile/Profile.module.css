@@ -268,6 +268,87 @@ PROFILE HERO
 
 }
 
+/* ---- aviso "Defina uma senha" (conta só-Google, Fase E/E1b) ---- */
+
+.settingsGearPulse{
+ background:rgba(255,255,255,.3);
+ animation:pwdGearPulse 1.5s ease-out infinite;
+ z-index:41;
+}
+
+@keyframes pwdGearPulse{
+ 0%{ box-shadow:0 0 0 0 rgba(255,255,255,.55); }
+ 70%{ box-shadow:0 0 0 14px rgba(255,255,255,0); }
+ 100%{ box-shadow:0 0 0 0 rgba(255,255,255,0); }
+}
+
+.pwdHintBackdrop{
+ position:fixed;
+ inset:0;
+ z-index:39;
+}
+
+.pwdHint{
+ position:absolute;
+ top:64px;
+ right:14px;
+ z-index:40;
+
+ max-width:250px;
+
+ background:var(--oratio-card-bg);
+ color:var(--oratio-text-dark);
+ border:1px solid var(--oratio-card-border);
+ border-radius:var(--oratio-radius-md);
+ box-shadow:var(--oratio-shadow-medium);
+ padding:12px 13px;
+}
+
+.pwdHint::before{
+ content:"";
+ position:absolute;
+ top:-7px;
+ right:16px;
+ width:12px;
+ height:12px;
+ background:var(--oratio-card-bg);
+ border-left:1px solid var(--oratio-card-border);
+ border-top:1px solid var(--oratio-card-border);
+ transform:rotate(45deg);
+}
+
+.pwdHint p{
+ margin:0 0 10px;
+ font-size:13px;
+ line-height:1.42;
+}
+
+.pwdHintActions{
+ display:flex;
+ gap:8px;
+ justify-content:flex-end;
+}
+
+.pwdHintLater{
+ background:transparent;
+ color:var(--oratio-text-soft);
+ border:none;
+ padding:6px 8px;
+ font-size:12.5px;
+ cursor:pointer;
+}
+
+.pwdHintGo{
+ background:var(--oratio-primary);
+ color:var(--oratio-text-light);
+ border:none;
+ border-radius:var(--oratio-radius-sm);
+ padding:6px 12px;
+ font-size:12.5px;
+ font-weight:600;
+ cursor:pointer;
+}
+
 .avatar{
 
  position:relative;

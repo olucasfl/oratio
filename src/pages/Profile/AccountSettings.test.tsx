@@ -27,8 +27,10 @@ import AccountSettings from "./AccountSettings"
 
 const getProfileMock = getProfile as unknown as ReturnType<typeof vi.fn>
 
-function renderSettings() {
-  return render(<MemoryRouter><AccountSettings /></MemoryRouter>)
+function renderSettings(path = "/oratio/profile/settings") {
+  return render(
+    <MemoryRouter initialEntries={[path]}><AccountSettings /></MemoryRouter>,
+  )
 }
 
 beforeEach(() => {
@@ -51,6 +53,15 @@ describe("AccountSettings", () => {
     fireEvent.click(await screen.findByRole("button", { name: /Definir senha/ }))
     expect(screen.getByText("set-password-modal")).toBeInTheDocument()
     expect(screen.queryByRole("button", { name: /Trocar senha/ })).not.toBeInTheDocument()
+  })
+
+  it("highlights the 'Definir senha' button when arriving from the profile hint (?senha=1)", async () => {
+    localStorage.setItem("oratio-profile", JSON.stringify({ hasPassword: false }))
+    getProfileMock.mockResolvedValue({ hasPassword: false })
+    renderSettings("/oratio/profile/settings?senha=1")
+    const btn = await screen.findByRole("button", { name: /Definir senha/ })
+    expect(btn.className).toMatch(/Pulse/i)
+    expect(navigateMock).not.toHaveBeenCalled()
   })
 
   it("falls back to 'Trocar senha' when the backend does not send hasPassword yet", async () => {
