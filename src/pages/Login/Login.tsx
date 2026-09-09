@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 
 import { login, loginWithGoogle, forgotPassword } from "../../services/authService";
+import { persistSession } from "../../services/api";
 import { getAuthErrorMessage } from "../../utils/authErrors";
 import { withRedirect } from "../../utils/authRedirect";
 
@@ -88,7 +89,12 @@ export default function Login() {
 
     try {
 
-      await loginWithGoogle(credential);
+      // Na tela de login, os três desfechos entram: a intenção é entrar, e
+      // entrar é o que acontece (spec login-google §"Fase E → E3"). O
+      // loginWithGoogle não persiste sozinho — a tela decide.
+      const result = await loginWithGoogle(credential);
+
+      persistSession(result.access_token, result.refresh_token);
 
       navigate(destination);
 

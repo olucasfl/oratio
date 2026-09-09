@@ -102,6 +102,29 @@ export function clearSession(redirectTo: string = "/login") {
   window.location.href = redirectTo;
 }
 
+/*
+================================
+PERSIST / DESCARTE DE SESSÃO
+================================
+Grava o par de tokens e seta o header default. Contrapartida do clearSession,
+mas sem redirect — quem chama decide pra onde ir.
+*/
+export function persistSession(accessToken: string, refreshToken: string) {
+  localStorage.setItem("access_token", accessToken);
+  localStorage.setItem("refresh_token", refreshToken);
+  api.defaults.headers.Authorization = `Bearer ${accessToken}`;
+}
+
+/*
+Descarta um header default que possa ter sobrado, SEM tocar no localStorage e
+SEM redirect. Usado quando um login foi feito no backend (tokens emitidos) mas
+o frontend decide NÃO adotar a sessão — o caso do cadastro repetido pela tela
+/register (ver Register.tsx / spec login-google §"Fase E → E3").
+*/
+export function clearAuthHeader() {
+  delete api.defaults.headers.Authorization;
+}
+
 function logout() {
   clearSession();
 }

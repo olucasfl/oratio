@@ -6,12 +6,15 @@ vi.mock("./api", () => ({
     defaults: { headers: {} as Record<string, string> },
   },
   clearSession: vi.fn(),
+  persistSession: vi.fn(),
+  clearAuthHeader: vi.fn(),
 }))
 
-import api, { clearSession } from "./api"
+import api, { clearSession, persistSession, clearAuthHeader } from "./api"
 import {
   login,
   loginWithGoogle,
+  discardGoogleSession,
   register,
   logout,
   forgotPassword,
@@ -24,6 +27,8 @@ import {
 const mockedApi = api as any // eslint-disable-line @typescript-eslint/no-explicit-any
 const postMock = mockedApi.post as ReturnType<typeof vi.fn>
 const clearSessionMock = clearSession as unknown as ReturnType<typeof vi.fn>
+const persistSessionMock = persistSession as unknown as ReturnType<typeof vi.fn>
+const clearAuthHeaderMock = clearAuthHeader as unknown as ReturnType<typeof vi.fn>
 
 describe("authService", () => {
 
@@ -69,26 +74,61 @@ describe("authService", () => {
       expect(postMock).toHaveBeenCalledWith("/auth/google", { credential: "google.id.token" })
     })
 
-    it("stores the token pair and sets the default Authorization header", async () => {
+    it("returns tokens + the E2 flags and does NOT persist (the screen decides)", async () => {
       postMock.mockResolvedValue({
-        data: { access_token: "acc-g", refresh_token: "ref-g" },
+        data: {
+          access_token: "acc-g",
+          refresh_token: "ref-g",
+          isNewUser: true,
+          googleLinkedNow: false,
+        },
       })
 
       const result = await loginWithGoogle("google.id.token")
 
-      expect(localStorage.getItem("access_token")).toBe("acc-g")
-      expect(localStorage.getItem("refresh_token")).toBe("ref-g")
-      expect(mockedApi.defaults.headers.Authorization).toBe("Bearer acc-g")
-      expect(result).toEqual({ access_token: "acc-g", refresh_token: "ref-g" })
+      // não persiste sozinho (assimetria proposital com login())
+      expect(persistSessionMock).not.toHaveBeenCalled()
+      expect(localStorage.getItem("access_token")).toBeNull()
+      expect(result).toEqual({
+        access_token: "acc-g",
+        refresh_token: "ref-g",
+        isNewUser: true,
+        googleLinkedNow: false,
+      })
     })
 
-    it("does not store anything when the request fails", async () => {
+    it("lets the error bubble without persisting when the request fails", async () => {
       postMock.mockRejectedValue({ response: { status: 401 } })
 
       await expect(loginWithGoogle("bad")).rejects.toBeTruthy()
 
+      expect(persistSessionMock).not.toHaveBeenCalled()
       expect(localStorage.getItem("access_token")).toBeNull()
-      expect(localStorage.getItem("refresh_token")).toBeNull()
+    })
+
+  })
+
+  describe("discardGoogleSession", () => {
+
+    it("revokes the orphan session and clears the auth header (best-effort)", async () => {
+      postMock.mockResolvedValue({ data: { message: "Logged out" } })
+
+      await discardGoogleSession("orphan-refresh")
+
+      expect(postMock).toHaveBeenCalledWith(
+        "/auth/logout",
+        { refresh_token: "orphan-refresh" },
+        { timeout: 3000 },
+      )
+      expect(clearAuthHeaderMock).toHaveBeenCalled()
+    })
+
+    it("still clears the header when the logout call fails (offline)", async () => {
+      postMock.mockRejectedValue(new Error("network"))
+
+      await expect(discardGoogleSession("orphan-refresh")).resolves.toBeUndefined()
+
+      expect(clearAuthHeaderMock).toHaveBeenCalled()
     })
 
   })

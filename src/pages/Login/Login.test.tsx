@@ -15,6 +15,8 @@ vi.mock("../../services/authService", () => ({
   forgotPassword: vi.fn(),
 }))
 
+vi.mock("../../services/api", () => ({ persistSession: vi.fn() }))
+
 // Isola o Login — o modal de reset tem teste próprio e fala com a API.
 vi.mock("../../components/ResetPasswordModal/ResetPasswordModal", () => ({
   default: ({ token }: { token: string }) => <div>reset-modal:{token}</div>,
@@ -29,11 +31,13 @@ vi.mock("../../components/GoogleSignInButton/GoogleSignInButton", () => ({
 }))
 
 import { login, loginWithGoogle, forgotPassword } from "../../services/authService"
+import { persistSession } from "../../services/api"
 import Login from "./Login"
 
 const loginMock = login as unknown as ReturnType<typeof vi.fn>
 const loginWithGoogleMock = loginWithGoogle as unknown as ReturnType<typeof vi.fn>
 const forgotPasswordMock = forgotPassword as unknown as ReturnType<typeof vi.fn>
+const persistSessionMock = persistSession as unknown as ReturnType<typeof vi.fn>
 
 function renderLogin(path = "/login") {
   return render(<MemoryRouter initialEntries={[path]}><Login /></MemoryRouter>)
@@ -133,8 +137,10 @@ describe("Login", () => {
     ).toBeInTheDocument()
   })
 
-  it("signs in with a Google credential and navigates to the destination", async () => {
-    loginWithGoogleMock.mockResolvedValue({})
+  it("signs in with a Google credential, persists the session and navigates", async () => {
+    loginWithGoogleMock.mockResolvedValue({
+      access_token: "a", refresh_token: "r", isNewUser: false, googleLinkedNow: false,
+    })
     renderLogin("/login?redirect=/oratio/vox")
 
     fireEvent.click(screen.getByText("google-signin"))
@@ -142,6 +148,7 @@ describe("Login", () => {
     await waitFor(() =>
       expect(loginWithGoogleMock).toHaveBeenCalledWith("fake-google-credential"),
     )
+    expect(persistSessionMock).toHaveBeenCalledWith("a", "r")
     expect(navigateMock).toHaveBeenCalledWith("/oratio/vox")
   })
 
