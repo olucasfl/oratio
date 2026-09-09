@@ -23,9 +23,9 @@ Comandos: `npm run dev` · `npm run build` (tsc -b + vite — erro de tipo quebr
 
 | Fase | O que muda aqui | Status |
 |---|---|---|
-| **B** | Script GIS (`https://accounts.google.com/gsi/client`) em `/login` e `/register`; `google.accounts.id.initialize({ client_id: VITE_GOOGLE_CLIENT_ID, callback, use_fedcm_for_button: true, itp_support: true, ux_mode: "popup" })` + `renderButton`. **Nunca** `ux_mode: "redirect"`/`login_uri` (PWA iOS). `authService.loginWithGoogle(credential)` → `POST /auth/google` (path relativo via `services/api.ts`, `x-app` já embutido); no 200 grava `access_token`/`refresh_token` e navega `/oratio/home`. Texto fixo e incondicional abaixo da área de erro do login: *"Já entrou com Google antes? Experimente o botão Entrar com Google."* | ✅ código na `develop` (branch `feat/login-google-fase-b`). Falta o **teste manual no navegador** (precisa do cliente OAuth + `VITE_GOOGLE_CLIENT_ID`). |
-| **C** | `profileService.setPassword()` → `POST /users/me/set-password`; `UserProfile.hasPassword` (novo campo do `GET /users/me`, backend C1); `SetPasswordModal` (= `ChangePasswordModal` sem "senha atual"); "Configurações da conta" busca o perfil e mostra **"Definir senha"** (`hasPassword: false`) **ou** "Trocar senha" (`true`), nunca os dois — lê o cache `oratio-profile` pra não piscar. `forgot`→`reset` já está acessível pela tela `/login` (Fase B). | ✅ código na branch `feat/login-google-fase-c` |
-| **D** | `vercel.json` bloco `headers` — adicionar aos directives da CSP: `script-src https://accounts.google.com/gsi/client` · `style-src https://accounts.google.com/gsi/style` · `frame-src https://accounts.google.com/gsi/` · `connect-src https://accounts.google.com/gsi/`. **Plano de verificação pós-deploy obrigatório na tarefa** (CSP falha fechada, `vite preview` não aplica — `RULES.md` §4). `VITE_GOOGLE_CLIENT_ID` na Vercel (humano). Smoke iPhone PWA instalado (humano). Confirmar `ALLOWED_ORIGINS` do backend inalterado (nenhuma origem nova). | ⏳ |
+| **B** | Script GIS (`https://accounts.google.com/gsi/client`) em `/login` e `/register`; `google.accounts.id.initialize({ client_id: VITE_GOOGLE_CLIENT_ID, callback, use_fedcm_for_button: true, itp_support: true, ux_mode: "popup" })` + `renderButton`. **Nunca** `ux_mode: "redirect"`/`login_uri` (PWA iOS). `authService.loginWithGoogle(credential)` → `POST /auth/google` (path relativo via `services/api.ts`, `x-app` já embutido); no 200 grava `access_token`/`refresh_token` e navega `/oratio/home`. Texto fixo e incondicional abaixo da área de erro do login: *"Já entrou com Google antes? Experimente o botão Entrar com Google."* | ✅ na `develop`. Falta o **teste manual no navegador** (precisa do cliente OAuth + `VITE_GOOGLE_CLIENT_ID`). |
+| **C** | `profileService.setPassword()` → `POST /users/me/set-password`; `UserProfile.hasPassword` (novo campo do `GET /users/me`, backend C1); `SetPasswordModal` (= `ChangePasswordModal` sem "senha atual"); "Configurações da conta" busca o perfil e mostra **"Definir senha"** (`hasPassword: false`) **ou** "Trocar senha" (`true`), nunca os dois — lê o cache `oratio-profile` pra não piscar. `forgot`→`reset` já está acessível pela tela `/login` (Fase B). | ✅ na `develop` |
+| **D** | `vercel.json` bloco `headers` — CSP ganha os directives do GIS (ver "Fase D — CSP" abaixo). `VITE_GOOGLE_CLIENT_ID` na Vercel (humano). `db push` de produção (humano). Cliente OAuth + origens de produção no Google Cloud Console (humano). Smoke iPhone PWA instalado (humano). Confirmar `ALLOWED_ORIGINS` do backend inalterado. | 🚧 CSP na branch `feat/login-google-fase-d`; resto é humano |
 
 ## Critérios de aceite (frontend — BDD)
 
@@ -59,6 +59,58 @@ Comandos: `npm run dev` · `npm run build` (tsc -b + vite — erro de tipo quebr
 - [x] `SetPasswordModal` **não** tem campo "senha atual" e **não** menciona sessões revogadas
       (o backend não revoga nesse fluxo).
 
+### Fase D — CSP, deploy, PWA
+
+**A CSP é a única mudança de código da fase.** `vercel.json` → directive por directive
+(valores da doc oficial do Google, `get-google-api-clientid` → seção CSP; conferido 2026-09-09):
+
+| Directive | Adicionado | Como fica |
+|---|---|---|
+| `script-src` | `https://accounts.google.com/gsi/client` | `'self' 'wasm-unsafe-eval' https://accounts.google.com/gsi/client` |
+| `style-src` | `https://accounts.google.com/gsi/style` | `'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com/gsi/style` |
+| `connect-src` | `https://accounts.google.com/gsi/` | `'self' https://*.onrender.com https://accounts.google.com/gsi/` |
+| `frame-src` | `https://accounts.google.com/gsi/` (directive nova — antes caía no `default-src 'self'`) | `'self' https://accounts.google.com/gsi/` |
+
+Usar sempre a **URL-pai** `https://accounts.google.com/gsi/` em `connect-src`/`frame-src`
+(recomendação do Google — listar URLs individuais quebra quando o GIS muda de endpoint).
+
+- [x] `vercel.json` alterado exatamente como a tabela acima. Sem `report-uri` novo.
+- [x] `ALLOWED_ORIGINS` do backend (`oratio-api` `main.ts`) **não** muda — o `POST /auth/google`
+      sai da mesma origem de frontend que já está na allowlist; nenhuma origem nova.
+- [ ] `npm run build` limpo (a CSP não afeta o build; só garantir que o JSON é válido).
+
+**⚠️ A CSP não é testável localmente** — `vite preview` e `npm run dev` **não aplicam**
+`vercel.json`; só a Vercel aplica, e ela **falha fechada** (`RULES.md` §4; já quebrou o PDF e as
+fontes antes). Por isso o plano de verificação é **pós-deploy** e **obrigatório**:
+
+**Plano de verificação pós-deploy (humano, logo após o deploy da Vercel):**
+1. Abrir `https://oratio-phi.vercel.app/login` numa aba anônima, DevTools → Console aberto.
+2. **Nenhuma** violação de CSP no console (`Refused to load…`, `Refused to connect…`,
+   `Refused to frame…`). Conferir também a aba Network: `gsi/client` carrega `200`.
+3. O botão "Entrar com Google" **renderiza** (não fica um espaço em branco).
+4. Clicar o botão → o popup do Google abre (não é bloqueado por `frame-src`/`connect-src`).
+5. Concluir o login com uma conta de teste → volta pro app, `POST /auth/google` responde `200`
+   na aba Network, navega pra `/oratio/home`.
+6. Repetir os passos 1–3 no **PWA instalado no iPhone** (Safari → Adicionar à Tela de Início):
+   o popup abre **dentro** do app e volta pra ele — **não** joga pro Safari.
+7. Regressão: abrir uma página com PDF (liturgia/consagração) e confirmar que o PDF ainda
+   abre — a mudança de CSP não pode ter afetado `worker-src`/`blob:`.
+8. Se **qualquer** passo falhar: reverter o `vercel.json` (o deploy anterior volta a CSP antiga),
+   e revisar o directive culpado contra a doc do Google antes de tentar de novo.
+
+**Pendências humanas da fase (não são código):**
+- [ ] `VITE_GOOGLE_CLIENT_ID` nas env vars da Vercel (= `GOOGLE_CLIENT_ID` do Render).
+- [ ] `GOOGLE_CLIENT_ID` nas env vars do Render.
+- [ ] `npx prisma db push && npx prisma generate` em produção (`oratio-api`; script em
+      `oratio-api/prisma/db-scripts/2026-09-08-login-google.sql`).
+- [ ] Google Cloud Console: cliente OAuth "Web application" com *Authorized JavaScript origins*
+      `http://localhost:5173` + `https://oratio-phi.vercel.app`; tela de consentimento (scopes
+      `openid`/`email`/`profile`, não-sensíveis). Detalhe em `oratio-api/docs/specs/login-google.md`
+      → "Notas de ambiente".
+- [ ] Executar o plano de verificação pós-deploy acima.
+
+---
+
 Testes: Vitest + RTL, `./api`/`loadGsi` mockados, toda asserção com corpo verificado.
 
 Arquivos Fase B: `src/services/api.ts`, `src/services/authService.ts`, `src/utils/loadGsi.ts`,
@@ -66,4 +118,4 @@ Arquivos Fase B: `src/services/api.ts`, `src/services/authService.ts`, `src/util
 `.env_example` (`VITE_GOOGLE_CLIENT_ID`).
 Arquivos Fase C: `src/services/profileService.ts`, `src/components/SetPasswordModal/*`,
 `src/pages/Profile/AccountSettings.tsx`.
-Fase D: `vercel.json` (CSP).
+Arquivos Fase D: `vercel.json` (CSP).
