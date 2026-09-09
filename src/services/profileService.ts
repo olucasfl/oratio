@@ -23,6 +23,12 @@ export interface UserProfile {
   createdAt: string
   emailVerified: boolean
   isAdmin: boolean
+  /*
+   `false` = conta que entrou só por Google e ainda não definiu senha.
+   Governa "Definir senha" vs "Trocar senha" em Configurações da conta.
+   O backend nunca manda o hash — só este booleano.
+  */
+  hasPassword: boolean
   spiritualProgress: SpiritualProgress
 }
 
@@ -39,6 +45,24 @@ export async function changePassword(currentPassword:string, newPassword:string)
  const res = await api.post("/users/me/change-password", {
   currentPassword,
   newPassword
+ })
+
+ return res.data
+
+}
+
+/*
+ Define a PRIMEIRA senha de uma conta que entrou só por Google (`hasPassword:
+ false`). Rota separada do `changePassword` de propósito: não há "senha atual"
+ pra informar, e o backend NÃO revoga as sessões aqui (nenhuma credencial
+ antiga deixou de valer). Um 409 significa que a conta já tem senha — nesse
+ caso a rota certa é "Trocar senha".
+*/
+export async function setPassword(password:string, confirmPassword:string){
+
+ const res = await api.post("/users/me/set-password", {
+  password,
+  confirmPassword
  })
 
  return res.data

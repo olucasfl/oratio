@@ -11,7 +11,7 @@ no mesmo commit — e `/docs-sync` confere se ela bate com a realidade.
 | Perfis de resposta do VoxAI | — *(não precisa: já entregue)* | `tasks/vox-profiles.md` (ponteiro) | `tasks/vox-profiles-todo.md` | `oratio-api/docs/tasks/vox-profiles-plan.md` (mestre) | ✅ **em produção** (F1–F4 na `main`; backend idem) |
 | Reformulação das notificações | — | `tasks/notifications.md` (ponteiro) | — | `oratio-api/docs/tasks/notifications-*.md` (mestre) | ✅ concluída |
 | Biografias do Santo do Dia | — | `tasks/santos-plan.md` | `tasks/santos-todo.md` | n/a | ✅ concluída (20/out–13/dez) |
-| Entrar com Google | `specs/login-google.md` (ponteiro) | `tasks/login-google-todo.md` | — | `oratio-api/docs/specs/login-google.md` (mestre) | 🚧 Fase B — botão GIS em `/login` e `/register` (código na `develop`; falta teste manual no navegador + CSP da Fase D). Backend Fase A idem. |
+| Entrar com Google | `specs/login-google.md` (ponteiro) | `tasks/login-google-todo.md` | — | `oratio-api/docs/specs/login-google.md` (mestre) | 🚧 Fase B (botão GIS em `/login` e `/register`) na `develop`. **Fase C** (UI "Definir senha" em Configurações da conta, via `hasPassword` do backend) na branch `feat/login-google-fase-c`, não mergeada. Falta: revisão/merge, teste manual no navegador, CSP da Fase D. Backend: `oratio-api` branches `feat/login-google-a8-delete` + `feat/login-google-c`. |
 
 ## Dívidas conhecidas (medidas em 2026-09-04)
 

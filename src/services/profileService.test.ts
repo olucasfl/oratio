@@ -8,6 +8,7 @@ import api from "./api"
 import {
   getProfile,
   changePassword,
+  setPassword,
   requestEmailChange,
   cancelEmailChange,
   deleteAccount,
@@ -36,6 +37,16 @@ describe("profileService", () => {
     expect(mockedApi.post).toHaveBeenCalledWith("/users/me/change-password", {
       currentPassword: "old-pw",
       newPassword: "new-pw",
+    })
+  })
+
+  it("setPassword posts the new password and its confirmation to /users/me/set-password", async () => {
+    mockedApi.post.mockResolvedValue({ data: { message: "Senha definida." } })
+    await setPassword("abcd1234", "abcd1234")
+
+    expect(mockedApi.post).toHaveBeenCalledWith("/users/me/set-password", {
+      password: "abcd1234",
+      confirmPassword: "abcd1234",
     })
   })
 
