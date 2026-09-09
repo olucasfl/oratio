@@ -4,7 +4,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 import type { GoogleAccountsId } from "../../utils/loadGsi"
 
 const initialize = vi.fn()
-const renderButton = vi.fn((el: HTMLElement) => { el.innerHTML = "<div>google-btn</div>" })
+const renderButton = vi.fn((el: HTMLElement, ...args: unknown[]) => {
+  void args
+  el.innerHTML = "<div>google-btn</div>"
+})
 const loadGsiMock = vi.fn()
 
 vi.mock("../../utils/loadGsi", () => ({

@@ -1,4 +1,4 @@
-import api, { clearSession, persistSession, clearAuthHeader } from "./api";
+import api, { clearSession, clearAuthHeader } from "./api";
 
 type AuthResponse = {
   access_token: string;

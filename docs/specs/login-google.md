@@ -20,14 +20,32 @@ Checklists executáveis (a criar):
   `renderButton`. **Nunca** `ux_mode: "redirect"` / `login_uri` — num PWA
   instalado no iOS isso joga a pessoa pro Safari e perde o contexto.
 - `authService.loginWithGoogle(credential)` → `POST /auth/google` pelo
-  `api` compartilhado (`x-app: oratio` já embutido). No 200: grava
-  `access_token`/`refresh_token` e navega pra `/oratio/home`.
-- **Texto fixo e incondicional** abaixo da área de erro do login:
-  *"Já entrou com Google antes? Experimente o botão Entrar com Google."* — em todo
-  erro de senha, não condicional ao tipo de conta (senão vaza que a conta é
-  só-Google).
+  `api` compartilhado (`x-app: oratio` já embutido). **Fase E:** retorna
+  `{ access_token, refresh_token, isNewUser, googleLinkedNow }` e **não grava
+  nada** — a tela decide (`Login.tsx` grava e navega; `Register.tsx` descarta a
+  sessão se `isNewUser: false` e vai pro `/login`).
+- ~~**Texto fixo** *"Já entrou com Google antes?…"* abaixo da área de erro do
+  login~~ — **removido na Fase E (E1a):** com a mensagem específica do backend
+  (E1), virou ruído permanente pros ~99% que entram por senha.
 - **Definir senha** nas configurações (para quem entrou só com Google): chama
   `POST /users/me/set-password`. Aparece só quando a conta não tem senha.
+
+## Fase E — mensageria + correções (branch `feat/login-google-fase-e`)
+
+Detalhe na spec mestra `oratio-api/docs/specs/login-google.md` → "## Fase E".
+
+- **E2/E3** — `loginWithGoogle` não persiste (ver acima). `Register.tsx` bloqueia
+  quem já tem conta: descarta os tokens, revoga a sessão órfã
+  (`authService.discardGoogleSession` → `POST /auth/logout`), aviso → `/login`.
+- **E4** — `utils/flash.ts` + `<FlashToast/>` (montado no App, sobrevive ao
+  `navigate`): toast "Sua conta Google foi conectada à sua conta Oratio." quando
+  `googleLinkedNow`.
+- **E1b** — `<SetPasswordNudge/>`: barra fina dispensável por sessão (nunca
+  modal) para conta autenticada com `hasPassword: false`.
+- **E5/E6** — `GoogleSignInButton` com rótulo `continue_with` (default) e prop
+  `disabled` (bloqueia o clique + spinner durante o fluxo).
+- **E7** — `DeleteAccountModal` por `hasPassword`: conta só-Google reautentica
+  pelo Google; `profileService.deleteAccount({ password? , googleCredential? })`.
 
 ## Mudanças de infra que são deste repo
 

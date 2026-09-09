@@ -14,10 +14,13 @@ export default function FlashToast() {
   const location = useLocation();
   const [message, setMessage] = useState<string | null>(null);
 
-  // a cada troca de rota, consome uma mensagem pendente (se houver)
+  // a cada troca de rota, consome uma mensagem pendente (se houver). O
+  // setState vai num microtask pra não ser síncrono dentro do effect.
   useEffect(() => {
     const pending = readFlash();
-    if (pending) setMessage(pending);
+    if (!pending) return;
+    const id = setTimeout(() => setMessage(pending), 0);
+    return () => clearTimeout(id);
   }, [location.pathname]);
 
   useEffect(() => {

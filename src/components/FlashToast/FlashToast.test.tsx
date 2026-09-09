@@ -21,13 +21,13 @@ describe("FlashToast", () => {
     expect(container).toBeEmptyDOMElement()
   })
 
-  it("shows the pending flash message and consumes it", () => {
+  it("shows the pending flash message and consumes it", async () => {
     setFlash("Sua conta Google foi conectada à sua conta Oratio.")
     renderToast()
     expect(
-      screen.getByText("Sua conta Google foi conectada à sua conta Oratio."),
+      await screen.findByText("Sua conta Google foi conectada à sua conta Oratio."),
     ).toBeInTheDocument()
-    // consumida: uma segunda montagem não mostra nada
+    // consumida do sessionStorage assim que o effect roda
     expect(sessionStorage.getItem("oratio_flash")).toBeNull()
   })
 
@@ -35,6 +35,7 @@ describe("FlashToast", () => {
     vi.useFakeTimers()
     setFlash("mensagem")
     renderToast()
+    act(() => { vi.advanceTimersByTime(0) })   // microtask do "show"
     expect(screen.getByText("mensagem")).toBeInTheDocument()
     act(() => { vi.advanceTimersByTime(4000) })
     expect(screen.queryByText("mensagem")).not.toBeInTheDocument()
