@@ -10,6 +10,7 @@ import OfflineBanner from "./components/OfflineBanner/OfflineBanner"
 import PullToRefresh from "./components/PullToRefresh/PullToRefresh"
 import InstallAppNudge from "./components/InstallAppNudge/InstallAppNudge"
 import FlashToast from "./components/FlashToast/FlashToast"
+import SetPasswordNudge from "./components/SetPasswordNudge/SetPasswordNudge"
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary"
 import { preloadConsecration, getProgress } from "./services/consecrationService"
 import { sendActivityPing } from "./services/activityService"
@@ -236,6 +237,8 @@ return(
 <InstallAppNudge />
 
 <FlashToast />
+
+<SetPasswordNudge />
 
 {/*
   Boundary por rota (key={location.pathname}): se uma página quebrar no

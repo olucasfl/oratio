@@ -51,6 +51,12 @@ vi.mock("./services/activityService", () => ({
 vi.mock("./services/pushService", () => ({
   syncPushTimezone: vi.fn().mockResolvedValue(undefined),
 }))
+// SetPasswordNudge busca o perfil no boot (conta autenticada) — stub aqui,
+// como os outros serviços de boot, senão a chamada real cai no interceptor
+// de 401 e derruba a sessão do teste.
+vi.mock("./services/profileService", () => ({
+  getProfile: vi.fn().mockResolvedValue({ hasPassword: true }),
+}))
 
 import { preloadConsecration, getProgress } from "./services/consecrationService"
 import { sendActivityPing } from "./services/activityService"
