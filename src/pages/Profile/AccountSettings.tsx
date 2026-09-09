@@ -1,24 +1,78 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 import styles from "./AccountSettings.module.css"
 
 import ChangePasswordModal from "../../components/ChangePasswordModal/ChangePasswordModal"
+import SetPasswordModal from "../../components/SetPasswordModal/SetPasswordModal"
 import ChangeEmailModal from "../../components/ChangeEmailModal/ChangeEmailModal"
+
+import { getProfile } from "../../services/profileService"
+import { asApiError } from "../../utils/authErrors"
 
 import {
  ChevronLeft,
  KeyRound,
- Mail
+ Mail,
+ Loader2
 } from "lucide-react"
+
+/*
+ Lê o `hasPassword` do cache que a tela de Perfil já gravou (`oratio-profile`)
+ pra decidir na primeira renderização entre "Definir senha" e "Trocar senha"
+ sem flash. Sem cache, mostra um placeholder até o fetch responder.
+*/
+function cachedHasPassword():boolean | null{
+ try{
+  const raw = localStorage.getItem("oratio-profile")
+  if(!raw) return null
+  const parsed = JSON.parse(raw)
+  return typeof parsed?.hasPassword === "boolean" ? parsed.hasPassword : null
+ }catch{
+  return null
+ }
+}
 
 export default function AccountSettings(){
 
  const navigate = useNavigate()
 
  const [changePasswordOpen,setChangePasswordOpen] = useState(false)
+ const [setPasswordOpen,setSetPasswordOpen] = useState(false)
  const [changeEmailOpen,setChangeEmailOpen] = useState(false)
  const [emailRequestedMsg,setEmailRequestedMsg] = useState<string | null>(null)
+
+ const [hasPassword,setHasPassword] = useState<boolean | null>(cachedHasPassword)
+
+ useEffect(()=>{
+
+  let active = true
+
+  getProfile()
+   .then((data)=>{
+    if(!active) return
+    /*
+     Só um `false` explícito vira "Definir senha". Se o backend ainda não
+     expõe `hasPassword` (deploy fora de ordem), cai no default "Trocar
+     senha" — o status quo, seguro para uma conta com senha.
+    */
+    setHasPassword(typeof data?.hasPassword === "boolean" ? data.hasPassword : true)
+    try{
+     localStorage.setItem("oratio-profile", JSON.stringify(data))
+    }catch{
+     // cache é conveniência — segue sem ele
+    }
+   })
+   .catch((err)=>{
+    if(asApiError(err).response?.status === 401){
+     navigate("/login")
+    }
+    // outros erros: mantém o que veio do cache (ou o placeholder)
+   })
+
+  return ()=>{ active = false }
+
+ },[navigate])
 
  function handleEmailRequested(pendingEmail:string){
 
@@ -72,12 +126,35 @@ export default function AccountSettings(){
 
      <div className={styles.actionList}>
 
-      <button
-       className={styles.actionButton}
-       onClick={()=>setChangePasswordOpen(true)}
-      >
-       <KeyRound size={16}/> Trocar senha
-      </button>
+      {hasPassword === null && (
+
+       <button className={styles.actionButton} disabled>
+        <Loader2 size={16} className={styles.spinIcon}/> Carregando…
+       </button>
+
+      )}
+
+      {hasPassword === true && (
+
+       <button
+        className={styles.actionButton}
+        onClick={()=>setChangePasswordOpen(true)}
+       >
+        <KeyRound size={16}/> Trocar senha
+       </button>
+
+      )}
+
+      {hasPassword === false && (
+
+       <button
+        className={styles.actionButton}
+        onClick={()=>setSetPasswordOpen(true)}
+       >
+        <KeyRound size={16}/> Definir senha
+       </button>
+
+      )}
 
       <button
        className={styles.actionButton}
@@ -95,6 +172,12 @@ export default function AccountSettings(){
    <ChangePasswordModal
     open={changePasswordOpen}
     onClose={()=>setChangePasswordOpen(false)}
+   />
+
+   <SetPasswordModal
+    open={setPasswordOpen}
+    onClose={()=>setSetPasswordOpen(false)}
+    onDefined={()=>setHasPassword(true)}
    />
 
    <ChangeEmailModal
