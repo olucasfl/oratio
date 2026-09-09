@@ -67,11 +67,16 @@ describe("profileService", () => {
     expect(mockedApi.post).toHaveBeenCalledWith("/users/me/email/cancel")
   })
 
-  it("deleteAccount sends the password as the DELETE body (not a query param)", async () => {
+  it("deleteAccount sends the proof object as the DELETE body (password or googleCredential)", async () => {
     mockedApi.delete.mockResolvedValue({ data: { ok: true } })
-    await deleteAccount("hunter2")
 
-    expect(mockedApi.delete).toHaveBeenCalledWith("/users/me", { data: { password: "hunter2" } })
+    await deleteAccount({ password: "hunter2" })
+    expect(mockedApi.delete).toHaveBeenLastCalledWith("/users/me", { data: { password: "hunter2" } })
+
+    await deleteAccount({ googleCredential: "fresh.id.token" })
+    expect(mockedApi.delete).toHaveBeenLastCalledWith("/users/me", {
+      data: { googleCredential: "fresh.id.token" },
+    })
   })
 
 })

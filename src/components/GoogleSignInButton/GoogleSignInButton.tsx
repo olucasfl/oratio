@@ -10,6 +10,8 @@ interface Props {
   onCredential: (credential: string) => void;
   /** Texto do botão do Google. Default: "continue_with" ("Continuar com Google"). */
   text?: "signin_with" | "signup_with" | "continue_with";
+  /** Enquanto true, cobre o botão com um spinner e ignora cliques (E6). */
+  disabled?: boolean;
 }
 
 /*
@@ -24,7 +26,7 @@ Botão "Entrar com Google" do Google Identity Services.
 - One Tap (`prompt()`) NÃO é usado: não aparece no Safari, e o botão renderizado
   é o caminho garantido em todo navegador.
 */
-export default function GoogleSignInButton({ onCredential, text = "continue_with" }: Props) {
+export default function GoogleSignInButton({ onCredential, text = "continue_with", disabled = false }: Props) {
 
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
 
@@ -86,5 +88,18 @@ export default function GoogleSignInButton({ onCredential, text = "continue_with
 
   if (!clientId) return null;
 
-  return <div ref={containerRef} className={styles.container} />;
+  return (
+    <div className={styles.wrap}>
+      <div ref={containerRef} className={styles.container} />
+      {disabled && (
+        <div
+          className={styles.blocker}
+          onClickCapture={(e) => e.stopPropagation()}
+          aria-hidden="true"
+        >
+          <span className={styles.spinner} />
+        </div>
+      )}
+    </div>
+  );
 }

@@ -9,6 +9,7 @@ import AdminRoute from "./components/AdminRoute"
 import OfflineBanner from "./components/OfflineBanner/OfflineBanner"
 import PullToRefresh from "./components/PullToRefresh/PullToRefresh"
 import InstallAppNudge from "./components/InstallAppNudge/InstallAppNudge"
+import FlashToast from "./components/FlashToast/FlashToast"
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary"
 import { preloadConsecration, getProgress } from "./services/consecrationService"
 import { sendActivityPing } from "./services/activityService"
@@ -233,6 +234,8 @@ return(
 <ScrollToTop />
 
 <InstallAppNudge />
+
+<FlashToast />
 
 {/*
   Boundary por rota (key={location.pathname}): se uma página quebrar no

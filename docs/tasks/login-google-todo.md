@@ -25,17 +25,20 @@ Comandos: `npm run dev` · `npm run build` (tsc -b + vite — erro de tipo quebr
 |---|---|---|
 | **B** | Script GIS (`https://accounts.google.com/gsi/client`) em `/login` e `/register`; `google.accounts.id.initialize({ client_id: VITE_GOOGLE_CLIENT_ID, callback, use_fedcm_for_button: true, itp_support: true, ux_mode: "popup" })` + `renderButton`. **Nunca** `ux_mode: "redirect"`/`login_uri` (PWA iOS). `authService.loginWithGoogle(credential)` → `POST /auth/google` (path relativo via `services/api.ts`, `x-app` já embutido); no 200 grava `access_token`/`refresh_token` e navega `/oratio/home`. Texto fixo e incondicional abaixo da área de erro do login: *"Já entrou com Google antes? Experimente o botão Entrar com Google."* | ✅ na `develop`. Falta o **teste manual no navegador** (precisa do cliente OAuth + `VITE_GOOGLE_CLIENT_ID`). |
 | **C** | `profileService.setPassword()` → `POST /users/me/set-password`; `UserProfile.hasPassword` (novo campo do `GET /users/me`, backend C1); `SetPasswordModal` (= `ChangePasswordModal` sem "senha atual"); "Configurações da conta" busca o perfil e mostra **"Definir senha"** (`hasPassword: false`) **ou** "Trocar senha" (`true`), nunca os dois — lê o cache `oratio-profile` pra não piscar. `forgot`→`reset` já está acessível pela tela `/login` (Fase B). | ✅ na `develop` |
-| **D** | `vercel.json` bloco `headers` — CSP ganha os directives do GIS (ver "Fase D — CSP" abaixo). `VITE_GOOGLE_CLIENT_ID` na Vercel (humano). `db push` de produção (humano). Cliente OAuth + origens de produção no Google Cloud Console (humano). Smoke iPhone PWA instalado (humano). Confirmar `ALLOWED_ORIGINS` do backend inalterado. | 🚧 CSP na branch `feat/login-google-fase-d`; resto é humano |
+| **D** | `vercel.json` bloco `headers` — CSP ganha os directives do GIS (ver "Fase D — CSP" abaixo). `VITE_GOOGLE_CLIENT_ID` na Vercel (humano). ~~`db push` de produção~~ **feito 2026-09-09** (Supabase). Cliente OAuth + origens de produção no Google Cloud Console (humano). Smoke iPhone PWA instalado (humano). Confirmar `ALLOWED_ORIGINS` do backend inalterado. | ✅ CSP mergeada na `develop` (`946cfac`); resto é humano |
+| **E** | Mensageria + sinais de resultado + correções — ver "Fase E" abaixo. `authService.loginWithGoogle` retorna `{ tokens, isNewUser, googleLinkedNow }` **sem persistir**; texto fixo do `/login` removido; `/register` bloqueia conta existente; toast de auto-ligação; rótulo do botão; loading state; exclusão de conta só-Google. | ✅ na branch `feat/login-google-fase-e` |
 
 ## Critérios de aceite (frontend — BDD)
 
-- [x] **Dado** `/login` carregada, **então** o texto fixo *"Já entrou com Google antes? ..."*
-      aparece sempre (mesmo sem erro), e o botão do Google renderiza quando há
-      `VITE_GOOGLE_CLIENT_ID` (`GoogleSignInButton` — teste próprio + `Login.test.tsx`).
+- [x] ~~**Dado** `/login` carregada, **então** o texto fixo *"Já entrou com Google antes? ..."*
+      aparece sempre~~ — **revertido na Fase E (E1a): o texto foi removido.** O botão do Google
+      renderiza quando há `VITE_GOOGLE_CLIENT_ID` (`GoogleSignInButton` — teste próprio +
+      `Login.test.tsx`) segue valendo.
 - [x] **Dado** o callback do GIS entrega um `credential`, **quando** conclui, **então**
       `authService.loginWithGoogle` faz `POST /auth/google` com `{ credential }` (`./api`
-      mockado, asserção do corpo), grava os tokens e navega pro destino (`authService.test.ts`,
-      `Login.test.tsx`, `Register.test.tsx`).
+      mockado, asserção do corpo) e navega pro destino. **Fase E (E2/E3):** `loginWithGoogle`
+      agora **retorna** os tokens sem gravar; a **tela** decide (`Login.tsx` grava sempre,
+      `Register.tsx` descarta se `isNewUser: false`).
 - [x] **Dado** `POST /auth/google` responde 401/503, **quando** o usuário tenta, **então**
       mensagem legível aparece e **nenhum** token é gravado, sem navegação.
 - [x] **Dado** um 401 de `/auth/google`, **então** o interceptor do `api.ts` **não** dispara
@@ -101,8 +104,9 @@ fontes antes). Por isso o plano de verificação é **pós-deploy** e **obrigat�
 **Pendências humanas da fase (não são código):**
 - [ ] `VITE_GOOGLE_CLIENT_ID` nas env vars da Vercel (= `GOOGLE_CLIENT_ID` do Render).
 - [ ] `GOOGLE_CLIENT_ID` nas env vars do Render.
-- [ ] `npx prisma db push && npx prisma generate` em produção (`oratio-api`; script em
-      `oratio-api/prisma/db-scripts/2026-09-08-login-google.sql`).
+- [x] `npx prisma db push` em produção (`oratio-api`) — **feito 2026-09-09** (Supabase;
+      `LinkedAccount` + `password` nullable aplicados). Script
+      `oratio-api/prisma/db-scripts/2026-09-08-login-google.sql`.
 - [ ] Google Cloud Console: cliente OAuth "Web application" com *Authorized JavaScript origins*
       `http://localhost:5173` + `https://oratio-phi.vercel.app`; tela de consentimento (scopes
       `openid`/`email`/`profile`, não-sensíveis). Detalhe em `oratio-api/docs/specs/login-google.md`
@@ -119,3 +123,49 @@ Arquivos Fase B: `src/services/api.ts`, `src/services/authService.ts`, `src/util
 Arquivos Fase C: `src/services/profileService.ts`, `src/components/SetPasswordModal/*`,
 `src/pages/Profile/AccountSettings.tsx`.
 Arquivos Fase D: `vercel.json` (CSP).
+
+---
+
+## Fase E — mensageria, sinais de resultado, correções (branch `feat/login-google-fase-e`)
+
+Spec: `oratio-api/docs/specs/login-google.md` → "## Fase E". Backend pareado:
+`oratio-api` branch `feat/login-google-fase-e` (E1 mensagem do 401, E2 os flags).
+
+- [x] **E1a** — `Login.tsx`: removido o `<p>` fixo *"Já entrou com Google antes?…"* + CSS
+      órfão. `Login.test.tsx`: texto ausente **+** a mensagem específica do 401 (E1) é exibida
+      (`getAuthErrorMessage` repassa mensagem desconhecida verbatim).
+- [x] **E2-consumo + E3** — `authService.loginWithGoogle` retorna `{ tokens, isNewUser,
+      googleLinkedNow }` e **não persiste** (comentário sobre a assimetria com `login()`, que
+      NÃO foi refatorado). `api.ts`: helpers `persistSession` / `clearAuthHeader`.
+      `authService.discardGoogleSession` (revoga a sessão órfã, timeout 3s, best-effort).
+      `Login.tsx`: os 3 desfechos entram → `persistSession` + navega. `Register.tsx`:
+      `isNewUser:false` → `discardGoogleSession` + `AlertModal` "Você já tem conta no Oratio.
+      Entre pela tela de login." → `/login`; `isNewUser:true` → `persistSession` + Home.
+- [x] **E4** — `utils/flash.ts` + `<FlashToast/>` (montado no App, sobrevive ao `navigate`).
+      `googleLinkedNow` → toast "Sua conta Google foi conectada à sua conta Oratio." (na
+      `/register`, vira a mensagem do `AlertModal` do ramo E3).
+- [x] **E1b** — aviso "Defina uma senha" **no Perfil**, de vez em quando (cooldown de 7 dias,
+      `localStorage set_password_hint_last`), quando a pessoa abre o Perfil e `hasPassword:
+      false`: a engrenagem de **Configurações da conta** pulsa e um balão aponta pra ela
+      ("Definir senha" leva a `/oratio/profile/settings?senha=1`; "Agora não" fecha). Chegando
+      em Configurações com `?senha=1`, o botão **"Definir senha"** rola até a vista e pulsa.
+      Não é modal. (Substitui o `<SetPasswordNudge/>` app-level da 1ª versão.)
+- [x] **E5 + E6** — `GoogleSignInButton`: prop `disabled` (camada que intercepta clique +
+      spinner). `Login.tsx`/`Register.tsx` removem `text=` (default `continue_with`) e passam
+      `disabled={loading}`.
+- [x] **E7-frontend** — `profileService.deleteAccount({ password? , googleCredential? })`.
+      `DeleteAccountModal` prop `hasPassword`: `true` → campo de senha; `false` → botão de
+      reautenticação no Google depois que o e-mail confere. `Profile.tsx` passa
+      `hasPassword={profile.hasPassword ?? true}`. Testes: 2 caminhos + 2 falhas.
+- [x] **Docs** — este arquivo (Fase E + premissa do `db push` corrigida) · ponteiro
+      `docs/specs/login-google.md` · `docs/ARCHITECTURE.md`.
+
+### Checkpoint E — teste manual (humano)
+
+- [ ] `/register` com uma conta que já existe → aviso "Você já tem conta…" → `/login` (e a
+      sessão órfã não aparece em "Sessões ativas").
+- [ ] `/register` com uma conta Google nova → entra direto.
+- [ ] Login por senha numa conta só-Google → 401 "Esta conta entra com o Google…".
+- [ ] Exclusão de conta só-Google: mesma conta Google → apaga; outra conta Google → 400,
+      continua logado.
+- [ ] Toast "Sua conta Google foi conectada…" ao auto-ligar.

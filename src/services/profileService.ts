@@ -85,9 +85,18 @@ export async function cancelEmailChange(){
 
 }
 
-export async function deleteAccount(password:string){
+/*
+Excluir a conta exige uma prova FRESCA de identidade — o access token sozinho
+(roubável) não pode destruir a conta (spec login-google §"Fase E → E7";
+ARCHITECTURE §7). Conta com senha manda { password }; conta só-Google manda um
+{ googleCredential } (id_token recém-emitido). O DeleteAccountDto do backend
+aceita os dois.
+*/
+export async function deleteAccount(
+ proof: { password?: string; googleCredential?: string },
+){
 
- const res = await api.delete("/users/me", { data: { password } })
+ const res = await api.delete("/users/me", { data: proof })
 
  return res.data
 

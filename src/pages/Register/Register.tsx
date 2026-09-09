@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
-import { register, loginWithGoogle } from "../../services/authService";
+import { register, loginWithGoogle, discardGoogleSession } from "../../services/authService";
+import { persistSession } from "../../services/api";
 import { getAuthErrorMessage } from "../../utils/authErrors";
 import { withRedirect } from "../../utils/authRedirect";
 import VerifyEmailModal from "../../components/VerifyEmailModal/VerifyEmailModal";
@@ -27,6 +28,7 @@ const [verifyOpen,setVerifyOpen] = useState(false);
 const [registeredEmail,setRegisteredEmail] = useState("");
 const [alertMessage,setAlertMessage] = useState<string | null>(null);
 const [openVerifyAfterAlert,setOpenVerifyAfterAlert] = useState(false);
+const [goToLoginAfterAlert,setGoToLoginAfterAlert] = useState(false);
 
 async function handleGoogleCredential(credential:string){
 
@@ -34,8 +36,30 @@ setLoading(true);
 
 try{
 
-await loginWithGoogle(credential);
+const result = await loginWithGoogle(credential);
 
+if(!result.isNewUser){
+ /*
+ A pessoa já tem conta no Oratio. O backend emitiu tokens, mas NÃO vamos
+ adotar a sessão: "cadastrar" quem já existe seria mentira (spec login-google
+ §"Fase E → E3"). Descarta a sessão órfã (senão vira dispositivo fantasma em
+ "sessões ativas") e manda pro login.
+ */
+ await discardGoogleSession(result.refresh_token);
+ setGoToLoginAfterAlert(true);
+ setAlertMessage(
+  result.googleLinkedNow
+   // auto-ligação aconteceu agora, pela tela de cadastro: avisa que ligou
+   // (E4 — única chance) E manda pro login (E3).
+   ? "Conectamos sua conta Google à sua conta Oratio. Agora entre pela tela de login."
+   : "Você já tem conta no Oratio. Entre pela tela de login."
+ );
+ return;
+}
+
+// cadastro novo via Google — a tela de boas-vindas (quando existir) intercepta
+// pelo showWelcome; por ora cai na Home.
+persistSession(result.access_token, result.refresh_token);
 navigate(homeDestination);
 
 }catch(err){
@@ -143,7 +167,7 @@ required
 
 <div className={styles.divider}><span>ou</span></div>
 
-<GoogleSignInButton onCredential={handleGoogleCredential} text="signup_with" />
+<GoogleSignInButton onCredential={handleGoogleCredential} disabled={loading} />
 
 <p className={styles.switch}>
 Já possui conta?
@@ -169,6 +193,10 @@ onClose={()=>{
  if(openVerifyAfterAlert){
   setOpenVerifyAfterAlert(false)
   setVerifyOpen(true)
+ }
+ if(goToLoginAfterAlert){
+  setGoToLoginAfterAlert(false)
+  navigate(loginDestination)
  }
 }}
 />

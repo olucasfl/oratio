@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useEffect, useRef, useState } from "react"
+import { useNavigate, useSearchParams } from "react-router-dom"
 
 import styles from "./AccountSettings.module.css"
 
@@ -36,6 +36,7 @@ function cachedHasPassword():boolean | null{
 export default function AccountSettings(){
 
  const navigate = useNavigate()
+ const [searchParams] = useSearchParams()
 
  const [changePasswordOpen,setChangePasswordOpen] = useState(false)
  const [setPasswordOpen,setSetPasswordOpen] = useState(false)
@@ -43,6 +44,27 @@ export default function AccountSettings(){
  const [emailRequestedMsg,setEmailRequestedMsg] = useState<string | null>(null)
 
  const [hasPassword,setHasPassword] = useState<boolean | null>(cachedHasPassword)
+
+ /* chegou do aviso do Perfil (?senha=1) → destaca o botão "Definir senha" */
+ const [pwdHighlight,setPwdHighlight] = useState(
+  ()=> searchParams.get("senha") === "1",
+ )
+ const setPwdBtnRef = useRef<HTMLButtonElement>(null)
+
+ useEffect(()=>{
+  if(!pwdHighlight) return
+  const t = setTimeout(()=>setPwdHighlight(false),3600)
+  return ()=>clearTimeout(t)
+ },[pwdHighlight])
+
+ // rola até o botão só depois que ele existe (hasPassword resolvido)
+ useEffect(()=>{
+  if(pwdHighlight && hasPassword === false){
+   requestAnimationFrame(()=>{
+    setPwdBtnRef.current?.scrollIntoView({ behavior:"smooth", block:"center" })
+   })
+  }
+ },[pwdHighlight, hasPassword])
 
  useEffect(()=>{
 
@@ -148,7 +170,8 @@ export default function AccountSettings(){
       {hasPassword === false && (
 
        <button
-        className={styles.actionButton}
+        ref={setPwdBtnRef}
+        className={`${styles.actionButton} ${pwdHighlight ? styles.actionButtonPulse : ""}`}
         onClick={()=>setSetPasswordOpen(true)}
        >
         <KeyRound size={16}/> Definir senha

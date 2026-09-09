@@ -4,16 +4,22 @@ import { createPortal } from "react-dom"
 import { deleteAccount } from "../../services/profileService"
 import { getAuthErrorMessage } from "../../utils/authErrors"
 import { clearSession } from "../../services/api"
+import GoogleSignInButton from "../GoogleSignInButton/GoogleSignInButton"
 
 import styles from "./DeleteAccountModal.module.css"
 
 interface Props{
  open:boolean
  userEmail:string
+ /*
+ `false` = conta que entrou só pelo Google — a prova de identidade é uma
+ reautenticação no Google, não a senha (spec login-google §"Fase E → E7").
+ */
+ hasPassword:boolean
  onClose:()=>void
 }
 
-export default function DeleteAccountModal({ open, userEmail, onClose }:Props){
+export default function DeleteAccountModal({ open, userEmail, hasPassword, onClose }:Props){
 
  const [confirmation,setConfirmation] = useState("")
  const [password,setPassword] = useState("")
@@ -22,9 +28,8 @@ export default function DeleteAccountModal({ open, userEmail, onClose }:Props){
 
  if(!open) return null
 
- const canDelete =
-  confirmation.trim().toLowerCase() === userEmail.trim().toLowerCase() &&
-  password.length > 0
+ const emailMatches =
+  confirmation.trim().toLowerCase() === userEmail.trim().toLowerCase()
 
  function handleClose(){
   setConfirmation("")
@@ -33,16 +38,14 @@ export default function DeleteAccountModal({ open, userEmail, onClose }:Props){
   onClose()
  }
 
- async function handleDelete(){
-
-  if(!canDelete) return
+ async function runDelete(proof:{ password?:string; googleCredential?:string }){
 
   setError(null)
   setLoading(true)
 
   try{
 
-   await deleteAccount(password)
+   await deleteAccount(proof)
    clearSession()
 
   }catch(err){
@@ -82,25 +85,49 @@ export default function DeleteAccountModal({ open, userEmail, onClose }:Props){
      onChange={(e)=>setConfirmation(e.target.value)}
     />
 
-    <p className={styles.hint}>
-     Confirme com sua senha atual:
-    </p>
+    {hasPassword ? (
+     <>
+      <p className={styles.hint}>
+       Confirme com sua senha atual:
+      </p>
 
-    <input
-     className={styles.input}
-     type="password"
-     placeholder="Sua senha"
-     value={password}
-     onChange={(e)=>setPassword(e.target.value)}
-    />
+      <input
+       className={styles.input}
+       type="password"
+       placeholder="Sua senha"
+       value={password}
+       onChange={(e)=>setPassword(e.target.value)}
+      />
 
-    <button
-     className={styles.buttonDanger}
-     onClick={handleDelete}
-     disabled={!canDelete || loading}
-    >
-     {loading ? "Excluindo..." : "Excluir minha conta"}
-    </button>
+      <button
+       className={styles.buttonDanger}
+       onClick={()=>runDelete({ password })}
+       disabled={!emailMatches || password.length === 0 || loading}
+      >
+       {loading ? "Excluindo..." : "Excluir minha conta"}
+      </button>
+     </>
+    ) : (
+     <>
+      <p className={styles.hint}>
+       Sua conta entra com o Google. Para confirmar a exclusão, entre de novo
+       com o Google:
+      </p>
+
+      {emailMatches ? (
+       <div className={styles.googleReauth}>
+        <GoogleSignInButton
+         onCredential={(credential)=>runDelete({ googleCredential: credential })}
+         disabled={loading}
+        />
+       </div>
+      ) : (
+       <button className={styles.buttonDanger} disabled>
+        Excluir minha conta
+       </button>
+      )}
+     </>
+    )}
 
     <button className={styles.buttonSecondary} onClick={handleClose}>
      Cancelar

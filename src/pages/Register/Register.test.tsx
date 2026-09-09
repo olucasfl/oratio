@@ -9,7 +9,13 @@ vi.mock("react-router-dom", async (importOriginal) => ({
   useNavigate: () => navigateMock,
 }))
 
-vi.mock("../../services/authService", () => ({ register: vi.fn(), loginWithGoogle: vi.fn() }))
+vi.mock("../../services/authService", () => ({
+  register: vi.fn(),
+  loginWithGoogle: vi.fn(),
+  discardGoogleSession: vi.fn(),
+}))
+
+vi.mock("../../services/api", () => ({ persistSession: vi.fn() }))
 
 // O modal de verificação faz polling contra a API — stub aqui.
 vi.mock("../../components/VerifyEmailModal/VerifyEmailModal", () => ({
@@ -18,16 +24,25 @@ vi.mock("../../components/VerifyEmailModal/VerifyEmailModal", () => ({
 }))
 
 vi.mock("../../components/GoogleSignInButton/GoogleSignInButton", () => ({
-  default: ({ onCredential }: { onCredential: (c: string) => void }) => (
-    <button onClick={() => onCredential("fake-google-credential")}>google-signin</button>
+  default: ({ onCredential, disabled }: { onCredential: (c: string) => void; disabled?: boolean }) => (
+    <button disabled={disabled} onClick={() => onCredential("fake-google-credential")}>
+      google-signin
+    </button>
   ),
 }))
 
-import { register, loginWithGoogle } from "../../services/authService"
+import { register, loginWithGoogle, discardGoogleSession } from "../../services/authService"
+import { persistSession } from "../../services/api"
 import Register from "./Register"
 
 const registerMock = register as unknown as ReturnType<typeof vi.fn>
 const loginWithGoogleMock = loginWithGoogle as unknown as ReturnType<typeof vi.fn>
+const discardGoogleSessionMock = discardGoogleSession as unknown as ReturnType<typeof vi.fn>
+const persistSessionMock = persistSession as unknown as ReturnType<typeof vi.fn>
+
+const NEW_USER = { access_token: "a", refresh_token: "r", isNewUser: true, googleLinkedNow: false }
+const EXISTING = { access_token: "a", refresh_token: "r", isNewUser: false, googleLinkedNow: false }
+const AUTO_LINKED = { access_token: "a", refresh_token: "r", isNewUser: false, googleLinkedNow: true }
 
 function fillForm() {
   fireEvent.change(screen.getByPlaceholderText("Nome"), { target: { value: "Ana" } })
@@ -80,8 +95,8 @@ describe("Register", () => {
     expect(navigateMock).toHaveBeenCalledWith("/login?redirect=%2Foratio%2Fprayers")
   })
 
-  it("signs up with a Google credential and goes straight to home (no verify step)", async () => {
-    loginWithGoogleMock.mockResolvedValue({})
+  it("signs up a NEW account with Google and goes straight to home (no verify step)", async () => {
+    loginWithGoogleMock.mockResolvedValue(NEW_USER)
     renderRegister("/register?redirect=/oratio/biblia")
 
     fireEvent.click(screen.getByText("google-signin"))
@@ -89,8 +104,46 @@ describe("Register", () => {
     await waitFor(() =>
       expect(loginWithGoogleMock).toHaveBeenCalledWith("fake-google-credential"),
     )
+    expect(persistSessionMock).toHaveBeenCalledWith("a", "r")
+    expect(discardGoogleSessionMock).not.toHaveBeenCalled()
     expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia")
     expect(screen.queryByText(/verify-modal/)).not.toBeInTheDocument()
+  })
+
+  it("E3 — an EXISTING account via /register: discards the session and routes to login", async () => {
+    loginWithGoogleMock.mockResolvedValue(EXISTING)
+    renderRegister("/register?redirect=/oratio/biblia")
+
+    fireEvent.click(screen.getByText("google-signin"))
+
+    // sessão órfã revogada, tokens NÃO adotados
+    await waitFor(() => expect(discardGoogleSessionMock).toHaveBeenCalledWith("r"))
+    expect(persistSessionMock).not.toHaveBeenCalled()
+
+    // aviso + caminho pro login
+    expect(
+      await screen.findByText("Você já tem conta no Oratio. Entre pela tela de login."),
+    ).toBeInTheDocument()
+    expect(navigateMock).not.toHaveBeenCalledWith("/oratio/biblia")
+
+    fireEvent.click(screen.getByRole("button", { name: "OK" }))
+    expect(navigateMock).toHaveBeenCalledWith("/login?redirect=%2Foratio%2Fbiblia")
+  })
+
+  it("E3+E4 — auto-link via /register: tells the user it linked, then routes to login", async () => {
+    loginWithGoogleMock.mockResolvedValue(AUTO_LINKED)
+    renderRegister()
+
+    fireEvent.click(screen.getByText("google-signin"))
+
+    await waitFor(() => expect(discardGoogleSessionMock).toHaveBeenCalledWith("r"))
+    expect(persistSessionMock).not.toHaveBeenCalled()
+    expect(
+      await screen.findByText(/Conectamos sua conta Google à sua conta Oratio/i),
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole("button", { name: "OK" }))
+    expect(navigateMock).toHaveBeenCalledWith("/login")
   })
 
   it("shows an alert when the Google sign-up fails", async () => {

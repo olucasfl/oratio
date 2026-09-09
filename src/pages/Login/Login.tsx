@@ -4,7 +4,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 
 import { login, loginWithGoogle, forgotPassword } from "../../services/authService";
+import { persistSession } from "../../services/api";
 import { getAuthErrorMessage } from "../../utils/authErrors";
+import { setFlash } from "../../utils/flash";
 import { withRedirect } from "../../utils/authRedirect";
 
 import ForgotPasswordModal from "../../components/ForgotPasswordModal/ForgotPasswordModal";
@@ -88,7 +90,19 @@ export default function Login() {
 
     try {
 
-      await loginWithGoogle(credential);
+      // Na tela de login, os três desfechos entram: a intenção é entrar, e
+      // entrar é o que acontece (spec login-google §"Fase E → E3"). O
+      // loginWithGoogle não persiste sozinho — a tela decide.
+      const result = await loginWithGoogle(credential);
+
+      persistSession(result.access_token, result.refresh_token);
+
+      if (result.googleLinkedNow) {
+        // auto-ligação silenciosa: a ÚNICA vez que a pessoa é avisada que a
+        // identidade Google foi ligada à conta dela (não há tela de
+        // desvincular no v1) — spec login-google §"Fase E → E4".
+        setFlash("Sua conta Google foi conectada à sua conta Oratio.");
+      }
 
       navigate(destination);
 
@@ -184,15 +198,7 @@ export default function Login() {
 
         <div className={styles.divider}><span>ou</span></div>
 
-        <GoogleSignInButton onCredential={handleGoogleCredential} text="signin_with" />
-
-        {/*
-          Texto fixo e incondicional — aparece SEMPRE, não só em erro e nunca
-          condicionado ao tipo da conta (senão vazaria que a conta é só-Google).
-        */}
-        <p className={styles.googleHint}>
-          Já entrou com Google antes? Experimente o botão Entrar com Google.
-        </p>
+        <GoogleSignInButton onCredential={handleGoogleCredential} disabled={loading} />
 
         <div
           className={styles.forgot}
