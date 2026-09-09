@@ -1,6 +1,6 @@
 # Entrar com Google — ponteiro
 
-> Status: aprovada (2026-09-08)
+> Status: Fases A–E na `develop` (2026-09-09). **Fase E COM BUG-E1 de CSS em aberto — não pronta pra `main`.**
 
 A **spec mestra** desta feature vive no backend:
 `oratio-api/docs/specs/login-google.md` (objetivo, contrato das rotas, modelo de
@@ -48,6 +48,17 @@ Detalhe na spec mestra `oratio-api/docs/specs/login-google.md` → "## Fase E".
   `disabled` (bloqueia o clique + spinner durante o fluxo).
 - **E7** — `DeleteAccountModal` por `hasPassword`: conta só-Google reautentica
   pelo Google; `profileService.deleteAccount({ password? , googleCredential? })`.
+
+### ⚠️ BUG-E1 (em aberto) — balão do aviso "Defina uma senha" recortado no desktop
+
+`.pwdHint` é `position:absolute` dentro de `.profileHero` (`Profile.module.css`),
+que tem `overflow:hidden` (segura o gradiente nas bordas). No desktop / com fonte
+grande o balão ultrapassa o card e some a última linha. **Não remover o
+`overflow:hidden`.** Correção: mover **só o balão** pro `<Portal/>`
+(`src/components/Portal/Portal.tsx`), `position:fixed` a partir do
+`getBoundingClientRect()` da engrenagem. Testar desktop + mobile + fonte máxima.
+Detalhe e critérios: `oratio-api/docs/specs/login-google.md` → "Fase E → Bugs
+conhecidos". Regra geral registrada em `docs/ARCHITECTURE.md` (§6).
 
 ## Mudanças de infra que são deste repo
 
