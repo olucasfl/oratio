@@ -12,6 +12,7 @@ import { logout as authLogout } from "../../services/authService"
 import { FONT_SCALE_OPTIONS, getStoredFontScale, setFontScale } from "../../utils/fontScale"
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
+import Portal from "../../components/Portal/Portal"
 import DeleteAccountModal from "../../components/DeleteAccountModal/DeleteAccountModal"
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
 import {
@@ -65,9 +66,15 @@ export default function Profile(){
  De vez em quando (a cada 7 dias, timestamp em localStorage), quando a pessoa
  entra no Perfil: a engrenagem de Configurações pulsa e um balão aponta pra ela.
  Não é modal. Some pra sempre quando a conta ganha senha.
+
+ O balão vive num <Portal/> (fora de `.profileHero`, que tem `overflow:hidden` e
+ recortava a última linha no desktop — BUG-E1). É `position:fixed`, posicionado a
+ partir do rect da engrenagem e recalculado no resize/scroll.
  */
  const [pwdHint,setPwdHint] = useState(false)
  const pwdHintChecked = useRef(false)
+ const gearRef = useRef<HTMLButtonElement>(null)
+ const [hintPos,setHintPos] = useState<{ top:number; right:number } | null>(null)
 
  /* chegou do popup de reengajamento (?notif=1) → destaca a opção */
  useEffect(()=>{
@@ -98,6 +105,30 @@ export default function Profile(){
   dismissPwdHint()
   navigate("/oratio/profile/settings?senha=1")
  }
+
+ // posiciona o balão a partir da engrenagem enquanto o aviso está aberto
+ useEffect(()=>{
+  if(!pwdHint) return
+
+  let raf = 0
+  const place = ()=>{
+   raf = requestAnimationFrame(()=>{
+    const el = gearRef.current
+    if(!el) return
+    const r = el.getBoundingClientRect()
+    setHintPos({ top: r.bottom + 8, right: Math.max(8, window.innerWidth - r.right) })
+   })
+  }
+
+  place()
+  window.addEventListener("resize", place)
+  window.addEventListener("scroll", place, true)
+  return ()=>{
+   cancelAnimationFrame(raf)
+   window.removeEventListener("resize", place)
+   window.removeEventListener("scroll", place, true)
+  }
+ },[pwdHint])
 
  // rola até o card só depois que o perfil renderizou (senão o ref é nulo)
  useEffect(()=>{
@@ -465,6 +496,7 @@ export default function Profile(){
     <div className={styles.profileHero}>
 
      <button
+      ref={gearRef}
       className={`${styles.settingsGear} ${pwdHint ? styles.settingsGearPulse : ""}`}
       onClick={()=>navigate("/oratio/profile/settings")}
       aria-label="Configurações da conta"
@@ -473,10 +505,14 @@ export default function Profile(){
       <Settings size={19}/>
      </button>
 
-     {pwdHint && (
-      <>
+     {pwdHint && hintPos && (
+      <Portal>
        <div className={styles.pwdHintBackdrop} onClick={dismissPwdHint} />
-       <div className={styles.pwdHint} role="status">
+       <div
+        className={styles.pwdHint}
+        role="status"
+        style={{ top: hintPos.top, right: hintPos.right }}
+       >
         <p>
          Sua conta entra com o Google. Defina uma senha em
          <strong> Configurações da conta</strong> (a engrenagem acima) para
@@ -491,7 +527,7 @@ export default function Profile(){
          </button>
         </div>
        </div>
-      </>
+      </Portal>
      )}
 
      <div className={styles.avatar}>
