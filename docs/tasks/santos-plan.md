@@ -1,5 +1,8 @@
 # Plano — Biografias do Santo do Dia: 20/out → 08/dez (50 dias)
 
+> **Nota (pós-execução):** a cobertura foi estendida até 13/dez (Lote 11 no
+> `santos-todo.md`). O texto abaixo é o desenho original de 50 dias.
+
 ## Context
 
 O recurso "Santo do Dia" (`SaintOfDayCard` na Home + página `SantoDoDia`) mostra nome, grau e
