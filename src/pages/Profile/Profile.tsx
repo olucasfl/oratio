@@ -961,8 +961,9 @@ export default function Profile(){
    <DeleteAccountModal
     open={deleteAccountOpen}
     userEmail={profile.email}
-    /* cache antigo pode não ter o campo — default seguro é o fluxo por senha */
+    /* cache antigo pode não ter os campos — default seguro é o fluxo por senha */
     hasPassword={profile.hasPassword ?? true}
+    hasGoogle={profile.hasGoogle ?? false}
     onClose={()=>setDeleteAccountOpen(false)}
    />
 

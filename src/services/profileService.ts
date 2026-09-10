@@ -29,6 +29,14 @@ export interface UserProfile {
    O backend nunca manda o hash — só este booleano.
   */
   hasPassword: boolean
+  /*
+   `true` = existe um `LinkedAccount` google para esta conta. Junto com
+   `hasPassword` diz se a conta tem senha, Google, ou OS DOIS — o
+   `DeleteAccountModal` precisa saber pra oferecer a prova por senha e a
+   prova por Google (spec prova-identidade). Aditivo; um cache antigo sem o
+   campo vira `undefined` → tratado como `false`.
+  */
+  hasGoogle?: boolean
   spiritualProgress: SpiritualProgress
 }
 
@@ -87,10 +95,10 @@ export async function cancelEmailChange(){
 
 /*
 Excluir a conta exige uma prova FRESCA de identidade — o access token sozinho
-(roubável) não pode destruir a conta (spec login-google §"Fase E → E7";
-ARCHITECTURE §7). Conta com senha manda { password }; conta só-Google manda um
-{ googleCredential } (id_token recém-emitido). O DeleteAccountDto do backend
-aceita os dois.
+(roubável) não pode destruir a conta (spec prova-identidade; ARCHITECTURE §7).
+Conta com senha manda { password }; conta com Google manda um { googleCredential }
+(id_token recém-emitido). Uma conta com OS DOIS métodos pode mandar qualquer um —
+o backend (`assertFreshProof`) decide pelo que a conta tem, não por hasPassword.
 */
 export async function deleteAccount(
  proof: { password?: string; googleCredential?: string },
