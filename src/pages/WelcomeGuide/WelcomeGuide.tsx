@@ -1,7 +1,12 @@
 import { useEffect, useId, useRef, useState } from "react"
 import type { TouchEvent } from "react"
 import { useNavigate } from "react-router-dom"
-import { Sunrise, Cross, BookOpen } from "lucide-react"
+import {
+ Sunrise, Cross, BookOpen,
+ Calendar, Flame, Circle, HandHeart,
+ CalendarCheck, HeartHandshake, Clock,
+ Highlighter, Book, MessageCircle, TrendingUp,
+} from "lucide-react"
 
 import { markWelcomeSeen } from "../../services/welcomeService"
 
@@ -20,61 +25,87 @@ import styles from "./WelcomeGuide.module.css"
  `showWelcome` do `GET /users/me` (o shell `WelcomeGate` redireciona pra cá)
  — este componente não decide se aparece.
 
- Movimento:
- - o texto se digita (padrão do Vox — ver `useTypewriter`), título e corpo
-   em tempos diferentes;
- - a página que sai desliza pra esquerda enquanto a que entra vem da direita
-   (coerente com "só pra frente");
- - o ícone tem um movimento próprio, sutil, contínuo;
+ Cada página é um capítulo: título curto, uma linha de introdução, e uma
+ lista de 3–4 recursos (ícone pequeno + nome + meia linha). Só apresentação
+ do que o app tem — nada de conteúdo devocional.
+
+ Movimento (aprovado, não muda):
+ - título e introdução se digitam (padrão do Vox — ver `useTypewriter`) em
+   tempos diferentes; os itens da lista entram em sequência depois;
+ - a página que sai desliza pra esquerda enquanto a que entra vem da direita;
+ - o ícone grande tem um movimento próprio, sutil, contínuo;
  - tocar na tela completa a animação em curso; arrastar pra esquerda avança.
- - `prefers-reduced-motion: reduce` → texto inteiro e instantâneo, nenhuma
+ - `prefers-reduced-motion: reduce` → tudo completo e instantâneo, nenhuma
    animação de entrada, nenhuma transição, e a página que sai nem é montada.
-   Caminho de primeira classe: as animações vivem só sob
-   `@media (prefers-reduced-motion: no-preference)` no CSS.
+   As animações vivem só sob `@media (prefers-reduced-motion: no-preference)`.
 
  A11y: `role="dialog"` + `aria-modal` + `aria-labelledby` no título; o foco
- vai pro botão de avanço a cada página; a camada que se digita é
- `aria-hidden` e o texto completo existe desde o início numa cópia
- visualmente escondida (`.srOnly`) — nada de `aria-live`.
+ vai pro botão de avanço a cada página. A camada que se digita e a lista
+ visível são `aria-hidden`; o texto completo (título, introdução e a lista
+ inteira como `<ul>/<li>`) existe desde o início numa cópia `.srOnly`. Nada
+ de `aria-live`.
 */
+
+interface Feature{
+ icon: typeof Sunrise
+ name: string
+ note: string
+}
 
 interface Page{
  icon: typeof Sunrise
  motion: string
  title: string
- body: string
+ intro: string
+ features: Feature[]
 }
 
 const PAGES: Page[] = [
  {
   icon: Sunrise,
   motion: "iconSunrise",
-  title: "Bem-vindo ao Oratio",
-  body: "Seu companheiro de oração diária. Abra o app e encontre a liturgia de hoje, o Santo do Dia e uma frase para levar no coração.",
+  title: "Oração diária",
+  intro: "O essencial de cada dia, sempre à mão.",
+  features: [
+   { icon: Calendar,  name: "Liturgia do dia",       note: "As leituras e a oração da Missa de hoje." },
+   { icon: Flame,     name: "Santo do dia",           note: "Quem a Igreja celebra hoje, com uma biografia." },
+   { icon: Circle,    name: "Terço & Rosário",        note: "Os mistérios guiados passo a passo." },
+   { icon: HandHeart, name: "Orações e Ladainhas",    note: "Uma biblioteca para rezar quando quiser." },
+  ],
  },
  {
   icon: Cross,
   motion: "iconCross",
-  title: "Reze e acompanhe",
-  body: "Terço, orações e a Consagração de 33 dias, com o seu progresso guardado a cada dia. E o exame de consciência para preparar a confissão.",
+  title: "Caminhos",
+  intro: "Devoções mais longas, para percorrer com calma.",
+  features: [
+   { icon: CalendarCheck,  name: "Consagração de 33 dias", note: "O preparo diário, com o seu progresso guardado." },
+   { icon: HeartHandshake, name: "Guia de Confissão",      note: "Exame de consciência, como se confessar e o ato de contrição." },
+   { icon: Clock,          name: "Uma Home que acompanha o dia", note: "\"Neste momento\" e \"Para você hoje\" mudam conforme a hora." },
+  ],
  },
  {
   icon: BookOpen,
   motion: "iconBook",
-  title: "Estude e converse",
-  body: "Bíblia de Estudo para marcar versículos e reuni-los em coleções, o Catecismo sempre à mão, e o Vox para conversar sobre a fé.",
+  title: "Estudo e conversa",
+  intro: "Para aprofundar e tirar dúvidas.",
+  features: [
+   { icon: Highlighter,   name: "Bíblia de Estudo",   note: "Marque versículos, faça anotações e reúna em coleções." },
+   { icon: Book,          name: "Catecismo",          note: "O texto completo, para consultar quando precisar." },
+   { icon: MessageCircle, name: "Vox",                note: "Converse sobre a fé com um assistente católico." },
+   { icon: TrendingUp,    name: "Perfil e progresso", note: "Sua sequência de oração e o que você já rezou." },
+  ],
  },
 ]
 
-// Coreografia (ms). O corpo começa depois que o título termina de digitar,
-// com uma pausa — por isso o startDelay do corpo é calculado a partir do
-// tamanho do título, não fixo.
-const TITLE_START = 240
-const TITLE_STEP = 26
-const TITLE_DIV = 12
-const BODY_STEP = 12
-const BODY_DIV = 26
-const BODY_GAP = 180
+// Coreografia (ms). A introdução começa depois que o título termina de
+// digitar; a lista entra depois disso (via `animation-delay` no CSS).
+const TITLE_START = 260
+const TITLE_STEP = 30
+const TITLE_DIV = 10
+const INTRO_STEP = 14
+const INTRO_DIV = 24
+const INTRO_GAP = 200
 
 const LEAVE_MS = 420   // > duração da animação de saída no CSS
 const SWIPE_PX = 56
@@ -84,15 +115,36 @@ function prefersReducedMotion(): boolean{
  return window.matchMedia("(prefers-reduced-motion: reduce)").matches
 }
 
-function bodyStartFor(title: string): number{
+function introStartFor(title: string): number{
  const chunk = Math.max(1, Math.round(title.length / TITLE_DIV))
  const titleDur = Math.ceil(title.length / chunk) * TITLE_STEP
- return TITLE_START + titleDur + BODY_GAP
+ return TITLE_START + titleDur + INTRO_GAP
 }
 
 function PageIcon({ page }: { page: Page }){
  const Icon = page.icon
- return <Icon size={56} strokeWidth={1.5} />
+ return <Icon size={40} strokeWidth={1.5} />
+}
+
+function FeatureList({ features, className, hidden }: {
+ features: Feature[]
+ className: string
+ hidden?: boolean
+}){
+ return(
+  <ul className={className} aria-hidden={hidden || undefined}>
+   {features.map((f)=>{
+    const Icon = f.icon
+    return(
+     <li key={f.name} className={styles.feature}>
+      <span className={styles.featureIcon}><Icon size={17} strokeWidth={1.75} /></span>
+      <span className={styles.featureName}>{f.name}</span>
+      <span className={styles.featureNote}>{f.note}</span>
+     </li>
+    )
+   })}
+  </ul>
+ )
 }
 
 export default function WelcomeGuide(){
@@ -103,6 +155,7 @@ export default function WelcomeGuide(){
  const [reduce] = useState(prefersReducedMotion)
  const [index,setIndex] = useState(0)
  const [leaving,setLeaving] = useState<number | null>(null)
+ const [rushedIndex,setRushedIndex] = useState<number | null>(null)
  const [finishing,setFinishing] = useState(false)
 
  const advanceRef = useRef<HTMLButtonElement>(null)
@@ -111,18 +164,19 @@ export default function WelcomeGuide(){
 
  const page = PAGES[index]
  const isLast = index === PAGES.length - 1
+ const rushed = rushedIndex === index
 
  const title = useTypewriter(page.title, {
-  animate: !reduce,
+  animate: !reduce && !rushed,
   startDelay: TITLE_START,
   stepMs: TITLE_STEP,
   chunkDivisor: TITLE_DIV,
  })
- const body = useTypewriter(page.body, {
-  animate: !reduce,
-  startDelay: bodyStartFor(page.title),
-  stepMs: BODY_STEP,
-  chunkDivisor: BODY_DIV,
+ const intro = useTypewriter(page.intro, {
+  animate: !reduce && !rushed,
+  startDelay: introStartFor(page.title),
+  stepMs: INTRO_STEP,
+  chunkDivisor: INTRO_DIV,
  })
 
  // Foco no botão de avanço a cada página — sem botão de saída, é o controle
@@ -134,8 +188,6 @@ export default function WelcomeGuide(){
  useEffect(()=>()=>{
   if(leaveTimer.current) clearTimeout(leaveTimer.current)
  },[])
-
- const revealing = !title.done || !body.done
 
  async function advance(){
 
@@ -168,12 +220,12 @@ export default function WelcomeGuide(){
 
  // Tocar na tela (fora do botão, que fica no rodapé) completa a animação em
  // curso — quem lê rápido não espera. O texto acessível completo já está no
- // DOM; isto só adianta a camada visual.
+ // DOM; isto só adianta a camada visual (typewriter + entrada da lista).
  function handleStageTap(){
-  if(revealing){
-   title.skip()
-   body.skip()
-  }
+  if(rushed) return
+  setRushedIndex(index)
+  title.skip()
+  intro.skip()
  }
 
  function handleTouchStart(e: TouchEvent<HTMLDivElement>){
@@ -215,18 +267,15 @@ export default function WelcomeGuide(){
         <PageIcon page={PAGES[leaving]} />
        </span>
       </div>
-      <div className={styles.title}>
-       <span className={styles.text}>{PAGES[leaving].title}</span>
-      </div>
-      <p className={styles.body}>
-       <span className={styles.text}>{PAGES[leaving].body}</span>
-      </p>
+      <div className={styles.title}><span className={styles.text}>{PAGES[leaving].title}</span></div>
+      <p className={styles.intro}><span className={styles.text}>{PAGES[leaving].intro}</span></p>
+      <FeatureList features={PAGES[leaving].features} className={styles.features} hidden />
      </div>
     )}
 
     <div
      key={`page-${index}`}
-     className={`${styles.page} ${reduce ? "" : styles.pageEnter}`}
+     className={`${styles.page} ${reduce ? "" : styles.pageEnter} ${rushed ? styles.settled : ""}`}
     >
 
      <div className={styles.iconWrap} aria-hidden="true">
@@ -243,10 +292,19 @@ export default function WelcomeGuide(){
       </span>
      </h1>
 
-     <p className={styles.body}>
-      <span className={styles.srOnly}>{page.body}</span>
-      <span className={styles.text} data-anim="body" aria-hidden="true">{body.text}</span>
+     <p className={styles.intro}>
+      <span className={styles.srOnly}>{page.intro}</span>
+      <span className={styles.text} data-anim="intro" aria-hidden="true">{intro.text}</span>
      </p>
+
+     {/* cópia acessível — a lista inteira no DOM desde o início */}
+     <ul className={styles.srOnly}>
+      {page.features.map((f)=>(
+       <li key={f.name}>{f.name}. {f.note}</li>
+      ))}
+     </ul>
+
+     <FeatureList features={page.features} className={styles.features} hidden />
 
     </div>
 

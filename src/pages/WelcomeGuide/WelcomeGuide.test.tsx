@@ -1,4 +1,4 @@
-import { render, screen, act, fireEvent } from "@testing-library/react"
+import { render, screen, act, fireEvent, within } from "@testing-library/react"
 import { MemoryRouter } from "react-router-dom"
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
 
@@ -14,8 +14,23 @@ import WelcomeGuide from "./WelcomeGuide"
 
 const markMock = markWelcomeSeen as unknown as ReturnType<typeof vi.fn>
 
-const P1_BODY =
-  "Seu companheiro de oração diária. Abra o app e encontre a liturgia de hoje, o Santo do Dia e uma frase para levar no coração."
+const P1_INTRO = "O essencial de cada dia, sempre à mão."
+
+// Os 3 capítulos e seus itens — precisam bater com o PAGES de WelcomeGuide.tsx.
+const CHAPTERS = [
+  {
+    title: "Oração diária",
+    items: ["Liturgia do dia", "Santo do dia", "Terço & Rosário", "Orações e Ladainhas"],
+  },
+  {
+    title: "Caminhos",
+    items: ["Consagração de 33 dias", "Guia de Confissão", "Uma Home que acompanha o dia"],
+  },
+  {
+    title: "Estudo e conversa",
+    items: ["Bíblia de Estudo", "Catecismo", "Vox", "Perfil e progresso"],
+  },
+]
 
 function setReducedMotion(on: boolean){
   window.matchMedia = vi.fn().mockImplementation((query: string) => ({
@@ -34,12 +49,18 @@ function renderGuide(){
   return render(<MemoryRouter><WelcomeGuide /></MemoryRouter>)
 }
 
-function animatedBody(){
-  return screen.getByRole("dialog").querySelector('[data-anim="body"]')?.textContent ?? ""
+function animatedIntro(){
+  return screen.getByRole("dialog").querySelector('[data-anim="intro"]')?.textContent ?? ""
 }
 
 function animatedTitleEl(){
   return screen.getByRole("dialog").querySelector('[data-anim="title"]')
+}
+
+// A lista visível é aria-hidden; a única com role="list" é a cópia acessível
+// (`<ul>/<li>` completa, no DOM desde o início).
+function accessibleItems(){
+  return within(screen.getByRole("list")).getAllByRole("listitem").map((li) => li.textContent ?? "")
 }
 
 beforeEach(() => {
@@ -55,26 +76,29 @@ afterEach(() => {
 
 describe("WelcomeGuide", () => {
 
-  it("avança as 3 páginas; a última carimba e navega pra Home", async () => {
-    vi.useFakeTimers()
-    setReducedMotion(false)
+  it("avança os 3 capítulos, cada um com seus itens; a última carimba e navega pra Home", async () => {
+    setReducedMotion(true)  // vai direto ao estado final de cada tela
     renderGuide()
 
     const btn = () => screen.getByRole("button")
 
-    expect(screen.getByRole("group")).toHaveAccessibleName("Página 1 de 3")
-    expect(screen.getByRole("dialog")).toHaveAccessibleName("Bem-vindo ao Oratio")
-    expect(btn()).toHaveTextContent("Próximo")
+    for (let c = 0; c < CHAPTERS.length; c++) {
+      expect(screen.getByRole("group")).toHaveAccessibleName(`Página ${c + 1} de 3`)
+      expect(screen.getByRole("dialog")).toHaveAccessibleName(CHAPTERS[c].title)
 
-    fireEvent.click(btn())
-    act(() => { vi.advanceTimersByTime(600) })  // deixa a transição + typewriter da pág 2 rodar
-    expect(screen.getByRole("group")).toHaveAccessibleName("Página 2 de 3")
+      const items = accessibleItems()
+      expect(items).toHaveLength(CHAPTERS[c].items.length)
+      for (const name of CHAPTERS[c].items) {
+        expect(items.some((t) => t.startsWith(name))).toBe(true)
+      }
 
-    fireEvent.click(btn())
-    act(() => { vi.advanceTimersByTime(600) })
-    expect(screen.getByRole("group")).toHaveAccessibleName("Página 3 de 3")
+      if (c < CHAPTERS.length - 1) {
+        expect(btn()).toHaveTextContent("Próximo")
+        fireEvent.click(btn())
+      }
+    }
+
     expect(btn()).toHaveTextContent("Começar")
-
     await act(async () => { fireEvent.click(btn()) })
 
     expect(markMock).toHaveBeenCalledTimes(1)
@@ -82,44 +106,42 @@ describe("WelcomeGuide", () => {
   })
 
   it("falha do welcome-seen ainda navega pra Home", async () => {
-    setReducedMotion(true)  // sem animação, avança na hora
+    setReducedMotion(true)
     markMock.mockRejectedValue(new Error("rede"))
     renderGuide()
 
-    fireEvent.click(screen.getByRole("button"))  // pág 1 → 2
-    fireEvent.click(screen.getByRole("button"))  // pág 2 → 3
-    await act(async () => { fireEvent.click(screen.getByRole("button")) })  // "Começar"
+    fireEvent.click(screen.getByRole("button"))
+    fireEvent.click(screen.getByRole("button"))
+    await act(async () => { fireEvent.click(screen.getByRole("button")) })
 
     expect(markMock).toHaveBeenCalledTimes(1)
     expect(navigateMock).toHaveBeenCalledWith("/oratio/home", { replace: true })
   })
 
-  it("prefers-reduced-motion: reduce → título e corpo completos de imediato", () => {
+  it("prefers-reduced-motion: reduce → título, introdução e lista completos de imediato", () => {
     setReducedMotion(true)
     renderGuide()
 
-    // sem fake timers e sem avançar nenhum: se o texto dependesse do
-    // typewriter estaria vazio na camada animada
-    expect(animatedBody()).toBe(P1_BODY)
-    expect(screen.getByRole("dialog")).toHaveTextContent("Bem-vindo ao Oratio")
-    // título completo e sem o caret (span-filho) piscando
-    expect(animatedTitleEl()?.textContent).toBe("Bem-vindo ao Oratio")
-    expect(animatedTitleEl()?.children.length).toBe(0)
+    // sem fake timers e sem avançar: se dependesse do typewriter estaria vazio
+    expect(animatedIntro()).toBe(P1_INTRO)
+    expect(animatedTitleEl()?.textContent).toBe("Oração diária")
+    expect(animatedTitleEl()?.children.length).toBe(0)  // sem caret
+    expect(accessibleItems()).toHaveLength(4)
   })
 
-  it("com movimento, o corpo se digita aos poucos e completa com o tempo", () => {
+  it("com movimento, a introdução se digita aos poucos e completa com o tempo", () => {
     vi.useFakeTimers()
     setReducedMotion(false)
     renderGuide()
 
     act(() => { vi.advanceTimersByTime(60) })
-    const early = animatedBody()
+    const early = animatedIntro()
 
     act(() => { vi.advanceTimersByTime(5000) })
-    const late = animatedBody()
+    const late = animatedIntro()
 
     expect(early.length).toBeLessThan(late.length)
-    expect(late).toBe(P1_BODY)
+    expect(late).toBe(P1_INTRO)
   })
 
   it("transição real: a página que sai e a que entra coexistem por um instante", () => {
@@ -128,33 +150,28 @@ describe("WelcomeGuide", () => {
     renderGuide()
 
     fireEvent.click(screen.getByRole("button"))
-    // logo após o clique, antes do timer de limpeza, o título da pág 1 (camada
-    // que sai) e o da pág 2 ainda estão os dois no DOM
     act(() => { vi.advanceTimersByTime(0) })
-    const headings = screen.getAllByRole("heading")
-    // a que entra é <h1>; a que sai é um <div> aria-hidden — então só 1 heading,
-    // mas o texto da que sai continua visível
-    expect(headings).toHaveLength(1)
-    expect(screen.getByRole("dialog")).toHaveTextContent("Bem-vindo ao Oratio")
-    expect(screen.getByRole("dialog")).toHaveTextContent("Reze e acompanhe")
+    expect(screen.getAllByRole("heading")).toHaveLength(1)  // só a que entra é <h1>
+    expect(screen.getByRole("dialog")).toHaveTextContent("Oração diária")
+    expect(screen.getByRole("dialog")).toHaveTextContent("Caminhos")
 
     act(() => { vi.advanceTimersByTime(600) })
-    // depois da limpeza, só a pág 2
-    expect(screen.getByRole("dialog")).not.toHaveTextContent("Bem-vindo ao Oratio")
+    expect(screen.getByRole("dialog")).not.toHaveTextContent("Oração diária")
   })
 
-  it("tocar na tela completa o texto em curso na hora", () => {
+  it("tocar na tela completa o texto e a lista em curso", () => {
     vi.useFakeTimers()
     setReducedMotion(false)
     renderGuide()
 
     act(() => { vi.advanceTimersByTime(120) })
-    expect(animatedBody().length).toBeLessThan(P1_BODY.length)
+    expect(animatedIntro().length).toBeLessThan(P1_INTRO.length)
 
-    // toca no corpo (o clique borbulha pro .stage)
-    fireEvent.click(screen.getByRole("dialog").querySelector('[data-anim="body"]')!)
+    fireEvent.click(screen.getByRole("dialog").querySelector('[data-anim="intro"]')!)
 
-    expect(animatedBody()).toBe(P1_BODY)
+    expect(animatedIntro()).toBe(P1_INTRO)
+    // a página fica marcada como "assentada" (as animações de entrada param)
+    expect(screen.getByRole("dialog").querySelector('[class*="settled"]')).not.toBeNull()
   })
 
   it("arrastar pra esquerda avança; pra direita não faz nada", () => {
@@ -162,12 +179,10 @@ describe("WelcomeGuide", () => {
     renderGuide()
     const stage = screen.getByRole("dialog").firstElementChild!
 
-    // pra direita: ignorado (só pra frente)
     fireEvent.touchStart(stage, { touches: [{ clientX: 100 }] })
     fireEvent.touchEnd(stage, { changedTouches: [{ clientX: 300 }] })
     expect(screen.getByRole("group")).toHaveAccessibleName("Página 1 de 3")
 
-    // pra esquerda: avança
     fireEvent.touchStart(stage, { touches: [{ clientX: 300 }] })
     fireEvent.touchEnd(stage, { changedTouches: [{ clientX: 100 }] })
     expect(screen.getByRole("group")).toHaveAccessibleName("Página 2 de 3")
