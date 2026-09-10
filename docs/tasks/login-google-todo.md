@@ -162,12 +162,12 @@ Spec: `oratio-api/docs/specs/login-google.md` → "## Fase E". Backend pareado:
 - [x] **Docs** — este arquivo (Fase E + premissa do `db push` corrigida) · ponteiro
       `docs/specs/login-google.md` · `docs/ARCHITECTURE.md`.
 
-### Checkpoint E — teste manual (humano)
+### Checkpoint E — teste manual (humano)  *(✅ verificado 2026-09-10 — os 7 cenários OK; BUG-E1 resolvido, `oratio-api` commit `44b55b7`)*
 
-- [ ] `/register` com uma conta que já existe → aviso "Você já tem conta…" → `/login` (e a
+- [x] `/register` com uma conta que já existe → aviso "Você já tem conta…" → `/login` (e a
       sessão órfã não aparece em "Sessões ativas").
-- [ ] `/register` com uma conta Google nova → entra direto.
-- [ ] Login por senha numa conta só-Google → 401 "Esta conta entra com o Google…".
-- [ ] Exclusão de conta só-Google: mesma conta Google → apaga; outra conta Google → 400,
+- [x] `/register` com uma conta Google nova → entra direto.
+- [x] Login por senha numa conta só-Google → 401 "Esta conta entra com o Google…".
+- [x] Exclusão de conta só-Google: mesma conta Google → apaga; outra conta Google → 400,
       continua logado.
-- [ ] Toast "Sua conta Google foi conectada…" ao auto-ligar.
+- [x] Toast "Sua conta Google foi conectada…" ao auto-ligar.

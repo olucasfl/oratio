@@ -1,4 +1,6 @@
-# Santo do Dia — checklist 20/out → 08/dez (50 dias)
+# Santo do Dia — checklist 20/out → 13/dez (55 dias)
+
+> O plano original ia até 08/dez (50 dias); a cobertura foi estendida até 13/dez com o Lote 11.
 
 Plano: `docs/tasks/santos-plan.md`. Protocolo por dia: (1) celebração oficial da data
 (gcatholic BR 2026 + Romano Geral + Martirológio) → (2) comparar/corrigir o índice

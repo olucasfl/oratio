@@ -266,7 +266,7 @@ Excluído do denominador (`vitest.config.ts`): `src/data/**` (conteúdo estátic
       pontuais, cujo teste profundo saía do escopo "simples" desta rodada — mesmo racional de
       "branches ficam atrás" que o plano já assumia. `npm run test:cov` passa limpo, sem `ERROR:`.
 
-## Fase Lint — limpar `npm run lint` (148 problemas, 128 erros / 20 avisos)
+## Fase Lint — limpar `npm run lint` (baseline 148 = 128 erros / 20 avisos; em 2026-09-08: 47 = 26 erros / 21 avisos)
 
 `npm run lint` estava 100% quebrado (sem `eslint.config.js`) — corrigido, e com ele rodando de
 verdade apareceram 148 problemas reais. Regra: nenhuma correção pode mudar comportamento
@@ -280,6 +280,12 @@ causar loop de re-fetch — ver nota na Tarefa L2).
       (`AdminPanel.tsx` x3, `consecrationService.ts`, `VerifyEmailModal.tsx` — `no-empty` ignora
       bloco com comentário, então só documentar a intenção já resolve sem tocar em lógica).
       148 → 143 problemas.
+
+> **Progresso 2026-09-08:** os sweeps de `no-explicit-any` (services/utils/components/pages,
+> território L3–L9) foram feitos nos commits `0c1e8b1` (122→94), `177de51` (94→64) e `df70e8a`
+> (64→26). As caixas L2–L11 abaixo ficaram sem marcar porque restam 26 erros e falta uma passada
+> final — não porque nada foi feito. `docs/specs/INDEX.md` tem o número corrente.
+
 - [ ] Tarefa L2 — `react-hooks/set-state-in-effect` (6 arquivos: `OfflineBanner.tsx`,
       `useFraseDiaria.ts`, `BibliaHome.tsx` x2, `ConfirmEmailChange.tsx`, `VerifyEmail.tsx`) —
       setState síncrono dentro de effect. Cuidado: cada caso precisa da técnica certa (estado
