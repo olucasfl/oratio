@@ -16,8 +16,9 @@ Comandos: `npm run dev` · `npm run build` (tsc -b + vite — erro de tipo quebr
 ## Pré-requisitos (do backend / humano)
 
 - Fase A no ar na `develop`: `POST /auth/google` e `POST /users/me/set-password` existem.
-- Cliente OAuth "Web application" criado no Google Cloud Console (valores na spec →
-  "Notas de ambiente"); `VITE_GOOGLE_CLIENT_ID` no `.env` local e na Vercel.
+- ✅ Cliente OAuth "Web application" ("Oratio Web") criado no Google Cloud Console em 2026-09-09
+  (consent screen, 3 escopos não-sensíveis, usuários de teste, origens `localhost:5173` +
+  `oratio-phi.vercel.app`). `VITE_GOOGLE_CLIENT_ID` **no `.env` local** — falta na Vercel.
 
 ## O que toca este repo
 
@@ -25,7 +26,7 @@ Comandos: `npm run dev` · `npm run build` (tsc -b + vite — erro de tipo quebr
 |---|---|---|
 | **B** | Script GIS (`https://accounts.google.com/gsi/client`) em `/login` e `/register`; `google.accounts.id.initialize({ client_id: VITE_GOOGLE_CLIENT_ID, callback, use_fedcm_for_button: true, itp_support: true, ux_mode: "popup" })` + `renderButton`. **Nunca** `ux_mode: "redirect"`/`login_uri` (PWA iOS). `authService.loginWithGoogle(credential)` → `POST /auth/google` (path relativo via `services/api.ts`, `x-app` já embutido); no 200 grava `access_token`/`refresh_token` e navega `/oratio/home`. Texto fixo e incondicional abaixo da área de erro do login: *"Já entrou com Google antes? Experimente o botão Entrar com Google."* | ✅ na `develop`. Falta o **teste manual no navegador** (precisa do cliente OAuth + `VITE_GOOGLE_CLIENT_ID`). |
 | **C** | `profileService.setPassword()` → `POST /users/me/set-password`; `UserProfile.hasPassword` (novo campo do `GET /users/me`, backend C1); `SetPasswordModal` (= `ChangePasswordModal` sem "senha atual"); "Configurações da conta" busca o perfil e mostra **"Definir senha"** (`hasPassword: false`) **ou** "Trocar senha" (`true`), nunca os dois — lê o cache `oratio-profile` pra não piscar. `forgot`→`reset` já está acessível pela tela `/login` (Fase B). | ✅ na `develop` |
-| **D** | `vercel.json` bloco `headers` — CSP ganha os directives do GIS (ver "Fase D — CSP" abaixo). `VITE_GOOGLE_CLIENT_ID` na Vercel (humano). ~~`db push` de produção~~ **feito 2026-09-09** (Supabase). Cliente OAuth + origens de produção no Google Cloud Console (humano). Smoke iPhone PWA instalado (humano). Confirmar `ALLOWED_ORIGINS` do backend inalterado. | ✅ CSP mergeada na `develop` (`946cfac`); resto é humano |
+| **D** | `vercel.json` bloco `headers` — CSP ganha os directives do GIS (ver "Fase D — CSP" abaixo). `VITE_GOOGLE_CLIENT_ID` na Vercel (humano). ~~`db push` de produção~~ **feito 2026-09-09** (Supabase). ~~Cliente OAuth + origens de produção no Google Cloud Console~~ **feito 2026-09-09**; falta **publicar** o app OAuth (Política de Privacidade). Smoke iPhone PWA instalado (humano). Confirmar `ALLOWED_ORIGINS` do backend inalterado. | ✅ CSP mergeada na `develop` (`946cfac`); resto é humano |
 | **E** | Mensageria + sinais de resultado + correções — ver "Fase E" abaixo. `authService.loginWithGoogle` retorna `{ tokens, isNewUser, googleLinkedNow }` **sem persistir**; texto fixo do `/login` removido; `/register` bloqueia conta existente; toast de auto-ligação; rótulo do botão; loading state; exclusão de conta só-Google. | ✅ na branch `feat/login-google-fase-e` |
 
 ## Critérios de aceite (frontend — BDD)
@@ -44,7 +45,7 @@ Comandos: `npm run dev` · `npm run build` (tsc -b + vite — erro de tipo quebr
 - [x] **Dado** um 401 de `/auth/google`, **então** o interceptor do `api.ts` **não** dispara
       refresh+logout (`/auth/google` em `PUBLIC_AUTH_PATHS` — `api.test.ts`).
 - [ ] **Manual (humano):** clicar o botão real no navegador (`npm run dev`) e completar o login.
-      Precisa do cliente OAuth criado + `VITE_GOOGLE_CLIENT_ID` no `.env` + backend Fase A no ar.
+      Cliente OAuth + `VITE_GOOGLE_CLIENT_ID` local já feitos (2026-09-09) — falta rodar o teste.
 
 ### Fase C — definir senha (UI)
 
@@ -104,13 +105,14 @@ fontes antes). Por isso o plano de verificação é **pós-deploy** e **obrigat�
 **Pendências humanas da fase (não são código):**
 - [ ] `VITE_GOOGLE_CLIENT_ID` nas env vars da Vercel (= `GOOGLE_CLIENT_ID` do Render).
 - [ ] `GOOGLE_CLIENT_ID` nas env vars do Render.
+- [ ] **Publicar** o app OAuth no Google Cloud Console (sai de "Testing"; exige a Política de
+      Privacidade — dívida). Até publicar, só usuários de teste logam em prod.
 - [x] `npx prisma db push` em produção (`oratio-api`) — **feito 2026-09-09** (Supabase;
       `LinkedAccount` + `password` nullable aplicados). Script
       `oratio-api/prisma/db-scripts/2026-09-08-login-google.sql`.
-- [ ] Google Cloud Console: cliente OAuth "Web application" com *Authorized JavaScript origins*
-      `http://localhost:5173` + `https://oratio-phi.vercel.app`; tela de consentimento (scopes
-      `openid`/`email`/`profile`, não-sensíveis). Detalhe em `oratio-api/docs/specs/login-google.md`
-      → "Notas de ambiente".
+- [x] Google Cloud Console: cliente OAuth "Oratio Web" + consent screen + usuários de teste —
+      **feito 2026-09-09**. Origens `http://localhost:5173` + `https://oratio-phi.vercel.app`;
+      3 escopos não-sensíveis. Client ID nos `.env` locais dos dois repos.
 - [ ] Executar o plano de verificação pós-deploy acima.
 
 ---
