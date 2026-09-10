@@ -12,21 +12,32 @@ interface Props{
  open:boolean
  userEmail:string
  /*
- `false` = conta que entrou só pelo Google — a prova de identidade é uma
- reautenticação no Google, não a senha (spec login-google §"Fase E → E7").
+  Qual prova de identidade a conta consegue dar (spec prova-identidade):
+  - `hasPassword && !hasGoogle` → só senha
+  - `!hasPassword`              → só reautenticação no Google
+  - `hasPassword && hasGoogle`  → os dois: campo de senha, com um atalho
+    "Não lembro minha senha" que troca para o botão do Google. A pessoa usa
+    o que conseguir — quem esqueceu a senha vai pelo Google, quem está sem o
+    celular vai pela senha.
  */
  hasPassword:boolean
+ hasGoogle?:boolean
  onClose:()=>void
 }
 
-export default function DeleteAccountModal({ open, userEmail, hasPassword, onClose }:Props){
+export default function DeleteAccountModal({ open, userEmail, hasPassword, hasGoogle = false, onClose }:Props){
 
  const [confirmation,setConfirmation] = useState("")
  const [password,setPassword] = useState("")
  const [loading,setLoading] = useState(false)
  const [error,setError] = useState<string | null>(null)
+ // conta com os dois métodos: a pessoa clicou em "Não lembro minha senha"
+ const [useGoogleInstead,setUseGoogleInstead] = useState(false)
 
  if(!open) return null
+
+ const bothMethods = hasPassword && hasGoogle
+ const proveWithGoogle = !hasPassword || (bothMethods && useGoogleInstead)
 
  const emailMatches =
   confirmation.trim().toLowerCase() === userEmail.trim().toLowerCase()
@@ -35,6 +46,7 @@ export default function DeleteAccountModal({ open, userEmail, hasPassword, onClo
   setConfirmation("")
   setPassword("")
   setError(null)
+  setUseGoogleInstead(false)
   onClose()
  }
 
@@ -85,7 +97,39 @@ export default function DeleteAccountModal({ open, userEmail, hasPassword, onClo
      onChange={(e)=>setConfirmation(e.target.value)}
     />
 
-    {hasPassword ? (
+    {proveWithGoogle ? (
+     <>
+      <p className={styles.hint}>
+       {bothMethods
+        ? "Confirme entrando de novo com o Google:"
+        : "Sua conta entra com o Google. Para confirmar a exclusão, entre de novo com o Google:"}
+      </p>
+
+      {emailMatches ? (
+       <div className={styles.googleReauth}>
+        <GoogleSignInButton
+         onCredential={(credential)=>runDelete({ googleCredential: credential })}
+         disabled={loading}
+        />
+       </div>
+      ) : (
+       <button className={styles.buttonDanger} disabled>
+        Excluir minha conta
+       </button>
+      )}
+
+      {bothMethods && (
+       <button
+        type="button"
+        className={styles.linkButton}
+        onClick={()=>{ setUseGoogleInstead(false); setError(null) }}
+        disabled={loading}
+       >
+        Prefiro usar minha senha
+       </button>
+      )}
+     </>
+    ) : (
      <>
       <p className={styles.hint}>
        Confirme com sua senha atual:
@@ -106,24 +150,15 @@ export default function DeleteAccountModal({ open, userEmail, hasPassword, onClo
       >
        {loading ? "Excluindo..." : "Excluir minha conta"}
       </button>
-     </>
-    ) : (
-     <>
-      <p className={styles.hint}>
-       Sua conta entra com o Google. Para confirmar a exclusão, entre de novo
-       com o Google:
-      </p>
 
-      {emailMatches ? (
-       <div className={styles.googleReauth}>
-        <GoogleSignInButton
-         onCredential={(credential)=>runDelete({ googleCredential: credential })}
-         disabled={loading}
-        />
-       </div>
-      ) : (
-       <button className={styles.buttonDanger} disabled>
-        Excluir minha conta
+      {bothMethods && (
+       <button
+        type="button"
+        className={styles.linkButton}
+        onClick={()=>{ setUseGoogleInstead(true); setError(null) }}
+        disabled={loading}
+       >
+        Não lembro minha senha
        </button>
       )}
      </>
