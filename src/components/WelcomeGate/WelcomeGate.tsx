@@ -14,8 +14,16 @@ import { getProfile } from "../../services/profileService"
  `POST /auth/google` só evita o flash na tela de cadastro (Login/Register já
  navegam direto pro guia nesse caso), nunca decide sozinho aqui.
 
- Falha de rede: não redireciona e tenta de novo no próximo boot. Pior caso,
- o guia aparece uma vez a mais — nunca prende ninguém na porta do app.
+ O efeito reavalia a cada troca de rota (`location.pathname` nas deps), não
+ só no boot: quem abre o app em `/login` deslogado e depois entra — o
+ `Login.tsx` navega por SPA, sem reload — precisa ser interceptado nessa
+ navegação, senão só veria o guia no boot seguinte (a spec vale para a
+ primeira entrada por senha também, não só Google). O `checked` ref
+ continua garantindo UMA busca de `/users/me` por sessão.
+
+ Falha de rede: não redireciona, libera o `checked` e tenta de novo na
+ próxima navegação. Pior caso, o guia aparece uma vez a mais — nunca
+ prende ninguém na porta do app.
 */
 
 const SKIP_PREFIXES = [
@@ -56,9 +64,9 @@ export default function WelcomeGate(){
 
   return ()=>{ cancelled = true }
 
- // roda uma vez — WelcomeGate fica montado no shell durante toda a sessão
- // eslint-disable-next-line react-hooks/exhaustive-deps
- },[])
+ // reavalia a cada navegação (o componente fica montado o app inteiro); o
+ // `checked` ref impede uma segunda busca de `/users/me` depois da primeira
+ },[location.pathname, navigate])
 
  return null
 
