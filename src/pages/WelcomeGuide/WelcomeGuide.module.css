@@ -1,3 +1,12 @@
+/*
+ Guia de boas-vindas — spec docs/specs/boas-vindas.md.
+
+ Animações só com transform/opacity (PWA em celular modesto — nada de
+ width/height/box-shadow/top/left). Todo movimento vive sob
+ @media (prefers-reduced-motion: no-preference): quem pediu redução recebe
+ o layout final estático, sem nenhuma regra pra desfazer.
+*/
+
 .screen{
 
  position:fixed;
@@ -5,23 +14,43 @@
  z-index:var(--z-modal);
 
  display:flex;
- align-items:center;
- justify-content:center;
+ flex-direction:column;
 
  padding:24px;
  padding-block:calc(24px + env(safe-area-inset-top)) calc(24px + env(safe-area-inset-bottom));
 
- background:
-  radial-gradient(120% 80% at 50% 0%, #fbf4e6 0%, var(--oratio-background) 60%);
+ background:radial-gradient(120% 80% at 50% 0%, #fbf4e6 0%, var(--oratio-background) 60%);
+
+ overflow:hidden;
+ /* o gesto vertical rola a página; o horizontal é nosso (avançar) */
+ touch-action:pan-y;
+
+}
+
+/* as duas páginas (a que sai e a que entra) ocupam a MESMA célula de grid,
+   empilhadas — sem position:absolute, então a célula cresce com o conteúdo
+   e nada é recortado numa tela pequena */
+.stage{
+
+ flex:1 1 auto;
+ min-height:0;
+
+ display:grid;
+ align-content:center;
+ justify-items:center;
+
+ width:100%;
+ max-width:420px;
+ margin:0 auto;
 
  overflow-y:auto;
 
 }
 
-.card{
+.page{
 
+ grid-area:1 / 1;
  width:100%;
- max-width:420px;
 
  display:flex;
  flex-direction:column;
@@ -29,8 +58,6 @@
  text-align:center;
 
  padding:12px;
-
- animation:welcomeIn .32s ease both;
 
 }
 
@@ -40,10 +67,9 @@
  align-items:center;
  justify-content:center;
 
- width:120px;
- height:120px;
-
- margin-bottom:28px;
+ width:112px;
+ height:112px;
+ margin-bottom:30px;
 
  border-radius:50%;
 
@@ -54,12 +80,26 @@
 
 }
 
+.iconGlyph{
+
+ display:inline-flex;
+
+}
+
+.iconGlyph svg{
+
+ display:block;
+
+}
+
 .title{
 
- margin:0 0 14px;
+ margin:0 0 16px;
+ /* reserva ~2 linhas pra o layout não pular enquanto o texto se digita */
+ min-height:2.4em;
 
  font-family:var(--oratio-font-title);
- font-size:1.9rem;
+ font-size:1.85rem;
  line-height:1.2;
  color:var(--oratio-primary-dark);
 
@@ -67,14 +107,72 @@
 
 .body{
 
- margin:0 0 32px;
+ margin:0;
+ min-height:6em;
+ max-width:34ch;
 
  font-family:var(--oratio-font-text);
  font-size:1.25rem;
  line-height:1.55;
  color:var(--oratio-text-dark);
 
- max-width:34ch;
+}
+
+.text{
+
+ white-space:pre-wrap;
+
+}
+
+.caret{
+
+ display:inline-block;
+
+ width:2px;
+ height:1em;
+ margin-left:3px;
+
+ vertical-align:-0.12em;
+
+ background:var(--oratio-primary);
+ opacity:0;
+
+}
+
+.srOnly{
+
+ position:absolute;
+ width:1px;
+ height:1px;
+
+ padding:0;
+ margin:-1px;
+
+ overflow:hidden;
+ clip:rect(0 0 0 0);
+ clip-path:inset(50%);
+
+ white-space:nowrap;
+ border:0;
+
+}
+
+/* rodapé fixo — progresso + botão sempre visíveis; NÃO entram/saem com as
+   páginas (sem botão de saída, a pessoa precisa ver que o guia acaba) */
+.footer{
+
+ flex:0 0 auto;
+
+ width:100%;
+ max-width:420px;
+ margin:0 auto;
+
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ gap:22px;
+
+ padding-top:16px;
 
 }
 
@@ -82,8 +180,6 @@
 
  display:flex;
  gap:10px;
-
- margin-bottom:28px;
 
 }
 
@@ -94,16 +190,19 @@
 
  border-radius:50%;
 
- background:var(--oratio-card-border);
+ background:var(--oratio-primary);
 
- transition:var(--oratio-transition);
+ opacity:.28;
+ transform:scale(1);
 
 }
 
-.dotActive{
+.dotDone{ opacity:.55; }
 
- background:var(--oratio-primary);
- transform:scale(1.15);
+.dotOn{
+
+ opacity:1;
+ transform:scale(1.35);
 
 }
 
@@ -125,15 +224,10 @@
  letter-spacing:.02em;
 
  cursor:pointer;
- transition:var(--oratio-transition);
 
 }
 
-.advance:hover:not(:disabled){
-
- background:var(--oratio-primary-dark);
-
-}
+.advance:hover:not(:disabled){ background:var(--oratio-primary-dark); }
 
 .advance:disabled{
 
@@ -149,16 +243,68 @@
 
 }
 
-@keyframes welcomeIn{
 
- from{ opacity:0; transform:translateY(10px); }
- to{ opacity:1; transform:translateY(0); }
+/* =========================
+   MOVIMENTO — só quando o usuário não pediu redução
+========================= */
+
+@media (prefers-reduced-motion:no-preference){
+
+ .pageEnter{ animation:wgPageIn .42s cubic-bezier(.22,.61,.36,1) both; }
+ .pageLeave{ animation:wgPageOut .34s ease both; }
+
+ /* stagger: ícone → título → corpo entram em tempos diferentes */
+ .pageEnter .iconWrap{ animation:wgRise .5s ease-out .04s both; }
+ .pageEnter .title   { animation:wgFade .42s ease-out .16s both; }
+ .pageEnter .body    { animation:wgFade .42s ease-out .30s both; }
+
+ .dot{ transition:transform .32s ease, opacity .32s ease; }
+
+ .caret{ animation:wgBlink 1s steps(1) infinite; }
+
+ /* movimento próprio de cada ícone — lento, litúrgico, sem "bounce" */
+ .iconSunrise{ animation:wgSunrise 4.5s ease-in-out infinite; }
+ .iconCross  { animation:wgGlow 4s ease-in-out infinite; }
+ .iconBook   { animation:wgSway 5s ease-in-out infinite; }
 
 }
 
-@media (prefers-reduced-motion:reduce){
+@keyframes wgPageIn{
+ from{ opacity:0; transform:translate3d(30px,0,0); }
+ to  { opacity:1; transform:translate3d(0,0,0); }
+}
 
- .card{ animation:none; }
- .dot,.dotActive,.advance{ transition:none; }
+@keyframes wgPageOut{
+ from{ opacity:1; transform:translate3d(0,0,0); }
+ to  { opacity:0; transform:translate3d(-30px,0,0); }
+}
 
+@keyframes wgRise{
+ from{ opacity:0; transform:translateY(9px) scale(.9); }
+ to  { opacity:1; transform:translateY(0) scale(1); }
+}
+
+@keyframes wgFade{
+ from{ opacity:0; transform:translateY(7px); }
+ to  { opacity:1; transform:translateY(0); }
+}
+
+@keyframes wgBlink{
+ 0%,49%  { opacity:1; }
+ 50%,100%{ opacity:0; }
+}
+
+@keyframes wgSunrise{
+ 0%,100%{ transform:translateY(3px); }
+ 50%    { transform:translateY(-4px); }
+}
+
+@keyframes wgGlow{
+ 0%,100%{ transform:scale(1);    opacity:1; }
+ 50%    { transform:scale(1.05); opacity:.8; }
+}
+
+@keyframes wgSway{
+ 0%,100%{ transform:rotate(-3deg); }
+ 50%    { transform:rotate(3deg); }
 }
