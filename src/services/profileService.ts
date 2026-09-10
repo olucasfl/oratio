@@ -37,6 +37,13 @@ export interface UserProfile {
    campo vira `undefined` → tratado como `false`.
   */
   hasGoogle?: boolean
+  /*
+   `true` = a conta ainda não concluiu o guia de boas-vindas (`welcomeSeenAt`
+   nulo no backend). O `WelcomeGate` redireciona pra `/oratio/boas-vindas`
+   enquanto isto for `true`. Aditivo; cache antigo sem o campo vira
+   `undefined` → nenhum redirect (fail-safe).
+  */
+  showWelcome?: boolean
   spiritualProgress: SpiritualProgress
 }
 

@@ -95,7 +95,7 @@ describe("Register", () => {
     expect(navigateMock).toHaveBeenCalledWith("/login?redirect=%2Foratio%2Fprayers")
   })
 
-  it("signs up a NEW account with Google and goes straight to home (no verify step)", async () => {
+  it("signs up a NEW account with Google and goes to the welcome guide (no verify step)", async () => {
     loginWithGoogleMock.mockResolvedValue(NEW_USER)
     renderRegister("/register?redirect=/oratio/biblia")
 
@@ -106,7 +106,9 @@ describe("Register", () => {
     )
     expect(persistSessionMock).toHaveBeenCalledWith("a", "r")
     expect(discardGoogleSessionMock).not.toHaveBeenCalled()
-    expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia")
+    // conta criada agora → guia de boas-vindas direto (spec boas-vindas);
+    // a visibilidade real ainda é do showWelcome
+    expect(navigateMock).toHaveBeenCalledWith("/oratio/boas-vindas")
     expect(screen.queryByText(/verify-modal/)).not.toBeInTheDocument()
   })
 

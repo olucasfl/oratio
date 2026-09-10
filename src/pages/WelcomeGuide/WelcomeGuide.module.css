@@ -1,0 +1,164 @@
+.screen{
+
+ position:fixed;
+ inset:0;
+ z-index:var(--z-modal);
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ padding:24px;
+ padding-block:calc(24px + env(safe-area-inset-top)) calc(24px + env(safe-area-inset-bottom));
+
+ background:
+  radial-gradient(120% 80% at 50% 0%, #fbf4e6 0%, var(--oratio-background) 60%);
+
+ overflow-y:auto;
+
+}
+
+.card{
+
+ width:100%;
+ max-width:420px;
+
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ text-align:center;
+
+ padding:12px;
+
+ animation:welcomeIn .32s ease both;
+
+}
+
+.iconWrap{
+
+ display:flex;
+ align-items:center;
+ justify-content:center;
+
+ width:120px;
+ height:120px;
+
+ margin-bottom:28px;
+
+ border-radius:50%;
+
+ color:var(--oratio-primary);
+ background:var(--oratio-card-bg);
+ border:1px solid var(--oratio-card-border);
+ box-shadow:var(--oratio-shadow-soft);
+
+}
+
+.title{
+
+ margin:0 0 14px;
+
+ font-family:var(--oratio-font-title);
+ font-size:1.9rem;
+ line-height:1.2;
+ color:var(--oratio-primary-dark);
+
+}
+
+.body{
+
+ margin:0 0 32px;
+
+ font-family:var(--oratio-font-text);
+ font-size:1.25rem;
+ line-height:1.55;
+ color:var(--oratio-text-dark);
+
+ max-width:34ch;
+
+}
+
+.dots{
+
+ display:flex;
+ gap:10px;
+
+ margin-bottom:28px;
+
+}
+
+.dot{
+
+ width:9px;
+ height:9px;
+
+ border-radius:50%;
+
+ background:var(--oratio-card-border);
+
+ transition:var(--oratio-transition);
+
+}
+
+.dotActive{
+
+ background:var(--oratio-primary);
+ transform:scale(1.15);
+
+}
+
+.advance{
+
+ width:100%;
+ max-width:280px;
+
+ padding:14px 20px;
+
+ border:none;
+ border-radius:var(--oratio-radius-sm);
+
+ background:var(--oratio-primary);
+ color:var(--oratio-text-light);
+
+ font-family:var(--oratio-font-title);
+ font-size:1rem;
+ letter-spacing:.02em;
+
+ cursor:pointer;
+ transition:var(--oratio-transition);
+
+}
+
+.advance:hover:not(:disabled){
+
+ background:var(--oratio-primary-dark);
+
+}
+
+.advance:disabled{
+
+ opacity:.6;
+ cursor:default;
+
+}
+
+.advance:focus-visible{
+
+ outline:3px solid var(--oratio-primary-light);
+ outline-offset:3px;
+
+}
+
+@keyframes welcomeIn{
+
+ from{ opacity:0; transform:translateY(10px); }
+ to{ opacity:1; transform:translateY(0); }
+
+}
+
+@media (prefers-reduced-motion:reduce){
+
+ .card{ animation:none; }
+ .dot,.dotActive,.advance{ transition:none; }
+
+}

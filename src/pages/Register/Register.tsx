@@ -16,7 +16,6 @@ const navigate = useNavigate();
 const [searchParams] = useSearchParams();
 const redirect = searchParams.get("redirect");
 const loginDestination = redirect ? withRedirect("/login", redirect) : "/login";
-const homeDestination = redirect || "/oratio/home";
 
 const [name,setName] = useState("");
 const [email,setEmail] = useState("");
@@ -57,10 +56,11 @@ if(!result.isNewUser){
  return;
 }
 
-// cadastro novo via Google — a tela de boas-vindas (quando existir) intercepta
-// pelo showWelcome; por ora cai na Home.
+// cadastro novo via Google → guia de boas-vindas direto (evita o flash da
+// Home antes do WelcomeGate). A visibilidade real é do `showWelcome` —
+// spec boas-vindas.
 persistSession(result.access_token, result.refresh_token);
-navigate(homeDestination);
+navigate("/oratio/boas-vindas");
 
 }catch(err){
 

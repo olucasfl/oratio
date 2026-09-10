@@ -10,6 +10,7 @@ import OfflineBanner from "./components/OfflineBanner/OfflineBanner"
 import PullToRefresh from "./components/PullToRefresh/PullToRefresh"
 import InstallAppNudge from "./components/InstallAppNudge/InstallAppNudge"
 import FlashToast from "./components/FlashToast/FlashToast"
+import WelcomeGate from "./components/WelcomeGate/WelcomeGate"
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary"
 import { preloadConsecration, getProgress } from "./services/consecrationService"
 import { sendActivityPing } from "./services/activityService"
@@ -46,6 +47,7 @@ const SantoDoDia       = lazy(() => import("./pages/SantoDoDia/SantoDoDia"))
 const Confissao        = lazy(() => import("./pages/Confissao/Confissao"))
 const Quaresma         = lazy(() => import("./pages/Quaresma/Quaresma"))
 const QuaresmaDia      = lazy(() => import("./pages/Quaresma/QuaresmaDia"))
+const WelcomeGuide     = lazy(() => import("./pages/WelcomeGuide/WelcomeGuide"))
 
 /*
 Decide de forma declarativa (na hora do match da rota, sem efeito nem
@@ -237,6 +239,8 @@ return(
 
 <FlashToast />
 
+<WelcomeGate />
+
 {/*
   Boundary por rota (key={location.pathname}): se uma página quebrar no
   render, só ela mostra o fallback — reiniciar a mesma boundary da raiz
@@ -265,6 +269,21 @@ return(
 <Route
 path="/oratio/home"
 element={<Home />}
+/>
+
+{/*
+  Guia de boas-vindas — tela cheia, FORA de qualquer layout com bottom nav
+  (não há layout compartilhado; a página simplesmente não renderiza a
+  navbar). Protegida: só faz sentido autenticado, e o WelcomeGate redireciona
+  pra cá por `showWelcome`. Spec: docs/specs/boas-vindas.md.
+*/}
+<Route
+path="/oratio/boas-vindas"
+element={
+<ProtectedRoute>
+<WelcomeGuide />
+</ProtectedRoute>
+}
 />
 
 <Route
