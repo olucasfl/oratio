@@ -198,7 +198,11 @@ describe("Profile", () => {
     getProfileMock.mockResolvedValue({ ...BASE_PROFILE, hasPassword: false })
     renderProfile()
 
-    expect(await screen.findByText(/Defina uma senha em/i)).toBeInTheDocument()
+    const bubble = (await screen.findByText(/Defina uma senha em/i)).closest("[role=status]") as HTMLElement
+    // BUG-E1: o balão vai num Portal, position:fixed, posicionado por JS a partir
+    // da engrenagem — não position:absolute dentro de .profileHero (overflow:hidden).
+    expect(bubble.style.top).not.toBe("")
+    expect(bubble.style.right).not.toBe("")
 
     fireEvent.click(screen.getByRole("button", { name: "Definir senha" }))
     expect(navigateMock).toHaveBeenCalledWith("/oratio/profile/settings?senha=1")
