@@ -33,6 +33,17 @@ function cachedHasPassword():boolean | null{
  }
 }
 
+function cachedEmail():string | null{
+ try{
+  const raw = localStorage.getItem("oratio-profile")
+  if(!raw) return null
+  const parsed = JSON.parse(raw)
+  return typeof parsed?.email === "string" ? parsed.email : null
+ }catch{
+  return null
+ }
+}
+
 export default function AccountSettings(){
 
  const navigate = useNavigate()
@@ -44,6 +55,7 @@ export default function AccountSettings(){
  const [emailRequestedMsg,setEmailRequestedMsg] = useState<string | null>(null)
 
  const [hasPassword,setHasPassword] = useState<boolean | null>(cachedHasPassword)
+ const [userEmail,setUserEmail] = useState<string | null>(cachedEmail)
 
  /* chegou do aviso do Perfil (?senha=1) → destaca o botão "Definir senha" */
  const [pwdHighlight,setPwdHighlight] = useState(
@@ -79,6 +91,7 @@ export default function AccountSettings(){
      senha" — o status quo, seguro para uma conta com senha.
     */
     setHasPassword(typeof data?.hasPassword === "boolean" ? data.hasPassword : true)
+    if(typeof data?.email === "string") setUserEmail(data.email)
     try{
      localStorage.setItem("oratio-profile", JSON.stringify(data))
     }catch{
@@ -194,6 +207,7 @@ export default function AccountSettings(){
 
    <ChangePasswordModal
     open={changePasswordOpen}
+    email={userEmail ?? undefined}
     onClose={()=>setChangePasswordOpen(false)}
    />
 
