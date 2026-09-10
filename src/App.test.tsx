@@ -51,6 +51,12 @@ vi.mock("./services/activityService", () => ({
 vi.mock("./services/pushService", () => ({
   syncPushTimezone: vi.fn().mockResolvedValue(undefined),
 }))
+// WelcomeGate (montado de verdade dentro de App) chama getProfile no boot
+// autenticado. Sem mock, é uma chamada axios real que rejeita no jsdom —
+// resolvida como "sem guia" pra manter o boot determinístico.
+vi.mock("./services/profileService", () => ({
+  getProfile: vi.fn().mockResolvedValue({ showWelcome: false }),
+}))
 
 import { preloadConsecration, getProgress } from "./services/consecrationService"
 import { sendActivityPing } from "./services/activityService"

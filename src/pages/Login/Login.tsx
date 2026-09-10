@@ -104,7 +104,10 @@ export default function Login() {
         setFlash("Sua conta Google foi conectada à sua conta Oratio.");
       }
 
-      navigate(destination);
+      // Conta criada agora → guia de boas-vindas direto (evita o flash da
+      // Home antes do WelcomeGate). A visibilidade real ainda é do
+      // `showWelcome` — spec boas-vindas.
+      navigate(result.isNewUser ? "/oratio/boas-vindas" : destination);
 
     } catch (err) {
 
