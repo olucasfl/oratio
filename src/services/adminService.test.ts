@@ -70,6 +70,7 @@ describe("adminService", () => {
         isAdmin: true,
         emailVerified: true,
         activeLastDays: 30,
+        provider: "both",
       })
 
       const [url] = mockedApi.get.mock.calls[0]
@@ -78,6 +79,17 @@ describe("adminService", () => {
       expect(query.get("isAdmin")).toBe("true")
       expect(query.get("emailVerified")).toBe("true")
       expect(query.get("activeLastDays")).toBe("30")
+      expect(query.get("provider")).toBe("both")
+    })
+
+    it("serializes provider only when set", async () => {
+      await getAllUsers({ provider: "google" })
+      expect(mockedApi.get).toHaveBeenCalledWith("/users/admin/users?provider=google")
+
+      mockedApi.get.mockClear()
+      await getAllUsers({ search: "x" })
+      const [url] = mockedApi.get.mock.calls[0]
+      expect(url).not.toContain("provider")
     })
 
   })
