@@ -55,6 +55,21 @@ export async function getProfile(){
 
 }
 
+/*
+ Edita só o nome exibido no perfil. O backend valida (`UpdateProfileDto`:
+ obrigatório, 2-80 caracteres, trim) e devolve uma lista branca explícita
+ (nunca a senha nem os tokens de verificação/reset — ver ARCHITECTURE do
+ oratio-api §7) — não o `UserProfile` inteiro, então quem chama funde o
+ `name` novo no perfil que já tinha em vez de substituir tudo.
+*/
+export async function updateName(name:string){
+
+ const res = await api.patch("/users/me", { name })
+
+ return res.data
+
+}
+
 export async function changePassword(currentPassword:string, newPassword:string){
 
  const res = await api.post("/users/me/change-password", {
