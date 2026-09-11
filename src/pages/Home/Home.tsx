@@ -193,7 +193,7 @@ export default function Home(){
    .catch(()=>{})
 
   getProfile()
-   .then((u)=>{ setUserName(u?.name ?? u?.nome ?? u?.firstName ?? null) })
+   .then((u)=>{ setUserName(u?.name ?? null) })
    .catch(()=>{})
 
   getHomeFeed()

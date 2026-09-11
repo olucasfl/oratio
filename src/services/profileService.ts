@@ -57,12 +57,72 @@ export interface UserProfile {
   spiritualProgress: SpiritualProgress
 }
 
-export async function getProfile(){
+/*
+ Dedupe + memo curto (spec: lentidão da tela de consentimento — 2026-09-11).
+ Ao logar, `LegalTermsGate`, `WelcomeGate` e (depois do redirect)
+ `LegalConsent`/`WelcomeGuide` chamavam `getProfile()` cada um por conta
+ própria — até 3 idas ao Supabase (us-east-1, `connection_limit=1`) em
+ sequência pela mesma navegação, serializando no banco. Aqui: uma requisição
+ em voo é compartilhada (dedupe) e o resultado fica bom por `PROFILE_TTL_MS`
+ (memo) — os gates que disparam quase juntos colapsam numa chamada só.
 
- const res = await api.get("/users/me")
+ `generation` existe pra `invalidateProfile()` não correr risco de um GET
+ tardio (iniciado ANTES da invalidação, resolvido DEPOIS) repopular o cache
+ com dado velho — só grava no cache quem começou na geração ainda vigente.
+ `pending === request` no fim evita que o `finally` de um request antigo
+ apague a referência de um request novo que já tomou o lugar dele.
+*/
+const PROFILE_TTL_MS = 5000
 
- return res.data
+let cache: { data: UserProfile; expiresAt: number } | null = null
+let pending: Promise<UserProfile> | null = null
+let generation = 0
 
+export async function getProfile(): Promise<UserProfile> {
+
+ if(cache && Date.now() < cache.expiresAt){
+  return cache.data
+ }
+
+ if(pending){
+  return pending
+ }
+
+ const requestGeneration = generation
+
+ const request = api.get("/users/me").then((res)=>res.data)
+
+ pending = request
+
+ request
+  .then((data)=>{
+   if(requestGeneration === generation){
+    cache = { data, expiresAt: Date.now() + PROFILE_TTL_MS }
+   }
+  })
+  .catch(()=>{
+   // erro já propaga pra quem chamou via `request`/`pending`; aqui é só
+   // pra não deixar uma rejection não tratada nesta ponta secundária.
+  })
+  .finally(()=>{
+   if(pending === request) pending = null
+  })
+
+ return request
+
+}
+
+/*
+ Invalida o memo/dedupe acima. Chamar depois de qualquer escrita que mude o
+ que `GET /users/me` devolve — `acceptLegalTerms`, `markWelcomeSeen`
+ (welcomeService.ts), `setPassword`, `updateName` e qualquer outra. Sem
+ isso, um gate podia ler o cache de ANTES da escrita e mandar a pessoa de
+ volta pra tela que ela acabou de completar.
+*/
+export function invalidateProfile(){
+ generation++
+ cache = null
+ pending = null
 }
 
 /*
@@ -74,6 +134,8 @@ export async function getProfile(){
 export async function acceptLegalTerms(){
 
  const res = await api.post("/users/me/legal-terms-accepted")
+
+ invalidateProfile()
 
  return res.data
 
@@ -89,6 +151,8 @@ export async function acceptLegalTerms(){
 export async function updateName(name:string){
 
  const res = await api.patch("/users/me", { name })
+
+ invalidateProfile()
 
  return res.data
 
@@ -118,6 +182,8 @@ export async function setPassword(password:string, confirmPassword:string){
   password,
   confirmPassword
  })
+
+ invalidateProfile()
 
  return res.data
 

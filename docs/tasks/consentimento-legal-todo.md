@@ -1,11 +1,11 @@
-# Todo: consentimento-legal — implementação (parcial, 2026-09-11)
+# Todo: consentimento-legal — implementação (local concluída, 2026-09-11)
 
 > Spec: `docs/specs/consentimento-privacidade.md` (frontend) ·
 > `oratio-api/docs/specs/consentimento-privacidade.md` (backend, mestre)
 > Branch (os dois repos): `feat/consentimento-legal`, a partir de `origin/develop`.
 > **NÃO mergear em `develop` até os dois lados (backend + frontend) estarem prontos.**
 
-## Estado no fim desta sessão
+## Estado atual
 
 **Backend (`oratio-api`) — commitado, branch `feat/consentimento-legal` (`fed10bb`), pushed.**
 Implementação completa: schema (`legalTermsAcceptedAt`/`legalTermsVersion`, aditivo, SEM
@@ -15,8 +15,9 @@ backfill), `legal-terms-version.ts` (`LEGAL_TERMS_VERSION = "2026-09-11"`),
 `prisma/db-scripts/2026-09-11-consentimento-privacidade.sql` (SEM BACKFILL em destaque). 874
 testes passando, build limpo. **Não tem `/review-pr` ainda.**
 
-**Frontend (`oratio`) — commitado como WIP nesta sessão, branch `feat/consentimento-legal`,
-pushed. `npx tsc -b` FALHA — ver "Bloqueios conhecidos" abaixo.** Arquivos novos/alterados:
+**Frontend (`oratio`) — implementação local concluída na branch `feat/consentimento-legal`.**
+O wiring, os testes e o build passam localmente. As alterações ainda não foram commitadas,
+mergeadas ou publicadas nesta sessão.
 
 - `src/services/profileService.ts` — `UserProfile.legalTermsAccepted?: boolean`,
   `acceptLegalTerms()` (`POST /users/me/legal-terms-accepted`, sem corpo).
@@ -50,9 +51,9 @@ pushed. `npx tsc -b` FALHA — ver "Bloqueios conhecidos" abaixo.** Arquivos nov
 - `src/pages/PrivacyPolicy/` — rota pública, reusa `TermsOfUse.module.css` (mesmo padrão de
   `Tratado.tsx` reusando o CSS de `Catecismo`).
 
-## Bloqueios conhecidos (encontrados rodando `npx tsc -b` nesta sessão)
+## Bloqueios antigos, resolvidos
 
-1. **`src/utils/legalDocs.test.ts` não compila.** `node:fs`, `node:path` e `process` não
+1. **`src/utils/legalDocs.test.ts` não compilava.** `node:fs`, `node:path` e `process` não
    resolvem — `tsconfig.app.json` (`"types": ["vite/client", "@testing-library/jest-dom"]`,
    sem `"node"`) restringe deliberadamente os globals de Node no app inteiro, e `tsc -b`
    tipa os `.test.ts` sob o mesmo `include: ["src"]`. `@types/node` **já está** em
@@ -68,22 +69,22 @@ pushed. `npx tsc -b` FALHA — ver "Bloqueios conhecidos" abaixo.** Arquivos nov
    ainda não foi atualizado pro 5º argumento `legalTermsAccepted`. É o wiring pendente abaixo,
    não um bug separado.
 
-## O que falta (nesta ordem)
+## Checklist
 
-1. **`src/pages/LegalConsent/`** (+ `.module.css`) — página nova, rota protegida
+1. [x] **`src/pages/LegalConsent/`** — página nova, rota protegida
    `/oratio/consentimento`. Busca o próprio perfil (`getProfile()` de `profileService.ts`) pra
    alimentar `hasPassword`/`hasGoogle`/`userEmail` do `LegalConsentGate` (`mode="post-account"`).
    Ao `onAccept`, `navigate("/oratio/home", { replace: true })` (mesma simplicidade do
    `WelcomeGuide` — não tenta voltar pra onde a pessoa ia).
 
-2. **Wiring em `src/App.tsx`:**
+2. [x] **Wiring em `src/App.tsx`:**
    - `<LegalTermsGate/>` **antes** de `<WelcomeGate/>` no JSX (mesma ordem do "Comportamento
      esperado" da spec — consentimento vem antes do guia de boas-vindas).
    - três rotas novas: `/termos-de-uso` (pública, `<TermsOfUse/>`), `/politica-de-privacidade`
      (pública, `<PrivacyPolicy/>`), `/oratio/consentimento` (dentro de `<ProtectedRoute>`,
      `<LegalConsent/>`) — seguir o padrão `lazy()` das demais páginas.
 
-3. **Wiring em `src/pages/Register/Register.tsx`:**
+3. [x] **Wiring em `src/pages/Register/Register.tsx`:**
    - estado local `legalTermsAccepted` (`useState(false)`) + estado do gate (`gateOpen`).
    - `handleSubmit`: se `!legalTermsAccepted`, abre o `LegalConsentGate` (`mode="pre-account"`)
      **em vez de** chamar `register()` direto; só chama `register(name,email,password,
@@ -103,14 +104,40 @@ pushed. `npx tsc -b` FALHA — ver "Bloqueios conhecidos" abaixo.** Arquivos nov
      recorrente não passa por aqui, é pego pelo `LegalTermsGate` na porta 4).
    - `Register.test.tsx` precisa de testes novos pra tudo isso (não escritos ainda).
 
-4. **Testes/build/lint no frontend** — rodar depois do wiring acima:
+4. [x] **Testes/build/lint no frontend** — validações executadas:
    `npx vitest run` → `npx tsc -b` (**tem que passar limpo**, incluindo o bloqueio #1 acima) →
    `npx eslint <arquivos tocados>` → `npm run test:cov` → `npm run build`.
 
-5. **`/review-pr`** nos dois repos, sobre o diff completo de `feat/consentimento-legal` contra
-   `develop` (backend já pronto pra revisão; frontend só depois do item 4).
+5. [x] **Correção de performance — 3 chamadas a `GET /users/me` numa navegação só.**
+   Diagnóstico confirmado (2026-09-11): `LegalTermsGate` + `WelcomeGate` disparavam
+   `getProfile()` cada um por conta própria na mesma navegação, e `LegalConsent`/`WelcomeGuide`
+   disparavam uma terceira DEPOIS do redirect (dado idêntico ao que `LegalTermsGate` já tinha) —
+   com `DATABASE_URL` em Supabase us-east-1 e `connection_limit=1`, as chamadas serializam no
+   banco. Consertado em `src/services/profileService.ts`: `getProfile()` ganhou dedupe (uma
+   requisição em voo é compartilhada) + memo de `PROFILE_TTL_MS = 5000`ms, com `invalidateProfile()`
+   exportado e chamado depois de `acceptLegalTerms()`, `updateName()`, `setPassword()` (mesmo
+   arquivo) e `markWelcomeSeen()` (`welcomeService.ts`) — sem isso um gate podia ler cache velho
+   e mandar a pessoa de volta pra tela que ela acabou de completar. **Não mexi na região do
+   Supabase nem no `connection_limit`** (produção, decisão do Lucas, fora de escopo).
+   - Efeito colateral encontrado e corrigido: `getProfile()` ganhou o tipo de retorno explícito
+     `Promise<UserProfile>` (antes inferia `any` via `res.data` sem anotação) — isso expôs um
+     bug pré-existente em `src/pages/Home/Home.tsx:196`, que lia `u?.nome ?? u?.firstName` (dois
+     campos que **nunca existiram** em `UserProfile`, confirmado contra `origin/develop` e
+     contra o `UsersService.getProfile()` do backend — dead code mascarado pelo `any` implícito).
+     Removido o fallback morto; `Home.test.tsx` continua verde (5/5).
+   - Testes novos em `profileService.test.ts`: um prova que duas chamadas concorrentes a
+     `getProfile()` resultam em UM fetch (dedupe); um prova que `invalidateProfile()` força a
+     próxima a ir na rede (e que, sem invalidar, uma segunda chamada dentro da janela serviria o
+     memo). Nenhum teste novo em `welcomeService.ts` (não tinha suíte antes; não criada agora —
+     fora do que foi pedido).
+   - Validado: `npx vitest run` → 880/880 passando (mais os 2 novos). `npx tsc -b` → limpo (com
+     a correção do `Home.tsx`). `npx eslint` nos arquivos tocados
+     (`profileService.ts`/`.test.ts`, `welcomeService.ts`, `Home.tsx`) → limpo.
 
-6. **Merge `--no-ff` de `feat/consentimento-legal` em `develop` + push — nos dois repos, na
+6. [ ] **`/review-pr`** nos dois repos, sobre o diff completo de `feat/consentimento-legal` contra
+   `develop` (backend pronto desde antes; frontend com o item 5 acima incluído).
+
+7. [ ] **Merge `--no-ff` de `feat/consentimento-legal` em `develop` + push — nos dois repos, na
    mesma janela** (a entrega só fecha com os dois lados; subir só um deixa `GET /users/me`
    devolvendo `legalTermsAccepted` sem ninguém no frontend saber ler, ou vice-versa). Depois do
    merge, atualizar `docs/specs/INDEX.md` dos dois repos (status da linha
@@ -147,5 +174,9 @@ pushed. `npx tsc -b` FALHA — ver "Bloqueios conhecidos" abaixo.** Arquivos nov
   `npm run lint` → **quebrado por config, pré-existente, não relacionado a esta tarefa**
   (`eslint.config.mjs` ignora os globs passados — mesmo erro rodando `npm run lint` puro, sem
   nenhuma mudança minha).
-- Frontend: `npx tsc -b` → **falha** (bloqueios #1 e #2 acima). Nenhum `vitest run` completo foi
-  rodado ainda nesta sessão para o frontend (fazer isso só depois do wiring, junto do item 4).
+- Frontend: `npx tsc -b` → limpo; testes focados → 53 passando; suíte completa → 877 passando;
+  `npm run test:cov` → thresholds aprovados (80,91% statements / 83,24% lines / 72,98% functions /
+  73,71% branches); lint focado → limpo; `npm run build` → limpo.
+- Pendência operacional: o script `prisma/db-scripts/2026-09-11-consentimento-privacidade.sql`
+  ainda depende de execução humana contra o banco correto. Nenhum `db push`, commit, merge ou push
+  foi executado pelo agente.
