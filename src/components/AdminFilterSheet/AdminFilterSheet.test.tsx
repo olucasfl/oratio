@@ -13,6 +13,8 @@ function baseProps() {
     setFilterVerif: vi.fn(),
     filterActive: "all" as const,
     setFilterActive: vi.fn(),
+    filterProvider: "all" as const,
+    setFilterProvider: vi.fn(),
     onClear: vi.fn(),
     activeCount: 0,
   }
@@ -37,6 +39,17 @@ describe("AdminFilterSheet", () => {
 
     fireEvent.click(screen.getByText("7 dias"))
     expect(props.setFilterActive).toHaveBeenCalledWith("7d")
+
+    fireEvent.click(screen.getByText("Só Google"))
+    expect(props.setFilterProvider).toHaveBeenCalledWith("google")
+  })
+
+  it("shows the 'Entrada' provider group with all four chips", () => {
+    render(<AdminFilterSheet {...baseProps()} />)
+    expect(screen.getByText("Entrada")).toBeInTheDocument()
+    for (const label of ["Só Oratio", "Só Google", "Ambos"]) {
+      expect(screen.getByText(label)).toBeInTheDocument()
+    }
   })
 
   it("disables 'Limpar filtros' when no filter is active", () => {

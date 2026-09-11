@@ -5,6 +5,7 @@ import styles from "./AdminFilterSheet.module.css"
 type FilterRole = "all" | "admin" | "normal"
 type FilterVerif = "all" | "verified" | "unverified"
 type FilterActivity = "all" | "7d" | "30d"
+type FilterProvider = "all" | "oratio" | "google" | "both"
 
 interface Props {
   open: boolean
@@ -16,8 +17,17 @@ interface Props {
   setFilterVerif: (v: FilterVerif) => void
   filterActive: FilterActivity
   setFilterActive: (v: FilterActivity) => void
+  filterProvider: FilterProvider
+  setFilterProvider: (v: FilterProvider) => void
   onClear: () => void
   activeCount: number
+}
+
+const PROVIDER_LABEL: Record<FilterProvider, string> = {
+  all: "Todos",
+  oratio: "Só Oratio",
+  google: "Só Google",
+  both: "Ambos",
 }
 
 export default function AdminFilterSheet({
@@ -25,6 +35,7 @@ export default function AdminFilterSheet({
   filterRole, setFilterRole,
   filterVerif, setFilterVerif,
   filterActive, setFilterActive,
+  filterProvider, setFilterProvider,
   onClear, activeCount,
 }: Props) {
 
@@ -88,6 +99,22 @@ export default function AdminFilterSheet({
                 >
                   {usersLoading && filterActive === v && <Loader2 size={11} className={styles.spin}/>}
                   {v === "all" ? "Todos" : v === "7d" ? "7 dias" : "30 dias"}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.group}>
+            <label>Entrada</label>
+            <div className={styles.row}>
+              {(["all", "oratio", "google", "both"] as FilterProvider[]).map(v => (
+                <button
+                  key={v}
+                  className={`${styles.chip} ${filterProvider === v ? styles.chipOn : ""}`}
+                  onClick={() => setFilterProvider(v)}
+                >
+                  {usersLoading && filterProvider === v && <Loader2 size={11} className={styles.spin}/>}
+                  {PROVIDER_LABEL[v]}
                 </button>
               ))}
             </div>

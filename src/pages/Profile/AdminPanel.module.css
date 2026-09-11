@@ -773,6 +773,31 @@ div.statCard:hover {
   flex-shrink: 0;
 }
 
+/* Método de entrada (spec admin-provedor) — indicadores de linha */
+.providerIcon {
+  color: #64748b;
+  background: #f1f5f9;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.providerAnomaly {
+  color: #b45309;
+  background: #fef3c7;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .userRight {
   display: flex;
   flex-direction: column;
@@ -1380,6 +1405,27 @@ div.statCard:hover {
 
 .verifiedBadge   { background: #dcfce7; color: #166534; }
 .unverifiedBadge { background: #ffedd5; color: #ea580c; }
+
+.providerBadge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* dentro do badge do modal, os ícones ficam sem o círculo de fundo */
+.providerBadge .providerIcon,
+.providerBadge .providerAnomaly {
+  width: auto;
+  height: auto;
+  background: none;
+  color: inherit;
+}
 
 .detailGrid {
   display: grid;

@@ -5,6 +5,9 @@ export interface AdminFilters {
   isAdmin?: boolean
   emailVerified?: boolean
   activeLastDays?: number
+  // Método de entrada (spec admin-provedor): "oratio" (e-mail+senha), "google",
+  // ou "both". Ausente = sem filtro. O backend ignora valor fora desses três.
+  provider?: "oratio" | "google" | "both"
 }
 
 /*
@@ -31,6 +34,11 @@ export interface AdminUser {
   emailVerified: boolean
   isAdmin: boolean
   spiritualStats?: AdminSpiritualStats | null
+  // Método de entrada (spec admin-provedor). O hash nunca vem — só o booleano
+  // e a lista de provedores sociais ("google" hoje). `authProviders: []` +
+  // `hasPassword: false` = anomalia de dados (conta sem método de entrada).
+  hasPassword: boolean
+  authProviders: string[]
 }
 
 /* Painel do admin — cada tipo cobre o que a tela realmente lê da resposta. */
@@ -103,7 +111,8 @@ export async function getAllUsers(filters?: AdminFilters) {
   if (filters?.isAdmin !== undefined) params.append('isAdmin', String(filters.isAdmin))
   if (filters?.emailVerified !== undefined) params.append('emailVerified', String(filters.emailVerified))
   if (filters?.activeLastDays !== undefined) params.append('activeLastDays', String(filters.activeLastDays))
-  
+  if (filters?.provider) params.append('provider', filters.provider)
+
   const queryString = params.toString()
   const url = queryString ? `/users/admin/users?${queryString}` : '/users/admin/users'
   
