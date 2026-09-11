@@ -19,7 +19,7 @@ function LocationDisplay(){
 
 function FakeLogin(){
   const navigate = useNavigate()
-  return <button onClick={() => navigate("/oratio/home")}>entrar</button>
+  return <button onClick={() => navigate("/oratio/profile")}>entrar</button>
 }
 
 function renderGate(initial = "/oratio/home"){

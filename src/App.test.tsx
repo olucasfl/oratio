@@ -55,7 +55,7 @@ vi.mock("./services/pushService", () => ({
 // autenticado. Sem mock, é uma chamada axios real que rejeita no jsdom —
 // resolvida como "sem guia" pra manter o boot determinístico.
 vi.mock("./services/profileService", () => ({
-  getProfile: vi.fn().mockResolvedValue({ showWelcome: false }),
+  getProfile: vi.fn().mockResolvedValue({ showWelcome: false, legalTermsAccepted: true }),
 }))
 
 import { preloadConsecration, getProgress } from "./services/consecrationService"

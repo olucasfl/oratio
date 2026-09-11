@@ -28,6 +28,7 @@ import { getProfile } from "../../services/profileService"
 
 const SKIP_PREFIXES = [
  "/oratio/boas-vindas",
+ "/oratio/consentimento",
  "/login",
  "/register",
  "/verificar-email",

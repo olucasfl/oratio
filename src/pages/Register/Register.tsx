@@ -3,11 +3,13 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { register, loginWithGoogle, discardGoogleSession } from "../../services/authService";
 import { persistSession } from "../../services/api";
+import { acceptLegalTerms, getProfile, type UserProfile } from "../../services/profileService";
 import { getAuthErrorMessage } from "../../utils/authErrors";
 import { withRedirect } from "../../utils/authRedirect";
 import VerifyEmailModal from "../../components/VerifyEmailModal/VerifyEmailModal";
 import AlertModal from "../../components/AlertModal/AlertModal";
 import GoogleSignInButton from "../../components/GoogleSignInButton/GoogleSignInButton";
+import LegalConsentGate from "../../components/LegalConsentGate/LegalConsentGate";
 import styles from "./Register.module.css";
 
 export default function Register(){
@@ -21,6 +23,11 @@ const [name,setName] = useState("");
 const [email,setEmail] = useState("");
 const [password,setPassword] = useState("");
 const [confirmPassword,setConfirmPassword] = useState("");
+const [legalTermsAccepted,setLegalTermsAccepted] = useState(false);
+const [gateOpen,setGateOpen] = useState(false);
+const [gateAction,setGateAction] = useState<"register" | "google">("register");
+const [googleConsentProfile,setGoogleConsentProfile] = useState<UserProfile | null>(null);
+const [googleConsentRetry,setGoogleConsentRetry] = useState(false);
 
 const [loading,setLoading] = useState(false);
 const [verifyOpen,setVerifyOpen] = useState(false);
@@ -60,6 +67,16 @@ if(!result.isNewUser){
 // Home antes do WelcomeGate). A visibilidade real é do `showWelcome` —
 // spec boas-vindas.
 persistSession(result.access_token, result.refresh_token);
+
+try{
+ await acceptLegalTerms();
+}catch{
+ const profile = await getProfile().catch(()=>null);
+ setGoogleConsentProfile(profile);
+ setGoogleConsentRetry(true);
+ return;
+}
+
 navigate("/oratio/boas-vindas");
 
 }catch(err){
@@ -74,14 +91,13 @@ setLoading(false);
 
 }
 
-async function handleSubmit(e:React.FormEvent){
+async function submitRegistration(){
 
-e.preventDefault();
 setLoading(true);
 
 try{
 
-const data = await register(name,email,password,confirmPassword);
+const data = await register(name,email,password,confirmPassword,true);
 
 setRegisteredEmail(email);
 
@@ -101,6 +117,20 @@ setAlertMessage(getAuthErrorMessage(err, "Não foi possível criar sua conta. Te
 setLoading(false);
 
 }
+
+}
+
+async function handleSubmit(e:React.FormEvent){
+
+e.preventDefault();
+
+if(!legalTermsAccepted){
+ setGateAction("register");
+ setGateOpen(true);
+ return;
+}
+
+await submitRegistration();
 
 }
 
@@ -167,7 +197,20 @@ required
 
 <div className={styles.divider}><span>ou</span></div>
 
-<GoogleSignInButton onCredential={handleGoogleCredential} disabled={loading} />
+<div style={{ position: "relative" }}>
+ <GoogleSignInButton onCredential={handleGoogleCredential} disabled={loading || !legalTermsAccepted} />
+ {!legalTermsAccepted && (
+  <button
+   type="button"
+   aria-label="Aceitar termos para continuar com Google"
+   style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer" }}
+  onClick={()=>{
+   setGateAction("google")
+   setGateOpen(true)
+  }}
+  />
+ )}
+</div>
 
 <p className={styles.switch}>
 Já possui conta?
@@ -200,6 +243,33 @@ onClose={()=>{
  }
 }}
 />
+
+{gateOpen && (
+ <LegalConsentGate
+  mode="pre-account"
+  onAccept={()=>{
+   setLegalTermsAccepted(true)
+   setGateOpen(false)
+  if(gateAction === "register") void submitRegistration()
+  }}
+  onDecline={()=>setGateOpen(false)}
+ />
+)}
+
+{googleConsentRetry && (
+ <LegalConsentGate
+  mode="post-account"
+  userEmail={googleConsentProfile?.email ?? ""}
+  hasPassword={googleConsentProfile?.hasPassword ?? false}
+  hasGoogle={googleConsentProfile?.hasGoogle ?? true}
+  onAccept={()=>{
+   setGoogleConsentProfile(null)
+   setGoogleConsentRetry(false)
+   navigate("/oratio/boas-vindas")
+  }}
+  onDecline={()=>{}}
+ />
+)}
 
 </div>
 
