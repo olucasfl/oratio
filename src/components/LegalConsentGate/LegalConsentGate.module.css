@@ -1,0 +1,142 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 28, 51, 0.55);
+  padding: 16px;
+}
+
+.card {
+  background: var(--oratio-card-bg);
+  border-radius: var(--oratio-radius-lg);
+  padding: 24px;
+  max-width: 440px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--oratio-shadow-strong);
+}
+
+.card h2 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.hint {
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.errorText {
+  color: #b3261e;
+  font-size: 0.85rem;
+  margin: 0 0 12px;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.checkboxRow input {
+  margin-top: 3px;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.checkboxRow label {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.linkButton {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--oratio-primary);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.buttonPrimary,
+.buttonSecondary,
+.buttonDanger {
+  flex: 1;
+  padding: 12px;
+  border-radius: 999px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.buttonPrimary {
+  background: var(--oratio-primary);
+  color: var(--oratio-text-light);
+}
+
+.buttonPrimary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.buttonSecondary {
+  background: rgba(127, 127, 127, 0.15);
+  color: inherit;
+}
+
+.buttonSecondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.buttonDanger {
+  background: #b3261e;
+  color: #fff;
+}
+
+.declined h2 {
+  margin: 0 0 8px;
+}
+
+.declinedActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.readerHeader {
+  margin-bottom: 12px;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 4px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: inherit;
+}
+
+.scroll {
+  max-height: calc(90vh - 60px);
+  overflow-y: auto;
+}

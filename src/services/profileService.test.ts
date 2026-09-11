@@ -7,6 +7,8 @@ vi.mock("./api", () => ({
 import api from "./api"
 import {
   getProfile,
+  invalidateProfile,
+  acceptLegalTerms,
   updateName,
   changePassword,
   setPassword,
@@ -21,6 +23,9 @@ describe("profileService", () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    // dedupe/memo de getProfile() vive em estado de módulo (fora do mock do
+    // axios) — sem isto, o cache de um teste vazaria pro próximo.
+    invalidateProfile()
   })
 
   it("getProfile GETs /users/me and returns the response body", async () => {
@@ -29,6 +34,50 @@ describe("profileService", () => {
 
     expect(mockedApi.get).toHaveBeenCalledWith("/users/me")
     expect(result).toEqual({ id: "u1", name: "Ana" })
+  })
+
+  it("getProfile dedupes concurrent calls into a single fetch (LegalTermsGate + WelcomeGate na mesma navegação)", async () => {
+    let resolveGet!: (value: { data: unknown }) => void
+    mockedApi.get.mockReturnValue(
+      new Promise((resolve) => { resolveGet = resolve }),
+    )
+
+    const p1 = getProfile()
+    const p2 = getProfile()
+
+    resolveGet({ data: { id: "u1", legalTermsAccepted: true } })
+
+    const [r1, r2] = await Promise.all([p1, p2])
+
+    expect(mockedApi.get).toHaveBeenCalledTimes(1)
+    expect(r1).toEqual({ id: "u1", legalTermsAccepted: true })
+    expect(r2).toEqual({ id: "u1", legalTermsAccepted: true })
+  })
+
+  it("invalidateProfile força a próxima chamada a ir na rede (sem invalidar, o memo serviria a mesma resposta)", async () => {
+    mockedApi.get.mockResolvedValueOnce({ data: { id: "u1" } })
+    await getProfile()
+    expect(mockedApi.get).toHaveBeenCalledTimes(1)
+
+    // dentro da janela do memo, sem invalidar: nenhum fetch novo
+    const cached = await getProfile()
+    expect(mockedApi.get).toHaveBeenCalledTimes(1)
+    expect(cached).toEqual({ id: "u1" })
+
+    mockedApi.get.mockResolvedValueOnce({ data: { id: "u1", legalTermsAccepted: true } })
+    invalidateProfile()
+    const fresh = await getProfile()
+
+    expect(mockedApi.get).toHaveBeenCalledTimes(2)
+    expect(fresh).toEqual({ id: "u1", legalTermsAccepted: true })
+  })
+
+  it("acceptLegalTerms POSTs /users/me/legal-terms-accepted with no body and returns the response body", async () => {
+    mockedApi.post.mockResolvedValue({ data: { ok: true } })
+    const result = await acceptLegalTerms()
+
+    expect(mockedApi.post).toHaveBeenCalledWith("/users/me/legal-terms-accepted")
+    expect(result).toEqual({ ok: true })
   })
 
   it("updateName PATCHes /users/me with the new name and returns the response body", async () => {

@@ -60,6 +60,15 @@ describe("WelcomeGate", () => {
     expect(screen.getByTestId("loc")).toHaveTextContent("/oratio/home")
   })
 
+  it("não pula o consentimento legal quando já está na tela de consentimento", async () => {
+    getProfileMock.mockResolvedValue({ showWelcome: true })
+
+    renderGate("/oratio/consentimento")
+
+    await waitFor(() => expect(getProfileMock).not.toHaveBeenCalled())
+    expect(screen.getByTestId("loc")).toHaveTextContent("/oratio/consentimento")
+  })
+
   it("cadastro por senha: monta deslogado em /login, loga, e a navegação SPA dispara o redirect", async () => {
     // no boot em /login não há sessão — o efeito roda e não faz nada
     isLoggedInMock.mockReturnValue(false)

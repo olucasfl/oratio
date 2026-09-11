@@ -86,14 +86,16 @@ export async function register(
   name: string,
   email: string,
   password: string,
-  confirmPassword: string
+  confirmPassword: string,
+  legalTermsAccepted: boolean
 ) {
 
   const response = await api.post("/users", {
     name,
     email,
     password,
-    confirmPassword
+    confirmPassword,
+    legalTermsAccepted
   });
 
   return response.data;

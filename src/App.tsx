@@ -10,6 +10,7 @@ import OfflineBanner from "./components/OfflineBanner/OfflineBanner"
 import PullToRefresh from "./components/PullToRefresh/PullToRefresh"
 import InstallAppNudge from "./components/InstallAppNudge/InstallAppNudge"
 import FlashToast from "./components/FlashToast/FlashToast"
+import LegalTermsGate from "./components/LegalTermsGate/LegalTermsGate"
 import WelcomeGate from "./components/WelcomeGate/WelcomeGate"
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary"
 import { preloadConsecration, getProgress } from "./services/consecrationService"
@@ -21,6 +22,9 @@ const Login            = lazy(() => import("./pages/Login/Login"))
 const Register         = lazy(() => import("./pages/Register/Register"))
 const VerifyEmail      = lazy(() => import("./pages/VerifyEmail/VerifyEmail"))
 const ConfirmEmailChange = lazy(() => import("./pages/ConfirmEmailChange/ConfirmEmailChange"))
+const TermsOfUse       = lazy(() => import("./pages/TermsOfUse/TermsOfUse"))
+const PrivacyPolicy    = lazy(() => import("./pages/PrivacyPolicy/PrivacyPolicy"))
+const LegalConsent     = lazy(() => import("./pages/LegalConsent/LegalConsent"))
 const Home             = lazy(() => import("./pages/Home/Home"))
 const ConsecrationHome = lazy(() => import("./pages/Consecration/ConsecrationHome"))
 const ConsecrationDay  = lazy(() => import("./pages/Consecration/ConsecrationDay"))
@@ -239,6 +243,8 @@ return(
 
 <FlashToast />
 
+<LegalTermsGate />
+
 <WelcomeGate />
 
 {/*
@@ -265,6 +271,19 @@ return(
 <Route path="/verificar-email" element={<VerifyEmail />} />
 
 <Route path="/confirmar-troca-email" element={<ConfirmEmailChange />} />
+
+<Route path="/termos-de-uso" element={<TermsOfUse />} />
+
+<Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
+
+<Route
+ path="/oratio/consentimento"
+ element={
+  <ProtectedRoute>
+   <LegalConsent />
+  </ProtectedRoute>
+ }
+/>
 
 <Route
 path="/oratio/home"

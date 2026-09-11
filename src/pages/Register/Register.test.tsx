@@ -17,6 +17,20 @@ vi.mock("../../services/authService", () => ({
 
 vi.mock("../../services/api", () => ({ persistSession: vi.fn() }))
 
+vi.mock("../../services/profileService", () => ({
+  acceptLegalTerms: vi.fn(),
+  getProfile: vi.fn(),
+}))
+
+vi.mock("../../components/LegalConsentGate/LegalConsentGate", () => ({
+  default: ({ mode, onAccept, onDecline }: { mode: string; onAccept: () => void; onDecline: () => void }) => (
+    <div data-testid={`legal-gate-${mode}`}>
+      <button onClick={onAccept}>legal-gate-accept</button>
+      <button onClick={onDecline}>legal-gate-decline</button>
+    </div>
+  ),
+}))
+
 // O modal de verificação faz polling contra a API — stub aqui.
 vi.mock("../../components/VerifyEmailModal/VerifyEmailModal", () => ({
   default: ({ open, email }: { open: boolean; email: string }) =>
@@ -33,12 +47,15 @@ vi.mock("../../components/GoogleSignInButton/GoogleSignInButton", () => ({
 
 import { register, loginWithGoogle, discardGoogleSession } from "../../services/authService"
 import { persistSession } from "../../services/api"
+import { acceptLegalTerms, getProfile } from "../../services/profileService"
 import Register from "./Register"
 
 const registerMock = register as unknown as ReturnType<typeof vi.fn>
 const loginWithGoogleMock = loginWithGoogle as unknown as ReturnType<typeof vi.fn>
 const discardGoogleSessionMock = discardGoogleSession as unknown as ReturnType<typeof vi.fn>
 const persistSessionMock = persistSession as unknown as ReturnType<typeof vi.fn>
+const acceptLegalTermsMock = acceptLegalTerms as unknown as ReturnType<typeof vi.fn>
+const getProfileMock = getProfile as unknown as ReturnType<typeof vi.fn>
 
 const NEW_USER = { access_token: "a", refresh_token: "r", isNewUser: true, googleLinkedNow: false }
 const EXISTING = { access_token: "a", refresh_token: "r", isNewUser: false, googleLinkedNow: false }
@@ -55,7 +72,19 @@ function renderRegister(path = "/register") {
   return render(<MemoryRouter initialEntries={[path]}><Register /></MemoryRouter>)
 }
 
-beforeEach(() => vi.clearAllMocks())
+function acceptLegalGate() {
+  fireEvent.click(screen.getByRole("button", { name: "legal-gate-accept" }))
+}
+
+beforeEach(() => {
+  vi.clearAllMocks()
+  acceptLegalTermsMock.mockResolvedValue({ ok: true })
+  getProfileMock.mockResolvedValue({
+    email: "ana@x.com",
+    hasPassword: false,
+    hasGoogle: true,
+  })
+})
 
 describe("Register", () => {
 
@@ -64,8 +93,9 @@ describe("Register", () => {
     renderRegister()
     fillForm()
     fireEvent.click(screen.getByRole("button", { name: "Criar conta" }))
+    acceptLegalGate()
     await waitFor(() =>
-      expect(registerMock).toHaveBeenCalledWith("Ana", "ana@x.com", "pw123456", "pw123456"),
+      expect(registerMock).toHaveBeenCalledWith("Ana", "ana@x.com", "pw123456", "pw123456", true),
     )
     expect(await screen.findByText("verify-modal:ana@x.com")).toBeInTheDocument()
   })
@@ -75,6 +105,7 @@ describe("Register", () => {
     renderRegister()
     fillForm()
     fireEvent.click(screen.getByRole("button", { name: "Criar conta" }))
+    acceptLegalGate()
 
     expect(await screen.findByText(/não conseguimos enviar o email de verificação/)).toBeInTheDocument()
     fireEvent.click(screen.getByRole("button", { name: "OK" }))
@@ -86,6 +117,7 @@ describe("Register", () => {
     renderRegister()
     fillForm()
     fireEvent.click(screen.getByRole("button", { name: "Criar conta" }))
+    acceptLegalGate()
     expect(await screen.findByText("Esse email já está cadastrado.")).toBeInTheDocument()
   })
 
@@ -99,12 +131,15 @@ describe("Register", () => {
     loginWithGoogleMock.mockResolvedValue(NEW_USER)
     renderRegister("/register?redirect=/oratio/biblia")
 
+    fireEvent.click(screen.getByRole("button", { name: /aceitar termos para continuar com google/i }))
+    acceptLegalGate()
     fireEvent.click(screen.getByText("google-signin"))
 
     await waitFor(() =>
       expect(loginWithGoogleMock).toHaveBeenCalledWith("fake-google-credential"),
     )
     expect(persistSessionMock).toHaveBeenCalledWith("a", "r")
+    expect(acceptLegalTermsMock).toHaveBeenCalled()
     expect(discardGoogleSessionMock).not.toHaveBeenCalled()
     // conta criada agora → guia de boas-vindas direto (spec boas-vindas);
     // a visibilidade real ainda é do showWelcome
@@ -112,10 +147,26 @@ describe("Register", () => {
     expect(screen.queryByText(/verify-modal/)).not.toBeInTheDocument()
   })
 
+  it("keeps a new Google account at the legal gate when recording consent fails", async () => {
+    loginWithGoogleMock.mockResolvedValue(NEW_USER)
+    acceptLegalTermsMock.mockRejectedValueOnce(new Error("network"))
+    renderRegister()
+
+    fireEvent.click(screen.getByRole("button", { name: /aceitar termos para continuar com google/i }))
+    acceptLegalGate()
+    fireEvent.click(screen.getByText("google-signin"))
+
+    await waitFor(() => expect(screen.getByTestId("legal-gate-post-account")).toBeInTheDocument())
+    expect(navigateMock).not.toHaveBeenCalledWith("/oratio/boas-vindas")
+    expect(getProfileMock).toHaveBeenCalledTimes(1)
+  })
+
   it("E3 — an EXISTING account via /register: discards the session and routes to login", async () => {
     loginWithGoogleMock.mockResolvedValue(EXISTING)
     renderRegister("/register?redirect=/oratio/biblia")
 
+    fireEvent.click(screen.getByRole("button", { name: /aceitar termos para continuar com google/i }))
+    acceptLegalGate()
     fireEvent.click(screen.getByText("google-signin"))
 
     // sessão órfã revogada, tokens NÃO adotados
@@ -136,6 +187,8 @@ describe("Register", () => {
     loginWithGoogleMock.mockResolvedValue(AUTO_LINKED)
     renderRegister()
 
+    fireEvent.click(screen.getByRole("button", { name: /aceitar termos para continuar com google/i }))
+    acceptLegalGate()
     fireEvent.click(screen.getByText("google-signin"))
 
     await waitFor(() => expect(discardGoogleSessionMock).toHaveBeenCalledWith("r"))
@@ -152,6 +205,8 @@ describe("Register", () => {
     loginWithGoogleMock.mockRejectedValue({ response: { status: 503 } })
     renderRegister()
 
+    fireEvent.click(screen.getByRole("button", { name: /aceitar termos para continuar com google/i }))
+    acceptLegalGate()
     fireEvent.click(screen.getByText("google-signin"))
 
     expect(await screen.findByText(/Não foi possível entrar com o Google/i)).toBeInTheDocument()

@@ -376,6 +376,9 @@ commit.
   teste dentro deste repo (`legalDocs.test.ts`, os dois arquivos com a mesma versão) + comentário
   nos componentes de conteúdo + item de checklist de release — não há teste automatizado
   **entre** repos, porque não há CI compartilhado entre `oratio` e `oratio-api`.
+- **Implementação em andamento (2026-09-11), parcial.** Checklist do que falta, com caminho de
+  arquivo e as decisões já tomadas que não estão nesta spec: `docs/tasks/consentimento-legal-
+  todo.md`. Branch `feat/consentimento-legal` nos dois repos, ainda sem merge em `develop`.
 - **Bloqueio externo:** o Vox não pode prometer, nos Termos de Uso, um encaminhamento de crise
   que o `vox.prompt.ts` não faz hoje — ver "Fora de escopo" e `oratio-api/docs/specs/INDEX.md`.
 - **`RULES.md` corrigido em sessão anterior** (não é código, é achado de pesquisa pedido
