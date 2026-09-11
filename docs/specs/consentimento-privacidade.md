@@ -1,7 +1,7 @@
 # Spec: consentimento-privacidade — telas e portas de consentimento
 
-> Status: rascunho
-> Plano: — *(a decidir na aprovação)* · Checklist: —
+> Status: aprovada
+> Plano: — *(ainda não escrito)* · Checklist: —
 > Backend pareado: `oratio-api/docs/specs/consentimento-privacidade.md` (mestre — dado, rotas,
 > DTO, critérios de backend e as decisões de design das quatro portas vivem lá)
 
