@@ -44,12 +44,36 @@ export interface UserProfile {
    `undefined` → nenhum redirect (fail-safe).
   */
   showWelcome?: boolean
+  /*
+   `true` = a conta aceitou o PAR Termos de Uso + Política de Privacidade
+   NA VERSÃO ATUAL (`legalTermsVersion` bate com `LEGAL_TERMS_VERSION` no
+   backend). O `LegalTermsGate` redireciona pra `/oratio/consentimento`
+   enquanto isto não for `true` — inclusive quem aceitou uma versão antiga
+   (o texto mudou) volta a ver a tela. Aditivo; cache antigo sem o campo
+   vira `undefined` → tratado como não aceito pelo gate (fail-safe: nunca
+   assume aceite por falta de campo).
+  */
+  legalTermsAccepted?: boolean
   spiritualProgress: SpiritualProgress
 }
 
 export async function getProfile(){
 
  const res = await api.get("/users/me")
+
+ return res.data
+
+}
+
+/*
+ Aceite do PAR Termos de Uso + Política de Privacidade (spec consentimento-
+ privacidade.md). Sem corpo — o `userId` vem do token. Ao contrário de
+ `markWelcomeSeen`, o backend SEMPRE regrava (chamar de novo depois de um
+ bump de `LEGAL_TERMS_VERSION` precisa conseguir registrar o reaceite).
+*/
+export async function acceptLegalTerms(){
+
+ const res = await api.post("/users/me/legal-terms-accepted")
 
  return res.data
 

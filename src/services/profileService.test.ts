@@ -7,6 +7,7 @@ vi.mock("./api", () => ({
 import api from "./api"
 import {
   getProfile,
+  acceptLegalTerms,
   updateName,
   changePassword,
   setPassword,
@@ -29,6 +30,14 @@ describe("profileService", () => {
 
     expect(mockedApi.get).toHaveBeenCalledWith("/users/me")
     expect(result).toEqual({ id: "u1", name: "Ana" })
+  })
+
+  it("acceptLegalTerms POSTs /users/me/legal-terms-accepted with no body and returns the response body", async () => {
+    mockedApi.post.mockResolvedValue({ data: { ok: true } })
+    const result = await acceptLegalTerms()
+
+    expect(mockedApi.post).toHaveBeenCalledWith("/users/me/legal-terms-accepted")
+    expect(result).toEqual({ ok: true })
   })
 
   it("updateName PATCHes /users/me with the new name and returns the response body", async () => {

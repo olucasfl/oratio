@@ -135,16 +135,17 @@ describe("authService", () => {
 
   describe("register", () => {
 
-    it("posts to /users with the four registration fields and returns the response body", async () => {
+    it("posts to /users with the five registration fields (including legalTermsAccepted) and returns the response body", async () => {
       postMock.mockResolvedValue({ data: { id: "u1" } })
 
-      const result = await register("Ana", "ana@example.com", "hunter2", "hunter2")
+      const result = await register("Ana", "ana@example.com", "hunter2", "hunter2", true)
 
       expect(postMock).toHaveBeenCalledWith("/users", {
         name: "Ana",
         email: "ana@example.com",
         password: "hunter2",
         confirmPassword: "hunter2",
+        legalTermsAccepted: true,
       })
       expect(result).toEqual({ id: "u1" })
     })
