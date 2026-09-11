@@ -6,6 +6,7 @@ import styles from "./AccountSettings.module.css"
 import ChangePasswordModal from "../../components/ChangePasswordModal/ChangePasswordModal"
 import SetPasswordModal from "../../components/SetPasswordModal/SetPasswordModal"
 import ChangeEmailModal from "../../components/ChangeEmailModal/ChangeEmailModal"
+import EditNameModal from "../../components/EditNameModal/EditNameModal"
 
 import { getProfile } from "../../services/profileService"
 import { asApiError } from "../../utils/authErrors"
@@ -14,6 +15,7 @@ import {
  ChevronLeft,
  KeyRound,
  Mail,
+ Pencil,
  Loader2
 } from "lucide-react"
 
@@ -44,6 +46,34 @@ function cachedEmail():string | null{
  }
 }
 
+function cachedName():string | null{
+ try{
+  const raw = localStorage.getItem("oratio-profile")
+  if(!raw) return null
+  const parsed = JSON.parse(raw)
+  return typeof parsed?.name === "string" ? parsed.name : null
+ }catch{
+  return null
+ }
+}
+
+/*
+ A tela de Perfil lê o mesmo cache "oratio-profile" pra render sem flash
+ (mesma técnica de `cachedHasPassword`/`cachedEmail` acima). Depois de
+ salvar um nome novo, funde só o campo `name` no que já estava cacheado —
+ nunca sobrescreve com um objeto parcial, que apagaria hasPassword/
+ hasGoogle/showWelcome/spiritualProgress do cache.
+*/
+function updateCachedName(name:string){
+ try{
+  const raw = localStorage.getItem("oratio-profile")
+  const parsed = raw ? JSON.parse(raw) : {}
+  localStorage.setItem("oratio-profile", JSON.stringify({ ...parsed, name }))
+ }catch{
+  // cache é conveniência — segue sem ele
+ }
+}
+
 export default function AccountSettings(){
 
  const navigate = useNavigate()
@@ -52,10 +82,12 @@ export default function AccountSettings(){
  const [changePasswordOpen,setChangePasswordOpen] = useState(false)
  const [setPasswordOpen,setSetPasswordOpen] = useState(false)
  const [changeEmailOpen,setChangeEmailOpen] = useState(false)
+ const [editNameOpen,setEditNameOpen] = useState(false)
  const [emailRequestedMsg,setEmailRequestedMsg] = useState<string | null>(null)
 
  const [hasPassword,setHasPassword] = useState<boolean | null>(cachedHasPassword)
  const [userEmail,setUserEmail] = useState<string | null>(cachedEmail)
+ const [userName,setUserName] = useState<string | null>(cachedName)
 
  /* chegou do aviso do Perfil (?senha=1) → destaca o botão "Definir senha" */
  const [pwdHighlight,setPwdHighlight] = useState(
@@ -92,6 +124,7 @@ export default function AccountSettings(){
     */
     setHasPassword(typeof data?.hasPassword === "boolean" ? data.hasPassword : true)
     if(typeof data?.email === "string") setUserEmail(data.email)
+    if(typeof data?.name === "string") setUserName(data.name)
     try{
      localStorage.setItem("oratio-profile", JSON.stringify(data))
     }catch{
@@ -115,6 +148,13 @@ export default function AccountSettings(){
   setEmailRequestedMsg(
    `Enviamos um link de confirmação para ${pendingEmail}.`
   )
+
+ }
+
+ function handleNameSaved(name:string){
+
+  setUserName(name)
+  updateCachedName(name)
 
  }
 
@@ -161,6 +201,13 @@ export default function AccountSettings(){
 
      <div className={styles.actionList}>
 
+      <button
+       className={styles.actionButton}
+       onClick={()=>setEditNameOpen(true)}
+      >
+       <Pencil size={16}/> Editar nome
+      </button>
+
       {hasPassword === null && (
 
        <button className={styles.actionButton} disabled>
@@ -204,6 +251,13 @@ export default function AccountSettings(){
     </div>
 
    </div>
+
+   <EditNameModal
+    open={editNameOpen}
+    name={userName ?? ""}
+    onClose={()=>setEditNameOpen(false)}
+    onSaved={handleNameSaved}
+   />
 
    <ChangePasswordModal
     open={changePasswordOpen}

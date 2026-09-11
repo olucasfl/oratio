@@ -21,6 +21,10 @@ vi.mock("../../components/ChangeEmailModal/ChangeEmailModal", () => ({
   default: ({ open, onRequested }: { open: boolean; onRequested: (e: string) => void }) =>
     open ? <button onClick={() => onRequested("novo@x.com")}>email-modal</button> : null,
 }))
+vi.mock("../../components/EditNameModal/EditNameModal", () => ({
+  default: ({ open, onSaved }: { open: boolean; onSaved: (n: string) => void }) =>
+    open ? <button onClick={() => onSaved("Nome Novo")}>name-modal</button> : null,
+}))
 
 import { getProfile } from "../../services/profileService"
 import AccountSettings from "./AccountSettings"
@@ -88,6 +92,27 @@ describe("AccountSettings", () => {
     fireEvent.click(await screen.findByRole("button", { name: /Trocar email/ }))
     fireEvent.click(screen.getByText("email-modal"))
     expect(screen.getByText("Enviamos um link de confirmação para novo@x.com.")).toBeInTheDocument()
+  })
+
+  it("opens the edit-name modal and merges the new name into the cache without dropping other fields", async () => {
+    // hasPassword/email pré-existentes no cache — a prova de que é merge, não
+    // sobrescrita: se `updateCachedName` gravasse `{ name }` sozinho, esse
+    // campo sumiria e o teste falharia.
+    localStorage.setItem(
+      "oratio-profile",
+      JSON.stringify({ name: "Nome Antigo", hasPassword: true, email: "a@b.com" }),
+    )
+    getProfileMock.mockResolvedValue({ hasPassword: true, name: "Nome Antigo", email: "a@b.com" })
+
+    renderSettings()
+    fireEvent.click(await screen.findByRole("button", { name: /Editar nome/ }))
+    fireEvent.click(screen.getByText("name-modal"))
+
+    expect(JSON.parse(localStorage.getItem("oratio-profile") ?? "{}")).toEqual({
+      name: "Nome Novo",
+      hasPassword: true,
+      email: "a@b.com",
+    })
   })
 
   it("goes back to the profile", () => {

@@ -1,12 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from "vitest"
 
 vi.mock("./api", () => ({
-  default: { get: vi.fn(), post: vi.fn(), delete: vi.fn() },
+  default: { get: vi.fn(), post: vi.fn(), patch: vi.fn(), delete: vi.fn() },
 }))
 
 import api from "./api"
 import {
   getProfile,
+  updateName,
   changePassword,
   setPassword,
   requestEmailChange,
@@ -28,6 +29,14 @@ describe("profileService", () => {
 
     expect(mockedApi.get).toHaveBeenCalledWith("/users/me")
     expect(result).toEqual({ id: "u1", name: "Ana" })
+  })
+
+  it("updateName PATCHes /users/me with the new name and returns the response body", async () => {
+    mockedApi.patch.mockResolvedValue({ data: { id: "u1", name: "Maria Nova" } })
+    const result = await updateName("Maria Nova")
+
+    expect(mockedApi.patch).toHaveBeenCalledWith("/users/me", { name: "Maria Nova" })
+    expect(result).toEqual({ id: "u1", name: "Maria Nova" })
   })
 
   it("changePassword posts current and new password", async () => {
