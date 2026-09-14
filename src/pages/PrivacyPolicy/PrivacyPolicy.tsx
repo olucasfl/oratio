@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom"
 import { ChevronLeft } from "lucide-react"
 
 import PrivacyPolicyContent from "../../components/PrivacyPolicyContent/PrivacyPolicyContent"
+import useBackOrHome from "../../hooks/useBackOrHome"
 
 import styles from "../TermsOfUse/TermsOfUse.module.css"
 
@@ -12,10 +12,12 @@ import styles from "../TermsOfUse/TermsOfUse.module.css"
  pública para a tela de consentimento OAuth. Mesmo layout de `TermsOfUse`
  (reusa o CSS module dela, como `Tratado.tsx` reusa o de `Catecismo`) — é a
  mesma peça (`PrivacyPolicyContent`) usada dentro do `LegalConsentGate`.
+ Aberta por link direto (ex.: do Google), o voltar leva pra Home
+ (`useBackOrHome`) — `navigate(-1)` ali não fazia nada.
 */
 export default function PrivacyPolicy(){
 
-  const navigate = useNavigate()
+  const goBack = useBackOrHome()
 
   return (
     <div className={`${styles.wrapper} page-enter`}>
@@ -24,7 +26,7 @@ export default function PrivacyPolicy(){
         <button
           type="button"
           className={styles.backButton}
-          onClick={()=>navigate(-1)}
+          onClick={goBack}
         >
           <ChevronLeft size={20} />
         </button>

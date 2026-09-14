@@ -41,9 +41,19 @@ mesmo estando ligado. Isso trava:
     fluxo dentro do app. O disparo + a confirmação clara é o equivalente.
   - Vale pra conta só-senha e pra conta com os dois métodos. Conta só-Google usa
     "Definir senha" (não pede a atual) — fora do alcance do link.
-- **`profileService.setPassword` NÃO mudou** — a ideia de aceitar `googleCredential`
-  ali foi descartada na spec mestra ("Fora de escopo"): o sintoma 2 sai de graça
-  reusando `forgot-password`.
+- **`profileService.setPassword(password, confirmPassword, googleCredential)`** —
+  **mudou em 2026-09-14** (antes da subida pra `main`): `POST /users/me/set-password`
+  passou a exigir `googleCredential` (id_token fresco do GIS) no corpo. Motivo: sem
+  isso, um access token roubado bastava para criar uma senha numa conta só-Google e
+  tomá-la. O `SetPasswordModal` virou dois passos — as duas senhas (validadas no
+  cliente) e depois "Para confirmar que é você, entre de novo com o Google"
+  (`GoogleSignInButton`, mesmo padrão do `DeleteAccountModal`); só o credential
+  dispara a chamada. Erros: 400 (outra conta Google → "Não foi possível confirmar
+  sua identidade."; validação), 401 (credential inválido/expirado → pede para
+  entrar de novo no Google), 409 (já tem senha → "Trocar senha"). O modal não fecha
+  em erro e deixa tentar de novo. (A spec mestra antes listava isto como "Fora de
+  escopo" para o sintoma 2 — que continua saindo por `forgot-password`; aqui o
+  motivo é outro: a prova fresca pra criar a primeira senha.)
 
 ## Decisão de escopo
 
