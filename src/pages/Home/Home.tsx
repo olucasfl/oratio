@@ -384,7 +384,9 @@ export default function Home(){
 
       <button
        className={styles.guestBanner}
-       style={!pwa ? { top:"calc(72px + env(safe-area-inset-top))" } : undefined}
+       // abaixo da fileira de botões do topo (menu 46px em 16px + safe-area)
+       // nos DOIS modos: no PWA a barra ficava em 10px e cobria o menu
+       style={{ top:"calc(72px + env(safe-area-inset-top))" }}
        onClick={()=>navigate("/register")}
       >
 
@@ -407,7 +409,7 @@ export default function Home(){
 
      <div
       className={styles.guestBannerSpacer}
-      style={!pwa ? { height:"142px" } : undefined}
+      style={{ height:"142px" }}
      />
 
     </>
