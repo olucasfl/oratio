@@ -195,7 +195,7 @@ const BLOCKS: LegalBlock[] = [
     items: [
       "**Enquanto sua conta existir**, mantemos os seus dados para que o aplicativo funcione e para que o seu histórico devocional continue disponível para você.",
       "**Contas sem acesso por 24 meses** são excluídas, com todos os dados associados. Avisaremos por e-mail antes disso, no endereço cadastrado.",
-      "**Registros de acesso** (endereço IP e informações do aparelho) são mantidos enquanto a sessão correspondente estiver ativa e por um período curto após o seu encerramento, para fins de segurança.",
+      "**Registros de acesso** (endereço IP, a localização aproximada obtida a partir dele e informações do aparelho) são guardados enquanto sua conta existir, para fins de segurança e para que você possa ver em quais aparelhos está conectado. O registro de um aparelho é apagado quando você sai do aplicativo nele ou encerra a sessão na tela de sessões ativas. Trocar ou redefinir a senha apaga os registros de todos os aparelhos.",
       "**Se você excluir sua conta**, os dados são apagados de forma permanente e imediata dos nossos sistemas. Cópias de segurança em poder dos prestadores listados na seção 6 são sobrescritas nos ciclos normais desses serviços.",
     ],
   },
