@@ -8,19 +8,25 @@ import { getProfile } from "../../services/profileService"
  Porta 4 do consentimento (spec `docs/specs/consentimento-privacidade.md`):
  já autenticado (login por senha, Google, ou reabertura do PWA).
 
- Mesma forma do `WelcomeGate` (spec boas-vindas), montado ANTES dele em
- `App.tsx`: ao carregar o app autenticado, busca `GET /users/me` uma vez e,
- se `legalTermsAccepted !== true` e a rota atual não estiver na lista de
- exceções, redireciona pra `/oratio/consentimento`. `legalTermsAccepted` é
- a ÚNICA fonte de verdade — nunca um flag local.
+ Montado ANTES do `WelcomeGate` em `App.tsx`. A cada troca de rota
+ (`location.pathname` nas deps) que não esteja na lista de exceções, consulta
+ `GET /users/me` e, se `legalTermsAccepted !== true`, redireciona pra
+ `/oratio/consentimento`. `legalTermsAccepted` é a ÚNICA fonte de verdade —
+ nunca um flag local.
 
- O efeito reavalia a cada troca de rota (`location.pathname` nas deps), não
- só no boot — mesmo racional do `WelcomeGate`: quem faz login por SPA (sem
- reload) precisa ser interceptado nessa navegação. O `checked` ref garante
- UMA busca de `/users/me` por sessão.
+ NÃO pulável: enquanto a última resposta for "não aceito", TODA navegação
+ qualificada consulta de novo (uma chamada por navegação — o memo curto e o
+ dedupe de `getProfile()` absorvem o `WelcomeGate` e a própria tela de
+ consentimento) e redireciona de novo. Antes era "uma busca por sessão": quem
+ usava o botão voltar na tela de consentimento entrava no app sem aceitar.
 
- Falha de rede: não redireciona, libera o `checked` e tenta de novo na
- próxima navegação. Nunca prende ninguém na porta do app.
+ Só o `accepted` ref encerra as consultas, e ele só vira `true` com uma
+ resposta `legalTermsAccepted === true`. Depois do aceite não há loop:
+ `acceptLegalTerms()` invalida o memo do perfil, a tela navega pra
+ `/oratio/home`, esta consulta já vem aceita e o gate se aposenta.
+
+ Falha de rede: não redireciona e reavalia na próxima navegação. Nunca prende
+ ninguém na porta do app.
 */
 
 const SKIP_PREFIXES = [
@@ -37,34 +43,31 @@ export default function LegalTermsGate(){
 
   const navigate = useNavigate()
   const location = useLocation()
-  const checked = useRef(false)
+  const accepted = useRef(false)
 
   useEffect(()=>{
 
-    if(checked.current) return
+    if(accepted.current) return
     if(!isLoggedIn()) return
     if(SKIP_PREFIXES.some((p)=> location.pathname.startsWith(p))) return
-
-    checked.current = true
 
     let cancelled = false
 
     getProfile()
       .then((u)=>{
-        if(cancelled) return
-        if(u?.legalTermsAccepted !== true){
-          navigate("/oratio/consentimento", { replace: true })
+        if(u?.legalTermsAccepted === true){
+          accepted.current = true
+          return
         }
+        if(cancelled) return
+        navigate("/oratio/consentimento", { replace: true })
       })
       .catch(()=>{
         // rede: não intercepta; reavalia na próxima navegação
-        checked.current = false
       })
 
     return ()=>{ cancelled = true }
 
-  // reavalia a cada navegação (o componente fica montado o app inteiro); o
-  // `checked` ref impede uma segunda busca de `/users/me` depois da primeira
   },[location.pathname, navigate])
 
   return null

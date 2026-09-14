@@ -104,8 +104,10 @@ antes de instalar.
 4. **Já logado (login por senha, Google, ou reabertura do PWA) — `LegalTermsGate`** —
    componente novo, `render-nothing`, mesma forma do `WelcomeGate`: monta no shell do `App`,
    **antes** do `WelcomeGate` na ordem do JSX (`<LegalTermsGate/>` então `<WelcomeGate/>`),
-   reavalia a cada troca de `location.pathname` (não só no boot), busca `GET /users/me` uma vez
-   por navegação qualificada (`checked` ref), e redireciona para `/oratio/consentimento`
+   reavalia a cada troca de `location.pathname` (não só no boot), busca `GET /users/me` em
+   **toda** navegação qualificada enquanto a última resposta for "não aceito" (no máximo uma por
+   navegação; para de buscar só depois de ver `legalTermsAccepted === true` — correção
+   2026-09-14: antes era uma busca por sessão e o botão voltar pulava a tela), e redireciona para `/oratio/consentimento`
    (`replace: true`) sempre que `legalTermsAccepted !== true` — **exceto** nas rotas de auth
    (`/login`, `/register`, `/verificar-email`, `/confirmar-troca-email`), nas rotas públicas dos
    próprios documentos (`/termos-de-uso`, `/politica-de-privacidade`) e na própria
@@ -292,8 +294,16 @@ Mitigação registrada (ver também o par backend):
 - [ ] **Dado** um usuário autenticado com `legalTermsAccepted: true`, **quando** o
   `LegalTermsGate` reavalia, **então** nenhum redirecionamento acontece.
 - [ ] **Dado** a falha de rede do `GET /users/me` dentro do `LegalTermsGate`, **quando** o efeito
-  roda, **então** não redireciona e libera o `checked` ref para tentar de novo na próxima
-  navegação (nunca prende ninguém na porta do app).
+  roda, **então** não redireciona e tenta de novo na próxima navegação (nunca prende ninguém na
+  porta do app).
+- [ ] **Dado** `legalTermsAccepted !== true` e a pessoa já redirecionada para
+  `/oratio/consentimento`, **quando** usa o botão voltar ou navega para outra rota fora das
+  exceções, **então** é redirecionada de novo (o gate não se "gasta" — correção 2026-09-14).
+- [ ] **Dado** uma conta com `legalTermsAccepted: false` **e** `showWelcome: true`, **quando** entra
+  no app, **então** vê consentimento → guia → Home, nesta ordem (o `WelcomeGate` não redireciona
+  enquanto os termos estão pendentes).
+- [ ] **Dado** falha ao carregar o perfil em `/oratio/consentimento`, **quando** a tela abre,
+  **então** mostra erro com "Tentar de novo" (refaz a busca), sem sair da rota.
 - [ ] **Dado** `/oratio/consentimento` (porta 4), **quando** clica "Recusar", **então** o mesmo
   overlay passa a mostrar "Sair do app" e "Excluir minha conta" lado a lado, e **nenhuma** chamada
   de exclusão ou logout acontece só por ter clicado em "Recusar".
