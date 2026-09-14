@@ -239,13 +239,20 @@ return(
 
 <ScrollToTop />
 
-<InstallAppNudge />
+{/*
+  O LegalTermsGate ENVOLVE o app: numa rota logada, nada abaixo monta antes
+  de confirmar o aceite dos termos. `cleared` segura também os popups e o
+  guia de boas-vindas enquanto a pessoa está na tela de consentimento.
+*/}
+<LegalTermsGate>
+{(cleared)=>(
+<>
+
+{cleared && <InstallAppNudge />}
 
 <FlashToast />
 
-<LegalTermsGate />
-
-<WelcomeGate />
+{cleared && <WelcomeGate />}
 
 {/*
   Boundary por rota (key={location.pathname}): se uma página quebrar no
@@ -460,6 +467,10 @@ element={
 </PullToRefresh>
 
 </ErrorBoundary>
+
+</>
+)}
+</LegalTermsGate>
 
 </Suspense>
 

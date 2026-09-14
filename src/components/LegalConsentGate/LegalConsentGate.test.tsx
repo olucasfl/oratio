@@ -14,6 +14,12 @@ vi.mock("../DeleteAccountModal/DeleteAccountModal", () => ({
     open ? <div data-testid="delete-modal">DeleteAccountModal aberto</div> : null,
 }))
 
+vi.mock("../GoogleSignInButton/GoogleSignInButton", () => ({
+  default: ({ onCredential }: { onCredential: (c: string) => void }) => (
+    <button onClick={() => onCredential("fake-google-credential")}>google-signin</button>
+  ),
+}))
+
 import { acceptLegalTerms } from "../../services/profileService"
 import { logout } from "../../services/authService"
 import LegalConsentGate from "./LegalConsentGate"
@@ -112,6 +118,29 @@ describe("LegalConsentGate — mode pre-account", () => {
     expect(onDecline).toHaveBeenCalledTimes(1)
     expect(screen.queryByText(/Sair do app/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/Excluir minha conta/i)).not.toBeInTheDocument()
+  })
+
+  it("com googleAccept, o aceitar É o botão do Google: só aparece com as duas caixas e entrega o credential", () => {
+    const onAccept = vi.fn()
+    const googleAccept = vi.fn()
+    render(
+      <LegalConsentGate mode="pre-account" onAccept={onAccept} onDecline={vi.fn()} googleAccept={googleAccept} />,
+    )
+
+    // antes das caixas: placeholder desabilitado, sem botão do Google
+    expect(screen.getByRole("button", { name: "Continuar com Google" })).toBeDisabled()
+    expect(screen.queryByText("google-signin")).not.toBeInTheDocument()
+    expect(screen.queryByRole("button", { name: /Aceitar e continuar/i })).not.toBeInTheDocument()
+
+    fireEvent.click(termsCheckbox())
+    expect(screen.queryByText("google-signin")).not.toBeInTheDocument()
+
+    fireEvent.click(privacyCheckbox())
+    fireEvent.click(screen.getByText("google-signin"))
+
+    expect(googleAccept).toHaveBeenCalledWith("fake-google-credential")
+    expect(onAccept).not.toHaveBeenCalled()
+    expect(acceptLegalTermsMock).not.toHaveBeenCalled()
   })
 
 })

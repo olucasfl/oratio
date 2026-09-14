@@ -36,8 +36,10 @@ function Controls(){
 function renderGate(initial = "/oratio/home", { withLegalGate = false } = {}){
   return render(
     <MemoryRouter initialEntries={[initial]}>
-      {withLegalGate && <LegalTermsGate />}
-      <WelcomeGate />
+      {withLegalGate
+        // mesmo formato do App.tsx: o gate envolve e só monta o guia com cleared
+        ? <LegalTermsGate>{(cleared) => (cleared ? <WelcomeGate /> : null)}</LegalTermsGate>
+        : <WelcomeGate />}
       <Controls />
       <LocationDisplay />
     </MemoryRouter>,

@@ -72,6 +72,12 @@
   margin-top: 20px;
 }
 
+/* cadastro pelo Google: botão do GIS em cima, largura total; Recusar embaixo */
+.actionsGoogle {
+  flex-direction: column-reverse;
+  align-items: stretch;
+}
+
 .buttonPrimary,
 .buttonSecondary,
 .buttonDanger {

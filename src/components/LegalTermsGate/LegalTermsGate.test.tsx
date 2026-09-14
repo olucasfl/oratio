@@ -19,6 +19,7 @@ function LocationDisplay(){
 
 // Botões que simulam navegação SPA: login, "Aceitar" da tela de consentimento
 // (que navega pra /oratio/home), outra rota qualquer, e o botão voltar.
+// Ficam FORA do gate, pra continuarem clicáveis enquanto ele segura o app.
 function Controls(){
   const navigate = useNavigate()
   return (
@@ -34,7 +35,9 @@ function Controls(){
 function renderGate(initialEntries: string[] = ["/oratio/home"]){
   return render(
     <MemoryRouter initialEntries={initialEntries} initialIndex={initialEntries.length - 1}>
-      <LegalTermsGate />
+      <LegalTermsGate>
+        {(cleared) => <div data-testid="app">app:{String(cleared)}</div>}
+      </LegalTermsGate>
       <Controls />
       <LocationDisplay />
     </MemoryRouter>,
@@ -42,23 +45,42 @@ function renderGate(initialEntries: string[] = ["/oratio/home"]){
 }
 
 const loc = () => screen.getByTestId("loc")
+const app = () => screen.queryByTestId("app")
 
 beforeEach(() => {
   vi.clearAllMocks()
+  localStorage.clear()
   isLoggedInMock.mockReturnValue(true)
 })
 
 describe("LegalTermsGate", () => {
 
-  it("aparece: redireciona para /oratio/consentimento quando legalTermsAccepted é false", async () => {
+  it("segura o app: enquanto a resposta não chega, nada do app monta", async () => {
+    let resolve!: (v: unknown) => void
+    getProfileMock.mockReturnValue(new Promise((r) => { resolve = r }))
+
+    renderGate()
+
+    expect(screen.getByTestId("legal-gate-checking")).toBeInTheDocument()
+    expect(app()).not.toBeInTheDocument()
+
+    resolve({ legalTermsAccepted: true })
+
+    await waitFor(() => expect(app()).toHaveTextContent("app:true"))
+  })
+
+  it("não aceito: vai para /oratio/consentimento sem montar o app antes", async () => {
     getProfileMock.mockResolvedValue({ legalTermsAccepted: false })
 
     renderGate()
 
+    expect(app()).not.toBeInTheDocument()
     await waitFor(() => expect(loc()).toHaveTextContent("/oratio/consentimento"))
+    // na tela de consentimento a rota renderiza, mas sem popups nem guia
+    expect(app()).toHaveTextContent("app:false")
   })
 
-  it("aparece: redireciona também quando legalTermsAccepted vem undefined (cache antigo)", async () => {
+  it("redireciona também quando legalTermsAccepted vem undefined (backend/cache antigo)", async () => {
     getProfileMock.mockResolvedValue({})
 
     renderGate()
@@ -66,12 +88,12 @@ describe("LegalTermsGate", () => {
     await waitFor(() => expect(loc()).toHaveTextContent("/oratio/consentimento"))
   })
 
-  it("não redireciona quando legalTermsAccepted é true", async () => {
+  it("aceito: libera o app com cleared=true", async () => {
     getProfileMock.mockResolvedValue({ legalTermsAccepted: true })
 
     renderGate()
 
-    await waitFor(() => expect(getProfileMock).toHaveBeenCalled())
+    await waitFor(() => expect(app()).toHaveTextContent("app:true"))
     expect(loc()).toHaveTextContent("/oratio/home")
   })
 
@@ -94,7 +116,6 @@ describe("LegalTermsGate", () => {
   it("não é pulável: voltar da tela de consentimento redireciona de novo", async () => {
     getProfileMock.mockResolvedValue({ legalTermsAccepted: false })
 
-    // histórico: /oratio/home → /oratio/prayers (onde o gate intercepta)
     renderGate(["/oratio/home", "/oratio/prayers"])
 
     await waitFor(() => expect(loc()).toHaveTextContent("/oratio/consentimento"))
@@ -130,45 +151,68 @@ describe("LegalTermsGate", () => {
     getProfileMock.mockResolvedValue({ legalTermsAccepted: true })
     fireEvent.click(screen.getByText("aceitar"))
 
-    await waitFor(() => expect(getProfileMock).toHaveBeenCalledTimes(2))
+    await waitFor(() => expect(app()).toHaveTextContent("app:true"))
     expect(loc()).toHaveTextContent("/oratio/home")
+    expect(getProfileMock).toHaveBeenCalledTimes(2)
 
     fireEvent.click(screen.getByText("outra-rota"))
     await waitFor(() => expect(loc()).toHaveTextContent("/oratio/prayers"))
     fireEvent.click(screen.getByText("entrar"))
     await waitFor(() => expect(loc()).toHaveTextContent("/oratio/profile"))
 
+    expect(app()).toHaveTextContent("app:true")
     expect(getProfileMock).toHaveBeenCalledTimes(2)
   })
 
-  it("falha de rede: não redireciona e tenta de novo na próxima navegação", async () => {
+  it("falha de rede sem cache: mostra erro, não libera o app, e 'Tentar de novo' consulta outra vez", async () => {
     getProfileMock.mockRejectedValueOnce(new Error("network"))
 
     renderGate()
 
-    await waitFor(() => expect(getProfileMock).toHaveBeenCalledTimes(1))
+    expect(await screen.findByRole("alert")).toHaveTextContent(/Não foi possível verificar sua conta/i)
+    expect(app()).not.toBeInTheDocument()
     expect(loc()).toHaveTextContent("/oratio/home")
 
-    getProfileMock.mockResolvedValueOnce({ legalTermsAccepted: false })
-    fireEvent.click(screen.getByText("entrar"))
+    getProfileMock.mockResolvedValueOnce({ legalTermsAccepted: true })
+    fireEvent.click(screen.getByRole("button", { name: "Tentar de novo" }))
 
-    await waitFor(() => expect(getProfileMock).toHaveBeenCalledTimes(2))
-    await waitFor(() => expect(loc()).toHaveTextContent("/oratio/consentimento"))
+    await waitFor(() => expect(app()).toHaveTextContent("app:true"))
+    expect(getProfileMock).toHaveBeenCalledTimes(2)
   })
 
-  it("visitante deslogado: nenhuma rota fora da lista dispara chamada", async () => {
+  it("falha de rede com cache de perfil já aceito: libera (PWA offline de quem já aceitou)", async () => {
+    localStorage.setItem("oratio-profile", JSON.stringify({ legalTermsAccepted: true }))
+    getProfileMock.mockRejectedValueOnce(new Error("network"))
+
+    renderGate()
+
+    await waitFor(() => expect(app()).toHaveTextContent("app:true"))
+  })
+
+  it("falha de rede com cache NÃO aceito: não libera", async () => {
+    localStorage.setItem("oratio-profile", JSON.stringify({ legalTermsAccepted: false }))
+    getProfileMock.mockRejectedValueOnce(new Error("network"))
+
+    renderGate()
+
+    expect(await screen.findByRole("alert")).toBeInTheDocument()
+    expect(app()).not.toBeInTheDocument()
+  })
+
+  it("visitante deslogado: renderiza o app sem consulta", async () => {
     isLoggedInMock.mockReturnValue(false)
 
     renderGate(["/oratio/prayers"])
 
-    await waitFor(() => expect(loc()).toHaveTextContent("/oratio/prayers"))
+    expect(app()).toHaveTextContent("app:true")
     expect(getProfileMock).not.toHaveBeenCalled()
   })
 
-  it("rotas dos documentos legais ficam de fora (não intercepta leitura pública)", async () => {
+  it("rotas dos documentos legais ficam de fora (leitura pública, sem popups)", async () => {
     renderGate(["/termos-de-uso"])
 
-    await waitFor(() => expect(loc()).toHaveTextContent("/termos-de-uso"))
+    expect(app()).toHaveTextContent("app:false")
+    expect(loc()).toHaveTextContent("/termos-de-uso")
     expect(getProfileMock).not.toHaveBeenCalled()
   })
 

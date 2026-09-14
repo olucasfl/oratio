@@ -1,32 +1,43 @@
-import { useEffect, useRef } from "react"
-import { useNavigate, useLocation } from "react-router-dom"
+import { useEffect, useState, type ReactNode } from "react"
+import { Navigate, useLocation } from "react-router-dom"
 
 import { isLoggedIn } from "../../utils/auth"
 import { getProfile } from "../../services/profileService"
+
+import styles from "./LegalTermsGate.module.css"
 
 /*
  Porta 4 do consentimento (spec `docs/specs/consentimento-privacidade.md`):
  já autenticado (login por senha, Google, ou reabertura do PWA).
 
- Montado ANTES do `WelcomeGate` em `App.tsx`. A cada troca de rota
- (`location.pathname` nas deps) que não esteja na lista de exceções, consulta
- `GET /users/me` e, se `legalTermsAccepted !== true`, redireciona pra
- `/oratio/consentimento`. `legalTermsAccepted` é a ÚNICA fonte de verdade —
- nunca um flag local.
+ ENVOLVE o app (`App.tsx`) em vez de rodar ao lado dele. Antes era um
+ componente irmão das rotas: a Home, o guia de boas-vindas e os popups
+ renderizavam normalmente e só DEPOIS do `GET /users/me` o gate
+ redirecionava — a pessoa via o app por um instante sem ter aceitado. Agora,
+ numa rota protegida, NADA do app monta enquanto a resposta não chega:
 
- NÃO pulável: enquanto a última resposta for "não aceito", TODA navegação
- qualificada consulta de novo (uma chamada por navegação — o memo curto e o
- dedupe de `getProfile()` absorvem o `WelcomeGate` e a própria tela de
- consentimento) e redireciona de novo. Antes era "uma busca por sessão": quem
- usava o botão voltar na tela de consentimento entrava no app sem aceitar.
+ - visitante deslogado → renderiza o app (`cleared = true`), sem consulta;
+ - rota da lista de exceções (consentimento, documentos legais, auth) →
+   renderiza a rota, mas com `cleared = false` enquanto o aceite não foi
+   confirmado: o `App.tsx` usa isso pra não montar popups (`InstallAppNudge`)
+   nem o `WelcomeGate` por cima da tela de consentimento;
+ - qualquer outra rota logada, sem aceite confirmado → carregando; a resposta
+   decide: aceito → libera o app (`cleared = true`) e para de consultar;
+   não aceito → `<Navigate>` pra `/oratio/consentimento` sem montar nada.
 
- Só o `accepted` ref encerra as consultas, e ele só vira `true` com uma
- resposta `legalTermsAccepted === true`. Depois do aceite não há loop:
- `acceptLegalTerms()` invalida o memo do perfil, a tela navega pra
- `/oratio/home`, esta consulta já vem aceita e o gate se aposenta.
+ Não pulável: enquanto não houver aceite confirmado, TODA navegação
+ qualificada consulta de novo (o memo curto e o dedupe de `getProfile()`
+ seguram o custo) — voltar da tela de consentimento cai no carregando e é
+ redirecionado de novo.
 
- Falha de rede: não redireciona e reavalia na próxima navegação. Nunca prende
- ninguém na porta do app.
+ Falha de rede: se o cache do perfil (`oratio-profile`, gravado a partir do
+ próprio `GET /users/me` e apagado no logout) diz que já aceitou, libera — o
+ PWA continua abrindo offline pra quem já aceitou. Sem essa certeza, mostra
+ erro com "Tentar de novo" e NÃO libera o app.
+
+ `legalTermsAccepted` é a ÚNICA fonte de verdade; o cache só vale como
+ fallback de rede. O logout recarrega a página (`clearSession`), então o
+ estado "aceito" nunca vaza de uma conta pra outra.
 */
 
 const SKIP_PREFIXES = [
@@ -39,37 +50,89 @@ const SKIP_PREFIXES = [
   "/confirmar-troca-email",
 ]
 
-export default function LegalTermsGate(){
+function cachedAccepted(): boolean {
+  try{
+    const raw = localStorage.getItem("oratio-profile")
+    return !!raw && JSON.parse(raw)?.legalTermsAccepted === true
+  }catch{
+    return false
+  }
+}
 
-  const navigate = useNavigate()
+interface Props {
+  /* `cleared`: o app pode montar popups e o guia de boas-vindas. */
+  children: (cleared: boolean) => ReactNode
+}
+
+export default function LegalTermsGate({ children }: Props){
+
   const location = useLocation()
-  const accepted = useRef(false)
+  const [accepted, setAccepted] = useState(false)
+  const [retry, setRetry] = useState(0)
+  // resultado negativo (ou erro) de UMA consulta, amarrado à NAVEGAÇÃO
+  // (location.key) + tentativa que o produziu. Não pode ser só o pathname:
+  // depois do aceite a tela volta pra /oratio/home — o mesmo path da primeira
+  // consulta — e um "não aceito" velho mandaria a pessoa de volta pro
+  // consentimento. Nova navegação ou "Tentar de novo" volta ao carregando.
+  const [outcome, setOutcome] = useState<{ key: string; value: "pending" | "error" } | null>(null)
+
+  const loggedIn = isLoggedIn()
+  const skip = SKIP_PREFIXES.some((p)=> location.pathname.startsWith(p))
+  const mustCheck = loggedIn && !accepted && !skip
+  const key = `${location.key}#${retry}`
 
   useEffect(()=>{
 
-    if(accepted.current) return
-    if(!isLoggedIn()) return
-    if(SKIP_PREFIXES.some((p)=> location.pathname.startsWith(p))) return
+    if(!mustCheck) return
 
     let cancelled = false
 
     getProfile()
       .then((u)=>{
+        if(cancelled) return
         if(u?.legalTermsAccepted === true){
-          accepted.current = true
+          setAccepted(true)
           return
         }
-        if(cancelled) return
-        navigate("/oratio/consentimento", { replace: true })
+        setOutcome({ key, value: "pending" })
       })
       .catch(()=>{
-        // rede: não intercepta; reavalia na próxima navegação
+        if(cancelled) return
+        if(cachedAccepted()){
+          setAccepted(true)
+          return
+        }
+        setOutcome({ key, value: "error" })
       })
 
     return ()=>{ cancelled = true }
 
-  },[location.pathname, navigate])
+  },[mustCheck, key])
 
-  return null
+  if(!mustCheck){
+    return <>{children(!loggedIn || accepted)}</>
+  }
+
+  if(outcome?.key === key && outcome.value === "pending"){
+    return <Navigate to="/oratio/consentimento" replace />
+  }
+
+  if(outcome?.key === key && outcome.value === "error"){
+    return (
+      <div className={styles.error} role="alert">
+        <p className={styles.title}>Não foi possível verificar sua conta</p>
+        <p className={styles.hint}>Confira sua conexão e tente de novo.</p>
+        <button
+          type="button"
+          className={styles.button}
+          onClick={()=>setRetry((r)=> r + 1)}
+        >
+          Tentar de novo
+        </button>
+      </div>
+    )
+  }
+
+  return <div className="oratio-loading" aria-busy="true" data-testid="legal-gate-checking" />
 
 }
