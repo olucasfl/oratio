@@ -48,6 +48,10 @@ Não são specs; são gaps reais que a auditoria encontrou e que precisam de don
     (registros de acesso ficam enquanto a conta existir), não criando job.
   - Exclusão de contas sem acesso por 24 meses, com aviso por e-mail antes — nada disso existe.
     **Aberta**; não bloqueia o lançamento.
+- **Aviso "Defina uma senha" volta a cada login** (achado do `/review-pr` da subida, 2026-09-14,
+  registrado como dívida por decisão de Lucas). `set_password_hint_last` (`Profile.tsx`) não está
+  no `KEEP_ON_LOGOUT` de `api.ts`, então o intervalo de 7 dias recomeça a cada logout de conta
+  só-Google. Corrigir exige decidir a chave contra o `KEEP_ON_LOGOUT` (`RULES.md` §4).
 
 ## Legenda de status
 
