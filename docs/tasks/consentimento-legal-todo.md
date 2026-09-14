@@ -15,9 +15,9 @@ backfill), `legal-terms-version.ts` (`LEGAL_TERMS_VERSION = "2026-09-11"`),
 `prisma/db-scripts/2026-09-11-consentimento-privacidade.sql` (SEM BACKFILL em destaque). 874
 testes passando, build limpo. **Não tem `/review-pr` ainda.**
 
-**Frontend (`oratio`) — implementação local concluída na branch `feat/consentimento-legal`.**
-O wiring, os testes e o build passam localmente. As alterações ainda não foram commitadas,
-mergeadas ou publicadas nesta sessão.
+**Frontend (`oratio`) — na `develop` desde 2026-09-11 (merge `ba706e0`).** A lista abaixo é o
+registro do que a branch trouxe; o que falta está nos itens 6 do Checklist (`/review-pr`) e no QA
+na tela antes da promoção pra `main`.
 
 - `src/services/profileService.ts` — `UserProfile.legalTermsAccepted?: boolean`,
   `acceptLegalTerms()` (`POST /users/me/legal-terms-accepted`, sem corpo).
@@ -44,8 +44,8 @@ mergeadas ou publicadas nesta sessão.
   nunca navegação de rota, então as caixas nunca desmontam e "Voltar" preserva o estado sem
   esforço), `mode="post-account"` integra `DeleteAccountModal` já existente.
 - `src/utils/legalDocs.test.ts` — compara a versão dos dois `.md` de `docs/legal/` entre si e
-  com as constantes exportadas pelos dois componentes de conteúdo. **Não compila** (ver
-  "Bloqueios conhecidos").
+  com as constantes exportadas pelos dois componentes de conteúdo. Compila e passa (3 testes,
+  conferido em 2026-09-14) — o bloqueio antigo está em "Bloqueios antigos, resolvidos".
 - `src/pages/TermsOfUse/` (+ `.module.css`) — rota pública, só leitura, botão voltar
   (`navigate(-1)`).
 - `src/pages/PrivacyPolicy/` — rota pública, reusa `TermsOfUse.module.css` (mesmo padrão de
@@ -136,8 +136,12 @@ mergeadas ou publicadas nesta sessão.
 
 6. [ ] **`/review-pr`** nos dois repos, sobre o diff completo de `feat/consentimento-legal` contra
    `develop` (backend pronto desde antes; frontend com o item 5 acima incluído).
+   **Pendência explícita (registrada no `/docs-sync` de 2026-09-14):** nunca foi rodado, e o item
+   7 já foi feito sem ele. Como o código já está na `develop`, rodar sobre
+   `origin/main..origin/develop` dos dois repos **antes** da promoção pra `main`.
 
-7. [ ] **Merge `--no-ff` de `feat/consentimento-legal` em `develop` + push — nos dois repos, na
+7. [x] **Feito em 2026-09-11** — merges `2fa0858` (`oratio-api`) e `ba706e0` (`oratio`); INDEX
+   dos dois repos atualizado no `/docs-sync` de 2026-09-14. Texto original do item: **Merge `--no-ff` de `feat/consentimento-legal` em `develop` + push — nos dois repos, na
    mesma janela** (a entrega só fecha com os dois lados; subir só um deixa `GET /users/me`
    devolvendo `legalTermsAccepted` sem ninguém no frontend saber ler, ou vice-versa). Depois do
    merge, atualizar `docs/specs/INDEX.md` dos dois repos (status da linha
@@ -163,7 +167,7 @@ mergeadas ou publicadas nesta sessão.
   `docs/legal/*.md` em runtime** — bate com o que você pediu ("o texto... passa a viver no
   componente — uma fonte só"), registrado aqui só pra deixar explícito: os `.md` em
   `docs/legal/` **não são importados por código nenhum**, exceto o teste de acoplamento
-  (`legalDocs.test.ts`, hoje quebrado — bloqueio #1).
+  (`legalDocs.test.ts` — o antigo bloqueio #1, já resolvido com import `?raw`).
 - **CSS novo usa os tokens já existentes** (`--oratio-primary`, `--oratio-card-bg`, `--z-modal`,
   `--oratio-radius-lg`, `--oratio-shadow-strong`) em vez de valores soltos — não é uma decisão
   de design nova, só segue `src/styles/variables.css`.

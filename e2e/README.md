@@ -14,8 +14,21 @@ npm run e2e:ui       # modo interativo, dá pra ver cada passo
 npm run e2e:report   # abre o último relatório HTML
 ```
 
-O Playwright sobe o `npm run dev` sozinho na porta 5199. A API usada é a
-de `.env.local` (produção Render por padrão).
+O Playwright sobe o `npm run dev` sozinho na porta 5199; o dev server lê
+`VITE_API_URL` do `.env` do projeto.
+
+**Atenção — duas APIs possíveis numa mesma rodada.** O `auth.setup.ts` roda
+no processo do Playwright, que **não** lê o `.env`: sem `VITE_API_URL` no
+ambiente ele loga direto na **API de produção**
+(`finance-api-y0ol.onrender.com`), mesmo que o app aponte pra local. Para
+testar contra a API local:
+
+```powershell
+$env:VITE_API_URL = "http://localhost:3000"; npm run e2e
+```
+
+E suba a API local com `ALLOWED_ORIGINS` incluindo `http://localhost:5199` —
+essa origem não está nos defaults de CORS do `oratio-api/src/main.ts`.
 
 ## O que sai
 
