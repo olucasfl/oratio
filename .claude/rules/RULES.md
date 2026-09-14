@@ -95,10 +95,12 @@ diariamente, e mudança silenciosa quebra a memória de uso.
 - Adicionar chave nova no `localStorage` sem decidir explicitamente: sobrevive ao logout
   (`KEEP_ON_LOGOUT` em `api.ts`)? sobrevive ao bump de `APP_VERSION`? Os dois são **opt-out por
   pattern-matching**, então uma chave pode ser varrida sem ninguém ter decidido isso.
-- Adicionar rota acessível a visitante. Três coisas independentes precisam concordar
-  (`ARCHITECTURE.md` §3/§7): a rota fora de `<ProtectedRoute>`, o path em `guestAllowedPrefixes`,
-  e cada ação identificada com `isLoggedIn()` + `GuestGateModal`. Faltar uma produz três bugs
-  diferentes.
+- Adicionar rota acessível a visitante. Duas coisas independentes precisam concordar
+  (`ARCHITECTURE.md` §3/§7): a rota declarada em `App.tsx` **fora** de `<ProtectedRoute>` — é só
+  isso que torna uma rota acessível a visitante; não existe uma lista/constante
+  `guestAllowedPrefixes` em lugar nenhum do código, apesar do nome já ter circulado nesta
+  documentação — e cada ação sensível dentro dela identificada com `isLoggedIn()` +
+  `GuestGateModal`. Faltar uma produz dois bugs diferentes.
 
 ---
 

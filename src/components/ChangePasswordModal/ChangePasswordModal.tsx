@@ -2,16 +2,23 @@ import { useState } from "react"
 import { createPortal } from "react-dom"
 
 import { changePassword } from "../../services/profileService"
+import { forgotPassword } from "../../services/authService"
 import { getAuthErrorMessage } from "../../utils/authErrors"
 
 import styles from "./ChangePasswordModal.module.css"
 
 interface Props{
  open:boolean
+ /*
+  E-mail da própria pessoa (ela está autenticada). Usado pelo link "Não
+  lembro minha senha atual" para disparar o `forgot-password` dela mesma —
+  spec prova-identidade, sintoma 2. Sem e-mail, o link não aparece.
+ */
+ email?:string
  onClose:()=>void
 }
 
-export default function ChangePasswordModal({ open, onClose }:Props){
+export default function ChangePasswordModal({ open, email, onClose }:Props){
 
  const [currentPassword,setCurrentPassword] = useState("")
  const [newPassword,setNewPassword] = useState("")
@@ -19,6 +26,8 @@ export default function ChangePasswordModal({ open, onClose }:Props){
  const [loading,setLoading] = useState(false)
  const [error,setError] = useState<string | null>(null)
  const [success,setSuccess] = useState(false)
+ // link "Não lembro minha senha atual" → e-mail de recuperação disparado
+ const [forgotSent,setForgotSent] = useState(false)
 
  if(!open) return null
 
@@ -28,6 +37,7 @@ export default function ChangePasswordModal({ open, onClose }:Props){
   setConfirmPassword("")
   setError(null)
   setSuccess(false)
+  setForgotSent(false)
  }
 
  function handleClose(){
@@ -73,6 +83,37 @@ export default function ChangePasswordModal({ open, onClose }:Props){
 
  }
 
+ /*
+  A pessoa não lembra a senha atual, mas já provou quem é (está logada).
+  Dispara o `POST /auth/forgot-password` do PRÓPRIO e-mail — a rota é
+  pública, idempotente e genérica; chamá-la autenticada não vaza nada e não
+  precisa de rota nova (spec prova-identidade, sintoma 2). O reset em si só
+  se conclui pelo link do e-mail, FORA do app — a tela deixa isso explícito.
+ */
+ async function handleForgot(){
+
+  if(!email) return
+
+  setError(null)
+  setLoading(true)
+
+  try{
+
+   await forgotPassword(email)
+   setForgotSent(true)
+
+  }catch(err){
+
+   setError(getAuthErrorMessage(err, "Não foi possível enviar o e-mail. Tente novamente."))
+
+  }finally{
+
+   setLoading(false)
+
+  }
+
+ }
+
  return createPortal(
 
   <div className={styles.overlay}>
@@ -88,6 +129,20 @@ export default function ChangePasswordModal({ open, onClose }:Props){
       </p>
       <button className={styles.buttonPrimary} onClick={handleClose}>
        Fechar
+      </button>
+     </>
+
+    ) : forgotSent ? (
+
+     <>
+      <h2>Verifique seu e-mail</h2>
+      <p className={styles.successText}>
+       Enviamos um link para <strong>{email}</strong>. Abra esse e-mail e
+       siga o link para definir uma senha nova — isso acontece fora do app.
+       Depois, entre de novo com a senha que você acabou de criar.
+      </p>
+      <button className={styles.buttonPrimary} onClick={handleClose}>
+       Entendi
       </button>
      </>
 
@@ -129,6 +184,17 @@ export default function ChangePasswordModal({ open, onClose }:Props){
       >
        {loading ? "Salvando..." : "Salvar nova senha"}
       </button>
+
+      {email && (
+       <button
+        type="button"
+        className={styles.linkButton}
+        onClick={handleForgot}
+        disabled={loading}
+       >
+        Não lembro minha senha atual
+       </button>
+      )}
 
       <button className={styles.buttonSecondary} onClick={handleClose}>
        Cancelar

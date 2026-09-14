@@ -53,6 +53,7 @@ na tela.
 
 const PUBLIC_AUTH_PATHS = [
   "/auth/login",
+  "/auth/google",
   "/auth/refresh",
   "/auth/logout",
   "/auth/forgot-password",
@@ -86,9 +87,6 @@ const KEEP_ON_LOGOUT = new Set([
   // Preferência de aparelho (tamanho de fonte, tema de leitura da Bíblia),
   // não é dado de conta — não faz sentido resetar no logout.
   "bibliaLeituraPrefs",
-  // Flag de "já vi o aviso das novidades da Bíblia" — é permanente por
-  // natureza, não deve reaparecer só porque a pessoa deslogou.
-  "biblia_estudo_nudge_v1",
 ]);
 
 export function clearSession(redirectTo: string = "/login") {
@@ -99,6 +97,29 @@ export function clearSession(redirectTo: string = "/login") {
     }
   }
   window.location.href = redirectTo;
+}
+
+/*
+================================
+PERSIST / DESCARTE DE SESSÃO
+================================
+Grava o par de tokens e seta o header default. Contrapartida do clearSession,
+mas sem redirect — quem chama decide pra onde ir.
+*/
+export function persistSession(accessToken: string, refreshToken: string) {
+  localStorage.setItem("access_token", accessToken);
+  localStorage.setItem("refresh_token", refreshToken);
+  api.defaults.headers.Authorization = `Bearer ${accessToken}`;
+}
+
+/*
+Descarta um header default que possa ter sobrado, SEM tocar no localStorage e
+SEM redirect. Usado quando um login foi feito no backend (tokens emitidos) mas
+o frontend decide NÃO adotar a sessão — o caso do cadastro repetido pela tela
+/register (ver Register.tsx / spec login-google §"Fase E → E3").
+*/
+export function clearAuthHeader() {
+  delete api.defaults.headers.Authorization;
 }
 
 function logout() {

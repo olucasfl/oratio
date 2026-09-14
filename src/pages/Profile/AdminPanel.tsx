@@ -10,7 +10,8 @@ import {
   BookHeart, ChevronDown, ChevronUp, ArrowUpDown, CalendarDays,
   SortAsc, Bot, LogIn, Gem, Heart, Pin, Check, AlertCircle,
   Loader2, Cross, RotateCcw, LayoutGrid, List, SlidersHorizontal,
-  BarChart3, Terminal, Cpu, Database, Clock, AlertTriangle, Bell
+  BarChart3, Terminal, Cpu, Database, Clock, AlertTriangle, Bell,
+  Mail, Chrome
 } from "lucide-react"
 
 import type { AdminFilters, AdminTimeseriesMetric, AdminTimeseriesRange, AdminUser, AdminStats, AdminSystemStatus, AdminActivity, AdminHeatmapData } from "../../services/adminService"
@@ -35,6 +36,53 @@ type SortDir      = "desc" | "asc"
 type FilterRole   = "all" | "admin" | "normal"
 type FilterVerif  = "all" | "verified" | "unverified"
 type FilterActivity = "all" | "7d" | "30d"
+type FilterProvider = "all" | "oratio" | "google" | "both"
+
+const PROVIDER_SUMMARY: Record<Exclude<FilterProvider, "all">, string> = {
+  oratio: "Só Oratio",
+  google: "Só Google",
+  both: "Ambos",
+}
+
+/*
+ Ícones do método de entrada (spec admin-provedor). `Mail` = e-mail+senha,
+ `Chrome` = Google (lucide não tem glifo do Google; Chrome é o mais próximo
+ e o `title` desfaz a ambiguidade). Os dois quando a conta tem ambos;
+ `AlertTriangle` quando não tem nenhum — anomalia de dados que não deveria
+ existir.
+*/
+function ProviderIcons({ user, size = 12 }: { user: AdminUser; size?: number }) {
+  const hasGoogle = user.authProviders.includes("google")
+
+  if (!user.hasPassword && !hasGoogle) {
+    return (
+      <span className={styles.providerAnomaly} title="Sem método de entrada">
+        <AlertTriangle size={size}/>
+      </span>
+    )
+  }
+
+  return (
+    <>
+      {user.hasPassword && (
+        <span className={styles.providerIcon} title="Entra com e-mail e senha">
+          <Mail size={size}/>
+        </span>
+      )}
+      {hasGoogle && (
+        <span className={styles.providerIcon} title="Entra com o Google">
+          <Chrome size={size}/>
+        </span>
+      )}
+    </>
+  )
+}
+
+function providerLabel(user: AdminUser): string {
+  const hasGoogle = user.authProviders.includes("google")
+  if (!user.hasPassword && !hasGoogle) return "Sem método de entrada"
+  return [user.hasPassword && "Oratio", hasGoogle && "Google"].filter(Boolean).join(" · ")
+}
 
 const METRIC_OPTIONS: { key: AdminTimeseriesMetric; label: string; icon: React.ReactNode }[] = [
   { key: "users",         label: "Usuários",     icon: <Users size={14}/> },
@@ -129,6 +177,7 @@ export default function AdminPanel() {
   const [filterRole,   setFilterRole]   = useState<FilterRole>("all")
   const [filterVerif,  setFilterVerif]  = useState<FilterVerif>("all")
   const [filterActive, setFilterActive] = useState<FilterActivity>("all")
+  const [filterProvider, setFilterProvider] = useState<FilterProvider>("all")
   const [filterSheetOpen, setFilterSheetOpen] = useState(false)
 
   const [sortBy,  setSortBy]  = useState<SortKey>("createdAt")
@@ -177,7 +226,7 @@ export default function AdminPanel() {
     if (pwdModal.show) return
     const t = setTimeout(() => loadUsers(), 350)
     return () => clearTimeout(t)
-  }, [searchTerm, filterRole, filterVerif, filterActive])
+  }, [searchTerm, filterRole, filterVerif, filterActive, filterProvider])
 
   useEffect(() => {
     if (activeTab !== "charts") return
@@ -210,6 +259,7 @@ export default function AdminPanel() {
         isAdmin:       filterRole === "admin" ? true : filterRole === "normal" ? false : undefined,
         emailVerified: filterVerif === "verified" ? true : filterVerif === "unverified" ? false : undefined,
         activeLastDays: filterActive === "7d" ? 7 : filterActive === "30d" ? 30 : undefined,
+        provider:      filterProvider === "all" ? undefined : filterProvider,
       }
       setUsers(await getAllUsers(filters))
       setError(null)
@@ -299,15 +349,17 @@ export default function AdminPanel() {
     setFilterRole("all")
     setFilterVerif("all")
     setFilterActive("all")
+    setFilterProvider("all")
   }
 
-  const activeFilterCount = [filterRole, filterVerif, filterActive]
+  const activeFilterCount = [filterRole, filterVerif, filterActive, filterProvider]
     .filter(v => v !== "all").length
 
   const filterSummary = [
     filterRole   !== "all" ? (filterRole === "admin" ? "Admin" : "Normal") : null,
     filterVerif  !== "all" ? (filterVerif === "verified" ? "Verificados" : "Não verif.") : null,
     filterActive !== "all" ? (filterActive === "7d" ? "7 dias" : "30 dias") : null,
+    filterProvider !== "all" ? PROVIDER_SUMMARY[filterProvider] : null,
   ].filter(Boolean).join(" · ")
 
   const sortedUsers = useMemo(() => {
@@ -488,6 +540,7 @@ export default function AdminPanel() {
                 ? <span className={styles.verifiedDot} title="Verificado"><Check size={10}/></span>
                 : <span className={styles.unverifiedDot} title="Não verificado"><AlertCircle size={10}/></span>
               }
+              <ProviderIcons user={user} size={11}/>
             </div>
             <p className={styles.userEmail}>{user.email}</p>
             {user.createdAt && (
@@ -537,6 +590,7 @@ export default function AdminPanel() {
             {!user.emailVerified && (
               <span className={styles.unverifiedDot} title="Não verificado"><AlertCircle size={9}/></span>
             )}
+            <ProviderIcons user={user} size={10}/>
           </div>
           <span className={styles.compactEmail}>{user.email}</span>
         </div>
@@ -1071,6 +1125,8 @@ export default function AdminPanel() {
         setFilterVerif={setFilterVerif}
         filterActive={filterActive}
         setFilterActive={setFilterActive}
+        filterProvider={filterProvider}
+        setFilterProvider={setFilterProvider}
         onClear={clearAllFilters}
         activeCount={activeFilterCount}
       />
@@ -1118,6 +1174,10 @@ export default function AdminPanel() {
                         ? <span className={styles.verifiedBadge}><BadgeCheck size={12}/> Verificado</span>
                         : <span className={styles.unverifiedBadge}><BadgeX size={12}/> Não verificado</span>
                       }
+                      <span className={styles.providerBadge} title="Método de entrada">
+                        <ProviderIcons user={detailModal.user} size={11}/>
+                        Entrada: {providerLabel(detailModal.user)}
+                      </span>
                     </div>
                   </div>
                 </div>

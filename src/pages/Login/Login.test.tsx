@@ -11,19 +11,38 @@ vi.mock("react-router-dom", async (importOriginal) => ({
 
 vi.mock("../../services/authService", () => ({
   login: vi.fn(),
+  loginWithGoogle: vi.fn(),
   forgotPassword: vi.fn(),
 }))
+
+vi.mock("../../services/api", () => ({ persistSession: vi.fn() }))
+vi.mock("../../utils/flash", () => ({ setFlash: vi.fn() }))
 
 // Isola o Login — o modal de reset tem teste próprio e fala com a API.
 vi.mock("../../components/ResetPasswordModal/ResetPasswordModal", () => ({
   default: ({ token }: { token: string }) => <div>reset-modal:{token}</div>,
 }))
 
-import { login, forgotPassword } from "../../services/authService"
+// Test double do botão do Google: um <button> que dispara onCredential.
+// O componente real carrega o script do GIS e tem teste próprio.
+vi.mock("../../components/GoogleSignInButton/GoogleSignInButton", () => ({
+  default: ({ onCredential, disabled }: { onCredential: (c: string) => void; disabled?: boolean }) => (
+    <button disabled={disabled} onClick={() => onCredential("fake-google-credential")}>
+      google-signin
+    </button>
+  ),
+}))
+
+import { login, loginWithGoogle, forgotPassword } from "../../services/authService"
+import { persistSession } from "../../services/api"
+import { setFlash } from "../../utils/flash"
 import Login from "./Login"
 
 const loginMock = login as unknown as ReturnType<typeof vi.fn>
+const loginWithGoogleMock = loginWithGoogle as unknown as ReturnType<typeof vi.fn>
 const forgotPasswordMock = forgotPassword as unknown as ReturnType<typeof vi.fn>
+const persistSessionMock = persistSession as unknown as ReturnType<typeof vi.fn>
+const setFlashMock = setFlash as unknown as ReturnType<typeof vi.fn>
 
 function renderLogin(path = "/login") {
   return render(<MemoryRouter initialEntries={[path]}><Login /></MemoryRouter>)
@@ -93,6 +112,95 @@ describe("Login", () => {
     renderLogin("/login?redirect=/oratio/prayers")
     fireEvent.click(screen.getByText("Criar conta"))
     expect(navigateMock).toHaveBeenCalledWith("/register?redirect=%2Foratio%2Fprayers")
+  })
+
+  it("no longer shows the fixed Google hint text (E1a)", () => {
+    renderLogin()
+    expect(
+      screen.queryByText(/Já entrou com Google antes/i),
+    ).not.toBeInTheDocument()
+  })
+
+  it("displays the backend's Google-specific 401 message verbatim (E1)", async () => {
+    // conta só-Google tentando login por senha — a mensagem não está no
+    // dicionário de getAuthErrorMessage, então é repassada como veio.
+    loginMock.mockRejectedValue({
+      response: {
+        status: 401,
+        data: {
+          message:
+            'Esta conta entra com o Google. Use o botão "Continuar com o Google" abaixo.',
+        },
+      },
+    })
+    renderLogin()
+    fireEvent.change(screen.getByPlaceholderText("Email"), { target: { value: "g@b.com" } })
+    fireEvent.change(screen.getByPlaceholderText("Senha"), { target: { value: "x" } })
+    fireEvent.click(screen.getByRole("button", { name: "Entrar" }))
+    expect(
+      await screen.findByText(/Esta conta entra com o Google/i),
+    ).toBeInTheDocument()
+  })
+
+  it("signs in with a Google credential, persists the session and navigates", async () => {
+    loginWithGoogleMock.mockResolvedValue({
+      access_token: "a", refresh_token: "r", isNewUser: false, googleLinkedNow: false,
+    })
+    renderLogin("/login?redirect=/oratio/vox")
+
+    fireEvent.click(screen.getByText("google-signin"))
+
+    await waitFor(() =>
+      expect(loginWithGoogleMock).toHaveBeenCalledWith("fake-google-credential"),
+    )
+    expect(persistSessionMock).toHaveBeenCalledWith("a", "r")
+    expect(setFlashMock).not.toHaveBeenCalled()
+    expect(navigateMock).toHaveBeenCalledWith("/oratio/vox")
+  })
+
+  it("flashes the auto-link toast when googleLinkedNow is true (E4)", async () => {
+    loginWithGoogleMock.mockResolvedValue({
+      access_token: "a", refresh_token: "r", isNewUser: false, googleLinkedNow: true,
+    })
+    renderLogin()
+
+    fireEvent.click(screen.getByText("google-signin"))
+
+    await waitFor(() =>
+      expect(setFlashMock).toHaveBeenCalledWith(
+        "Sua conta Google foi conectada à sua conta Oratio.",
+      ),
+    )
+    expect(persistSessionMock).toHaveBeenCalledWith("a", "r")
+    expect(navigateMock).toHaveBeenCalledWith("/oratio/home")
+  })
+
+  it("disables the Google button while a Google sign-in is in flight (E6)", async () => {
+    let resolveLogin: (v: unknown) => void = () => {}
+    loginWithGoogleMock.mockImplementation(
+      () => new Promise((r) => { resolveLogin = r }),
+    )
+    renderLogin()
+
+    const btn = screen.getByText("google-signin")
+    expect(btn).not.toBeDisabled()
+
+    fireEvent.click(btn)
+    await waitFor(() => expect(btn).toBeDisabled())
+
+    resolveLogin({ access_token: "a", refresh_token: "r", isNewUser: false, googleLinkedNow: false })
+  })
+
+  it("shows a friendly error and does not navigate when the Google sign-in fails", async () => {
+    loginWithGoogleMock.mockRejectedValue({
+      response: { status: 401, data: { message: "Seu e-mail no Google não está verificado. ..." } },
+    })
+    renderLogin()
+
+    fireEvent.click(screen.getByText("google-signin"))
+
+    expect(await screen.findByText(/e-mail no Google não está verificado/i)).toBeInTheDocument()
+    expect(navigateMock).not.toHaveBeenCalled()
   })
 
 })

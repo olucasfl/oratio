@@ -3,12 +3,15 @@ import type { FormEvent } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 
-import { login, forgotPassword } from "../../services/authService";
+import { login, loginWithGoogle, forgotPassword } from "../../services/authService";
+import { persistSession } from "../../services/api";
 import { getAuthErrorMessage } from "../../utils/authErrors";
+import { setFlash } from "../../utils/flash";
 import { withRedirect } from "../../utils/authRedirect";
 
 import ForgotPasswordModal from "../../components/ForgotPasswordModal/ForgotPasswordModal";
 import ResetPasswordModal from "../../components/ResetPasswordModal/ResetPasswordModal";
+import GoogleSignInButton from "../../components/GoogleSignInButton/GoogleSignInButton";
 
 import styles from "./Login.module.css";
 
@@ -79,6 +82,44 @@ export default function Login() {
   FORGOT PASSWORD
   ============================
   */
+
+  async function handleGoogleCredential(credential: string) {
+
+    setLoading(true);
+    setError(null);
+
+    try {
+
+      // Na tela de login, os três desfechos entram: a intenção é entrar, e
+      // entrar é o que acontece (spec login-google §"Fase E → E3"). O
+      // loginWithGoogle não persiste sozinho — a tela decide.
+      const result = await loginWithGoogle(credential);
+
+      persistSession(result.access_token, result.refresh_token);
+
+      if (result.googleLinkedNow) {
+        // auto-ligação silenciosa: a ÚNICA vez que a pessoa é avisada que a
+        // identidade Google foi ligada à conta dela (não há tela de
+        // desvincular no v1) — spec login-google §"Fase E → E4".
+        setFlash("Sua conta Google foi conectada à sua conta Oratio.");
+      }
+
+      // Conta criada agora → guia de boas-vindas direto (evita o flash da
+      // Home antes do WelcomeGate). A visibilidade real ainda é do
+      // `showWelcome` — spec boas-vindas.
+      navigate(result.isNewUser ? "/oratio/boas-vindas" : destination);
+
+    } catch (err) {
+
+      setError(getAuthErrorMessage(err, "Não foi possível entrar com o Google. Tente novamente."));
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  }
 
   async function handleForgotPassword(email: string){
 
@@ -157,6 +198,10 @@ export default function Login() {
           </button>
 
         </form>
+
+        <div className={styles.divider}><span>ou</span></div>
+
+        <GoogleSignInButton onCredential={handleGoogleCredential} disabled={loading} />
 
         <div
           className={styles.forgot}

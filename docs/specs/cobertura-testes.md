@@ -6,9 +6,10 @@
 > statements 80,22% · lines 82,59% · branches 71,98% · functions 72,4% — todos acima dos
 > thresholds de `vitest.config.ts` (80/80/70/70). Fases 1–6 fechadas.
 >
-> **Lint: ❌ em aberto.** `npx eslint .` reporta **143 problemas (122 erros, 21 avisos)**. A
-> baseline desta spec era 148 (128/20): só a Tarefa L1 foi feita. As tarefas **L2–L11 seguem
-> pendentes** em `docs/tasks/plan.md`, e o critério de sucesso "0 erros" não está cumprido.
+> **Lint: ❌ em aberto.** `npx eslint .` reporta **47 problemas (26 erros, 21 avisos)** (medido em
+> 2026-09-08). A baseline desta spec era 148 (128/20); o backlog de lint recuou bastante desde
+> então, mas o critério de sucesso "0 erros" ainda não está cumprido. Ver `docs/tasks/plan.md`
+> para o estado das tarefas L2–L11.
 >
 > Plano/checklist: `docs/tasks/plan.md`
 > As regras permanentes que nasceram aqui (a seção **Boundaries**) foram promovidas para

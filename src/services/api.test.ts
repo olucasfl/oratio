@@ -187,6 +187,17 @@ describe("response interceptor — 401 refresh flow", () => {
     expect(postSpy).not.toHaveBeenCalled()
   })
 
+  it("never attempts refresh for a 401 on /auth/google (invalid credential / email_verified false is business, not an expired session)", async () => {
+    localStorage.setItem("access_token", "tok")
+    localStorage.setItem("refresh_token", "rtok")
+    const postSpy = vi.spyOn(axios, "post")
+    const rejected = getResponseRejected()
+    const err = { response: { status: 401 }, config: { url: "/auth/google", headers: {} } }
+
+    await expect(rejected(err)).rejects.toBe(err)
+    expect(postSpy).not.toHaveBeenCalled()
+  })
+
   it("passes a 401 straight through with no logout for a guest with no session at all", async () => {
     const rejected = getResponseRejected()
     const err = { response: { status: 401 }, config: { url: "/oratio/prayers/complete", headers: {} } }

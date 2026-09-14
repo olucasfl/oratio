@@ -28,9 +28,6 @@ from "../../components/QuaresmaCard/QuaresmaCard"
 import QuaresmaNudge
 from "../../components/QuaresmaNudge/QuaresmaNudge"
 
-import BibliaStudyNudge
-from "../../components/BibliaStudyNudge/BibliaStudyNudge"
-
 import {
  LogOut,
  Loader2,
@@ -196,7 +193,7 @@ export default function Home(){
    .catch(()=>{})
 
   getProfile()
-   .then((u)=>{ setUserName(u?.name ?? u?.nome ?? u?.firstName ?? null) })
+   .then((u)=>{ setUserName(u?.name ?? null) })
    .catch(()=>{})
 
   getHomeFeed()
@@ -430,10 +427,6 @@ export default function Home(){
 
    <QuaresmaNudge
     guest={guest}
-    blocked={showWelcome || gateMessage !== null}
-   />
-
-   <BibliaStudyNudge
     blocked={showWelcome || gateMessage !== null}
    />
 

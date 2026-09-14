@@ -29,7 +29,20 @@ vi.mock("../../components/AdminChart/AdminChart", () => ({ default: () => <div>c
 vi.mock("../../components/AdminHeatmap/AdminHeatmap", () => ({ default: () => <div>heatmap-stub</div> }))
 vi.mock("../../components/AdminNotifications/AdminNotifications", () => ({ default: () => <div>notif-stub</div> }))
 vi.mock("../../components/AdminFilterSheet/AdminFilterSheet", () => ({
-  default: ({ open }: { open: boolean }) => (open ? <div>filter-sheet</div> : null),
+  // stub que expõe os setters/onClear como botões, pra testar a fiação do
+  // painel sem depender do markup real do sheet (coberto no seu próprio teste)
+  default: ({ open, setFilterProvider, onClear }: {
+    open: boolean
+    setFilterProvider: (v: string) => void
+    onClear: () => void
+  }) =>
+    open ? (
+      <div>
+        filter-sheet
+        <button onClick={() => setFilterProvider("google")}>stub-set-google</button>
+        <button onClick={onClear}>stub-clear</button>
+      </div>
+    ) : null,
 }))
 
 import {
@@ -57,11 +70,19 @@ const USER_A = {
   id: "a", name: "Alice", email: "alice@x.com", isAdmin: false, emailVerified: true,
   createdAt: "2025-06-01T00:00:00.000Z",
   spiritualStats: { prayerStreak: 3, prayersPrayed: 10, rosariesPrayed: 2 },
+  hasPassword: true, authProviders: [],           // só Oratio
 }
 const USER_B = {
   id: "b", name: "Bob", email: "bob@x.com", isAdmin: true, emailVerified: false,
   createdAt: "2025-01-01T00:00:00.000Z",
   spiritualStats: { prayerStreak: 40, prayersPrayed: 1, rosariesPrayed: 99 },
+  hasPassword: true, authProviders: ["google"],   // ambos
+}
+const USER_ANOMALY = {
+  id: "c", name: "Ghost", email: "ghost@x.com", isAdmin: false, emailVerified: false,
+  createdAt: "2025-03-01T00:00:00.000Z",
+  spiritualStats: null,
+  hasPassword: false, authProviders: [],          // anomalia — sem método de entrada
 }
 
 const STATS = {
@@ -165,6 +186,8 @@ describe("AdminPanel", () => {
     fireEvent.click(screen.getAllByTitle("Ver detalhes")[0])
     expect(await screen.findByText("Atividades recentes")).toBeInTheDocument()
     expect(screen.getByText("Rezou o terço")).toBeInTheDocument()
+    // método de entrada no badge do modal (USER_A = só Oratio)
+    expect(screen.getByText(/Entrada:/)).toHaveTextContent("Oratio")
   })
 
   it("deletes a user through the confirmation modal", async () => {
@@ -232,6 +255,51 @@ describe("AdminPanel", () => {
     fireEvent.click(screen.getByRole("button", { name: /Nome/ }))
     const names = screen.getAllByText(/Alice|Bob/).map(n => n.textContent)
     expect(names[0]).toContain("Bob") // desc: B antes de A
+  })
+
+  // --- método de entrada (spec admin-provedor) ---
+
+  it("shows both login-method icons for an account with password + Google", async () => {
+    m.users.mockResolvedValue([USER_B])
+    renderPanel()
+    await screen.findByRole("heading", { name: "Visão Geral" })
+    fireEvent.click(screen.getByRole("button", { name: "Usuários" }))
+    await screen.findByText("Bob")
+
+    expect(screen.getByTitle("Entra com e-mail e senha")).toBeInTheDocument()
+    expect(screen.getByTitle("Entra com o Google")).toBeInTheDocument()
+  })
+
+  it("flags an account with no login method as an anomaly", async () => {
+    m.users.mockResolvedValue([USER_ANOMALY])
+    renderPanel()
+    await screen.findByRole("heading", { name: "Visão Geral" })
+    fireEvent.click(screen.getByRole("button", { name: "Usuários" }))
+    await screen.findByText("Ghost")
+
+    expect(screen.getByTitle("Sem método de entrada")).toBeInTheDocument()
+    expect(screen.queryByTitle("Entra com e-mail e senha")).not.toBeInTheDocument()
+    expect(screen.queryByTitle("Entra com o Google")).not.toBeInTheDocument()
+  })
+
+  it("sends provider in the query and drops it again on 'Limpar filtros'", async () => {
+    renderPanel()
+    await screen.findByRole("heading", { name: "Visão Geral" })
+    fireEvent.click(screen.getByRole("button", { name: "Usuários" }))
+    await screen.findByText("Alice")
+
+    fireEvent.click(screen.getByRole("button", { name: /Filtros/ }))
+    m.users.mockClear()
+    fireEvent.click(screen.getByRole("button", { name: "stub-set-google" }))
+    await waitFor(() =>
+      expect(m.users).toHaveBeenCalledWith(expect.objectContaining({ provider: "google" })),
+    )
+
+    m.users.mockClear()
+    fireEvent.click(screen.getByRole("button", { name: "stub-clear" }))
+    await waitFor(() =>
+      expect(m.users).toHaveBeenCalledWith(expect.objectContaining({ provider: undefined })),
+    )
   })
 
 })

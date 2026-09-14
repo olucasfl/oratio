@@ -38,8 +38,9 @@ Um caminho de spec (`docs/specs/<feature>.md`) ou, na falta dela, um checklist
 - **Nunca reescreva o critério** para que ele passe a caber no que o código faz. Se o código
   divergiu da spec, o achado é a divergência.
 - Verifique também o que a spec lista em **Notas de ambiente**: chave nova de `localStorage`
-  decidida contra `KEEP_ON_LOGOUT`, rota de visitante nos três lugares (`ProtectedRoute`,
-  `guestAllowedPrefixes`, `isLoggedIn()`+`GuestGateModal`), bump de `APP_VERSION`/`CACHE_NAME`.
+  decidida contra `KEEP_ON_LOGOUT`, rota de visitante nos dois lugares que precisam concordar (rota
+  declarada em `App.tsx` **fora** de `<ProtectedRoute>`, e cada ação sensível com
+  `isLoggedIn()`+`GuestGateModal` — não existe lista `guestAllowedPrefixes` no código), bump de `APP_VERSION`/`CACHE_NAME`.
   Isso costuma ser esquecido e não aparece em teste.
 
 ## Saída

@@ -9,6 +9,9 @@ import AdminRoute from "./components/AdminRoute"
 import OfflineBanner from "./components/OfflineBanner/OfflineBanner"
 import PullToRefresh from "./components/PullToRefresh/PullToRefresh"
 import InstallAppNudge from "./components/InstallAppNudge/InstallAppNudge"
+import FlashToast from "./components/FlashToast/FlashToast"
+import LegalTermsGate from "./components/LegalTermsGate/LegalTermsGate"
+import WelcomeGate from "./components/WelcomeGate/WelcomeGate"
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary"
 import { preloadConsecration, getProgress } from "./services/consecrationService"
 import { sendActivityPing } from "./services/activityService"
@@ -19,6 +22,9 @@ const Login            = lazy(() => import("./pages/Login/Login"))
 const Register         = lazy(() => import("./pages/Register/Register"))
 const VerifyEmail      = lazy(() => import("./pages/VerifyEmail/VerifyEmail"))
 const ConfirmEmailChange = lazy(() => import("./pages/ConfirmEmailChange/ConfirmEmailChange"))
+const TermsOfUse       = lazy(() => import("./pages/TermsOfUse/TermsOfUse"))
+const PrivacyPolicy    = lazy(() => import("./pages/PrivacyPolicy/PrivacyPolicy"))
+const LegalConsent     = lazy(() => import("./pages/LegalConsent/LegalConsent"))
 const Home             = lazy(() => import("./pages/Home/Home"))
 const ConsecrationHome = lazy(() => import("./pages/Consecration/ConsecrationHome"))
 const ConsecrationDay  = lazy(() => import("./pages/Consecration/ConsecrationDay"))
@@ -45,6 +51,7 @@ const SantoDoDia       = lazy(() => import("./pages/SantoDoDia/SantoDoDia"))
 const Confissao        = lazy(() => import("./pages/Confissao/Confissao"))
 const Quaresma         = lazy(() => import("./pages/Quaresma/Quaresma"))
 const QuaresmaDia      = lazy(() => import("./pages/Quaresma/QuaresmaDia"))
+const WelcomeGuide     = lazy(() => import("./pages/WelcomeGuide/WelcomeGuide"))
 
 /*
 Decide de forma declarativa (na hora do match da rota, sem efeito nem
@@ -232,7 +239,20 @@ return(
 
 <ScrollToTop />
 
-<InstallAppNudge />
+{/*
+  O LegalTermsGate ENVOLVE o app: numa rota logada, nada abaixo monta antes
+  de confirmar o aceite dos termos. `cleared` segura também os popups e o
+  guia de boas-vindas enquanto a pessoa está na tela de consentimento.
+*/}
+<LegalTermsGate>
+{(cleared)=>(
+<>
+
+{cleared && <InstallAppNudge />}
+
+<FlashToast />
+
+{cleared && <WelcomeGate />}
 
 {/*
   Boundary por rota (key={location.pathname}): se uma página quebrar no
@@ -259,9 +279,37 @@ return(
 
 <Route path="/confirmar-troca-email" element={<ConfirmEmailChange />} />
 
+<Route path="/termos-de-uso" element={<TermsOfUse />} />
+
+<Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
+
+<Route
+ path="/oratio/consentimento"
+ element={
+  <ProtectedRoute>
+   <LegalConsent />
+  </ProtectedRoute>
+ }
+/>
+
 <Route
 path="/oratio/home"
 element={<Home />}
+/>
+
+{/*
+  Guia de boas-vindas — tela cheia, FORA de qualquer layout com bottom nav
+  (não há layout compartilhado; a página simplesmente não renderiza a
+  navbar). Protegida: só faz sentido autenticado, e o WelcomeGate redireciona
+  pra cá por `showWelcome`. Spec: docs/specs/boas-vindas.md.
+*/}
+<Route
+path="/oratio/boas-vindas"
+element={
+<ProtectedRoute>
+<WelcomeGuide />
+</ProtectedRoute>
+}
 />
 
 <Route
@@ -419,6 +467,10 @@ element={
 </PullToRefresh>
 
 </ErrorBoundary>
+
+</>
+)}
+</LegalTermsGate>
 
 </Suspense>
 

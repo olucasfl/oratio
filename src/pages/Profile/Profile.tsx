@@ -12,6 +12,7 @@ import { logout as authLogout } from "../../services/authService"
 import { FONT_SCALE_OPTIONS, getStoredFontScale, setFontScale } from "../../utils/fontScale"
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
+import Portal from "../../components/Portal/Portal"
 import DeleteAccountModal from "../../components/DeleteAccountModal/DeleteAccountModal"
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
 import {
@@ -60,6 +61,21 @@ export default function Profile(){
  const notifCardRef = useRef<HTMLDivElement>(null)
  const [notifHighlight,setNotifHighlight] = useState(false)
 
+ /*
+ Aviso "Defina uma senha" para conta só-Google (spec login-google §"Fase E → E1b").
+ De vez em quando (a cada 7 dias, timestamp em localStorage), quando a pessoa
+ entra no Perfil: a engrenagem de Configurações pulsa e um balão aponta pra ela.
+ Não é modal. Some pra sempre quando a conta ganha senha.
+
+ O balão vive num <Portal/> (fora de `.profileHero`, que tem `overflow:hidden` e
+ recortava a última linha no desktop — BUG-E1). É `position:fixed`, posicionado a
+ partir do rect da engrenagem e recalculado no resize/scroll.
+ */
+ const [pwdHint,setPwdHint] = useState(false)
+ const pwdHintChecked = useRef(false)
+ const gearRef = useRef<HTMLButtonElement>(null)
+ const [hintPos,setHintPos] = useState<{ top:number; right:number } | null>(null)
+
  /* chegou do popup de reengajamento (?notif=1) → destaca a opção */
  useEffect(()=>{
   if(searchParams.get("notif") === "1"){
@@ -68,6 +84,51 @@ export default function Profile(){
    return ()=>clearTimeout(t)
   }
  },[searchParams])
+
+ useEffect(()=>{
+  if(pwdHintChecked.current || loading || !profile) return
+  pwdHintChecked.current = true
+  if(profile.hasPassword !== false) return
+
+  const EVERY_MS = 7 * 24 * 60 * 60 * 1000
+  let last = 0
+  try{ last = Number(localStorage.getItem("set_password_hint_last") || 0) }catch{ /* ignore */ }
+  if(Date.now() - last >= EVERY_MS) setPwdHint(true)
+ },[loading, profile])
+
+ function dismissPwdHint(){
+  try{ localStorage.setItem("set_password_hint_last", String(Date.now())) }catch{ /* ignore */ }
+  setPwdHint(false)
+ }
+
+ function goSetPassword(){
+  dismissPwdHint()
+  navigate("/oratio/profile/settings?senha=1")
+ }
+
+ // posiciona o balão a partir da engrenagem enquanto o aviso está aberto
+ useEffect(()=>{
+  if(!pwdHint) return
+
+  let raf = 0
+  const place = ()=>{
+   raf = requestAnimationFrame(()=>{
+    const el = gearRef.current
+    if(!el) return
+    const r = el.getBoundingClientRect()
+    setHintPos({ top: r.bottom + 8, right: Math.max(8, window.innerWidth - r.right) })
+   })
+  }
+
+  place()
+  window.addEventListener("resize", place)
+  window.addEventListener("scroll", place, true)
+  return ()=>{
+   cancelAnimationFrame(raf)
+   window.removeEventListener("resize", place)
+   window.removeEventListener("scroll", place, true)
+  }
+ },[pwdHint])
 
  // rola até o card só depois que o perfil renderizou (senão o ref é nulo)
  useEffect(()=>{
@@ -435,13 +496,39 @@ export default function Profile(){
     <div className={styles.profileHero}>
 
      <button
-      className={styles.settingsGear}
+      ref={gearRef}
+      className={`${styles.settingsGear} ${pwdHint ? styles.settingsGearPulse : ""}`}
       onClick={()=>navigate("/oratio/profile/settings")}
       aria-label="Configurações da conta"
       title="Configurações da conta"
      >
       <Settings size={19}/>
      </button>
+
+     {pwdHint && hintPos && (
+      <Portal>
+       <div className={styles.pwdHintBackdrop} onClick={dismissPwdHint} />
+       <div
+        className={styles.pwdHint}
+        role="status"
+        style={{ top: hintPos.top, right: hintPos.right }}
+       >
+        <p>
+         Sua conta entra com o Google. Defina uma senha em
+         <strong> Configurações da conta</strong> (a engrenagem acima) para
+         também entrar sem o Google.
+        </p>
+        <div className={styles.pwdHintActions}>
+         <button type="button" className={styles.pwdHintLater} onClick={dismissPwdHint}>
+          Agora não
+         </button>
+         <button type="button" className={styles.pwdHintGo} onClick={goSetPassword}>
+          Definir senha
+         </button>
+        </div>
+       </div>
+      </Portal>
+     )}
 
      <div className={styles.avatar}>
 
@@ -874,6 +961,9 @@ export default function Profile(){
    <DeleteAccountModal
     open={deleteAccountOpen}
     userEmail={profile.email}
+    /* cache antigo pode não ter os campos — default seguro é o fluxo por senha */
+    hasPassword={profile.hasPassword ?? true}
+    hasGoogle={profile.hasGoogle ?? false}
     onClose={()=>setDeleteAccountOpen(false)}
    />
 
