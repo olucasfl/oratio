@@ -98,13 +98,14 @@ describe("profileService", () => {
     })
   })
 
-  it("setPassword posts the new password and its confirmation to /users/me/set-password", async () => {
+  it("setPassword posts the new password, its confirmation and the fresh Google credential", async () => {
     mockedApi.post.mockResolvedValue({ data: { message: "Senha definida." } })
-    await setPassword("abcd1234", "abcd1234")
+    await setPassword("abcd1234", "abcd1234", "fresh-google-id-token")
 
     expect(mockedApi.post).toHaveBeenCalledWith("/users/me/set-password", {
       password: "abcd1234",
       confirmPassword: "abcd1234",
+      googleCredential: "fresh-google-id-token",
     })
   })
 

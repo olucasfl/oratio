@@ -175,12 +175,19 @@ export async function changePassword(currentPassword:string, newPassword:string)
  pra informar, e o backend NÃO revoga as sessões aqui (nenhuma credencial
  antiga deixou de valer). Um 409 significa que a conta já tem senha — nesse
  caso a rota certa é "Trocar senha".
+
+ Exige uma prova FRESCA de identidade (spec prova-identidade): `googleCredential`
+ é um id_token recém-emitido pelo Google Identity Services, obrigatório. Sem
+ isso, um access token roubado bastava pra criar uma senha e tomar a conta.
+ Erros: 400 (senhas não conferem / credential de outra conta Google / validação),
+ 401 (credential inválido ou expirado), 409 (já tem senha).
 */
-export async function setPassword(password:string, confirmPassword:string){
+export async function setPassword(password:string, confirmPassword:string, googleCredential:string){
 
  const res = await api.post("/users/me/set-password", {
   password,
-  confirmPassword
+  confirmPassword,
+  googleCredential
  })
 
  invalidateProfile()
