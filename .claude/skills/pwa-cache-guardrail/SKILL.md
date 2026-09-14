@@ -12,11 +12,11 @@ depois, no aparelho de um usuário.
 | Mecanismo | Onde | Governa | Regra de inclusão |
 |---|---|---|---|
 | `APP_VERSION` (`"v10"`) | `src/App.tsx:79` | limpeza do `localStorage` no boot | **substring**: apaga chave que contenha `oratio`, `stage_` ou `consecration` |
-| `CACHE_NAME` (`"oratio-cache-v22"`) | `public/sw.js:1` | cache de assets do service worker | prefixo: caches `oratio-cache-*` antigos são apagados no `activate` |
+| `CACHE_NAME` (`"oratio-cache-v23"`) | `public/sw.js:1` | cache de assets do service worker | prefixo: caches `oratio-cache-*` antigos são apagados no `activate` |
 | `KEEP_ON_LOGOUT` | `src/services/api.ts:83` | o que sobrevive ao logout | **allowlist explícita** (`Set`) |
 | exceção do nudge | `src/App.tsx` | flags de "já vi isso" | `key.startsWith("oratio_quaresma_nudge_")` escapa da limpeza |
 
-**Os dois números não são a mesma coisa e não sobem juntos automaticamente.** `v10` e `v22` já
+**Os dois números não são a mesma coisa e não sobem juntos automaticamente.** `v10` e `v23` já
 divergiram porque governam ciclos diferentes.
 
 ## Antes de bumpar: qual dos dois?
