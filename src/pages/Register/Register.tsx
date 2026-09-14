@@ -198,7 +198,9 @@ required
 <div className={styles.divider}><span>ou</span></div>
 
 <div style={{ position: "relative" }}>
- <GoogleSignInButton onCredential={handleGoogleCredential} disabled={loading || !legalTermsAccepted} />
+ {/* sem spinner antes do aceite: o botão invisível abaixo intercepta o
+     clique e abre os termos; o spinner fica só pro loading de verdade */}
+ <GoogleSignInButton onCredential={handleGoogleCredential} disabled={loading} />
  {!legalTermsAccepted && (
   <button
    type="button"
@@ -253,6 +255,13 @@ onClose={()=>{
   if(gateAction === "register") void submitRegistration()
   }}
   onDecline={()=>setGateOpen(false)}
+  googleAccept={gateAction === "google" ? (credential)=>{
+   // marcar as duas caixas + clicar no botão do Google = aceite e popup
+   // no mesmo gesto (o GIS não deixa abrir o popup por código)
+   setLegalTermsAccepted(true)
+   setGateOpen(false)
+   void handleGoogleCredential(credential)
+  } : undefined}
  />
 )}
 

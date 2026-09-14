@@ -5,6 +5,7 @@ import { ChevronLeft } from "lucide-react"
 import TermsOfUseContent from "../TermsOfUseContent/TermsOfUseContent"
 import PrivacyPolicyContent from "../PrivacyPolicyContent/PrivacyPolicyContent"
 import DeleteAccountModal from "../DeleteAccountModal/DeleteAccountModal"
+import GoogleSignInButton from "../GoogleSignInButton/GoogleSignInButton"
 import { acceptLegalTerms } from "../../services/profileService"
 import { logout } from "../../services/authService"
 import { getAuthErrorMessage } from "../../utils/authErrors"
@@ -21,6 +22,15 @@ interface Props {
   userEmail?: string
   hasPassword?: boolean
   hasGoogle?: boolean
+  /*
+   Só em mode="pre-account", no cadastro pelo Google. O popup do Google só
+   abre com um clique real no botão oficial do GIS — código nosso não
+   consegue abri-lo depois de um "Aceitar" comum. Por isso, quando esta prop
+   vem, o próprio botão de aceitar É o "Continuar com Google": marcar as duas
+   caixas e clicar nele aceita e abre o popup no mesmo gesto. Recebe o
+   id_token do Google.
+  */
+  googleAccept?: (credential: string) => void
 }
 
 /*
@@ -49,6 +59,7 @@ export default function LegalConsentGate({
   userEmail = "",
   hasPassword = false,
   hasGoogle = false,
+  googleAccept,
 }: Props){
 
   const [view, setView] = useState<View>("consent")
@@ -212,7 +223,15 @@ export default function LegalConsentGate({
               </label>
             </div>
 
-            <div className={styles.actions}>
+            <div
+              className={
+                mode === "pre-account" && googleAccept
+                  // botão do GIS tem largura mínima de 240px: empilha (Google
+                  // em cima, largura total) em vez de espremer ao lado do Recusar
+                  ? `${styles.actions} ${styles.actionsGoogle}`
+                  : styles.actions
+              }
+            >
               <button
                 type="button"
                 className={styles.buttonSecondary}
@@ -222,14 +241,28 @@ export default function LegalConsentGate({
                 Recusar
               </button>
 
-              <button
-                type="button"
-                className={styles.buttonPrimary}
-                onClick={handleAccept}
-                disabled={!bothChecked || loading}
-              >
-                {loading ? "Aceitando..." : "Aceitar e continuar"}
-              </button>
+              {mode === "pre-account" && googleAccept ? (
+                bothChecked ? (
+                  <GoogleSignInButton onCredential={googleAccept} />
+                ) : (
+                  <button
+                    type="button"
+                    className={styles.buttonPrimary}
+                    disabled
+                  >
+                    Continuar com Google
+                  </button>
+                )
+              ) : (
+                <button
+                  type="button"
+                  className={styles.buttonPrimary}
+                  onClick={handleAccept}
+                  disabled={!bothChecked || loading}
+                >
+                  {loading ? "Aceitando..." : "Aceitar e continuar"}
+                </button>
+              )}
             </div>
 
           </>

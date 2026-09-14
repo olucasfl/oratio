@@ -23,9 +23,13 @@ vi.mock("../../services/profileService", () => ({
 }))
 
 vi.mock("../../components/LegalConsentGate/LegalConsentGate", () => ({
-  default: ({ mode, onAccept, onDecline }: { mode: string; onAccept: () => void; onDecline: () => void }) => (
+  default: ({ mode, onAccept, onDecline, googleAccept }: {
+    mode: string; onAccept: () => void; onDecline: () => void; googleAccept?: (c: string) => void
+  }) => (
     <div data-testid={`legal-gate-${mode}`}>
-      <button onClick={onAccept}>legal-gate-accept</button>
+      {googleAccept
+        ? <button onClick={() => googleAccept("fake-google-credential")}>legal-gate-google</button>
+        : <button onClick={onAccept}>legal-gate-accept</button>}
       <button onClick={onDecline}>legal-gate-decline</button>
     </div>
   ),
@@ -127,13 +131,25 @@ describe("Register", () => {
     expect(navigateMock).toHaveBeenCalledWith("/login?redirect=%2Foratio%2Fprayers")
   })
 
+  it("Google button has no loading state before the terms: clicking opens the gate whose accept IS the Google button", () => {
+    renderRegister()
+
+    // o spinner só existe pro loading de verdade
+    expect(screen.getByText("google-signin")).toBeEnabled()
+
+    fireEvent.click(screen.getByRole("button", { name: /aceitar termos para continuar com google/i }))
+
+    expect(screen.getByTestId("legal-gate-pre-account")).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "legal-gate-google" })).toBeInTheDocument()
+    expect(loginWithGoogleMock).not.toHaveBeenCalled()
+  })
+
   it("signs up a NEW account with Google and goes to the welcome guide (no verify step)", async () => {
     loginWithGoogleMock.mockResolvedValue(NEW_USER)
     renderRegister("/register?redirect=/oratio/biblia")
 
     fireEvent.click(screen.getByRole("button", { name: /aceitar termos para continuar com google/i }))
-    acceptLegalGate()
-    fireEvent.click(screen.getByText("google-signin"))
+    fireEvent.click(screen.getByRole("button", { name: "legal-gate-google" }))
 
     await waitFor(() =>
       expect(loginWithGoogleMock).toHaveBeenCalledWith("fake-google-credential"),
@@ -153,8 +169,7 @@ describe("Register", () => {
     renderRegister()
 
     fireEvent.click(screen.getByRole("button", { name: /aceitar termos para continuar com google/i }))
-    acceptLegalGate()
-    fireEvent.click(screen.getByText("google-signin"))
+    fireEvent.click(screen.getByRole("button", { name: "legal-gate-google" }))
 
     await waitFor(() => expect(screen.getByTestId("legal-gate-post-account")).toBeInTheDocument())
     expect(navigateMock).not.toHaveBeenCalledWith("/oratio/boas-vindas")
@@ -166,8 +181,7 @@ describe("Register", () => {
     renderRegister("/register?redirect=/oratio/biblia")
 
     fireEvent.click(screen.getByRole("button", { name: /aceitar termos para continuar com google/i }))
-    acceptLegalGate()
-    fireEvent.click(screen.getByText("google-signin"))
+    fireEvent.click(screen.getByRole("button", { name: "legal-gate-google" }))
 
     // sessão órfã revogada, tokens NÃO adotados
     await waitFor(() => expect(discardGoogleSessionMock).toHaveBeenCalledWith("r"))
@@ -188,8 +202,7 @@ describe("Register", () => {
     renderRegister()
 
     fireEvent.click(screen.getByRole("button", { name: /aceitar termos para continuar com google/i }))
-    acceptLegalGate()
-    fireEvent.click(screen.getByText("google-signin"))
+    fireEvent.click(screen.getByRole("button", { name: "legal-gate-google" }))
 
     await waitFor(() => expect(discardGoogleSessionMock).toHaveBeenCalledWith("r"))
     expect(persistSessionMock).not.toHaveBeenCalled()
@@ -206,8 +219,7 @@ describe("Register", () => {
     renderRegister()
 
     fireEvent.click(screen.getByRole("button", { name: /aceitar termos para continuar com google/i }))
-    acceptLegalGate()
-    fireEvent.click(screen.getByText("google-signin"))
+    fireEvent.click(screen.getByRole("button", { name: "legal-gate-google" }))
 
     expect(await screen.findByText(/Não foi possível entrar com o Google/i)).toBeInTheDocument()
   })
