@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import {
   ChevronLeft,
   ChevronRight,
@@ -25,6 +25,7 @@ import {
   createCollection,
   type BibleCollection,
 } from "../../services/bibleCollectionsService"
+import { compareByBookOrder, testamentOf, type Testament } from "../../data/bibleBookOrder"
 
 import styles from "./MinhaBiblia.module.css"
 
@@ -37,6 +38,13 @@ const TABS: { id: Tab; label: string; icon: typeof Highlighter }[] = [
   { id: "colecoes", label: "Coleções", icon: FolderClosed },
 ]
 
+const TAB_IDS = TABS.map((t) => t.id)
+
+const TESTAMENT_LABEL: Record<Testament, string> = {
+  AT: "Antigo Testamento",
+  NT: "Novo Testamento",
+}
+
 function norm(s: string) {
   return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
 }
@@ -48,11 +56,29 @@ function notePreview(note: string) {
   return { text: note.slice(0, NOTE_PREVIEW_MAX).trimEnd() + "…", clipped: true }
 }
 
+// Livros que têm pelo menos 1 mark nesta aba, agrupados por Antigo/Novo
+// Testamento em ordem canônica — é a tela de entrada de cada aba
+// (grifados/favoritos/anotações) antes de escolher um livro.
+function groupBooks(marksOfTab: BibleMark[]) {
+  const counts = new Map<string, number>()
+  for (const m of marksOfTab) counts.set(m.book, (counts.get(m.book) ?? 0) + 1)
+  return [...counts.keys()]
+    .sort(compareByBookOrder)
+    .map((book) => ({ book, testament: testamentOf(book), count: counts.get(book)! }))
+}
+
 export default function MinhaBiblia() {
 
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
-  const [tab, setTab] = useState<Tab>("grifados")
+  const initialTabParam = searchParams.get("tab")
+  const initialTab: Tab = TAB_IDS.includes(initialTabParam as Tab) ? (initialTabParam as Tab) : "grifados"
+
+  const [tab, setTab] = useState<Tab>(initialTab)
+  // Livro escolhido dentro da aba atual (2º nível: "Efésios" → vê os
+  // versículos daquele livro). null = mostrando a lista de livros.
+  const [selectedBook, setSelectedBook] = useState<string | null>(searchParams.get("book"))
   const [marks, setMarks] = useState<BibleMark[]>([])
   const [collections, setCollections] = useState<BibleCollection[]>([])
   const [loading, setLoading] = useState(true)
@@ -79,22 +105,61 @@ export default function MinhaBiblia() {
     listCollections().then(setCollections)
   }, [])
 
-  const filtered = useMemo(() => {
-    const byTab = marks.filter((m) =>
-      tab === "grifados" ? m.highlighted
-      : tab === "favoritos" ? m.favorite
-      : tab === "anotacoes" ? !!m.note
-      : false,
-    )
+  function changeTab(id: Tab) {
+    setTab(id)
+    setSelectedBook(null)
+    setQuery("")
+  }
+
+  const byTab = useMemo(
+    () =>
+      marks.filter((m) =>
+        tab === "grifados" ? m.highlighted
+        : tab === "favoritos" ? m.favorite
+        : tab === "anotacoes" ? !!m.note
+        : false,
+      ),
+    [marks, tab],
+  )
+
+  const hasQuery = query.trim().length > 0
+
+  // Busca ignora o agrupamento por livro — resultado cruza todos os
+  // livros, igual antes. Sem busca, o agrupamento por livro é que manda.
+  const searched = useMemo(() => {
+    if (!hasQuery) return byTab
     const q = norm(query.trim())
-    if (!q) return byTab
     return byTab.filter(
       (m) =>
         norm(m.reference).includes(q) ||
         norm(m.text).includes(q) ||
         (m.note ? norm(m.note).includes(q) : false),
     )
-  }, [marks, tab, query])
+  }, [byTab, query, hasQuery])
+
+  const bookGroups = useMemo(() => groupBooks(byTab), [byTab])
+
+  const versesOfSelectedBook = useMemo(() => {
+    if (!selectedBook) return []
+    return byTab
+      .filter((m) => m.book === selectedBook)
+      .sort((a, b) => a.chapter - b.chapter || a.verse - b.verse)
+  }, [byTab, selectedBook])
+
+  // 3º nível dentro do livro: separado por capítulo, na ordem em que
+  // aparecem no livro (não fica tudo misturado quando há marks de
+  // vários capítulos diferentes)
+  const chaptersOfSelectedBook = useMemo(() => {
+    const byChapter = new Map<number, BibleMark[]>()
+    for (const m of versesOfSelectedBook) {
+      const list = byChapter.get(m.chapter) ?? []
+      list.push(m)
+      byChapter.set(m.chapter, list)
+    }
+    return [...byChapter.keys()]
+      .sort((a, b) => a - b)
+      .map((chapter) => ({ chapter, marks: byChapter.get(chapter)! }))
+  }, [versesOfSelectedBook])
 
   function openVerse(m: BibleMark) {
     navigate(
@@ -115,6 +180,46 @@ export default function MinhaBiblia() {
     }
   }
 
+  function handleBack() {
+    // Dentro de um livro: "voltar" sobe um nível (volta pra lista de
+    // livros), não sai da tela.
+    if (selectedBook) { setSelectedBook(null); return }
+    navigate("/oratio/biblia")
+  }
+
+  function renderMarkCard(m: BibleMark) {
+    const preview = tab === "anotacoes" && m.note ? notePreview(m.note) : null
+    return (
+      <div key={m.id} className={styles.card}>
+        <button className={styles.cardMain} onClick={() => openVerse(m)}>
+          <div className={styles.cardHead}>
+            {tab === "grifados" && (
+              <span
+                className={styles.colorDot}
+                data-hl-color={m.highlightColor ?? "amber"}
+              />
+            )}
+            <strong>{m.reference}</strong>
+          </div>
+          <p className={styles.cardText}>{m.text}</p>
+          {preview && (
+            <p className={styles.cardNote}>
+              <NotebookPen size={13} /> {preview.text}
+            </p>
+          )}
+        </button>
+        {preview?.clipped && (
+          <button
+            className={styles.noteMoreBtn}
+            onClick={() => setNoteView(m)}
+          >
+            Ver anotação completa
+          </button>
+        )}
+      </div>
+    )
+  }
+
   const showSearch = tab !== "colecoes"
 
   return (
@@ -122,14 +227,16 @@ export default function MinhaBiblia() {
 
       <div className={styles.glow} />
 
-      <button className={styles.backButton} onClick={() => navigate("/oratio/biblia")}>
-        <ChevronLeft size={18} /> Voltar
+      <button className={styles.backButton} onClick={handleBack}>
+        <ChevronLeft size={18} /> {selectedBook ? "Livros" : "Voltar"}
       </button>
 
       <div className={styles.hero}>
-        <h1 className={styles.title}>Minha Bíblia</h1>
+        <h1 className={styles.title}>{selectedBook ?? "Minha Bíblia"}</h1>
         <p className={styles.subtitle}>
-          Seus versículos grifados, favoritos, anotados e suas coleções.
+          {selectedBook
+            ? `${versesOfSelectedBook.length} versículo${versesOfSelectedBook.length === 1 ? "" : "s"}`
+            : "Seus versículos grifados, favoritos, anotados e suas coleções."}
         </p>
       </div>
 
@@ -138,14 +245,14 @@ export default function MinhaBiblia() {
           <button
             key={id}
             className={`${styles.tab} ${tab === id ? styles.tabActive : ""}`}
-            onClick={() => setTab(id)}
+            onClick={() => changeTab(id)}
           >
             <Icon size={14} /> {label}
           </button>
         ))}
       </div>
 
-      {showSearch && (
+      {showSearch && !selectedBook && (
         <div className={styles.searchWrapper}>
           <Search size={18} className={styles.searchIcon} />
           <input
@@ -197,49 +304,58 @@ export default function MinhaBiblia() {
             ))
           )}
         </div>
-      ) : filtered.length === 0 ? (
+      ) : hasQuery ? (
+        // busca cruza todos os livros — sem agrupamento
+        searched.length === 0 ? (
+          <div className={styles.empty}>
+            <BookOpen size={38} />
+            <h3>Nada aqui ainda</h3>
+            <p>Nenhum resultado para essa busca.</p>
+          </div>
+        ) : (
+          <div className={styles.list}>{searched.map(renderMarkCard)}</div>
+        )
+      ) : selectedBook ? (
+        // 2º nível: versículos daquele livro, separados por capítulo
+        <div className={styles.chapterGroups}>
+          {chaptersOfSelectedBook.map((g) => (
+            <div key={g.chapter}>
+              <h2 className={styles.chapterHeader}>Capítulo {g.chapter}</h2>
+              <div className={styles.list}>{g.marks.map(renderMarkCard)}</div>
+            </div>
+          ))}
+        </div>
+      ) : bookGroups.length === 0 ? (
         <div className={styles.empty}>
           <BookOpen size={38} />
           <h3>Nada aqui ainda</h3>
           <p>
             Abra a Bíblia, toque num versículo e escolha grifar, favoritar ou
-            anotar — vai aparecer nesta lista.
+            anotar — vai aparecer nesta lista, agrupado por livro.
           </p>
         </div>
       ) : (
+        // 1º nível: lista de livros, agrupados por Antigo/Novo Testamento
         <div className={styles.list}>
-          {filtered.map((m) => {
-            const preview = tab === "anotacoes" && m.note ? notePreview(m.note) : null
-            return (
-              <div key={m.id} className={styles.card}>
-                <button className={styles.cardMain} onClick={() => openVerse(m)}>
-                  <div className={styles.cardHead}>
-                    {tab === "grifados" && (
-                      <span
-                        className={styles.colorDot}
-                        data-hl-color={m.highlightColor ?? "amber"}
-                      />
-                    )}
-                    <strong>{m.reference}</strong>
-                  </div>
-                  <p className={styles.cardText}>{m.text}</p>
-                  {preview && (
-                    <p className={styles.cardNote}>
-                      <NotebookPen size={13} /> {preview.text}
-                    </p>
-                  )}
-                </button>
-                {preview?.clipped && (
-                  <button
-                    className={styles.noteMoreBtn}
-                    onClick={() => setNoteView(m)}
-                  >
-                    Ver anotação completa
-                  </button>
-                )}
-              </div>
-            )
-          })}
+          {bookGroups.map((g, i) => (
+            <div key={g.book}>
+              {(i === 0 || bookGroups[i - 1].testament !== g.testament) && (
+                <h2 className={styles.testamentHeader}>{TESTAMENT_LABEL[g.testament]}</h2>
+              )}
+              <button
+                className={styles.collectionCard}
+                onClick={() => setSelectedBook(g.book)}
+              >
+                <div className={styles.collectionText}>
+                  <strong className={styles.collectionName}>{g.book}</strong>
+                  <span className={styles.collectionCount}>
+                    {g.count} versículo{g.count === 1 ? "" : "s"}
+                  </span>
+                </div>
+                <ChevronRight size={18} className={styles.collectionArrow} />
+              </button>
+            </div>
+          ))}
         </div>
       )}
 

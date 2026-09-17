@@ -16,12 +16,57 @@ import {
   deleteCollection,
   removeCollectionItem,
   type BibleCollection,
+  type BibleCollectionItem,
 } from "../../services/bibleCollectionsService"
+import { compareByBookOrder, testamentOf, type Testament } from "../../data/bibleBookOrder"
 
 import styles from "./CollectionDetail.module.css"
 
 const verseKey = (book: string, chapter: number, verse: number) =>
   `${book}|${chapter}|${verse}`
+
+const TESTAMENT_LABEL: Record<Testament, string> = {
+  AT: "Antigo Testamento",
+  NT: "Novo Testamento",
+}
+
+/*
+ Agrupa os itens por livro — um livro só aparece se tiver pelo menos 1
+ versículo salvo aqui — em ordem canônica de Antigo/Novo Testamento, e
+ dentro do livro por capítulo. Tudo na mesma tela, sem navegação extra: a
+ coleção já é um recorte pequeno e focado (ver ARCHITECTURE.md — mesma
+ lógica de MinhaBiblia, sem o drill-down por livro que ela usa).
+*/
+function groupByBook(items: BibleCollectionItem[]) {
+  const byBook = new Map<string, BibleCollectionItem[]>()
+  for (const it of items) {
+    const list = byBook.get(it.book) ?? []
+    list.push(it)
+    byBook.set(it.book, list)
+  }
+  return [...byBook.keys()]
+    .sort(compareByBookOrder)
+    .map((book) => ({
+      book,
+      testament: testamentOf(book),
+      chapters: groupByChapter(byBook.get(book)!),
+    }))
+}
+
+function groupByChapter(items: BibleCollectionItem[]) {
+  const byChapter = new Map<number, BibleCollectionItem[]>()
+  for (const it of items) {
+    const list = byChapter.get(it.chapter) ?? []
+    list.push(it)
+    byChapter.set(it.chapter, list)
+  }
+  return [...byChapter.keys()]
+    .sort((a, b) => a - b)
+    .map((chapter) => ({
+      chapter,
+      items: [...byChapter.get(chapter)!].sort((a, b) => a.verse - b.verse),
+    }))
+}
 
 export default function CollectionDetail() {
 
@@ -59,6 +104,7 @@ export default function CollectionDetail() {
   }, [load, navigate])
 
   const items = useMemo(() => collection?.items ?? [], [collection])
+  const groups = useMemo(() => groupByBook(items), [items])
 
   async function handleRename(name: string) {
     setShowRename(false)
@@ -154,42 +200,59 @@ export default function CollectionDetail() {
           </p>
         </div>
       ) : (
-        <div className={styles.list}>
-          {items.map((it) => {
-            const note = notesByVerse[verseKey(it.book, it.chapter, it.verse)]
-            return (
-              <div key={it.id} className={styles.card}>
-                <button
-                  className={styles.cardMain}
-                  onClick={() =>
-                    navigate(
-                      `/oratio/biblia/${encodeURIComponent(it.book)}/${it.chapter}?verse=${it.verse}`,
-                    )
-                  }
-                >
-                  <strong className={styles.ref}>{it.reference}</strong>
-                  <p className={styles.text}>{it.text}</p>
-                </button>
+        <div className={styles.groups}>
+          {groups.map((group, i) => (
+            <div key={group.book} className={styles.bookGroup}>
+              {(i === 0 || groups[i - 1].testament !== group.testament) && (
+                <h2 className={styles.testamentHeader}>{TESTAMENT_LABEL[group.testament]}</h2>
+              )}
+              <h3 className={styles.bookHeader}>{group.book}</h3>
 
-                {note && (
-                  <button
-                    className={styles.noteBtn}
-                    onClick={() => setNoteView({ reference: it.reference, note })}
-                  >
-                    <NotebookPen size={13} /> Ver anotação
-                  </button>
-                )}
+              {group.chapters.map((cg) => (
+                <div key={cg.chapter} className={styles.chapterGroup}>
+                  <h4 className={styles.chapterHeader}>Capítulo {cg.chapter}</h4>
 
-                <button
-                  className={styles.removeBtn}
-                  onClick={() => setConfirmRemove({ id: it.id, reference: it.reference })}
-                  aria-label="Remover da coleção"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-            )
-          })}
+                  <div className={styles.list}>
+                    {cg.items.map((it) => {
+                      const note = notesByVerse[verseKey(it.book, it.chapter, it.verse)]
+                      return (
+                        <div key={it.id} className={styles.card}>
+                          <button
+                            className={styles.cardMain}
+                            onClick={() =>
+                              navigate(
+                                `/oratio/biblia/${encodeURIComponent(it.book)}/${it.chapter}?verse=${it.verse}`,
+                              )
+                            }
+                          >
+                            <strong className={styles.ref}>{it.reference}</strong>
+                            <p className={styles.text}>{it.text}</p>
+                          </button>
+
+                          {note && (
+                            <button
+                              className={styles.noteBtn}
+                              onClick={() => setNoteView({ reference: it.reference, note })}
+                            >
+                              <NotebookPen size={13} /> Ver anotação
+                            </button>
+                          )}
+
+                          <button
+                            className={styles.removeBtn}
+                            onClick={() => setConfirmRemove({ id: it.id, reference: it.reference })}
+                            aria-label="Remover da coleção"
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       )}
 

@@ -455,7 +455,7 @@
   color:var(--oratio-primary);
 }
 
-/* toast simples (mesmo padrão do Quaresma) */
+/* toast simples (mesmo padrão do Quaresma), com atalho opcional ("Ver") */
 .toast{
   position:fixed;
   left:50%;
@@ -463,7 +463,10 @@
   transform:translateX(-50%);
   z-index:1001;
   max-width:88vw;
-  padding:12px 18px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:12px 14px 12px 18px;
   border-radius:14px;
   background:rgba(30,24,22,.94);
   color:#fff;
@@ -472,6 +475,18 @@
   text-align:center;
   box-shadow:0 12px 30px rgba(0,0,0,.28);
   animation:toastIn .2s ease;
+}
+
+.toastAction{
+  flex-shrink:0;
+  padding:6px 14px;
+  border:none;
+  border-radius:999px;
+  background:#fff;
+  color:#1e1c1a;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
 }
 
 @keyframes toastIn{
@@ -664,6 +679,169 @@
 .readingBtn:hover{
   border-color:var(--oratio-primary);
   color:var(--oratio-primary);
+}
+
+/* botão "Selecionar" — mesma cara do .readingBtn, mas sem empurrar os
+   outros pra direita (não é margin-left:auto, pra não brigar com ele) */
+.selectBtn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:7px 12px;
+  border-radius:999px;
+  border:1.5px solid var(--oratio-card-border);
+  background:transparent;
+  color:var(--oratio-text-soft);
+  font-size:13px;
+  font-weight:600;
+  font-family:var(--oratio-font-text);
+  cursor:pointer;
+  transition:var(--oratio-transition);
+}
+
+.selectBtn:hover{
+  border-color:var(--oratio-primary);
+  color:var(--oratio-primary);
+}
+
+.readingBtnOn{
+  border-color:var(--oratio-primary);
+  background:var(--oratio-primary);
+  color:#fff;
+}
+
+/* ========================= */
+/* SELEÇÃO MÚLTIPLA */
+/* ========================= */
+
+.verseSelectable{
+  cursor:pointer;
+}
+
+.verseSelected{
+  background:rgba(176,24,26,.07);
+  border-radius:12px;
+  box-shadow:0 0 0 2px rgba(176,24,26,.18);
+}
+
+.selectDot{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:20px;
+  height:20px;
+  margin-right:8px;
+  border-radius:50%;
+  border:1.5px solid rgba(120,90,60,.35);
+  color:#fff;
+  vertical-align:middle;
+  flex-shrink:0;
+}
+
+.selectDotOn{
+  background:var(--oratio-primary);
+  border-color:var(--oratio-primary);
+}
+
+.bulkBar{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:1000;
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  background:rgba(255,255,255,.97);
+  backdrop-filter:blur(14px);
+  box-shadow:0 -8px 30px rgba(0,0,0,.12);
+  border-top:1px solid var(--oratio-card-border);
+}
+
+.bulkRow{
+  max-width:760px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.bulkCount{
+  font-size:13.5px;
+  font-weight:700;
+  color:var(--oratio-text-soft);
+  white-space:nowrap;
+}
+
+.bulkActions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.bulkBtn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:9px 12px;
+  border:none;
+  border-radius:999px;
+  background:rgba(176,24,26,.08);
+  color:var(--oratio-primary);
+  font-size:13px;
+  font-weight:700;
+  font-family:var(--oratio-font-text);
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.bulkBtn:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+}
+
+.bulkCancel{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:36px;
+  height:36px;
+  border:none;
+  border-radius:50%;
+  background:transparent;
+  color:var(--oratio-text-soft);
+  cursor:pointer;
+}
+
+.bulkSwatches{
+  max-width:760px;
+  margin:0 auto 12px;
+  display:flex;
+  gap:12px;
+  justify-content:center;
+}
+
+.swatch{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  border:2px solid rgba(0,0,0,.08);
+  cursor:pointer;
+  transition:transform .12s;
+}
+
+.swatch:hover{ transform:scale(1.12); }
+.swatch:disabled{ opacity:.5; cursor:not-allowed; }
+
+.sw_amber  { background:rgb(245,205,100); }
+.sw_green  { background:rgb(150,220,140); }
+.sw_blue   { background:rgb(140,200,245); }
+.sw_pink   { background:rgb(247,170,205); }
+.sw_purple { background:rgb(203,175,240); }
+
+@media(max-width:480px){
+  .bulkBtn{ padding:8px 9px; font-size:12px; gap:4px; }
+  .bulkCount{ font-size:12px; }
 }
 
 /* ========================= */

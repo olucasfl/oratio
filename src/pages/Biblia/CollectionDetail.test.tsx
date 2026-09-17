@@ -58,6 +58,38 @@ describe("CollectionDetail", () => {
     expect(screen.getByText("João 3,16")).toBeInTheDocument()
   })
 
+  it("groups items by book, under Antigo/Novo Testamento headers, in canonical order", async () => {
+    getMock.mockResolvedValue({
+      id: "c1",
+      name: "Estudo",
+      items: [
+        { id: "i1", book: "Efésios", chapter: 2, verse: 8, reference: "Efésios 2,8", text: "Pela graça sois salvos", note: null },
+        { id: "i2", book: "Salmos", chapter: 23, verse: 1, reference: "Salmos 23,1", text: "O Senhor é meu pastor", note: null },
+        { id: "i3", book: "Salmos", chapter: 91, verse: 1, reference: "Salmos 91,1", text: "Habita ao abrigo do Altíssimo", note: null },
+      ],
+    })
+    renderPage()
+
+    expect(await screen.findByText("Antigo Testamento")).toBeInTheDocument()
+    expect(screen.getByText("Novo Testamento")).toBeInTheDocument()
+    expect(screen.getByText("Salmos")).toBeInTheDocument()
+    expect(screen.getByText("Efésios")).toBeInTheDocument()
+
+    // Antigo Testamento antes do Novo, e o livro só aparece pelos
+    // versículos que a pessoa de fato salvou nele
+    const headings = screen.getAllByRole("heading", { level: 1 }).length // sanity: hero title still renders once
+    expect(headings).toBe(1)
+    const testamentOrder = screen.getAllByText(/Testamento$/).map((el) => el.textContent)
+    expect(testamentOrder).toEqual(["Antigo Testamento", "Novo Testamento"])
+
+    // 2 versículos de Salmos aparecem sob o mesmo cabeçalho de livro,
+    // cada um no seu próprio capítulo
+    expect(screen.getByText("Capítulo 23")).toBeInTheDocument()
+    expect(screen.getByText("Capítulo 91")).toBeInTheDocument()
+    expect(screen.getByText("Salmos 23,1")).toBeInTheDocument()
+    expect(screen.getByText("Salmos 91,1")).toBeInTheDocument()
+  })
+
   it("opens the verse in context on tap", async () => {
     renderPage()
     fireEvent.click(await screen.findByText("João 3,16"))

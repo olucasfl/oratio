@@ -180,6 +180,33 @@
   gap: 10px;
 }
 
+.testamentHeader {
+  margin: 4px 0 -2px;
+  font-family: var(--oratio-font-text);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--oratio-text-soft);
+}
+
+.list > div:first-child .testamentHeader { margin-top: 0; }
+
+.chapterGroups {
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.chapterHeader {
+  margin: 0 0 8px;
+  font-family: var(--oratio-font-title);
+  font-size: 15px;
+  color: var(--oratio-primary);
+}
+
 .card {
   border: 1px solid var(--oratio-card-border);
   border-radius: 16px;

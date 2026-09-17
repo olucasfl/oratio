@@ -118,6 +118,51 @@
 
 .empty p { margin: 0; font-size: 14px; line-height: 1.6; }
 
+.groups {
+  max-width: 520px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.bookGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chapterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chapterHeader {
+  margin: 0;
+  font-family: var(--oratio-font-text);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--oratio-text-soft);
+}
+
+.testamentHeader {
+  margin: 6px 0 -4px;
+  font-family: var(--oratio-font-text);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--oratio-text-soft);
+}
+
+.bookHeader {
+  margin: 0;
+  font-family: var(--oratio-font-title);
+  font-size: 18px;
+  color: #4b1818;
+}
+
 .list {
   max-width: 520px;
   margin: 0 auto;

@@ -31,6 +31,10 @@ let isLoggedInReturn = true
 
 const longNote = "a".repeat(400)
 
+// "João"/"Mateus" ficam sem o "São " que o JSON real usa — não importa
+// aqui: o agrupamento por livro funciona igual, só a categorização
+// AT/NT exata desses dois fica indefinida nesses testes (Salmos/Isaías
+// são nomes reais e cobrem a ordenação AT/NT em si).
 const marks = [
   { id: "1", book: "João", chapter: 3, verse: 16, reference: "João 3,16", text: "Porque Deus amou o mundo", highlighted: true, highlightColor: "green", favorite: false, note: null },
   { id: "2", book: "Salmos", chapter: 23, verse: 1, reference: "Salmos 23,1", text: "O Senhor é meu pastor", highlighted: false, favorite: true, note: null },
@@ -38,8 +42,12 @@ const marks = [
   { id: "4", book: "Isaías", chapter: 41, verse: 10, reference: "Isaías 41,10", text: "Não temas", highlighted: false, favorite: false, note: longNote },
 ]
 
-function renderPage() {
-  return render(<MemoryRouter><MinhaBiblia /></MemoryRouter>)
+function renderPage(initialEntry = "/oratio/biblia/minha") {
+  return render(
+    <MemoryRouter initialEntries={[initialEntry]}>
+      <MinhaBiblia />
+    </MemoryRouter>,
+  )
 }
 
 beforeEach(() => {
@@ -52,53 +60,98 @@ beforeEach(() => {
 
 describe("MinhaBiblia", () => {
 
-  it("shows highlighted verses on the default tab", async () => {
+  it("groups the default tab by book, and drills into a book to see its verses", async () => {
     renderPage()
+
+    // 1º nível: livro (não o versículo direto)
+    expect(await screen.findByText("João")).toBeInTheDocument()
+    expect(screen.getByText("1 versículo")).toBeInTheDocument()
+    expect(screen.queryByText("João 3,16")).not.toBeInTheDocument()
+    // só João tem grifo — Salmos/Mateus/Isaías não aparecem nesta aba
+    expect(screen.queryByText("Salmos")).not.toBeInTheDocument()
+
+    // 2º nível: entra no livro, vê o versículo
+    fireEvent.click(screen.getByRole("button", { name: /João/ }))
     expect(await screen.findByText("João 3,16")).toBeInTheDocument()
-    expect(screen.queryByText("Salmos 23,1")).not.toBeInTheDocument()
+
+    // "voltar" agora sobe um nível (lista de livros), não sai da tela
+    fireEvent.click(screen.getByRole("button", { name: /Livros/ }))
+    expect(await screen.findByText("João")).toBeInTheDocument()
+    expect(screen.queryByText("João 3,16")).not.toBeInTheDocument()
   })
 
-  it("switches to favourites and to notes", async () => {
+  it("separates the verses within a book by chapter", async () => {
+    getAllMarksMock.mockResolvedValue([
+      { id: "5", book: "Salmos", chapter: 23, verse: 1, reference: "Salmos 23,1", text: "O Senhor é meu pastor", highlighted: true, highlightColor: "amber", favorite: false, note: null },
+      { id: "6", book: "Salmos", chapter: 91, verse: 1, reference: "Salmos 91,1", text: "Habita ao abrigo do Altíssimo", highlighted: true, highlightColor: "amber", favorite: false, note: null },
+    ])
     renderPage()
-    await screen.findByText("João 3,16")
+
+    fireEvent.click(await screen.findByRole("button", { name: /Salmos/ }))
+
+    expect(await screen.findByText("Capítulo 23")).toBeInTheDocument()
+    expect(screen.getByText("Capítulo 91")).toBeInTheDocument()
+    expect(screen.getByText("Salmos 23,1")).toBeInTheDocument()
+    expect(screen.getByText("Salmos 91,1")).toBeInTheDocument()
+  })
+
+  it("switches to favoritos and anotações, each grouped by their own books", async () => {
+    renderPage()
+    await screen.findByText("João")
 
     fireEvent.click(screen.getByRole("button", { name: /Favoritos/ }))
-    expect(screen.getByText("Salmos 23,1")).toBeInTheDocument()
-    expect(screen.queryByText("João 3,16")).not.toBeInTheDocument()
+    expect(await screen.findByText("Salmos")).toBeInTheDocument()
+    fireEvent.click(screen.getByRole("button", { name: /Salmos/ }))
+    expect(await screen.findByText("Salmos 23,1")).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole("button", { name: /Anotações/ }))
-    expect(screen.getByText("Mateus 5,9")).toBeInTheDocument()
+    expect(await screen.findByText("Mateus")).toBeInTheDocument()
+    expect(screen.getByText("Isaías")).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole("button", { name: /Mateus/ }))
+    expect(await screen.findByText("Mateus 5,9")).toBeInTheDocument()
     expect(screen.getByText(/estudar sobre paz/)).toBeInTheDocument()
   })
 
   it("truncates a long note and opens the full text in a modal", async () => {
     renderPage()
-    await screen.findByText("João 3,16")
+    await screen.findByText("João")
+
     fireEvent.click(screen.getByRole("button", { name: /Anotações/ }))
+    fireEvent.click(await screen.findByRole("button", { name: /Isaías/ }))
 
     // preview is clipped (200 chars + ellipsis), not the full 400
-    const preview = screen.getByText(/a{50,}…$/)
+    const preview = await screen.findByText(/a{50,}…$/)
     expect(preview.textContent!.length).toBeLessThan(260)
 
     fireEvent.click(screen.getByRole("button", { name: "Ver anotação completa" }))
     expect(screen.getByRole("dialog", { name: /Isaías 41,10/ })).toBeInTheDocument()
   })
 
-  it("filters the list by the search box (text, reference or note)", async () => {
+  it("search bypasses the book grouping and matches across every book directly", async () => {
     renderPage()
-    await screen.findByText("João 3,16")
+    await screen.findByText("João")
 
     fireEvent.change(screen.getByPlaceholderText(/Buscar nos seus/), { target: { value: "mundo" } })
-    expect(screen.getByText("João 3,16")).toBeInTheDocument()
+    expect(await screen.findByText("João 3,16")).toBeInTheDocument()
 
     fireEvent.change(screen.getByPlaceholderText(/Buscar nos seus/), { target: { value: "zzz" } })
     expect(screen.getByText("Nada aqui ainda")).toBeInTheDocument()
   })
 
-  it("opens the verse in context when a card is tapped", async () => {
+  it("opens the verse in context when its card is tapped, after drilling into the book", async () => {
     renderPage()
+    fireEvent.click(await screen.findByRole("button", { name: /João/ }))
     fireEvent.click(await screen.findByText("João 3,16"))
     expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia/Jo%C3%A3o/3?verse=16")
+  })
+
+  it("auto-opens a book from ?tab & ?book (the shortcut coming from the reading toast)", async () => {
+    renderPage("/oratio/biblia/minha?tab=anotacoes&book=Mateus")
+    expect(await screen.findByText("Mateus 5,9")).toBeInTheDocument()
+    expect(screen.getByText(/estudar sobre paz/)).toBeInTheDocument()
+    // não é a aba padrão (grifados) — confirma que o ?tab= foi respeitado
+    expect(screen.queryByText("João")).not.toBeInTheDocument()
   })
 
   it("lists collections with name, count and a working link", async () => {
@@ -106,7 +159,7 @@ describe("MinhaBiblia", () => {
       { id: "c1", name: "Promessas de Deus", _count: { items: 3 } },
     ])
     renderPage()
-    await screen.findByText("João 3,16")
+    await screen.findByText("João")
     fireEvent.click(screen.getByRole("button", { name: /Coleções/ }))
 
     const card = screen.getByRole("button", { name: /Promessas de Deus/ })
@@ -119,7 +172,7 @@ describe("MinhaBiblia", () => {
   it("creates a collection through the Oratio modal (no window.prompt)", async () => {
     const promptSpy = vi.spyOn(window, "prompt")
     renderPage()
-    await screen.findByText("João 3,16")
+    await screen.findByText("João")
 
     fireEvent.click(screen.getByRole("button", { name: /Coleções/ }))
     fireEvent.click(screen.getByRole("button", { name: /Nova coleção/ }))

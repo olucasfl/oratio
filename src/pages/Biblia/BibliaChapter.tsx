@@ -1,5 +1,5 @@
 import { useParams,useNavigate,useSearchParams } from "react-router-dom"
-import { useState,useRef,useEffect,useCallback } from "react"
+import { useState,useRef,useEffect,useCallback,useMemo } from "react"
 import { createPortal } from "react-dom"
 
 import {
@@ -10,7 +10,12 @@ import {
  Sparkles,
  Type,
  Heart,
- NotebookPen
+ NotebookPen,
+ ListChecks,
+ Highlighter,
+ FolderPlus,
+ Check,
+ X
 } from "lucide-react"
 
 import { getChapter }
@@ -23,6 +28,7 @@ import {
  getChapterMarks,
  upsertMark,
  isDeleted,
+ HIGHLIGHT_COLORS,
  type BibleMark,
  type HighlightColor
 } from "../../services/bibleMarksService"
@@ -62,6 +68,10 @@ from "./BibliaChapter.module.css"
 
 interface Verse { versiculo:number; texto:string }
 
+// toast simples, opcionalmente com um atalho (ex.: "Ver" → Minha Bíblia,
+// já filtrada no livro/aba do que acabou de ser marcado)
+interface Toast { text:string; action?: { label:string; onClick:()=>void } }
+
 export default function BibliaChapter(){
 
  const { book,chapter } = useParams()
@@ -88,8 +98,17 @@ export default function BibliaChapter(){
  const [noteVerse,setNoteVerse]   = useState<number | null>(null)
  const [collVerse,setCollVerse]   = useState<number | null>(null)
  const [noteSaving,setNoteSaving] = useState(false)
- const [toast,setToast]           = useState<string | null>(null)
+ const [toast,setToast]           = useState<Toast | null>(null)
  const [gateMsg,setGateMsg]       = useState<string | null>(null)
+
+ /* seleção múltipla — grifar/anotar/adicionar à coleção vários versículos
+    de uma vez, sem repetir o toque em cada um */
+ const [selectMode,setSelectMode]       = useState(false)
+ const [selected,setSelected]           = useState<Set<number>>(new Set())
+ const [bulkColorPicker,setBulkColorPicker] = useState(false)
+ const [bulkNoteOpen,setBulkNoteOpen]   = useState(false)
+ const [bulkCollOpen,setBulkCollOpen]   = useState(false)
+ const [bulkSaving,setBulkSaving]       = useState(false)
 
  const verseRefs =
   useRef<Record<number,HTMLParagraphElement | null>>({})
@@ -265,7 +284,7 @@ export default function BibliaChapter(){
     else delete next[verseNum]
     return next
    })
-   setToast("Não foi possível salvar. Tente de novo.")
+   setToast({ text:"Não foi possível salvar. Tente de novo." })
    return false
   }
 
@@ -289,7 +308,15 @@ export default function BibliaChapter(){
   setNoteSaving(true)
   const ok = await applyMark(noteVerse, { note })
   setNoteSaving(false)
-  if(ok) setNoteVerse(null)
+  if(ok){
+   setNoteVerse(null)
+   if(note.trim()){
+    setToast({
+     text:"Anotação salva",
+     action:{ label:"Ver", onClick:()=>navigate(minhaBibliaLink("anotacoes")) }
+    })
+   }
+  }
  }
 
  async function deleteNote(){
@@ -299,6 +326,79 @@ export default function BibliaChapter(){
   setNoteSaving(false)
   if(ok) setNoteVerse(null)
  }
+
+ // link de atalho pro toast: pousa direto na aba/livro do que acabou de
+ // ser marcado, em vez de a pessoa ter que navegar até "Minha Bíblia" e
+ // achar o livro de novo
+ function minhaBibliaLink(tab:"grifados"|"anotacoes"){
+  return `/oratio/biblia/minha?tab=${tab}&book=${encodeURIComponent(book!)}`
+ }
+
+ function toggleSelected(verseNum:number){
+  setSelected((s)=>{
+   const next = new Set(s)
+   if(next.has(verseNum)) next.delete(verseNum)
+   else next.add(verseNum)
+   return next
+  })
+ }
+
+ function exitSelectMode(){
+  setSelectMode(false)
+  setSelected(new Set())
+  setBulkColorPicker(false)
+ }
+
+ async function applyBulkHighlight(color:HighlightColor){
+  setBulkColorPicker(false)
+  setBulkSaving(true)
+  const verses = [...selected]
+  const results = await Promise.all(
+   verses.map((v)=>applyMark(v, { highlighted:true, highlightColor:color }))
+  )
+  setBulkSaving(false)
+  const okCount = results.filter(Boolean).length
+  if(okCount > 0){
+   setToast({
+    text: `${okCount} versículo${okCount === 1 ? "" : "s"} grifado${okCount === 1 ? "" : "s"}`,
+    action: { label:"Ver", onClick:()=>navigate(minhaBibliaLink("grifados")) }
+   })
+  }
+  exitSelectMode()
+ }
+
+ async function applyBulkNote(note:string){
+  setBulkSaving(true)
+  const verses = [...selected]
+  const results = await Promise.all(verses.map((v)=>applyMark(v, { note })))
+  setBulkSaving(false)
+  setBulkNoteOpen(false)
+  const okCount = results.filter(Boolean).length
+  if(okCount > 0){
+   setToast({
+    text: `${okCount} versículo${okCount === 1 ? "" : "s"} anotado${okCount === 1 ? "" : "s"}`,
+    action: { label:"Ver", onClick:()=>navigate(minhaBibliaLink("anotacoes")) }
+   })
+  }
+  exitSelectMode()
+ }
+
+ // itens da coleção pros versículos selecionados (modo múltiplo do
+ // AddToCollectionSheet) — só recalcula quando a seleção muda, pra não
+ // disparar o sheet de novo a cada render enquanto está aberto
+ const bulkItems = useMemo(()=>{
+  if(!capitulo) return []
+  return [...selected].map((v)=>{
+   const vv = capitulo.versiculos.find((x:Verse)=>x.versiculo === v)
+   return {
+    book: book!,
+    chapter: chapterNum,
+    verse: v,
+    reference: buildReference(v),
+    text: vv?.texto ?? ""
+   }
+  })
+ },[selected,capitulo,book,chapterNum,buildReference])
 
  if(!capitulo){
 
@@ -360,6 +460,16 @@ export default function BibliaChapter(){
       <span>
         Buscar versículo
       </span>
+
+      <button
+       className={`${styles.selectBtn} ${selectMode ? styles.readingBtnOn : ""}`}
+       onClick={()=> selectMode ? exitSelectMode() : setSelectMode(true)}
+       aria-pressed={selectMode}
+       aria-label={selectMode ? "Cancelar seleção de versículos" : "Selecionar vários versículos"}
+      >
+       <ListChecks size={15}/>
+       {selectMode ? "Cancelar" : "Selecionar"}
+      </button>
 
       <button
        className={styles.readingBtn}
@@ -442,6 +552,7 @@ export default function BibliaChapter(){
 
       const mark = marks[v.versiculo]
       const isDrop = index === 0
+      const isSelected = selected.has(v.versiculo)
 
       return(
 
@@ -450,9 +561,15 @@ export default function BibliaChapter(){
           ref={(el)=>{
             verseRefs.current[v.versiculo] = el
           }}
-          className={styles.verse}
-          onClick={()=>openSheet(v.versiculo)}
+          className={`${styles.verse} ${selectMode ? styles.verseSelectable : ""} ${isSelected ? styles.verseSelected : ""}`}
+          onClick={()=> selectMode ? toggleSelected(v.versiculo) : openSheet(v.versiculo)}
         >
+
+          {selectMode && (
+            <span className={`${styles.selectDot} ${isSelected ? styles.selectDotOn : ""}`}>
+              {isSelected && <Check size={12}/>}
+            </span>
+          )}
 
           {isDrop ? (
             <>
@@ -480,17 +597,23 @@ export default function BibliaChapter(){
             <NotebookPen
               size={14}
               className={styles.noteFlag}
-              onClick={(e)=>{ e.stopPropagation(); setNoteVerse(v.versiculo) }}
+              onClick={(e)=>{
+                e.stopPropagation()
+                if(selectMode) toggleSelected(v.versiculo)
+                else setNoteVerse(v.versiculo)
+              }}
             />
           )}
 
-          <button
-            className={`${styles.favBtn} ${mark?.favorite ? styles.favBtnOn : ""}`}
-            onClick={(e)=>{ e.stopPropagation(); toggleFavoriteQuick(v.versiculo) }}
-            aria-label={mark?.favorite ? "Desfavoritar versículo" : "Favoritar versículo"}
-          >
-            <Heart size={14} fill={mark?.favorite ? "currentColor" : "none"} />
-          </button>
+          {!selectMode && (
+            <button
+              className={`${styles.favBtn} ${mark?.favorite ? styles.favBtnOn : ""}`}
+              onClick={(e)=>{ e.stopPropagation(); toggleFavoriteQuick(v.versiculo) }}
+              aria-label={mark?.favorite ? "Desfavoritar versículo" : "Favoritar versículo"}
+            >
+              <Heart size={14} fill={mark?.favorite ? "currentColor" : "none"} />
+            </button>
+          )}
 
         </p>
 
@@ -499,6 +622,72 @@ export default function BibliaChapter(){
     })}
 
    </div>
+
+   {selectMode && (
+     <div className={styles.bulkBar}>
+
+       {bulkColorPicker && (
+         <div className={styles.bulkSwatches}>
+           {HIGHLIGHT_COLORS.map((c)=>(
+             <button
+               key={c}
+               className={`${styles.swatch} ${styles["sw_" + c]}`}
+               onClick={()=>applyBulkHighlight(c)}
+               aria-label={`Grifar selecionados de ${c}`}
+               disabled={bulkSaving}
+             />
+           ))}
+         </div>
+       )}
+
+       <div className={styles.bulkRow}>
+
+         <span className={styles.bulkCount}>
+           {selected.size === 0
+             ? "Toque nos versículos"
+             : `${selected.size} selecionado${selected.size === 1 ? "" : "s"}`}
+         </span>
+
+         <div className={styles.bulkActions}>
+
+           <button
+             className={styles.bulkBtn}
+             disabled={selected.size === 0 || bulkSaving}
+             onClick={()=>setBulkColorPicker((v)=>!v)}
+           >
+             <Highlighter size={16}/> Grifar
+           </button>
+
+           <button
+             className={styles.bulkBtn}
+             disabled={selected.size === 0 || bulkSaving}
+             onClick={()=>setBulkNoteOpen(true)}
+           >
+             <NotebookPen size={16}/> Anotar
+           </button>
+
+           <button
+             className={styles.bulkBtn}
+             disabled={selected.size === 0 || bulkSaving}
+             onClick={()=>setBulkCollOpen(true)}
+           >
+             <FolderPlus size={16}/> Coleção
+           </button>
+
+           <button
+             className={styles.bulkCancel}
+             onClick={exitSelectMode}
+             aria-label="Cancelar seleção"
+           >
+             <X size={18}/>
+           </button>
+
+         </div>
+
+       </div>
+
+     </div>
+   )}
 
    <div className={styles.pageSpacer}></div>
 
@@ -522,7 +711,14 @@ export default function BibliaChapter(){
        applyMark(
          sheetVerse,
          color ? { highlighted:true, highlightColor:color } : { highlighted:false }
-       )
+       ).then((ok)=>{
+         if(ok && color){
+           setToast({
+             text:"Grifo salvo",
+             action:{ label:"Ver", onClick:()=>navigate(minhaBibliaLink("grifados")) }
+           })
+         }
+       })
        setSheetVerse(null)
      }}
      onToggleFavorite={()=>{
@@ -571,7 +767,7 @@ export default function BibliaChapter(){
           })()
         : null
      }
-     onDone={(msg)=>setToast(msg)}
+     onDone={(msg)=>setToast({ text:msg })}
    />
 
    <VerseNoteEditor
@@ -584,6 +780,27 @@ export default function BibliaChapter(){
      onDelete={deleteNote}
    />
 
+   {/* seleção múltipla — anotar aplica o mesmo texto a todos os
+       selecionados (initialNote vazio: não há "excluir" nesse modo) */}
+   <VerseNoteEditor
+     open={bulkNoteOpen}
+     reference={`${selected.size} versículo${selected.size === 1 ? "" : "s"} selecionado${selected.size === 1 ? "" : "s"}`}
+     initialNote=""
+     saving={bulkSaving}
+     onClose={()=>setBulkNoteOpen(false)}
+     onSave={applyBulkNote}
+     onDelete={()=>{}}
+   />
+
+   <AddToCollectionSheet
+     open={bulkCollOpen}
+     onClose={()=>{ setBulkCollOpen(false); exitSelectMode() }}
+     reference={`${selected.size} versículo${selected.size === 1 ? "" : "s"} selecionado${selected.size === 1 ? "" : "s"}`}
+     item={null}
+     items={bulkItems}
+     onDone={(msg)=>setToast({ text:msg })}
+   />
+
    <GuestGateModal
      open={gateMsg !== null}
      message={gateMsg || ""}
@@ -591,7 +808,17 @@ export default function BibliaChapter(){
    />
 
    {toast && createPortal(
-     <div className={styles.toast}>{toast}</div>,
+     <div className={styles.toast}>
+       <span>{toast.text}</span>
+       {toast.action && (
+         <button
+           className={styles.toastAction}
+           onClick={()=>{ toast.action!.onClick(); setToast(null) }}
+         >
+           {toast.action.label}
+         </button>
+       )}
+     </div>,
      document.body
    )}
 
