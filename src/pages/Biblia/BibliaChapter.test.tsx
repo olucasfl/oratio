@@ -145,7 +145,7 @@ describe("BibliaChapter", () => {
     expect(await screen.findByText("Grifo salvo")).toBeInTheDocument()
     fireEvent.click(screen.getByRole("button", { name: "Ver" }))
     expect(navigateMock).toHaveBeenCalledWith(
-      "/oratio/biblia/minha?tab=grifados&book=G%C3%AAnesis",
+      "/oratio/biblia/minha?tab=grifados&book=G%C3%AAnesis&chapter=1",
       { state: { readingBook: "Gênesis", readingChapter: 1 } },
     )
   })

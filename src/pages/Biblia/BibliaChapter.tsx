@@ -318,11 +318,11 @@ export default function BibliaChapter(){
   if(ok) setNoteVerse(null)
  }
 
- // link de atalho pro toast: pousa direto na aba/livro do que acabou de
- // ser marcado, em vez de a pessoa ter que navegar até "Minha Bíblia" e
- // achar o livro de novo
+ // link de atalho pro toast: pousa direto na aba/livro/capítulo do que
+ // acabou de ser marcado (3º nível), em vez de a pessoa ter que navegar
+ // até "Minha Bíblia" e achar o livro e o capítulo de novo
  function minhaBibliaLink(tab:"grifados"|"anotacoes"){
-  return `/oratio/biblia/minha?tab=${tab}&book=${encodeURIComponent(book!)}`
+  return `/oratio/biblia/minha?tab=${tab}&book=${encodeURIComponent(book!)}&chapter=${chapterNum}`
  }
 
  if(!capitulo){

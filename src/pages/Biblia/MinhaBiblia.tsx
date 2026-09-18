@@ -49,13 +49,6 @@ function norm(s: string) {
   return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
 }
 
-const NOTE_PREVIEW_MAX = 200
-
-function notePreview(note: string) {
-  if (note.length <= NOTE_PREVIEW_MAX) return { text: note, clipped: false }
-  return { text: note.slice(0, NOTE_PREVIEW_MAX).trimEnd() + "…", clipped: true }
-}
-
 // Livros que têm pelo menos 1 mark nesta aba, agrupados por Antigo/Novo
 // Testamento em ordem canônica — é a tela de entrada de cada aba
 // (grifados/favoritos/anotações) antes de escolher um livro.
@@ -86,8 +79,14 @@ export default function MinhaBiblia() {
 
   const [tab, setTab] = useState<Tab>(initialTab)
   // Livro escolhido dentro da aba atual (2º nível: "Efésios" → vê os
-  // versículos daquele livro). null = mostrando a lista de livros.
+  // capítulos daquele livro, em blocos). null = mostrando a lista de livros.
   const [selectedBook, setSelectedBook] = useState<string | null>(searchParams.get("book"))
+  // Capítulo escolhido dentro do livro (3º nível: "Efésios 2" → vê os
+  // versículos soltos daquele capítulo). null = mostrando os capítulos.
+  const [selectedChapter, setSelectedChapter] = useState<number | null>(() => {
+    const c = searchParams.get("chapter")
+    return c ? Number(c) : null
+  })
   const [marks, setMarks] = useState<BibleMark[]>([])
   const [collections, setCollections] = useState<BibleCollection[]>([])
   const [loading, setLoading] = useState(true)
@@ -117,6 +116,7 @@ export default function MinhaBiblia() {
   function changeTab(id: Tab) {
     setTab(id)
     setSelectedBook(null)
+    setSelectedChapter(null)
     setQuery("")
   }
 
@@ -148,27 +148,30 @@ export default function MinhaBiblia() {
 
   const bookGroups = useMemo(() => groupBooks(byTab), [byTab])
 
+  // todos os marks do livro escolhido (qualquer capítulo) — usado pra
+  // contar o total no 2º nível e como base do agrupamento por capítulo
   const versesOfSelectedBook = useMemo(() => {
     if (!selectedBook) return []
-    return byTab
-      .filter((m) => m.book === selectedBook)
-      .sort((a, b) => a.chapter - b.chapter || a.verse - b.verse)
+    return byTab.filter((m) => m.book === selectedBook)
   }, [byTab, selectedBook])
 
-  // 3º nível dentro do livro: separado por capítulo, na ordem em que
-  // aparecem no livro (não fica tudo misturado quando há marks de
-  // vários capítulos diferentes)
-  const chaptersOfSelectedBook = useMemo(() => {
-    const byChapter = new Map<number, BibleMark[]>()
-    for (const m of versesOfSelectedBook) {
-      const list = byChapter.get(m.chapter) ?? []
-      list.push(m)
-      byChapter.set(m.chapter, list)
-    }
-    return [...byChapter.keys()]
+  // 2º nível: capítulos daquele livro que têm pelo menos 1 mark nesta
+  // aba, em blocos (igual a lista de livros, um nível abaixo)
+  const chapterGroups = useMemo(() => {
+    const counts = new Map<number, number>()
+    for (const m of versesOfSelectedBook) counts.set(m.chapter, (counts.get(m.chapter) ?? 0) + 1)
+    return [...counts.keys()]
       .sort((a, b) => a - b)
-      .map((chapter) => ({ chapter, marks: byChapter.get(chapter)! }))
+      .map((chapter) => ({ chapter, count: counts.get(chapter)! }))
   }, [versesOfSelectedBook])
+
+  // 3º nível: versículos soltos do capítulo escolhido
+  const versesOfSelectedChapter = useMemo(() => {
+    if (selectedChapter === null) return []
+    return versesOfSelectedBook
+      .filter((m) => m.chapter === selectedChapter)
+      .sort((a, b) => a.verse - b.verse)
+  }, [versesOfSelectedBook, selectedChapter])
 
   function openVerse(m: BibleMark) {
     navigate(
@@ -190,14 +193,23 @@ export default function MinhaBiblia() {
   }
 
   function handleBack() {
-    // Dentro de um livro: "voltar" sobe um nível (volta pra lista de
-    // livros), não sai da tela.
+    // Sobe um nível de cada vez: capítulo → livro → lista de livros →
+    // só aí sai da tela.
+    if (selectedChapter !== null) { setSelectedChapter(null); return }
     if (selectedBook) { setSelectedBook(null); return }
     navigate("/oratio/biblia")
   }
 
+  function openBook(book: string) {
+    setSelectedBook(book)
+    setSelectedChapter(null)
+  }
+
   function renderMarkCard(m: BibleMark) {
-    const preview = tab === "anotacoes" && m.note ? notePreview(m.note) : null
+    // aba Anotações: mesma mecânica das Coleções — botão "Ver anotação"
+    // que abre o texto completo no modal, em vez de mostrar (e truncar)
+    // a nota direto no card
+    const hasNote = tab === "anotacoes" && !!m.note
     return (
       <div key={m.id} className={styles.card}>
         <button className={styles.cardMain} onClick={() => openVerse(m)}>
@@ -211,18 +223,13 @@ export default function MinhaBiblia() {
             <strong>{m.reference}</strong>
           </div>
           <p className={styles.cardText}>{m.text}</p>
-          {preview && (
-            <p className={styles.cardNote}>
-              <NotebookPen size={13} /> {preview.text}
-            </p>
-          )}
         </button>
-        {preview?.clipped && (
+        {hasNote && (
           <button
             className={styles.noteMoreBtn}
             onClick={() => setNoteView(m)}
           >
-            Ver anotação completa
+            <NotebookPen size={13} /> Ver anotação
           </button>
         )}
       </div>
@@ -237,15 +244,22 @@ export default function MinhaBiblia() {
       <div className={styles.glow} />
 
       <button className={styles.backButton} onClick={handleBack}>
-        <ChevronLeft size={18} /> {selectedBook ? "Livros" : "Voltar"}
+        <ChevronLeft size={18} />
+        {selectedChapter !== null ? "Capítulos" : selectedBook ? "Livros" : "Voltar"}
       </button>
 
       <div className={styles.hero}>
-        <h1 className={styles.title}>{selectedBook ?? "Minha Bíblia"}</h1>
+        <h1 className={styles.title}>
+          {selectedChapter !== null
+            ? `${selectedBook} ${selectedChapter}`
+            : selectedBook ?? "Minha Bíblia"}
+        </h1>
         <p className={styles.subtitle}>
-          {selectedBook
-            ? `${versesOfSelectedBook.length} versículo${versesOfSelectedBook.length === 1 ? "" : "s"}`
-            : "Seus versículos grifados, favoritos, anotados e suas coleções."}
+          {selectedChapter !== null
+            ? `${versesOfSelectedChapter.length} versículo${versesOfSelectedChapter.length === 1 ? "" : "s"}`
+            : selectedBook
+              ? `${versesOfSelectedBook.length} versículo${versesOfSelectedBook.length === 1 ? "" : "s"}`
+              : "Seus versículos grifados, favoritos, anotados e suas coleções."}
         </p>
       </div>
 
@@ -274,7 +288,7 @@ export default function MinhaBiblia() {
         ))}
       </div>
 
-      {showSearch && !selectedBook && (
+      {showSearch && !selectedBook && selectedChapter === null && (
         <div className={styles.searchWrapper}>
           <Search size={18} className={styles.searchIcon} />
           <input
@@ -337,14 +351,27 @@ export default function MinhaBiblia() {
         ) : (
           <div className={styles.list}>{searched.map(renderMarkCard)}</div>
         )
+      ) : selectedBook && selectedChapter !== null ? (
+        // 3º nível: versículos soltos daquele capítulo
+        <div className={styles.list}>{versesOfSelectedChapter.map(renderMarkCard)}</div>
       ) : selectedBook ? (
-        // 2º nível: versículos daquele livro, separados por capítulo
-        <div className={styles.chapterGroups}>
-          {chaptersOfSelectedBook.map((g) => (
-            <div key={g.chapter}>
-              <h2 className={styles.chapterHeader}>Capítulo {g.chapter}</h2>
-              <div className={styles.list}>{g.marks.map(renderMarkCard)}</div>
-            </div>
+        // 2º nível: capítulos daquele livro, em blocos (mesma cara da
+        // lista de livros, um nível abaixo)
+        <div className={styles.list}>
+          {chapterGroups.map((cg) => (
+            <button
+              key={cg.chapter}
+              className={styles.collectionCard}
+              onClick={() => setSelectedChapter(cg.chapter)}
+            >
+              <div className={styles.collectionText}>
+                <strong className={styles.collectionName}>Capítulo {cg.chapter}</strong>
+                <span className={styles.collectionCount}>
+                  {cg.count} versículo{cg.count === 1 ? "" : "s"}
+                </span>
+              </div>
+              <ChevronRight size={18} className={styles.collectionArrow} />
+            </button>
           ))}
         </div>
       ) : bookGroups.length === 0 ? (
@@ -366,7 +393,7 @@ export default function MinhaBiblia() {
               )}
               <button
                 className={styles.collectionCard}
-                onClick={() => setSelectedBook(g.book)}
+                onClick={() => openBook(g.book)}
               >
                 <div className={styles.collectionText}>
                   <strong className={styles.collectionName}>{g.book}</strong>
