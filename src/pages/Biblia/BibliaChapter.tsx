@@ -10,7 +10,8 @@ import {
  Sparkles,
  Type,
  Heart,
- NotebookPen
+ NotebookPen,
+ BookMarked
 } from "lucide-react"
 
 import { getChapter }
@@ -62,6 +63,10 @@ from "./BibliaChapter.module.css"
 
 interface Verse { versiculo:number; texto:string }
 
+// toast simples, opcionalmente com um atalho (ex.: "Ver" → Minha Bíblia,
+// já filtrada no livro/aba do que acabou de ser marcado)
+interface Toast { text:string; action?: { label:string; onClick:()=>void } }
+
 export default function BibliaChapter(){
 
  const { book,chapter } = useParams()
@@ -88,7 +93,7 @@ export default function BibliaChapter(){
  const [noteVerse,setNoteVerse]   = useState<number | null>(null)
  const [collVerse,setCollVerse]   = useState<number | null>(null)
  const [noteSaving,setNoteSaving] = useState(false)
- const [toast,setToast]           = useState<string | null>(null)
+ const [toast,setToast]           = useState<Toast | null>(null)
  const [gateMsg,setGateMsg]       = useState<string | null>(null)
 
  const verseRefs =
@@ -183,6 +188,11 @@ export default function BibliaChapter(){
   [book,chapter]
  )
 
+ // vai junto sempre que se navega daqui pra Minha Bíblia (ícone do topo ou
+ // atalho "Ver" do toast) — é o que deixa Minha Bíblia oferecer "Voltar
+ // para <livro> <capítulo>"
+ const readingState = { readingBook: book, readingChapter: chapterNum }
+
  /*
   Aplica um patch (grifo / favorito / nota) num versículo de forma
   otimista e persiste no backend. Em erro, desfaz e avisa.
@@ -265,7 +275,7 @@ export default function BibliaChapter(){
     else delete next[verseNum]
     return next
    })
-   setToast("Não foi possível salvar. Tente de novo.")
+   setToast({ text:"Não foi possível salvar. Tente de novo." })
    return false
   }
 
@@ -289,7 +299,15 @@ export default function BibliaChapter(){
   setNoteSaving(true)
   const ok = await applyMark(noteVerse, { note })
   setNoteSaving(false)
-  if(ok) setNoteVerse(null)
+  if(ok){
+   setNoteVerse(null)
+   if(note.trim()){
+    setToast({
+     text:"Anotação salva",
+     action:{ label:"Ver", onClick:()=>navigate(minhaBibliaLink("anotacoes"), { state: readingState }) }
+    })
+   }
+  }
  }
 
  async function deleteNote(){
@@ -298,6 +316,13 @@ export default function BibliaChapter(){
   const ok = await applyMark(noteVerse, { note: "" })
   setNoteSaving(false)
   if(ok) setNoteVerse(null)
+ }
+
+ // link de atalho pro toast: pousa direto na aba/livro/capítulo do que
+ // acabou de ser marcado (3º nível), em vez de a pessoa ter que navegar
+ // até "Minha Bíblia" e achar o livro e o capítulo de novo
+ function minhaBibliaLink(tab:"grifados"|"anotacoes"){
+  return `/oratio/biblia/minha?tab=${tab}&book=${encodeURIComponent(book!)}&chapter=${chapterNum}`
  }
 
  if(!capitulo){
@@ -323,13 +348,28 @@ export default function BibliaChapter(){
 
    <div className={styles.hero}>
 
-    <button
-      className={styles.backButton}
-      onClick={()=>navigate(`/oratio/biblia/${book}`)}
-    >
-      <ChevronLeft size={18}/>
-      Voltar
-    </button>
+    <div className={styles.heroTopRow}>
+
+      <button
+        className={styles.backButton}
+        onClick={()=>navigate(`/oratio/biblia/${book}`)}
+      >
+        <ChevronLeft size={18}/>
+        Voltar
+      </button>
+
+      {/* atalho pra Minha Bíblia — evidente (ícone + texto), no mesmo
+          nível do "Voltar", do lado direito. Leva o livro/capítulo atual
+          no state, pra Minha Bíblia poder oferecer "Voltar para X Y". */}
+      <button
+        className={styles.minhaBibliaLink}
+        onClick={()=>navigate("/oratio/biblia/minha", { state: readingState })}
+      >
+        <BookMarked size={17}/>
+        Minha Bíblia
+      </button>
+
+    </div>
 
     <div className={styles.heroIcon}>
       <BookOpen size={34}/>
@@ -522,7 +562,14 @@ export default function BibliaChapter(){
        applyMark(
          sheetVerse,
          color ? { highlighted:true, highlightColor:color } : { highlighted:false }
-       )
+       ).then((ok)=>{
+         if(ok && color){
+           setToast({
+             text:"Grifo salvo",
+             action:{ label:"Ver", onClick:()=>navigate(minhaBibliaLink("grifados"), { state: readingState }) }
+           })
+         }
+       })
        setSheetVerse(null)
      }}
      onToggleFavorite={()=>{
@@ -571,7 +618,7 @@ export default function BibliaChapter(){
           })()
         : null
      }
-     onDone={(msg)=>setToast(msg)}
+     onDone={(msg)=>setToast({ text:msg })}
    />
 
    <VerseNoteEditor
@@ -591,7 +638,17 @@ export default function BibliaChapter(){
    />
 
    {toast && createPortal(
-     <div className={styles.toast}>{toast}</div>,
+     <div className={styles.toast}>
+       <span>{toast.text}</span>
+       {toast.action && (
+         <button
+           className={styles.toastAction}
+           onClick={()=>{ toast.action!.onClick(); setToast(null) }}
+         >
+           {toast.action.label}
+         </button>
+       )}
+     </div>,
      document.body
    )}
 
