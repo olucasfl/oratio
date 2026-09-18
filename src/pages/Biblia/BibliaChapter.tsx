@@ -203,6 +203,11 @@ export default function BibliaChapter(){
   [book,chapter]
  )
 
+ // vai junto sempre que se navega daqui pra Minha Bíblia (ícone do topo ou
+ // atalho "Ver" do toast) — é o que deixa Minha Bíblia oferecer "Voltar
+ // para <livro> <capítulo>"
+ const readingState = { readingBook: book, readingChapter: chapterNum }
+
  /*
   Aplica um patch (grifo / favorito / nota) num versículo de forma
   otimista e persiste no backend. Em erro, desfaz e avisa.
@@ -314,7 +319,7 @@ export default function BibliaChapter(){
    if(note.trim()){
     setToast({
      text:"Anotação salva",
-     action:{ label:"Ver", onClick:()=>navigate(minhaBibliaLink("anotacoes")) }
+     action:{ label:"Ver", onClick:()=>navigate(minhaBibliaLink("anotacoes"), { state: readingState }) }
     })
    }
   }
@@ -362,7 +367,7 @@ export default function BibliaChapter(){
   if(okCount > 0){
    setToast({
     text: `${okCount} versículo${okCount === 1 ? "" : "s"} grifado${okCount === 1 ? "" : "s"}`,
-    action: { label:"Ver", onClick:()=>navigate(minhaBibliaLink("grifados")) }
+    action: { label:"Ver", onClick:()=>navigate(minhaBibliaLink("grifados"), { state: readingState }) }
    })
   }
   exitSelectMode()
@@ -378,7 +383,7 @@ export default function BibliaChapter(){
   if(okCount > 0){
    setToast({
     text: `${okCount} versículo${okCount === 1 ? "" : "s"} anotado${okCount === 1 ? "" : "s"}`,
-    action: { label:"Ver", onClick:()=>navigate(minhaBibliaLink("anotacoes")) }
+    action: { label:"Ver", onClick:()=>navigate(minhaBibliaLink("anotacoes"), { state: readingState }) }
    })
   }
   exitSelectMode()
@@ -424,13 +429,28 @@ export default function BibliaChapter(){
 
    <div className={styles.hero}>
 
-    <button
-      className={styles.backButton}
-      onClick={()=>navigate(`/oratio/biblia/${book}`)}
-    >
-      <ChevronLeft size={18}/>
-      Voltar
-    </button>
+    <div className={styles.heroTopRow}>
+
+      <button
+        className={styles.backButton}
+        onClick={()=>navigate(`/oratio/biblia/${book}`)}
+      >
+        <ChevronLeft size={18}/>
+        Voltar
+      </button>
+
+      {/* atalho pra Minha Bíblia — evidente (ícone + texto), no mesmo
+          nível do "Voltar", do lado direito. Leva o livro/capítulo atual
+          no state, pra Minha Bíblia poder oferecer "Voltar para X Y". */}
+      <button
+        className={styles.minhaBibliaLink}
+        onClick={()=>navigate("/oratio/biblia/minha", { state: readingState })}
+      >
+        <BookMarked size={17}/>
+        Minha Bíblia
+      </button>
+
+    </div>
 
     <div className={styles.heroIcon}>
       <BookOpen size={34}/>
@@ -694,19 +714,6 @@ export default function BibliaChapter(){
 
    <BottomNavbar/>
 
-   {/* atalho fixo pra Minha Bíblia — discreto, acompanha o scroll;
-       some durante a seleção múltipla pra não brigar com a barra de baixo */}
-   {!selectMode && (
-     <button
-       className={styles.minhaBibliaFab}
-       onClick={()=>navigate("/oratio/biblia/minha")}
-       aria-label="Ir para Minha Bíblia"
-       title="Minha Bíblia"
-     >
-       <BookMarked size={19}/>
-     </button>
-   )}
-
    <ReadingPanel
      open={panelOpen}
      onClose={()=>setPanelOpen(false)}
@@ -729,7 +736,7 @@ export default function BibliaChapter(){
          if(ok && color){
            setToast({
              text:"Grifo salvo",
-             action:{ label:"Ver", onClick:()=>navigate(minhaBibliaLink("grifados")) }
+             action:{ label:"Ver", onClick:()=>navigate(minhaBibliaLink("grifados"), { state: readingState }) }
            })
          }
        })

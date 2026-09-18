@@ -138,13 +138,13 @@ describe("BibliaChapter", () => {
     expect(upsertMarkMock).not.toHaveBeenCalled()
   })
 
-  it("always shows a fixed shortcut to Minha Bíblia, hidden only while selecting", async () => {
+  it("shows an evident 'Minha Bíblia' link next to Voltar, carrying the book/chapter being read", async () => {
     renderPage()
-    fireEvent.click(screen.getByRole("button", { name: "Ir para Minha Bíblia" }))
-    expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia/minha")
-
-    fireEvent.click(screen.getByRole("button", { name: /Selecionar/ }))
-    expect(screen.queryByRole("button", { name: "Ir para Minha Bíblia" })).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole("button", { name: /Minha Bíblia/ }))
+    expect(navigateMock).toHaveBeenCalledWith(
+      "/oratio/biblia/minha",
+      { state: { readingBook: "Gênesis", readingChapter: 1 } },
+    )
   })
 
   it("shows a 'Ver' shortcut to Minha Bíblia right after highlighting a verse", async () => {
@@ -154,7 +154,10 @@ describe("BibliaChapter", () => {
 
     expect(await screen.findByText("Grifo salvo")).toBeInTheDocument()
     fireEvent.click(screen.getByRole("button", { name: "Ver" }))
-    expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia/minha?tab=grifados&book=G%C3%AAnesis")
+    expect(navigateMock).toHaveBeenCalledWith(
+      "/oratio/biblia/minha?tab=grifados&book=G%C3%AAnesis",
+      { state: { readingBook: "Gênesis", readingChapter: 1 } },
+    )
   })
 
   it("selects two verses and highlights both at once", async () => {
@@ -177,7 +180,10 @@ describe("BibliaChapter", () => {
 
     expect(await screen.findByText("2 versículos grifados")).toBeInTheDocument()
     fireEvent.click(screen.getByRole("button", { name: "Ver" }))
-    expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia/minha?tab=grifados&book=G%C3%AAnesis")
+    expect(navigateMock).toHaveBeenCalledWith(
+      "/oratio/biblia/minha?tab=grifados&book=G%C3%AAnesis",
+      { state: { readingBook: "Gênesis", readingChapter: 1 } },
+    )
 
     // sai do modo de seleção depois da ação em lote
     expect(screen.queryByRole("button", { name: "Cancelar" })).not.toBeInTheDocument()

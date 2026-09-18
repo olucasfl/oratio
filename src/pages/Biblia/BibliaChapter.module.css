@@ -74,13 +74,24 @@
 }
 
 /* ========================= */
-/* BACK BUTTON */
+/* LINHA DO TOPO — VOLTAR + MINHA BÍBLIA */
 /* ========================= */
+
+.heroTopRow{
+  width:100%;
+  max-width:760px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+
+  margin-bottom:26px;
+}
 
 .backButton{
 
   min-height:44px;
-  align-self:flex-start;
 
   display:flex;
   align-items:center;
@@ -94,8 +105,6 @@
   font-size:15px;
   font-weight:600;
 
-  margin-bottom:26px;
-
   cursor:pointer;
 
   transition:.2s;
@@ -104,6 +113,42 @@
 
 .backButton:hover{
   opacity:.7;
+}
+
+/* atalho pra Minha Bíblia — mesmo peso visual do "Voltar", do lado
+   oposto, sempre com ícone + texto (nada de ícone sozinho: precisa dar
+   pra entender o que é sem precisar tocar). */
+.minhaBibliaLink{
+
+  min-height:44px;
+
+  display:flex;
+  align-items:center;
+  gap:6px;
+
+  padding:6px 12px;
+
+  border:1.5px solid var(--oratio-card-border);
+  border-radius:999px;
+
+  background:rgba(255,255,255,.7);
+
+  color:#8b756a;
+
+  font-size:13.5px;
+  font-weight:700;
+  font-family:var(--oratio-font-text);
+
+  cursor:pointer;
+
+  transition:var(--oratio-transition);
+
+}
+
+.minhaBibliaLink:hover{
+  border-color:var(--oratio-primary);
+  color:var(--oratio-primary);
+  background:#fff;
 }
 
 /* ========================= */
@@ -455,51 +500,6 @@
   color:var(--oratio-primary);
 }
 
-/* ========================= */
-/* ATALHO FIXO — MINHA BÍBLIA */
-/* discreto de propósito: pequeno, semi-transparente, só o ícone. Fica
-   fixo (acompanha o scroll) acima da navbar inferior, no canto — não
-   disputa atenção com o texto, mas está sempre alcançável. */
-/* ========================= */
-
-.minhaBibliaFab{
-  position:fixed;
-  right:16px;
-  bottom:calc(94px + env(safe-area-inset-bottom, 0px));
-  z-index:var(--z-fab);
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  width:44px;
-  height:44px;
-  border-radius:50%;
-
-  border:1px solid rgba(120,90,60,.14);
-  background:rgba(255,255,255,.80);
-  backdrop-filter:blur(10px);
-  color:#8b756a;
-
-  box-shadow:0 6px 18px rgba(0,0,0,.10);
-
-  opacity:.8;
-  cursor:pointer;
-  transition:opacity .2s, transform .15s, background .2s, color .2s;
-}
-
-.minhaBibliaFab:hover,
-.minhaBibliaFab:active{
-  opacity:1;
-  transform:translateY(-2px);
-  background:#fff;
-  color:var(--oratio-primary);
-}
-
-@media(prefers-reduced-motion:reduce){
-  .minhaBibliaFab{ transition:none; }
-}
-
 /* toast simples (mesmo padrão do Quaresma), com atalho opcional ("Ver") */
 .toast{
   position:fixed;
@@ -656,6 +656,15 @@
 
   .container{
     padding-inline:14px;
+  }
+
+  .backButton,
+  .minhaBibliaLink{
+    font-size:12.5px;
+  }
+
+  .minhaBibliaLink{
+    padding:6px 9px;
   }
 
   .heroIcon{

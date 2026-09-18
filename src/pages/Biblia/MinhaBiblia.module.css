@@ -54,6 +54,28 @@
   color: var(--oratio-text-soft);
 }
 
+/* "Voltar para X Y" — só aparece quando se veio da leitura (ícone/atalho
+   do toast em BibliaChapter, via location.state). Fica visível o tempo
+   todo nesta tela, mesmo trocando de aba, até a pessoa navegar pra outro
+   lugar. */
+.backToReading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  max-width: 520px;
+  margin: -8px auto 16px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(176, 24, 26, .06);
+  color: var(--oratio-primary);
+  font-family: var(--oratio-font-text);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .tabs {
   display: flex;
   gap: 6px;

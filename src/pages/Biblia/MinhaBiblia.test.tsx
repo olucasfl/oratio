@@ -42,7 +42,9 @@ const marks = [
   { id: "4", book: "Isaías", chapter: 41, verse: 10, reference: "Isaías 41,10", text: "Não temas", highlighted: false, favorite: false, note: longNote },
 ]
 
-function renderPage(initialEntry = "/oratio/biblia/minha") {
+function renderPage(
+  initialEntry: string | { pathname: string; state?: unknown } = "/oratio/biblia/minha",
+) {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
       <MinhaBiblia />
@@ -183,6 +185,24 @@ describe("MinhaBiblia", () => {
     await waitFor(() => expect(createCollectionMock).toHaveBeenCalledWith("Promessas"))
     expect(promptSpy).not.toHaveBeenCalled()
     promptSpy.mockRestore()
+  })
+
+  it("shows 'Voltar para X Y' when arriving with reading state from BibliaChapter", async () => {
+    renderPage({
+      pathname: "/oratio/biblia/minha",
+      state: { readingBook: "Gênesis", readingChapter: 3 },
+    })
+    await screen.findByText("João")
+
+    const back = screen.getByRole("button", { name: /Voltar para Gênesis 3/ })
+    fireEvent.click(back)
+    expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia/G%C3%AAnesis/3")
+  })
+
+  it("shows no 'Voltar para' button on a plain entry (e.g. via BottomNavbar)", async () => {
+    renderPage()
+    await screen.findByText("João")
+    expect(screen.queryByRole("button", { name: /Voltar para/ })).not.toBeInTheDocument()
   })
 
   it("gates guests and does not call the API", async () => {

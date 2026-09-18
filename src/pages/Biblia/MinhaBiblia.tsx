@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { useNavigate, useSearchParams } from "react-router-dom"
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import {
   ChevronLeft,
   ChevronRight,
@@ -71,6 +71,15 @@ export default function MinhaBiblia() {
 
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const location = useLocation()
+
+  // livro/capítulo que a pessoa estava lendo quando veio pra cá (ícone do
+  // topo da leitura, ou o atalho "Ver" do toast) — mostra um "Voltar para
+  // X Y" enquanto ela ficar nesta tela. Não vem de query param de propósito:
+  // não é algo pra compartilhar/persistir em link, só pra essa navegação.
+  const readingState = location.state as
+    | { readingBook?: string; readingChapter?: number }
+    | null
 
   const initialTabParam = searchParams.get("tab")
   const initialTab: Tab = TAB_IDS.includes(initialTabParam as Tab) ? (initialTabParam as Tab) : "grifados"
@@ -239,6 +248,19 @@ export default function MinhaBiblia() {
             : "Seus versículos grifados, favoritos, anotados e suas coleções."}
         </p>
       </div>
+
+      {readingState?.readingBook && readingState.readingChapter && (
+        <button
+          className={styles.backToReading}
+          onClick={() =>
+            navigate(
+              `/oratio/biblia/${encodeURIComponent(readingState.readingBook!)}/${readingState.readingChapter}`,
+            )
+          }
+        >
+          <ChevronLeft size={14} /> Voltar para {readingState.readingBook} {readingState.readingChapter}
+        </button>
+      )}
 
       <div className={styles.tabs}>
         {TABS.map(({ id, label, icon: Icon }) => (
