@@ -455,6 +455,51 @@
   color:var(--oratio-primary);
 }
 
+/* ========================= */
+/* ATALHO FIXO — MINHA BÍBLIA */
+/* discreto de propósito: pequeno, semi-transparente, só o ícone. Fica
+   fixo (acompanha o scroll) acima da navbar inferior, no canto — não
+   disputa atenção com o texto, mas está sempre alcançável. */
+/* ========================= */
+
+.minhaBibliaFab{
+  position:fixed;
+  right:16px;
+  bottom:calc(94px + env(safe-area-inset-bottom, 0px));
+  z-index:var(--z-fab);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  width:44px;
+  height:44px;
+  border-radius:50%;
+
+  border:1px solid rgba(120,90,60,.14);
+  background:rgba(255,255,255,.80);
+  backdrop-filter:blur(10px);
+  color:#8b756a;
+
+  box-shadow:0 6px 18px rgba(0,0,0,.10);
+
+  opacity:.8;
+  cursor:pointer;
+  transition:opacity .2s, transform .15s, background .2s, color .2s;
+}
+
+.minhaBibliaFab:hover,
+.minhaBibliaFab:active{
+  opacity:1;
+  transform:translateY(-2px);
+  background:#fff;
+  color:var(--oratio-primary);
+}
+
+@media(prefers-reduced-motion:reduce){
+  .minhaBibliaFab{ transition:none; }
+}
+
 /* toast simples (mesmo padrão do Quaresma), com atalho opcional ("Ver") */
 .toast{
   position:fixed;

@@ -138,6 +138,15 @@ describe("BibliaChapter", () => {
     expect(upsertMarkMock).not.toHaveBeenCalled()
   })
 
+  it("always shows a fixed shortcut to Minha Bíblia, hidden only while selecting", async () => {
+    renderPage()
+    fireEvent.click(screen.getByRole("button", { name: "Ir para Minha Bíblia" }))
+    expect(navigateMock).toHaveBeenCalledWith("/oratio/biblia/minha")
+
+    fireEvent.click(screen.getByRole("button", { name: /Selecionar/ }))
+    expect(screen.queryByRole("button", { name: "Ir para Minha Bíblia" })).not.toBeInTheDocument()
+  })
+
   it("shows a 'Ver' shortcut to Minha Bíblia right after highlighting a verse", async () => {
     renderPage()
     fireEvent.click(screen.getByText(/A terra era sem forma/))

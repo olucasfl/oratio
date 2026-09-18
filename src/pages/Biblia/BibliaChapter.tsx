@@ -15,7 +15,8 @@ import {
  Highlighter,
  FolderPlus,
  Check,
- X
+ X,
+ BookMarked
 } from "lucide-react"
 
 import { getChapter }
@@ -692,6 +693,19 @@ export default function BibliaChapter(){
    <div className={styles.pageSpacer}></div>
 
    <BottomNavbar/>
+
+   {/* atalho fixo pra Minha Bíblia — discreto, acompanha o scroll;
+       some durante a seleção múltipla pra não brigar com a barra de baixo */}
+   {!selectMode && (
+     <button
+       className={styles.minhaBibliaFab}
+       onClick={()=>navigate("/oratio/biblia/minha")}
+       aria-label="Ir para Minha Bíblia"
+       title="Minha Bíblia"
+     >
+       <BookMarked size={19}/>
+     </button>
+   )}
 
    <ReadingPanel
      open={panelOpen}
