@@ -115,29 +115,39 @@
   opacity:.7;
 }
 
-/* atalho pra Minha Bíblia — mesmo peso visual do "Voltar", do lado
-   oposto, sempre com ícone + texto (nada de ícone sozinho: precisa dar
-   pra entender o que é sem precisar tocar). */
+/* atalho pra Minha Bíblia — fixo (acompanha o scroll, não só o topo da
+   página), no nível de onde "Voltar" fica, do lado oposto. Sempre com
+   ícone + texto (nada de ícone sozinho: precisa dar pra entender o que é
+   sem precisar tocar). Fica fora do fluxo do .heroTopRow de propósito —
+   por isso não usa a mesma altura/alinhamento do "Voltar" ali do lado. */
 .minhaBibliaLink{
 
-  min-height:44px;
+  position:fixed;
+  top:calc(30px + env(safe-area-inset-top, 0px));
+  right:calc(16px + env(safe-area-inset-right, 0px));
+  z-index:var(--z-fab);
+
+  min-height:40px;
 
   display:flex;
   align-items:center;
   gap:6px;
 
-  padding:6px 12px;
+  padding:8px 14px;
 
   border:1.5px solid var(--oratio-card-border);
   border-radius:999px;
 
-  background:rgba(255,255,255,.7);
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(10px);
 
   color:#8b756a;
 
   font-size:13.5px;
   font-weight:700;
   font-family:var(--oratio-font-text);
+
+  box-shadow:0 6px 18px rgba(0,0,0,.10);
 
   cursor:pointer;
 
