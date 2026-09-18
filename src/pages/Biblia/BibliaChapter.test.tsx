@@ -128,4 +128,26 @@ describe("BibliaChapter", () => {
     expect(upsertMarkMock).not.toHaveBeenCalled()
   })
 
+  it("shows an evident 'Minha Bíblia' link next to Voltar, carrying the book/chapter being read", async () => {
+    renderPage()
+    fireEvent.click(screen.getByRole("button", { name: /Minha Bíblia/ }))
+    expect(navigateMock).toHaveBeenCalledWith(
+      "/oratio/biblia/minha",
+      { state: { readingBook: "Gênesis", readingChapter: 1 } },
+    )
+  })
+
+  it("shows a 'Ver' shortcut to Minha Bíblia right after highlighting a verse", async () => {
+    renderPage()
+    fireEvent.click(screen.getByText(/A terra era sem forma/))
+    fireEvent.click(await screen.findByRole("button", { name: "Grifar de verde" }))
+
+    expect(await screen.findByText("Grifo salvo")).toBeInTheDocument()
+    fireEvent.click(screen.getByRole("button", { name: "Ver" }))
+    expect(navigateMock).toHaveBeenCalledWith(
+      "/oratio/biblia/minha?tab=grifados&book=G%C3%AAnesis&chapter=1",
+      { state: { readingBook: "Gênesis", readingChapter: 1 } },
+    )
+  })
+
 })

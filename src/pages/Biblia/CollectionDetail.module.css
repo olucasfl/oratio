@@ -118,6 +118,64 @@
 
 .empty p { margin: 0; font-size: 14px; line-height: 1.6; }
 
+.testamentHeader {
+  margin: 4px 0 -2px;
+  font-family: var(--oratio-font-text);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--oratio-text-soft);
+}
+
+.list > div:first-child .testamentHeader { margin-top: 0; }
+
+/* blocos de livro (1º nível) e de capítulo (2º nível) — mesma cara em
+   MinhaBiblia.module.css (.collectionCard), pra manter os dois lugares
+   com o mesmo drill-down parecendo a mesma coisa. */
+.bookBlock {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  padding: 16px;
+  border: 1px solid var(--oratio-card-border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .92);
+  cursor: pointer;
+  transition: transform .12s;
+}
+
+.bookBlock:hover { transform: translateY(-2px); }
+
+.bookBlockText {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bookBlockName {
+  font-family: var(--oratio-font-title);
+  font-size: 16px;
+  color: #4b1818;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bookBlockCount {
+  font-size: 13px;
+  color: var(--oratio-text-soft);
+}
+
+.bookBlockArrow {
+  flex-shrink: 0;
+  color: var(--oratio-primary);
+}
+
 .list {
   max-width: 520px;
   margin: 0 auto;

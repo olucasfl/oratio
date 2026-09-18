@@ -4,7 +4,19 @@
 > `79d6d70 chore(biblia): fechamento (F9) — offline no CollectionDetail + plano concluído`.
 > Depois disso a feature ainda evoluiu para além deste plano: cor do grifo, popup único de
 > novidades (`e0b7d0e`), adicionar/tirar versículo de coleção num toque (`7fa3da6`), janela de
-> 21 dias do aviso (`e90d5cc`), e o fix das folhas do versículo atrás da navbar (`8ccc260`).
+> 21 dias do aviso (`e90d5cc`), e o fix das folhas do versículo atrás da navbar (`8ccc260`). Em
+> 2026-09-17 (branch `feat/biblia-atalho-selecao-agrupamento`): link evidente e fixo "Minha
+> Bíblia" no cabeçalho da leitura (acompanha o scroll) + atalho "Ver" no toast pra Minha Bíblia
+> logo após grifar/anotar — os dois levam o livro/capítulo lido, e Minha Bíblia mostra um
+> "Voltar para `<Livro>` `<Capítulo>`" enquanto a pessoa fica na tela. `MinhaBiblia`
+> (grifados/favoritos/anotações) e `CollectionDetail` passaram a usar o **mesmo drill-down de 3
+> níveis**: livro → capítulo → versículos soltos, tudo em blocos clicáveis, com Antigo/Novo
+> Testamento em ordem canônica no 1º nível (busca em Minha Bíblia ainda cruza tudo, sem
+> agrupamento — ver `src/data/bibleBookOrder.ts`). A aba Anotações passou a usar o mesmo
+> mecanismo de "Ver anotação" (botão → modal) que as Coleções, em vez de um preview truncado
+> inline. Uma seleção múltipla de versículos (grifar/anotar/colecionar vários de uma vez) chegou
+> a ser implementada nesta branch e foi **removida a pedido do usuário** antes de qualquer merge
+> — não existe no código. Ver `docs/ARCHITECTURE.md`.
 >
 > **Como este checklist foi fechado (2026-09-04).** Os checkboxes ficaram congelados em **10/96**
 > desde `8a1650c` (a consolidação da documentação em `docs/`), enquanto o código seguiu e foi
