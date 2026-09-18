@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { createPortal } from "react-dom"
 import { Check, Loader2, Plus, X } from "lucide-react"
 
@@ -18,11 +18,7 @@ interface Props {
   open: boolean
   onClose: () => void
   reference: string
-  // Um versículo (modo padrão, com toggle adicionar/remover por coleção) —
-  // ou vários de uma vez (seleção múltipla na leitura). `items` manda em
-  // `item` quando os dois vêm preenchidos.
   item: AddCollectionItemInput | null
-  items?: AddCollectionItemInput[]
   onDone: (message: string) => void
 }
 
@@ -31,69 +27,36 @@ export default function AddToCollectionSheet({
   onClose,
   reference,
   item,
-  items,
   onDone,
 }: Props) {
 
   const [collections, setCollections] = useState<BibleCollection[]>([])
   const [loading, setLoading] = useState(true)
   const [busyId, setBusyId] = useState<string | null>(null)
-  // itemId quando o versículo está na coleção, null quando não está.
-  // Só faz sentido no modo de 1 versículo — no modo múltiplo fica vazio
-  // (não há "toggle": tocar sempre adiciona os selecionados).
+  // itemId quando o versículo está na coleção, null quando não está
   const [membership, setMembership] = useState<Record<string, string | null>>({})
   const [newName, setNewName] = useState("")
   const [creating, setCreating] = useState(false)
 
-  const isMulti = !!items && items.length > 0
-  const targets = useMemo(
-    () => (isMulti ? items! : item ? [item] : []),
-    [isMulti, items, item],
-  )
-
   useLockBodyScroll(open)
 
   useEffect(() => {
-    if (!open || targets.length === 0) return
+    if (!open || !item) return
     setNewName("")
     setLoading(true)
-
-    const verseRef = !isMulti
-      ? { book: targets[0].book, chapter: targets[0].chapter, verse: targets[0].verse }
-      : undefined
-
-    listCollections(verseRef).then((c) => {
+    listCollections({ book: item.book, chapter: item.chapter, verse: item.verse }).then((c) => {
       setCollections(c)
       const m: Record<string, string | null> = {}
-      if (!isMulti) {
-        for (const col of c) m[col.id] = col.containsItemId ?? null
-      }
+      for (const col of c) m[col.id] = col.containsItemId ?? null
       setMembership(m)
       setLoading(false)
     })
-  }, [open, targets, isMulti])
+  }, [open, item])
 
   if (!open) return null
 
   async function toggle(collection: BibleCollection) {
-    if (targets.length === 0 || busyId) return
-
-    if (isMulti) {
-      setBusyId(collection.id)
-      try {
-        await Promise.all(targets.map((it) => addCollectionItem(collection.id, it)))
-        onDone(
-          `${targets.length} versículo${targets.length === 1 ? "" : "s"} adicionado${targets.length === 1 ? "" : "s"} a "${collection.name}"`,
-        )
-      } catch {
-        onDone("Não foi possível salvar. Tente de novo.")
-      } finally {
-        setBusyId(null)
-      }
-      return
-    }
-
-    const it = targets[0]
+    if (!item || busyId) return
     const existingItemId = membership[collection.id]
     setBusyId(collection.id)
     try {
@@ -102,7 +65,7 @@ export default function AddToCollectionSheet({
         setMembership((m) => ({ ...m, [collection.id]: null }))
         onDone(`Removido de "${collection.name}"`)
       } else {
-        const created = await addCollectionItem(collection.id, it)
+        const created = await addCollectionItem(collection.id, item)
         setMembership((m) => ({ ...m, [collection.id]: created.id }))
         onDone(`Adicionado a "${collection.name}"`)
       }
@@ -115,24 +78,15 @@ export default function AddToCollectionSheet({
 
   async function handleCreate() {
     const name = newName.trim()
-    if (!name || targets.length === 0 || creating) return
+    if (!name || !item || creating) return
     setCreating(true)
     try {
       const created = await createCollection(name)
-      if (isMulti) {
-        await Promise.all(targets.map((it) => addCollectionItem(created.id, it)))
-        setCollections((c) => [{ ...created, _count: { items: targets.length } }, ...c])
-        setNewName("")
-        onDone(
-          `${targets.length} versículo${targets.length === 1 ? "" : "s"} adicionado${targets.length === 1 ? "" : "s"} a "${name}"`,
-        )
-      } else {
-        const addedItem = await addCollectionItem(created.id, targets[0])
-        setCollections((c) => [{ ...created, _count: { items: 1 } }, ...c])
-        setMembership((m) => ({ ...m, [created.id]: addedItem.id }))
-        setNewName("")
-        onDone(`Adicionado a "${name}"`)
-      }
+      const addedItem = await addCollectionItem(created.id, item)
+      setCollections((c) => [{ ...created, _count: { items: 1 } }, ...c])
+      setMembership((m) => ({ ...m, [created.id]: addedItem.id }))
+      setNewName("")
+      onDone(`Adicionado a "${name}"`)
     } catch {
       onDone("Não foi possível criar a coleção.")
     } finally {
@@ -188,7 +142,7 @@ export default function AddToCollectionSheet({
             </div>
           ) : (
             collections.map((c) => {
-              const inCollection = !isMulti && !!membership[c.id]
+              const inCollection = !!membership[c.id]
               return (
                 <button
                   key={c.id}
@@ -212,9 +166,7 @@ export default function AddToCollectionSheet({
         </div>
 
         <p className={styles.hint}>
-          {isMulti
-            ? `Toque para adicionar os ${targets.length} versículos selecionados.`
-            : "Toque para adicionar; toque de novo para tirar desta coleção."}
+          Toque para adicionar; toque de novo para tirar desta coleção.
         </p>
       </div>
     </div>,
