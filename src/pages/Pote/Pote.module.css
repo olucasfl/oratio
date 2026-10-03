@@ -153,7 +153,7 @@
  color:var(--p-burgundy);
  box-shadow:inset 0 0 0 1px #e6d3a8, 0 10px 24px -14px rgba(60,35,20,.6);
 }
-.itemName{ font-family:var(--oratio-font-title); font-size:var(--step-2); margin:0; color:var(--p-ink); text-wrap:balance; }
+.itemName{ font-family:var(--oratio-font-title); font-size:clamp(1.05rem, 5vw, 1.44rem); overflow-wrap:anywhere; margin:0; color:var(--p-ink); text-wrap:balance; }
 .itemMeta{ margin:0; color:var(--p-ink-soft); font-size:var(--step--1); letter-spacing:.06em; text-transform:uppercase; }
 .itemFun{
  display:inline-flex; align-items:center; gap:6px;
@@ -243,6 +243,36 @@
  display:flex; align-items:center; justify-content:center; gap:8px;
  text-align:center; padding:var(--space-3); color:var(--p-ink-soft);
 }
+
+/* ── tamanho em destaque ── */
+.chips{ display:flex; flex-wrap:wrap; align-items:stretch; justify-content:center; gap:var(--space-2); margin:0; }
+.chips > p{ margin:0; }
+.sizePill{
+ display:inline-flex; align-items:center; gap:10px;
+ padding:6px 16px 6px 14px; border-radius:99px;
+ background:linear-gradient(180deg, #a01a1d 0%, var(--p-burgundy-deep) 100%);
+ color:#fff; box-shadow:0 8px 18px -10px rgba(77,11,13,.9);
+}
+.sizeLabel{ text-transform:uppercase; letter-spacing:.14em; font-size:.68rem; font-family:var(--oratio-font-title); opacity:.85; }
+.sizeNum{ font-family:var(--oratio-font-title); font-size:1.9rem; line-height:1; font-weight:700; }
+.sizeTag{
+ display:inline-flex; align-items:center; padding:1px 9px; border-radius:99px;
+ background:var(--p-burgundy); color:#fff; font-family:var(--oratio-font-title);
+ font-size:.78rem; letter-spacing:.04em;
+}
+
+/* ── carregamento ── */
+.spinner{
+ display:inline-block; flex:none; width:18px; height:18px; border-radius:50%;
+ border:2.5px solid currentColor; border-right-color:transparent; opacity:.85;
+}
+.tileCheck.spinner{ margin-left:auto; color:var(--p-burgundy); }
+.syncRow{
+ display:flex; align-items:center; justify-content:center; gap:8px;
+ min-height:22px; margin-top:calc(var(--space-2) * -1);
+ color:var(--p-ink-soft); font-size:var(--step--1);
+}
+.tilePending{ opacity:.82; }
 
 /* ── avisos ── */
 .toast{
@@ -371,6 +401,27 @@
 }
 .resultIcon{ composes:classIcon; align-self:center; }
 
+/* ── sala de espera (jogador) ── */
+.liveCount{
+ display:flex; align-items:center; justify-content:center; gap:8px; margin:0;
+ font-family:var(--oratio-font-title); font-size:var(--step-0); color:var(--p-ink-soft);
+}
+.liveDot{ width:9px; height:9px; border-radius:50%; background:var(--p-good); flex:none; }
+.lobbyList{ display:flex; flex-direction:column; gap:var(--space-2); margin:0; padding:0; list-style:none; }
+.lobbyPerson{
+ display:flex; align-items:center; gap:var(--space-3);
+ padding:var(--space-2) var(--space-3);
+ background:#fff; border:1px solid var(--p-line); border-radius:var(--oratio-radius-md);
+ font-size:var(--step-1);
+}
+.lobbyName{ flex:1; min-width:0; font-weight:600; }
+.youTag{
+ flex:none; padding:2px 10px; border-radius:99px;
+ background:var(--p-gold-soft); color:#7a5316; font-size:var(--step--1);
+}
+.waitDots{ display:inline-flex; gap:4px; margin-left:6px; vertical-align:middle; }
+.waitDots i{ width:5px; height:5px; border-radius:50%; background:currentColor; opacity:.35; }
+
 /* ── entrada ── */
 .hero{ display:flex; flex-direction:column; align-items:center; gap:var(--space-3); text-align:center; }
 .heroIcon{
@@ -404,6 +455,7 @@
  .tileIn{ animation:tilePulse .4s var(--p-ease); }
 
  .toast{ animation:toastIn .35s var(--p-ease) both; }
+ .spinner{ animation:spin .7s linear infinite; }
 
  .burst{ animation:fadeIn .2s ease both; }
  .burstCard{ animation:burstIn .6s var(--p-spring) both; }
@@ -415,12 +467,18 @@
  .pauseIcon{ animation:breathe 2.2s ease-in-out infinite; }
 
  .lobbyJar{ animation:float 5s ease-in-out infinite; }
+ .liveDot{ animation:ping 2s ease-out infinite; }
+ .lobbyPerson{ animation:personIn .5s var(--p-spring) both; }
+ .waitDots i{ animation:dotWave 1.2s ease-in-out infinite; }
+ .waitDots i:nth-child(2){ animation-delay:.15s; }
+ .waitDots i:nth-child(3){ animation-delay:.3s; }
 
  .dotOn{ animation:ping 2s ease-out infinite; }
  .playerRow{ animation:fadeUp .45s var(--p-ease) both; animation-delay:calc(var(--i, 0) * 45ms); }
  .classIcon{ animation:pop .7s var(--p-spring) both; }
 }
 
+@keyframes spin{ to{ transform:rotate(360deg); } }
 @keyframes stageIn{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
 @keyframes fadeUp{ from{ opacity:0; transform:translateY(12px); } to{ opacity:1; transform:none; } }
 @keyframes fadeIn{ from{ opacity:0; } to{ opacity:1; } }
@@ -432,5 +490,7 @@
 @keyframes iconBeat{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.18); } }
 @keyframes ring{ 0%{ opacity:.7; transform:scale(.6); } 100%{ opacity:0; transform:scale(3.2); } }
 @keyframes breathe{ 0%,100%{ transform:scale(1); opacity:.9; } 50%{ transform:scale(1.12); opacity:1; } }
+@keyframes personIn{ from{ opacity:0; transform:translateY(10px) scale(.94); } to{ opacity:1; transform:none; } }
+@keyframes dotWave{ 0%,60%,100%{ opacity:.3; transform:translateY(0); } 30%{ opacity:1; transform:translateY(-3px); } }
 @keyframes float{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
 @keyframes ping{ 0%{ box-shadow:0 0 0 0 rgba(47,122,84,.5); } 70%,100%{ box-shadow:0 0 0 8px rgba(47,122,84,0); } }

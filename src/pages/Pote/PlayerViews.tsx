@@ -1,10 +1,7 @@
-import { useState } from "react"
 import Icon from "../../components/Icon/Icon"
-import { COMMITMENT_MAX_LENGTH, ITEM_BY_ID } from "./domain/catalog"
+import { ITEM_BY_ID } from "./domain/catalog"
 import {
   CLASSIFICATION_TEXT,
-  COMMITMENT_LABEL,
-  COMMITMENT_PLACEHOLDER,
   FINAL_TEXT,
   PARABLE,
 } from "./domain/content"
@@ -12,19 +9,45 @@ import { COMBOS } from "./domain/score"
 import Jar from "./components/Jar"
 import { ScoreBar, ScoreItem } from "./components/Score"
 import { LeftOutStrip } from "./Round1"
-import { saveCommitment, type PlayerMe, type RoomState } from "../../services/poteService"
+import type { PlayerMe } from "../../services/poteService"
 import styles from "./Pote.module.css"
 
-type Act = (fn: () => Promise<RoomState>) => Promise<string | null>
-
-export function Lobby() {
+/*
+ Sala de espera do jogador: sem pote (ele só aparece dentro do jogo). Mostra, em
+ tempo real, quem já entrou — o polling traz a lista e cada chegada nova entra
+ com animação. Só nomes de exibição.
+*/
+export function Lobby({ players }: { players: { displayName: string; isMe: boolean }[] }) {
   return (
-    <>
-      <p className={styles.subtitle}>Aguardando o líder iniciar…</p>
-      <div className={styles.lobbyJar}>
-        <Jar placed={[]} />
+    <div className={styles.stage}>
+      <div className={styles.hero}>
+        <span className={styles.heroIcon}>
+          <Icon name="groups" size={38} filled />
+        </span>
+        <h2 className={styles.subtitle}>
+          Aguardando o líder começar
+          <span className={styles.waitDots} aria-hidden>
+            <i /><i /><i />
+          </span>
+        </h2>
       </div>
-    </>
+
+      <section className={styles.card} aria-live="polite">
+        <p className={styles.liveCount}>
+          <span className={styles.liveDot} aria-hidden />
+          {players.length === 1 ? "1 pessoa na sala" : `${players.length} pessoas na sala`}
+        </p>
+        <ul className={styles.lobbyList}>
+          {players.map((p, i) => (
+            <li key={`${p.displayName}-${i}`} className={styles.lobbyPerson}>
+              <span className={styles.avatar} aria-hidden>{p.displayName.charAt(0).toUpperCase()}</span>
+              <span className={styles.lobbyName}>{p.displayName}</span>
+              {p.isMe && <span className={styles.youTag}>você</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
   )
 }
 
@@ -83,29 +106,11 @@ export function Parable() {
   )
 }
 
-export function Final({
-  code,
-  me,
-  act,
-}: {
-  code: string
-  me: PlayerMe
-  act: Act
-}) {
+export function Final({ me }: { me: PlayerMe }) {
   const r2 = me.round2
-  const [text, setText] = useState(me.commitment ?? "")
-  const [saved, setSaved] = useState(me.commitment !== null)
-  const [error, setError] = useState<string | null>(null)
   const cls = r2.classification ? CLASSIFICATION_TEXT[r2.classification] : null
   const missed = Object.values(ITEM_BY_ID)
     .filter((i) => i.category !== "PEDRA" && !r2.placed.includes(i.id))
-
-  async function save() {
-    setError(null)
-    const err = await act(() => saveCommitment(code, text.trim()))
-    if (err) setError(err)
-    else setSaved(true)
-  }
 
   return (
     <>
@@ -145,25 +150,6 @@ export function Final({
         ))}
       </article>
 
-      {cls && (
-        <div className={styles.card}>
-          <label htmlFor="pote-commitment" className={styles.text}>{COMMITMENT_LABEL}</label>
-          <textarea
-            id="pote-commitment"
-            className={styles.textarea}
-            value={text}
-            maxLength={COMMITMENT_MAX_LENGTH}
-            placeholder={COMMITMENT_PLACEHOLDER}
-            onChange={(e) => { setText(e.target.value); setSaved(false) }}
-          />
-          <span className={`${styles.small} ${styles.muted}`}>{text.length}/{COMMITMENT_MAX_LENGTH}</span>
-          {error && <p className={styles.error}><Icon name="error" size={18} />{error}</p>}
-          <button className={styles.btn} disabled={!text.trim() || saved} onClick={save}>
-            <Icon name={saved ? "check_circle" : "save"} size={20} filled={saved} />
-            {saved ? "Compromisso salvo" : "Salvar"}
-          </button>
-        </div>
-      )}
     </>
   )
 }

@@ -5,6 +5,7 @@ import {
   ROUND1_SEQUENCE,
   ITEM_BY_ID,
   ROCK_IDS,
+  SIZE,
 } from "./domain/catalog"
 import { TUTORIAL_BUTTON, TUTORIAL_SCREENS } from "./domain/content"
 import { canPlace } from "./domain/rules"
@@ -117,7 +118,7 @@ function Round1Card({
     item.category,
   )
   const available = item.category === "PEDRA" ? me.round1.free : me.round1.free + me.round1.gaps
-  const needed = item.category === "PEDRA" ? 14 : item.category === "CASCALHO" ? 5 : 2
+  const needed = SIZE[item.category]
 
   async function send(action: "TAKE" | "PASS") {
     if (busy || paused || sent.current) return
@@ -166,11 +167,16 @@ function Round1Card({
           <Icon name={item.icon} size={44} filled />
         </span>
         <h2 className={styles.itemName}>{item.name}</h2>
-        <p className={styles.itemMeta}>{`Tamanho ${needed}`}</p>
-        <p className={styles.itemFun}>
-          <Icon name="bolt" size={20} filled />
-          {`+${item.fun} diversão`}
-        </p>
+        <div className={styles.chips}>
+          <p className={styles.sizePill} aria-label={`Tamanho ${needed}`}>
+            <span className={styles.sizeLabel}>Tamanho</span>
+            <span className={styles.sizeNum}>{needed}</span>
+          </p>
+          <p className={styles.itemFun}>
+            <Icon name="bolt" size={20} filled />
+            {`+${item.fun} diversão`}
+          </p>
+        </div>
       </div>
 
       <div className={styles.bar} role="progressbar" aria-label="Tempo para decidir"
@@ -187,8 +193,8 @@ function Round1Card({
           disabled={busy || paused}
           onClick={tryTake}
         >
-          <Icon name={fits ? "add_circle" : "block"} size={20} />
-          {fits ? "Pegar" : `Não cabe: precisa de ${needed}, você tem ${available}`}
+          {busy ? <span className={styles.spinner} aria-hidden /> : <Icon name={fits ? "add_circle" : "block"} size={20} />}
+          {fits ? (busy ? "Pegando…" : "Pegar") : `Não cabe: precisa de ${needed}, você tem ${available}`}
         </button>
         <button className={styles.btnGhost} disabled={busy || paused} onClick={() => send("PASS")}>
           <Icon name="skip_next" size={20} />
