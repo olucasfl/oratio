@@ -119,6 +119,24 @@ describe("Profile", () => {
     expect(await screen.findByText("Painel Administrador")).toBeInTheDocument()
   })
 
+  it("shows the Dinâmicas entry only for admins, as its own card apart from the admin panel", async () => {
+    getProfileMock.mockResolvedValue({ ...BASE_PROFILE, isAdmin: true })
+    renderProfile()
+    const dynamics = await screen.findByRole("button", { name: /Dinâmicas/ })
+    const adminTitle = screen.getByText("Painel Administrador")
+    expect(dynamics.closest('[class*="adminCard"]')).toBeNull()
+    // painel admin em cima, Dinâmicas logo abaixo
+    expect(dynamics.compareDocumentPosition(adminTitle) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy()
+    fireEvent.click(dynamics)
+    expect(navigateMock).toHaveBeenCalledWith("/oratio/dinamicas")
+  })
+
+  it("hides Dinâmicas from non-admins", async () => {
+    renderProfile()
+    await screen.findByText("Ana Maria")
+    expect(screen.queryByRole("button", { name: /Dinâmicas/ })).toBeNull()
+  })
+
   it("labels the prayer streak band from the streak count", async () => {
     getProfileMock.mockResolvedValue({
       ...BASE_PROFILE,
