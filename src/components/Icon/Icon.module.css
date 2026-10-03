@@ -1,0 +1,30 @@
+/*
+ Material Symbols Rounded. A caixa tem tamanho FIXO e `overflow:hidden`: se a
+ fonte demorar (ou for bloqueada), o nome do ícone em texto não vaza para o
+ layout — a caixa só fica vazia. `font-display:block` (na URL do Google) evita
+ o flash do texto enquanto carrega.
+*/
+.icon{
+ font-family:"Material Symbols Rounded";
+ font-weight:400;
+ font-style:normal;
+ line-height:1;
+ letter-spacing:normal;
+ text-transform:none;
+ display:inline-block;
+ flex:none;
+ white-space:nowrap;
+ word-wrap:normal;
+ direction:ltr;
+ overflow:hidden;
+ vertical-align:middle;
+ user-select:none;
+ -webkit-font-smoothing:antialiased;
+ font-feature-settings:"liga";
+ font-variation-settings:"FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+ transition:font-variation-settings .25s ease;
+}
+
+.filled{
+ font-variation-settings:"FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
+}

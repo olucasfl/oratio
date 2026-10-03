@@ -13,6 +13,7 @@ import { FONT_SCALE_OPTIONS, getStoredFontScale, setFontScale } from "../../util
 
 import BottomNavbar from "../../components/BottomNavbar/BottomNavbar"
 import Portal from "../../components/Portal/Portal"
+import Icon from "../../components/Icon/Icon"
 import DeleteAccountModal from "../../components/DeleteAccountModal/DeleteAccountModal"
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
 import {
@@ -585,7 +586,39 @@ export default function Profile(){
 
       </button>
 
+
      </div>
+
+    )}
+
+    {/* DINÂMICAS — só admin vê. Card próprio, logo abaixo do painel admin (visual distinto);
+        os convidados chegam pelo sino, não por aqui. */}
+
+    {profile.isAdmin && (
+
+     <button
+      type="button"
+      className={styles.dynamicsCard}
+      onClick={()=>navigate("/oratio/dinamicas")}
+     >
+
+      <span className={styles.dynamicsIcon}>
+
+       <Icon name="groups" size={30} filled/>
+
+      </span>
+
+      <span className={styles.dynamicsText}>
+
+       <strong>Dinâmicas</strong>
+
+       <span>Jogos em grupo para encontros e reuniões</span>
+
+      </span>
+
+      <Icon name="chevron_right" size={26} className={styles.dynamicsArrow}/>
+
+     </button>
 
     )}
 

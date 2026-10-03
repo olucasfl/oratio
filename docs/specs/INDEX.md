@@ -52,6 +52,7 @@ Não são specs; são gaps reais que a auditoria encontrou e que precisam de don
   registrado como dívida por decisão de Lucas). `set_password_hint_last` (`Profile.tsx`) não está
   no `KEEP_ON_LOGOUT` de `api.ts`, então o intervalo de 7 dias recomeça a cada logout de conta
   só-Google. Corrigir exige decidir a chave contra o `KEEP_ON_LOGOUT` (`RULES.md` §4).
+| O Pote (dinâmica multiplayer, só admin, convite pelo sino) | `specs/pote.md` (ponteiro) | `oratio-api/docs/tasks/pote-plan.md` | `tasks/pote-todo.md` | `oratio-api/docs/specs/pote.md` (mestre) | 🚧 **frontend P5–P9 escrito, sem commit** (2026-10-02; `vitest` 133 arquivos / 979 testes verdes, `tsc`/build ok, lint inalterado em 47). **Não visto na tela ainda** (precisa do backend + `db push` humano) e sem QA com várias abas. Entrada só no card admin do Perfil; convidados entram pelo sino. |
 
 ## Legenda de status
 
