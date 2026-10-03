@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react"
 import Icon from "../../components/Icon/Icon"
 import {
   ROUND1_ITEM_SECONDS,
-  ROUND1_SEQUENCE,
   ITEM_BY_ID,
   ROCK_IDS,
   SIZE,
@@ -64,9 +63,7 @@ export function Tutorial({ code, act, paused }: { code: string; act: Act; paused
 
 /** Itens da sequência que já passaram e não entraram — a faixa "Ficou de fora". */
 function leftOut(me: PlayerMe): string[] {
-  return ROUND1_SEQUENCE.slice(0, me.round1.index)
-    .map((i) => i.id)
-    .filter((id) => !me.round1.placed.includes(id))
+  return me.round1.seen.filter((id) => !me.round1.placed.includes(id))
 }
 
 export function LeftOutStrip({ ids }: { ids: string[] }) {
@@ -254,7 +251,7 @@ export function Round1Waiting({
       <div className={styles.lobbyJar}>
         <Jar placed={me.round1.placed} />
       </div>
-      <LeftOutStrip ids={leftOut({ ...me, round1: { ...me.round1, index: me.round1.total } })} />
+      <LeftOutStrip ids={leftOut(me)} />
     </>
   )
 }

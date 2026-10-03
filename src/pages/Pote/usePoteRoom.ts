@@ -8,7 +8,9 @@ import {
 
 export type RoomError = "forbidden" | "notfound" | null
 
-const POLL_MS = 1000
+const POLL_MS = 1000 // líder e telão: precisam ver tudo quase ao vivo
+const POLL_MS_PLAYER = 1500 // jogador: o que importa (fase, pausa) tolera 1,5 s
+const POLL_MS_HIDDEN = 4000 // aba em segundo plano: poupa o servidor
 const POLL_MS_TERMINAL = 5000
 const POLL_MS_AFTER_ERROR = 3000
 
@@ -26,11 +28,13 @@ export default function usePoteRoom(code: string) {
   const [error, setError] = useState<RoomError>(null)
   const sinceRef = useRef<number | undefined>(undefined)
   const offsetRef = useRef(0)
+  const roleRef = useRef<"LEADER" | "PLAYER" | null>(null)
 
   const apply = useCallback((next: RoomState) => {
     // Respostas de ação e de polling podem se cruzar: nunca voltar no tempo.
     if (sinceRef.current !== undefined && next.version < sinceRef.current) return
     sinceRef.current = next.version
+    roleRef.current = next.role
     offsetRef.current = new Date(next.room.serverNow).getTime() - Date.now()
     setData(next)
     setError(null)
@@ -47,6 +51,8 @@ export default function usePoteRoom(code: string) {
         if (!active) return
         if (res.changed) apply(res)
         else sinceRef.current = res.version
+        // depois da resposta: já se sabe se é jogador (1,5 s) ou líder/telão (1 s)
+        delay = document.hidden ? POLL_MS_HIDDEN : roleRef.current === "PLAYER" ? POLL_MS_PLAYER : POLL_MS
         if (res.changed && (res.room.phase === "ENDED" || res.room.phase === "CANCELLED")) {
           delay = POLL_MS_TERMINAL
         }

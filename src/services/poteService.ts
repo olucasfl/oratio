@@ -32,6 +32,8 @@ export interface PlayerRound1 {
   index: number
   total: number
   currentItemId: string | null
+  /** Itens que já passaram (a ordem é sorteada por jogador; o que vem por aí não é revelado). */
+  seen: string[]
   placed: string[]
   free: number
   gaps: number
@@ -222,6 +224,14 @@ export const round2Place = async (code: string, itemId: string): Promise<RoomSta
 
 export const round2Remove = async (code: string, itemId: string): Promise<RoomState> =>
   (await api.post(`${base(code)}/round2/remove`, { itemId })).data
+
+/**
+ * Define o pote da rodada 2 de uma vez: manda a lista que o jogador QUER ter e o servidor
+ * valida tudo junto. Vários toques seguidos viram um pedido só (o que mais pesa quando a
+ * rede ou o servidor estão lentos).
+ */
+export const round2Sync = async (code: string, placed: string[]): Promise<RoomState> =>
+  (await api.post(`${base(code)}/round2/sync`, { placed })).data
 
 export const round2Finish = async (code: string): Promise<RoomState> =>
   (await api.post(`${base(code)}/round2/finish`)).data
