@@ -12,6 +12,7 @@ import {
   poteErrorStatus,
   round1Action,
   round2Place,
+  round2Sync,
   removePlayer,
   searchUsers,
   setPaused,
@@ -38,6 +39,8 @@ describe("poteService — rotas e corpo", () => {
   it("ações do jogador vão para as rotas certas, sem userId no corpo", async () => {
     await round1Action("1234", 3, "TAKE")
     expect(m.post).toHaveBeenLastCalledWith("/oratio/pote/rooms/1234/round1/action", { index: 3, action: "TAKE" })
+    await round2Sync("1234", ["oracao", "reels"])
+    expect(m.post).toHaveBeenLastCalledWith("/oratio/pote/rooms/1234/round2/sync", { placed: ["oracao", "reels"] })
     await round2Place("1234", "oracao")
     expect(m.post).toHaveBeenLastCalledWith("/oratio/pote/rooms/1234/round2/place", { itemId: "oracao" })
   })

@@ -11,8 +11,7 @@ vi.mock("../../services/poteService", async (importOriginal) => {
     joinRoom: vi.fn(),
     tutorialDone: vi.fn(),
     round1Action: vi.fn(),
-    round2Place: vi.fn(),
-    round2Remove: vi.fn(),
+    round2Sync: vi.fn(),
     round2Finish: vi.fn(),
   }
 })
@@ -180,13 +179,15 @@ describe("PotePlayer — rodada 1", () => {
   })
 
   it("faixa Ficou de fora lista o que passou sem entrar", async () => {
+    // a ordem é sorteada por jogador: o servidor manda só o que já passou (seen)
     const state = playerState("ROUND_1", {
-      round1: round1({ index: 17, currentItemId: "missa", free: 4, placed: ["reels"] }),
+      round1: round1({ index: 3, currentItemId: "missa", free: 90, seen: ["reels", "serie", "amigos"], placed: ["reels"] }),
     })
     serve(state)
     renderPlayer()
     const strip = await screen.findByTestId("left-out")
     expect(strip).toHaveTextContent("Série")
+    expect(strip).toHaveTextContent("Amigos")
     expect(strip).not.toHaveTextContent("Reels")
   })
 
@@ -257,10 +258,10 @@ describe("PotePlayer — resultado, parábola e rodada 2", () => {
   it("rodada 2: tocar numa pedra a coloca", async () => {
     const state = playerState("ROUND_2", { round2: round2() })
     serve(state)
-    m.round2Place.mockResolvedValue(state)
+    m.round2Sync.mockResolvedValue(state)
     renderPlayer()
     fireEvent.click(await screen.findByRole("button", { name: /Oração/ }))
-    await waitFor(() => expect(m.round2Place).toHaveBeenCalledWith("1234", "oracao"))
+    await waitFor(() => expect(m.round2Sync).toHaveBeenCalledWith("1234", ["oracao"]))
   })
 
   it("rodada 2 destravada: mostra o espaço para escolhas e retira o cascalho tocando de novo", async () => {
@@ -271,7 +272,7 @@ describe("PotePlayer — resultado, parábola e rodada 2", () => {
       }),
     })
     serve(state)
-    m.round2Remove.mockResolvedValue(state)
+    m.round2Sync.mockResolvedValue(state)
     renderPlayer()
 
     expect(await screen.findByText(/Espaço no pote: 35/)).toBeInTheDocument()
@@ -279,7 +280,9 @@ describe("PotePlayer — resultado, parábola e rodada 2", () => {
     const amigos = screen.getByRole("button", { name: /Amigos/ })
     expect(amigos).toHaveAttribute("aria-pressed", "true")
     fireEvent.click(amigos)
-    await waitFor(() => expect(m.round2Remove).toHaveBeenCalledWith("1234", "amigos"))
+    await waitFor(() =>
+      expect(m.round2Sync).toHaveBeenCalledWith("1234", ["oracao", "missa", "familia", "estudos", "sono"]),
+    )
   })
 
   it("pote cheio: avisa sem chamar o servidor", async () => {
@@ -294,7 +297,7 @@ describe("PotePlayer — resultado, parábola e rodada 2", () => {
     fireEvent.click(await screen.findByRole("tab", { name: /Areia/ }))
     fireEvent.click(screen.getByRole("button", { name: /Reels/ }))
     expect(await screen.findByText("Pote cheio. Para colocar algo, tire outra coisa.")).toBeInTheDocument()
-    expect(m.round2Place).not.toHaveBeenCalled()
+    expect(m.round2Sync).not.toHaveBeenCalled()
   })
 
   it("fechar a semana pede confirmação", async () => {
