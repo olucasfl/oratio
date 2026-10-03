@@ -11,7 +11,7 @@ import { joinRoom, type PlayerState } from "../../services/poteService"
 import styles from "./Pote.module.css"
 
 const PHASE_TITLE: Record<string, string> = {
-  LOBBY: "O Pote",
+  LOBBY: "Sala de espera",
   ROUND_1: "Rodada 1",
   RESULT_1: "Resultado da rodada 1",
   PARABLE: "Parábola",
@@ -90,7 +90,7 @@ export default function PotePlayer() {
     )
   }
 
-  const { room, me, progress } = data as PlayerState
+  const { room, me, progress, lobby } = data as PlayerState
   const phase = room.phase
 
   if (phase === "ENDED" || phase === "CANCELLED") {
@@ -111,7 +111,7 @@ export default function PotePlayer() {
 
   let body
   if (phase === "LOBBY") {
-    body = <Lobby />
+    body = <Lobby players={lobby?.players ?? []} />
   } else if (phase === "ROUND_1") {
     const s = me.round1.status
     if (s === "FINISHED") {
@@ -133,7 +133,7 @@ export default function PotePlayer() {
         <Round2Play code={code} me={me} paused={room.isPaused} remainingMs={remainingMs} act={act} />
       )
   } else {
-    body = <Final code={code} me={me} act={act} />
+    body = <Final me={me} />
   }
 
   // A chave muda quando o "momento" muda (fase ou status): o conteúdo entra com o

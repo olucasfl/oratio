@@ -45,7 +45,6 @@ export const round2 = (over: Partial<PlayerRound2> = {}): PlayerRound2 => ({
   free: 100,
   gaps: 0,
   spaceLeft: 100,
-  unlocked: false,
   fun: 0,
   life: 0,
   combos: [],
