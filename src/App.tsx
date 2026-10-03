@@ -52,6 +52,10 @@ const Confissao        = lazy(() => import("./pages/Confissao/Confissao"))
 const Quaresma         = lazy(() => import("./pages/Quaresma/Quaresma"))
 const QuaresmaDia      = lazy(() => import("./pages/Quaresma/QuaresmaDia"))
 const WelcomeGuide     = lazy(() => import("./pages/WelcomeGuide/WelcomeGuide"))
+const PoteHome         = lazy(() => import("./pages/Pote/PoteHome"))
+const PotePlayer       = lazy(() => import("./pages/Pote/PotePlayer"))
+const PoteLeader       = lazy(() => import("./pages/Pote/PoteLeader"))
+const PoteScreen       = lazy(() => import("./pages/Pote/PoteScreen"))
 
 /*
 Decide de forma declarativa (na hora do match da rota, sem efeito nem
@@ -428,6 +432,51 @@ element={
   <ProtectedRoute>
    <AdminRoute>
     <AdminPanel/>
+   </AdminRoute>
+  </ProtectedRoute>
+ }
+/>
+
+{/*
+  "O Pote" (spec oratio-api/docs/specs/pote.md). Criar/conduzir/telão: SÓ admin
+  (AdminRoute). Jogar: qualquer usuário logado, mas o servidor só aceita quem
+  foi convidado (o convite chega no sino) — sem convite a tela mostra "Sem
+  convite". Não entram no preload: é uso pontual, de uma noite.
+*/}
+<Route
+ path="/oratio/dinamicas"
+ element={
+  <ProtectedRoute>
+   <AdminRoute>
+    <PoteHome/>
+   </AdminRoute>
+  </ProtectedRoute>
+ }
+/>
+<Route
+ path="/oratio/dinamicas/pote/:code"
+ element={
+  <ProtectedRoute>
+   <PotePlayer/>
+  </ProtectedRoute>
+ }
+/>
+<Route
+ path="/oratio/dinamicas/pote/:code/lider"
+ element={
+  <ProtectedRoute>
+   <AdminRoute>
+    <PoteLeader/>
+   </AdminRoute>
+  </ProtectedRoute>
+ }
+/>
+<Route
+ path="/oratio/dinamicas/pote/:code/telao"
+ element={
+  <ProtectedRoute>
+   <AdminRoute>
+    <PoteScreen/>
    </AdminRoute>
   </ProtectedRoute>
  }
