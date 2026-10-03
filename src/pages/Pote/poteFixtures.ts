@@ -27,6 +27,7 @@ export const round1 = (over: Partial<PlayerRound1> = {}): PlayerRound1 => ({
   index: 0,
   total: 19,
   currentItemId: "reels",
+  seen: [],
   placed: [],
   free: 100,
   gaps: 0,

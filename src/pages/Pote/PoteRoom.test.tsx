@@ -30,6 +30,40 @@ async function flush() {
 }
 
 describe("usePoteRoom — polling", () => {
+  it("o jogador consulta a cada 1,5 s; o líder a cada 1 s (poupa o servidor)", async () => {
+    getRoom.mockResolvedValue({ ...playerState("LOBBY"), version: 1 })
+    const player = renderHook(() => usePoteRoom("1234"))
+    await flush()
+    getRoom.mockClear()
+    await act(async () => { await vi.advanceTimersByTimeAsync(1200) })
+    expect(getRoom).not.toHaveBeenCalled()
+    await act(async () => { await vi.advanceTimersByTimeAsync(400) })
+    expect(getRoom).toHaveBeenCalledTimes(1)
+    player.unmount()
+
+    getRoom.mockResolvedValue(leaderState("LOBBY"))
+    renderHook(() => usePoteRoom("1234"))
+    await flush()
+    getRoom.mockClear()
+    await act(async () => { await vi.advanceTimersByTimeAsync(1100) })
+    expect(getRoom).toHaveBeenCalledTimes(1)
+  })
+
+  it("aba em segundo plano consulta bem menos", async () => {
+    getRoom.mockResolvedValue({ ...playerState("LOBBY"), version: 1 })
+    renderHook(() => usePoteRoom("1234"))
+    await flush()
+    Object.defineProperty(document, "hidden", { configurable: true, get: () => true })
+    getRoom.mockClear()
+    await act(async () => { await vi.advanceTimersByTimeAsync(1600) }) // o ciclo em andamento termina
+    getRoom.mockClear()
+    await act(async () => { await vi.advanceTimersByTimeAsync(3000) })
+    expect(getRoom).not.toHaveBeenCalled()
+    await act(async () => { await vi.advanceTimersByTimeAsync(1500) })
+    expect(getRoom).toHaveBeenCalled()
+    Object.defineProperty(document, "hidden", { configurable: true, get: () => false })
+  })
+
   it("primeira chamada sem since; as seguintes mandam a última versão; {changed:false} não troca o estado", async () => {
     getRoom
       .mockResolvedValueOnce({ ...playerState("LOBBY"), version: 5 })
@@ -40,7 +74,7 @@ describe("usePoteRoom — polling", () => {
     expect(getRoom).toHaveBeenNthCalledWith(1, "1234", undefined)
     expect(result.current.data?.version).toBe(5)
 
-    await act(async () => { await vi.advanceTimersByTimeAsync(1000) })
+    await act(async () => { await vi.advanceTimersByTimeAsync(1500) })
     expect(getRoom).toHaveBeenNthCalledWith(2, "1234", 5)
     expect(result.current.data?.version).toBe(5)
   })
@@ -62,7 +96,7 @@ describe("usePoteRoom — polling", () => {
 
     const { result } = renderHook(() => usePoteRoom("1234"))
     await flush()
-    await act(async () => { await vi.advanceTimersByTimeAsync(1000) })
+    await act(async () => { await vi.advanceTimersByTimeAsync(1500) })
     expect(result.current.data?.room.phase).toBe("LOBBY") // erro não apaga o estado
     expect(result.current.error).toBeNull()
 

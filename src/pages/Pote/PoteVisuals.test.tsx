@@ -12,8 +12,7 @@ vi.mock("../../services/poteService", async (importOriginal) => {
     ...actual,
     getRoom: vi.fn(),
     joinRoom: vi.fn(),
-    round2Place: vi.fn(),
-    round2Remove: vi.fn(),
+    round2Sync: vi.fn(),
     round2Finish: vi.fn(),
   }
 })
@@ -128,7 +127,7 @@ describe("rodada 2 — movimento e celebração", () => {
     })
     m.getRoom.mockResolvedValue(before)
     m.joinRoom.mockResolvedValue(before)
-    m.round2Place.mockResolvedValue(after)
+    m.round2Sync.mockResolvedValue(after)
     renderPlayer()
 
     fireEvent.click(await screen.findByRole("tab", { name: /Cascalho/ }))
@@ -145,7 +144,7 @@ describe("rodada 2 — movimento e celebração", () => {
     })
     m.getRoom.mockResolvedValue(before)
     m.joinRoom.mockResolvedValue(before)
-    m.round2Place.mockResolvedValue(before)
+    m.round2Sync.mockResolvedValue(before)
     renderPlayer()
 
     fireEvent.click(await screen.findByRole("tab", { name: /Areia/ }))
@@ -195,7 +194,7 @@ describe("rodada 2 — resposta imediata e carregamento", () => {
     const slow = deferred<unknown>()
     m.getRoom.mockResolvedValue(base)
     m.joinRoom.mockResolvedValue(base)
-    m.round2Place.mockReturnValue(slow.promise)
+    m.round2Sync.mockReturnValue(slow.promise)
     renderPlayer()
 
     const tile = await screen.findByRole("button", { name: /Oração/ })
@@ -219,7 +218,7 @@ describe("rodada 2 — resposta imediata e carregamento", () => {
     const base = playerState("ROUND_2", { round2: round2({ placed: ROCKS, free: 0, gaps: 40, spaceLeft: 40, rocksIn: 5, fun: 10, life: 95 }) })
     m.getRoom.mockResolvedValue(base)
     m.joinRoom.mockResolvedValue(base)
-    m.round2Place.mockReturnValue(new Promise(() => {})) // nunca responde
+    m.round2Sync.mockReturnValue(new Promise(() => {})) // nunca responde
     renderPlayer()
 
     fireEvent.click(await screen.findByRole("tab", { name: /Cascalho/ }))
@@ -235,7 +234,7 @@ describe("rodada 2 — resposta imediata e carregamento", () => {
     const base = playerState("ROUND_2", { round2: round2() })
     m.getRoom.mockResolvedValue(base)
     m.joinRoom.mockResolvedValue(base)
-    m.round2Place.mockRejectedValue({ response: { data: { message: "NAO_CABE" } } })
+    m.round2Sync.mockRejectedValue({ response: { data: { message: "NAO_CABE" } } })
     renderPlayer()
 
     fireEvent.click(await screen.findByRole("button", { name: /Oração/ }))
@@ -245,37 +244,56 @@ describe("rodada 2 — resposta imediata e carregamento", () => {
     )
   })
 
-  it("toques seguidos vão ao servidor um de cada vez, na ordem", async () => {
+  it("toques seguidos viajam JUNTOS: dois toques rápidos = um pedido só, com a lista inteira", async () => {
     const base = playerState("ROUND_2", { round2: round2() })
-    const first = deferred<unknown>()
     m.getRoom.mockResolvedValue(base)
     m.joinRoom.mockResolvedValue(base)
-    m.round2Place.mockReturnValueOnce(first.promise).mockResolvedValue(base)
+    m.round2Sync.mockResolvedValue(
+      playerState("ROUND_2", { round2: round2({ placed: ["oracao", "missa"], free: 60, gaps: 16, rocksIn: 2 }) }),
+    )
     renderPlayer()
 
     fireEvent.click(await screen.findByRole("button", { name: /Oração/ }))
     fireEvent.click(screen.getByRole("button", { name: /Missa/ }))
-    await waitFor(() => expect(m.round2Place).toHaveBeenCalledTimes(1))
-    expect(m.round2Place).toHaveBeenLastCalledWith("1234", "oracao") // a 2ª espera a 1ª
+    await waitFor(() => expect(m.round2Sync).toHaveBeenCalledTimes(1))
+    expect(m.round2Sync).toHaveBeenCalledWith("1234", ["oracao", "missa"])
+  })
 
-    first.resolve({ ...base, version: 2 })
-    await waitFor(() => expect(m.round2Place).toHaveBeenCalledTimes(2))
-    expect(m.round2Place).toHaveBeenLastCalledWith("1234", "missa")
+  it("toque durante um pedido em voo vai no pedido seguinte, que leva tudo o que já foi confirmado", async () => {
+    const base = playerState("ROUND_2", { round2: round2() })
+    const first = deferred<unknown>()
+    m.getRoom.mockResolvedValue(base)
+    m.joinRoom.mockResolvedValue(base)
+    m.round2Sync.mockReturnValueOnce(first.promise).mockResolvedValue(
+      playerState("ROUND_2", { round2: round2({ placed: ["oracao", "missa"], free: 60, gaps: 16, rocksIn: 2 }) }),
+    )
+    renderPlayer()
+
+    fireEvent.click(await screen.findByRole("button", { name: /Oração/ }))
+    await waitFor(() => expect(m.round2Sync).toHaveBeenCalledTimes(1))
+    expect(m.round2Sync).toHaveBeenLastCalledWith("1234", ["oracao"])
+
+    fireEvent.click(screen.getByRole("button", { name: /Missa/ })) // enquanto o 1º ainda não voltou
+    expect(m.round2Sync).toHaveBeenCalledTimes(1) // espera o 1º
+
+    first.resolve(playerState("ROUND_2", { round2: round2({ placed: ["oracao"], free: 80, gaps: 8, rocksIn: 1 }) }))
+    await waitFor(() => expect(m.round2Sync).toHaveBeenCalledTimes(2))
+    expect(m.round2Sync).toHaveBeenLastCalledWith("1234", ["oracao", "missa"]) // não "esquece" a Oração
   })
 
   it("item com ação pendente ignora o segundo toque", async () => {
     const base = playerState("ROUND_2", { round2: round2() })
     m.getRoom.mockResolvedValue(base)
     m.joinRoom.mockResolvedValue(base)
-    m.round2Place.mockReturnValue(new Promise(() => {}))
+    m.round2Sync.mockReturnValue(new Promise(() => {}))
     renderPlayer()
 
     const tile = await screen.findByRole("button", { name: /Oração/ })
     fireEvent.click(tile)
     fireEvent.click(screen.getByRole("button", { name: /Oração/ }))
-    await waitFor(() => expect(m.round2Place).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(m.round2Sync).toHaveBeenCalledTimes(1))
     fireEvent.click(screen.getByRole("button", { name: /Oração/ }))
-    expect(m.round2Place).toHaveBeenCalledTimes(1)
+    expect(m.round2Sync).toHaveBeenCalledTimes(1)
   })
 
   it("com o pote cheio de cascalho a pedra não entra (precisa de 20 livres) e nem chama o servidor", async () => {
@@ -287,7 +305,7 @@ describe("rodada 2 — resposta imediata e carregamento", () => {
     renderPlayer()
     fireEvent.click(await screen.findByRole("button", { name: /Oração/ }))
     expect(await screen.findByText("Pote cheio. Para colocar algo, tire outra coisa.")).toBeInTheDocument()
-    expect(m.round2Place).not.toHaveBeenCalled()
+    expect(m.round2Sync).not.toHaveBeenCalled()
   })
 
   it("o tamanho aparece em destaque no card da rodada 1 (e as pedras valem 20)", async () => {

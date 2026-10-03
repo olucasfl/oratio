@@ -11,9 +11,9 @@ import { formatClock } from "./useRound2Clock"
 import ConfirmModal from "../../components/ConfirmModal/ConfirmModal"
 import {
   round2Finish,
-  round2Place,
-  round2Remove,
+  round2Sync,
   type PlayerMe,
+  type PlayerState,
   type RoomState,
 } from "../../services/poteService"
 import styles from "./Pote.module.css"
@@ -35,6 +35,8 @@ const TABS: { id: Tab; label: string; icon: string }[] = [
 
 const TOAST_MS = 2600
 const BURST_MS = 2200
+/** Toques dentro dessa janela viajam juntos, num pedido só. */
+const BATCH_MS = 40
 
 /** O que o jogador vê = o que o servidor confirmou + as ações ainda pendentes. */
 function applyOps(base: readonly string[], ops: readonly Op[]): string[] {
@@ -51,8 +53,13 @@ function applyOps(base: readonly string[], ops: readonly Op[]): string[] {
  retirados até fechar a semana; as pedras não saem. Toda ação responde NA HORA
  (o item entra/sai do pote e o placar acompanha, usando as mesmas funções puras
  do servidor) e mostra um indicador de "salvando" no item até o servidor
- confirmar. As ações vão ao servidor uma de cada vez, na ordem em que foram
- tocadas; se alguma falhar, ela some da tela e o motivo aparece num aviso.
+ confirmar.
+
+ Para não depender da velocidade do servidor, os toques NÃO viram um pedido cada:
+ enquanto um pedido está a caminho, os novos toques se acumulam e o próximo pedido
+ leva a lista inteira que o jogador quer ter (round2Sync). Dez toques seguidos custam
+ 1 ou 2 idas ao servidor, não dez. Se um pedido falhar, os itens dele somem da tela e
+ o motivo aparece num aviso.
 */
 export function Round2Play({
   code,
@@ -76,7 +83,12 @@ export function Round2Play({
   const toastTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const burstTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const burstSeq = useRef(0)
-  const queue = useRef<Promise<void>>(Promise.resolve())
+  // Lista que o servidor confirmou por último e as ações ainda não confirmadas (espelho
+  // em ref para o laço de envio enxergar o valor mais novo sem esperar um render).
+  const confirmed = useRef<string[]>(me.round2.placed)
+  const opsRef = useRef<Op[]>([])
+  const flying = useRef<Promise<void> | null>(null)
+  const batchTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   const placed = useMemo(() => applyOps(r2.placed, ops), [r2.placed, ops])
   const pending = useMemo(() => new Set(ops.map((o) => o.id)), [ops])
@@ -104,6 +116,44 @@ export function Round2Play({
     burstTimer.current = setTimeout(() => setBurst(null), BURST_MS)
   }
 
+  function updateOps(fn: (list: Op[]) => Op[]) {
+    opsRef.current = fn(opsRef.current)
+    setOps(opsRef.current)
+  }
+
+  /** Envia o que está pendente. Um pedido por vez; o que chegar durante o voo vai no próximo. */
+  function flush(): Promise<void> {
+    if (flying.current) return flying.current
+    flying.current = (async () => {
+      try {
+        while (opsRef.current.length > 0) {
+          const covered = opsRef.current
+          const target = applyOps(confirmed.current, covered)
+          const err = await act(async () => {
+            const state = await round2Sync(code, target)
+            const placed = (state as PlayerState).me?.round2.placed
+            if (placed) confirmed.current = placed
+            return state
+          })
+          updateOps((list) => list.filter((o) => !covered.includes(o)))
+          if (err) say(err === "NAO_CABE" ? JAR_FULL_MESSAGE : err, "error")
+        }
+      } finally {
+        flying.current = null
+      }
+    })()
+    return flying.current
+  }
+
+  /** Junta toques muito próximos num só pedido (se já há um em voo, o laço dele cuida). */
+  function scheduleFlush() {
+    if (flying.current || batchTimer.current) return
+    batchTimer.current = setTimeout(() => {
+      batchTimer.current = undefined
+      void flush()
+    }, BATCH_MS)
+  }
+
   function toggle(id: string) {
     if (paused || pending.has(id)) return
     const item = ITEM_BY_ID[id]
@@ -127,12 +177,8 @@ export function Round2Play({
     }
 
     const op: Op = { id, kind: isIn ? "remove" : "add" }
-    setOps((list) => [...list, op])
-    queue.current = queue.current.then(async () => {
-      const err = await act(() => (isIn ? round2Remove(code, id) : round2Place(code, id)))
-      setOps((list) => list.filter((o) => o !== op))
-      if (err) say(err === "NAO_CABE" ? JAR_FULL_MESSAGE : err, "error")
-    })
+    updateOps((list) => [...list, op])
+    scheduleFlush()
   }
 
   const items = ITEMS.filter((i) => i.category === tab)
@@ -258,11 +304,14 @@ export function Round2Play({
         confirmLabel="Fechar minha semana"
         onConfirm={() => {
           setConfirmFinish(false)
-          // entra na mesma fila: só fecha depois que as ações pendentes chegaram
-          queue.current = queue.current.then(async () => {
+          // só fecha depois que as ações pendentes chegaram ao servidor
+          void (async () => {
+            clearTimeout(batchTimer.current)
+            batchTimer.current = undefined
+            await flush()
             const err = await act(() => round2Finish(code))
             if (err) say(err, "error")
-          })
+          })()
         }}
         onCancel={() => setConfirmFinish(false)}
       />
