@@ -50,7 +50,6 @@ export interface PlayerRound2 {
   free: number
   gaps: number
   spaceLeft: number
-  unlocked: boolean
   fun: number
   life: number
   combos: string[]
@@ -73,6 +72,8 @@ export interface PlayerState {
   removed?: undefined
   room: RoomView
   me: PlayerMe
+  /** Só no LOBBY: quem já entrou na sala (nomes de exibição), em ordem de chegada. */
+  lobby?: { players: { displayName: string; isMe: boolean }[] }
   progress: { total: number; round1Finished: number; round2Finished: number }
 }
 
@@ -225,8 +226,6 @@ export const round2Remove = async (code: string, itemId: string): Promise<RoomSt
 export const round2Finish = async (code: string): Promise<RoomState> =>
   (await api.post(`${base(code)}/round2/finish`)).data
 
-export const saveCommitment = async (code: string, text: string): Promise<RoomState> =>
-  (await api.post(`${base(code)}/commitment`, { text })).data
 
 /** Mensagem legível de um erro do backend (`message` do Nest) ou um texto padrão. */
 export function poteErrorMessage(err: unknown, fallback = "Algo deu errado. Tente de novo."): string {

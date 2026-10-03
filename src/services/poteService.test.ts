@@ -13,7 +13,6 @@ import {
   round1Action,
   round2Place,
   removePlayer,
-  saveCommitment,
   searchUsers,
   setPaused,
   setPhase,
@@ -41,8 +40,6 @@ describe("poteService — rotas e corpo", () => {
     expect(m.post).toHaveBeenLastCalledWith("/oratio/pote/rooms/1234/round1/action", { index: 3, action: "TAKE" })
     await round2Place("1234", "oracao")
     expect(m.post).toHaveBeenLastCalledWith("/oratio/pote/rooms/1234/round2/place", { itemId: "oracao" })
-    await saveCommitment("1234", "Rezar")
-    expect(m.post).toHaveBeenLastCalledWith("/oratio/pote/rooms/1234/commitment", { text: "Rezar" })
   })
 
   it("controles do líder e convites", async () => {

@@ -8,18 +8,18 @@ describe("jarSegments", () => {
     expect(state.free).toBe(100)
   })
 
-  it("cada pedra soma 14 à pilha", () => {
+  it("cada pedra soma 20 à pilha", () => {
     const { segments } = jarSegments(["oracao", "missa"])
-    expect(segments.map((s) => s.height)).toEqual([14, 14])
+    expect(segments.map((s) => s.height)).toEqual([20, 20])
   })
 
   it("item que cabe inteiro nos vãos não cresce a pilha; o que cabe só em parte cresce só o excedente", () => {
-    // pedra: 6 de vão. Areia(2) cabe inteira no vão; cascalho(5) usa os 4 que sobram + 1 do livre.
-    const { segments, inGaps, state } = jarSegments(["oracao", "reels", "amigos"])
-    expect(segments.map((s) => s.height)).toEqual([14, 1])
-    expect(inGaps).toBe(1) // só a areia coube inteira nos vãos
+    // pedra: 8 de vão. Areia(2) e cascalho(5) cabem inteiros nos vãos (sobra 1); o 2º cascalho usa 1 do vão + 4 do livre.
+    const { segments, inGaps, state } = jarSegments(["oracao", "reels", "amigos", "role"])
+    expect(segments.map((s) => s.height)).toEqual([20, 4])
+    expect(inGaps).toBe(2) // reels e amigos couberam inteiros nos vãos
     expect(state.gaps).toBe(0)
-    expect(state.free).toBe(100 - 14 - 1)
+    expect(state.free).toBe(100 - 20 - 4)
   })
 
   it("marca como negativo o item de Vida < 0 (o ⚠️ só aparece depois de colocado)", () => {

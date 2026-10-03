@@ -14,7 +14,6 @@ vi.mock("../../services/poteService", async (importOriginal) => {
     round2Place: vi.fn(),
     round2Remove: vi.fn(),
     round2Finish: vi.fn(),
-    saveCommitment: vi.fn(),
   }
 })
 vi.mock("../../components/ConfirmModal/ConfirmModal", () => ({
@@ -77,9 +76,50 @@ describe("PotePlayer — acesso", () => {
   it("entra na sala uma vez (join) assim que o estado chega", async () => {
     serve(playerState("LOBBY"))
     renderPlayer()
-    expect(await screen.findByText("Aguardando o líder iniciar…")).toBeInTheDocument()
+    expect(await screen.findByText(/Aguardando o líder começar/)).toBeInTheDocument()
     await waitFor(() => expect(m.joinRoom).toHaveBeenCalledTimes(1))
     expect(m.joinRoom).toHaveBeenCalledWith("1234")
+  })
+})
+
+describe("PotePlayer — sala de espera", () => {
+  it("sem pote: mostra quem já entrou, com contagem e a si mesmo marcado", async () => {
+    serve({
+      ...playerState("LOBBY"),
+      lobby: {
+        players: [
+          { displayName: "Bia", isMe: false },
+          { displayName: "Ana", isMe: true },
+        ],
+      },
+    })
+    renderPlayer()
+    expect(await screen.findByText("2 pessoas na sala")).toBeInTheDocument()
+    expect(screen.getByText("Bia")).toBeInTheDocument()
+    expect(screen.getByText("Ana")).toBeInTheDocument()
+    expect(screen.getByText("você")).toBeInTheDocument()
+    expect(screen.queryByTestId("jar")).toBeNull() // o pote só aparece dentro do jogo
+  })
+
+  it("singular quando só você entrou", async () => {
+    serve({ ...playerState("LOBBY"), lobby: { players: [{ displayName: "Ana", isMe: true }] } })
+    renderPlayer()
+    expect(await screen.findByText("1 pessoa na sala")).toBeInTheDocument()
+  })
+
+  it("a lista cresce quando chega gente nova (polling)", async () => {
+    const first = { ...playerState("LOBBY"), version: 1, lobby: { players: [{ displayName: "Ana", isMe: true }] } }
+    const second = {
+      ...playerState("LOBBY"),
+      version: 2,
+      lobby: { players: [{ displayName: "Ana", isMe: true }, { displayName: "Caio", isMe: false }] },
+    }
+    m.getRoom.mockResolvedValueOnce(first).mockResolvedValue(second)
+    m.joinRoom.mockResolvedValue(first)
+    renderPlayer()
+    expect(await screen.findByText("1 pessoa na sala")).toBeInTheDocument()
+    expect(await screen.findByText("Caio", {}, { timeout: 3000 })).toBeInTheDocument()
+    expect(screen.getByText("2 pessoas na sala")).toBeInTheDocument()
   })
 })
 
@@ -133,7 +173,7 @@ describe("PotePlayer — rodada 1", () => {
     serve(state)
     renderPlayer()
 
-    const button = await screen.findByText("Não cabe: precisa de 14, você tem 4")
+    const button = await screen.findByText("Não cabe: precisa de 20, você tem 4")
     fireEvent.click(button)
     expect(m.round1Action).not.toHaveBeenCalled()
     expect(screen.getByTestId("item-card").className).toMatch(/shake/)
@@ -205,13 +245,13 @@ describe("PotePlayer — resultado, parábola e rodada 2", () => {
     expect(screen.getByText(/Mt 6,33/)).toBeInTheDocument()
   })
 
-  it("rodada 2 trancada: abas de cascalho e areia desabilitadas e contador de pedras", async () => {
-    serve(playerState("ROUND_2", { round2: round2({ unlocked: false, rocksIn: 0 }) }))
+  it("rodada 2: cascalho e areia estão liberados desde o início (nada de cadeado)", async () => {
+    serve(playerState("ROUND_2", { round2: round2({ rocksIn: 0 }) }))
     renderPlayer()
-    expect(await screen.findByText("Pedras: 0/5")).toBeInTheDocument()
-    expect(screen.getByRole("tab", { name: /Cascalho/ })).toBeDisabled()
-    expect(screen.getByRole("tab", { name: /Areia/ })).toBeDisabled()
-    expect(screen.getByText(/Primeiro as pedras/)).toBeInTheDocument()
+    expect(await screen.findByText(/Pedras: 0\/5 · Espaço no pote: 100/)).toBeInTheDocument()
+    expect(screen.getByRole("tab", { name: /Cascalho/ })).toBeEnabled()
+    expect(screen.getByRole("tab", { name: /Areia/ })).toBeEnabled()
+    expect(screen.queryByText(/Primeiro as pedras/)).toBeNull()
   })
 
   it("rodada 2: tocar numa pedra a coloca", async () => {
@@ -227,14 +267,14 @@ describe("PotePlayer — resultado, parábola e rodada 2", () => {
     const rocks = ["oracao", "missa", "familia", "estudos", "sono"]
     const state = playerState("ROUND_2", {
       round2: round2({
-        unlocked: true, rocksIn: 5, placed: [...rocks, "amigos"], spaceLeft: 55, free: 25, gaps: 30,
+        rocksIn: 5, placed: [...rocks, "amigos"], spaceLeft: 55, free: 25, gaps: 30,
       }),
     })
     serve(state)
     m.round2Remove.mockResolvedValue(state)
     renderPlayer()
 
-    expect(await screen.findByText("Espaço para escolhas: 55")).toBeInTheDocument()
+    expect(await screen.findByText(/Espaço no pote: 35/)).toBeInTheDocument()
     fireEvent.click(screen.getByRole("tab", { name: /Cascalho/ }))
     const amigos = screen.getByRole("button", { name: /Amigos/ })
     expect(amigos).toHaveAttribute("aria-pressed", "true")
@@ -244,10 +284,10 @@ describe("PotePlayer — resultado, parábola e rodada 2", () => {
 
   it("pote cheio: avisa sem chamar o servidor", async () => {
     const rocks = ["oracao", "missa", "familia", "estudos", "sono"]
-    const cascalhos = ["amigos", "role", "futebol", "namoro", "violao", "praia", "academia", "livro", "ejc", "pastoral", "avos", "curso"]
+    const cascalhos = ["amigos", "role", "futebol", "namoro", "violao", "praia", "academia", "livro"]
     serve(
       playerState("ROUND_2", {
-        round2: round2({ unlocked: true, rocksIn: 5, placed: [...rocks, ...cascalhos], spaceLeft: 0, free: 0, gaps: 0 }),
+        round2: round2({ rocksIn: 5, placed: [...rocks, ...cascalhos], spaceLeft: 0, free: 0, gaps: 0 }),
       }),
     )
     renderPlayer()
@@ -270,25 +310,21 @@ describe("PotePlayer — resultado, parábola e rodada 2", () => {
 })
 
 describe("PotePlayer — final", () => {
-  it("mostra a classificação, o texto final e salva o compromisso", async () => {
+  it("mostra a classificação e o texto final, sem campo de compromisso", async () => {
     const state = playerState("FINAL", {
       round2: round2({
         status: "FINISHED", classification: "PLENA", fun: 70, life: 160, combos: ["deus_primeiro"],
-        placed: ["oracao", "missa", "familia", "estudos", "sono"], unlocked: true, rocksIn: 5,
+        placed: ["oracao", "missa", "familia", "estudos", "sono"], rocksIn: 5,
       }),
     })
     serve(state)
-    m.saveCommitment.mockResolvedValue({ ...state, me: { ...state.me, commitment: "Rezar antes do celular" } })
     renderPlayer()
 
     expect(await screen.findByText("Semana plena")).toBeInTheDocument()
     expect(screen.getByText("Não dá para colocar tudo")).toBeInTheDocument()
-
-    const field = screen.getByLabelText("Qual pedra você vai colocar primeiro nesta semana?")
-    expect(field).toHaveAttribute("maxlength", "140")
-    fireEvent.change(field, { target: { value: "Rezar antes do celular" } })
-    fireEvent.click(screen.getByText("Salvar"))
-    await waitFor(() => expect(m.saveCommitment).toHaveBeenCalledWith("1234", "Rezar antes do celular"))
+    expect(screen.getByText("Então, como anda o seu tempo?")).toBeInTheDocument()
+    expect(screen.queryByText(/Qual pedra você vai colocar/)).toBeNull()
+    expect(screen.queryByRole("textbox")).toBeNull()
   })
 
   it("sala cancelada pelo líder", async () => {
